@@ -35,7 +35,7 @@ class ChatHeader extends StatelessWidget {
                   "Employees Name",
                   style: TextStyle(
                     fontSize: 14,
-                    fontWeight: FontWeight.w600,
+                    fontFamily: fontInterSemiBold,
                     color: Color(0xff1f78c8),
                   ),
                 ),

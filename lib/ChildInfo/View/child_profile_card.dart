@@ -38,7 +38,7 @@ class ChildProfileCard extends StatelessWidget {
                   "Child Name",
                   style: TextStyle(
                     fontSize: 16,
-                    fontWeight: FontWeight.w600,
+                    fontFamily: fontInterSemiBold,
                     color: Color(0xff1f78c8),
                   ),
                 ),

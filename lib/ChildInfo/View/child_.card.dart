@@ -1,3 +1,4 @@
+import 'package:bloom_kidz/CommonWidgets/blue_large_bold_text.dart';
 import 'package:bloom_kidz/CommonWidgets/common_green_button.dart';
 import 'package:bloom_kidz/CommonWidgets/common_text_field.dart';
 import 'package:bloom_kidz/Styles/my_colors.dart';
@@ -6,6 +7,9 @@ import 'package:bloom_kidz/Styles/my_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../CommonWidgets/black_medium_regular_text.dart';
+import '../../CommonWidgets/black_small_medium_text.dart';
+import '../../CommonWidgets/black_small_regular_text.dart';
 import 'child_details_screen.dart';
 
 class ChildCard extends StatelessWidget {
@@ -16,7 +20,7 @@ class ChildCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: (){
+      onTap: () {
         Get.to(ChildDetailsScreen());
       },
       child: Container(
@@ -35,41 +39,31 @@ class ChildCard extends StatelessWidget {
         ),
         child: Row(
           children: [
-            CircleAvatar(
-              radius: 35,
-              backgroundImage: AssetImage(image),
-            ),
+            CircleAvatar(radius: 35, backgroundImage: AssetImage(image)),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    "Child Name",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xff1f78c8),
-                    ),
-                  ),
+                  BlueLargeBoldText("Child Name"),
                   const SizedBox(height: 6),
                   Row(
-                    children: const [
+                    children: [
                       Icon(Icons.school, size: 14, color: Colors.grey),
                       SizedBox(width: 4),
-                      Text("Explorers", style: TextStyle(fontSize: 12)),
+                      BlackSmallRegularText("Explorers"),
                     ],
                   ),
                   const SizedBox(height: 4),
                   Row(
-                    children: const [
+                    children: [
                       Icon(Icons.sick, size: 14, color: Colors.grey),
                       SizedBox(width: 4),
-                      Text("Sick", style: TextStyle(fontSize: 12)),
+                      BlackSmallRegularText("Sick"),
                       SizedBox(width: 12),
                       Icon(Icons.beach_access, size: 14, color: Colors.grey),
                       SizedBox(width: 4),
-                      Text("Holiday", style: TextStyle(fontSize: 12)),
+                      BlackSmallRegularText("Holiday"),
                     ],
                   ),
                   const SizedBox(height: 10),
@@ -79,10 +73,10 @@ class ChildCard extends StatelessWidget {
                       const SizedBox(width: 8),
                       _actionButton(Icons.location_pin, "Collection Pin"),
                     ],
-                  )
+                  ),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -100,15 +94,9 @@ class ChildCard extends StatelessWidget {
         children: [
           Icon(icon, color: Colors.white, size: 14),
           const SizedBox(width: 4),
-          Text(
-            text,
-            style: const TextStyle(color: Colors.white, fontSize: 12),
-          ),
+          BlackSmallMediumText(text, color: Colors.white),
         ],
       ),
     );
   }
 }
-
-
-

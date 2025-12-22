@@ -23,14 +23,9 @@ class ChildInfoScreen extends StatelessWidget {
         elevation: 0,
         title: const Text(
           "Child Info",
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+          style: TextStyle(fontSize: 18, fontFamily: fontInterSemiBold),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.menu),
-            onPressed: () {},
-          )
-        ],
+        actions: [IconButton(icon: const Icon(Icons.menu), onPressed: () {})],
       ),
       body: ListView(
         padding: const EdgeInsets.all(12),
@@ -41,32 +36,6 @@ class ChildInfoScreen extends StatelessWidget {
           ChildCard(image: "assets/child4.jpg"),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: const Color(0xff1f78c8),
-        unselectedItemColor: Colors.grey,
-        currentIndex: 1,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.campaign),
-            label: "News Feed",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.child_care),
-            label: "Child Info",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.chat),
-            label: "Chat",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: "My Profile",
-          ),
-        ],
-      ),
     );
   }
 }
-
-

@@ -29,7 +29,7 @@ class ChatScreen extends StatelessWidget {
         elevation: 0,
         title: const Text(
           "Chat",
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+          style: TextStyle(fontSize: 18, fontFamily: fontInterSemiBold),
         ),
         actions: [
           Padding(
@@ -49,30 +49,7 @@ class ChatScreen extends StatelessWidget {
           _replyBox(),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        currentIndex: 2,
-        selectedItemColor: const Color(0xff1f78c8),
-        unselectedItemColor: Colors.grey,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.campaign),
-            label: "News Feed",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.child_care),
-            label: "Child Info",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.chat),
-            label: "Chat",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: "My Profile",
-          ),
-        ],
-      ),
+
     );
   }
 

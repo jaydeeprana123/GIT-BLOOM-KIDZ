@@ -1,3 +1,6 @@
+import 'package:bloom_kidz/CommonWidgets/black_large_bold_text.dart';
+import 'package:bloom_kidz/CommonWidgets/blue_medium_bold_text.dart';
+import 'package:bloom_kidz/CommonWidgets/blue_medium_regular_text.dart';
 import 'package:bloom_kidz/CommonWidgets/common_green_button.dart';
 import 'package:bloom_kidz/CommonWidgets/common_text_field.dart';
 import 'package:bloom_kidz/Styles/my_colors.dart';
@@ -6,37 +9,42 @@ import 'package:bloom_kidz/Styles/my_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-
 import 'package:flutter/material.dart';
+
+import '../../CommonWidgets/black_medium_bold_text.dart';
+import '../../CommonWidgets/black_medium_regular_text.dart';
+import '../../CommonWidgets/blue_small_regular_text.dart';
 
 class NewsFeedCard extends StatelessWidget {
   const NewsFeedCard({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 14),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.06),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _header(),
-          _titleText(),
-          _image(),
-          _description(),
-          _actions(),
-          _replyBox(),
-        ],
+    return Card(
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 14),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(18),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.06),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _header(),
+            _titleText(),
+            _image(),
+            _description(),
+            _actions(),
+            _replyBox(),
+          ],
+        ),
       ),
     );
   }
@@ -54,35 +62,24 @@ class NewsFeedCard extends StatelessWidget {
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text(
-                  "Dummy Name",
-                  style: TextStyle(fontWeight: FontWeight.w600),
-                ),
+              children: [
+                BlackLargeBoldText("Dummy Name"),
                 SizedBox(height: 2),
-                Text(
-                  "10% • 26-11-2025",
-                  style: TextStyle(fontSize: 11, color: Colors.grey),
-                ),
+                BlueSmallRegularText("10% • 26-11-2025"),
               ],
             ),
           ),
-          const Icon(Icons.more_vert)
+          const Icon(Icons.more_vert),
         ],
       ),
     );
   }
 
   Widget _titleText() {
-    return const Padding(
+    return Padding(
       padding: EdgeInsets.symmetric(horizontal: 12),
-      child: Text(
+      child: BlueMediumBoldText(
         "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-        style: TextStyle(
-          fontSize: 13,
-          color: Color(0xff1f78c8),
-          fontWeight: FontWeight.w500,
-        ),
       ),
     );
   }
@@ -102,12 +99,12 @@ class NewsFeedCard extends StatelessWidget {
   }
 
   Widget _description() {
-    return const Padding(
+    return Padding(
       padding: EdgeInsets.symmetric(horizontal: 12),
-      child: Text(
+      child: BlackMediumBoldText(
         "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "
-            "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.",
-        style: TextStyle(fontSize: 12, color: Colors.black87),
+        "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.",
+        fontSize: 12,
       ),
     );
   }
@@ -116,14 +113,14 @@ class NewsFeedCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(12),
       child: Row(
-        children: const [
-          Icon(Icons.favorite, color: Colors.blue, size: 16),
+        children: [
+          Icon(Icons.favorite, color: color_secondary, size: 16),
           SizedBox(width: 4),
-          Text("10", style: TextStyle(fontSize: 12)),
+          BlueMediumRegularText("10"),
           SizedBox(width: 16),
-          Icon(Icons.chat_bubble_outline, size: 16),
+          Icon(Icons.chat, size: 16, color: color_secondary),
           SizedBox(width: 4),
-          Text("3", style: TextStyle(fontSize: 12)),
+          BlueMediumRegularText("3"),
         ],
       ),
     );
@@ -149,17 +146,12 @@ class NewsFeedCard extends StatelessWidget {
               ),
             ),
             IconButton(
-              icon: const Icon(Icons.send, color: Colors.blue),
+              icon: const Icon(Icons.send, color: color_secondary),
               onPressed: () {},
-            )
+            ),
           ],
         ),
       ),
     );
   }
 }
-
-
-
-
-

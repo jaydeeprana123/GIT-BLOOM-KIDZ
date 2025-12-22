@@ -84,7 +84,7 @@ class DocumentCard extends StatelessWidget {
             "Heading Will be Here...",
             style: TextStyle(
               fontSize: 13,
-              fontWeight: FontWeight.w600,
+              fontFamily: fontInterSemiBold,
               color: Color(0xff1f78c8),
             ),
           ),

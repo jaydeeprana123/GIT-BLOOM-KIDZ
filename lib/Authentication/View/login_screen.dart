@@ -1,3 +1,4 @@
+import 'package:bloom_kidz/BottomNavigation/View/bottom_navigation_view.dart';
 import 'package:bloom_kidz/CommonWidgets/common_green_button.dart';
 import 'package:bloom_kidz/CommonWidgets/common_text_field.dart';
 import 'package:bloom_kidz/Styles/my_colors.dart';
@@ -111,7 +112,7 @@ class LoginScreen extends StatelessWidget {
                     width: 160,
                     height: 45,
                     child: CommonGradientButton(btnTitle: "SIGN IN",onPressed: (){
-                      Get.to(ChatScreen());
+                      Get.to(BottomNavigationView(selectTabPosition: 0,));
                     })
 
 

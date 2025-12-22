@@ -34,7 +34,7 @@ class AboutScreen extends StatelessWidget {
         elevation: 0,
         title: const Text(
           "About",
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+          style: TextStyle(fontSize: 18, fontFamily: fontInterSemiBold),
         ),
         actions: [
           Padding(
@@ -52,30 +52,7 @@ class AboutScreen extends StatelessWidget {
           Expanded(child: AboutCard()),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        currentIndex: 1,
-        selectedItemColor: const Color(0xff1f78c8),
-        unselectedItemColor: Colors.grey,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.campaign),
-            label: "News Feed",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.child_care),
-            label: "Child Info",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.chat),
-            label: "Chat",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: "My Profile",
-          ),
-        ],
-      ),
+
     );
   }
 }

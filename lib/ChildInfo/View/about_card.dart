@@ -52,7 +52,7 @@ class AboutCard extends StatelessWidget {
               "Oliver",
               style: TextStyle(
                 fontSize: 16,
-                fontWeight: FontWeight.w600,
+                fontFamily: fontInterSemiBold,
                 color: Color(0xff1f78c8),
               ),
             ),
@@ -92,7 +92,7 @@ class AboutCard extends StatelessWidget {
                   TextSpan(
                     text: "$title\n",
                     style: const TextStyle(
-                      fontWeight: FontWeight.w600,
+                      fontFamily: fontInterSemiBold,
                     ),
                   ),
                   TextSpan(text: value),
@@ -115,7 +115,7 @@ class AboutCard extends StatelessWidget {
             SizedBox(width: 6),
             Text(
               "Special Note",
-              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+              style: TextStyle(fontFamily: fontInterSemiBold, fontSize: 13),
             ),
           ],
         ),

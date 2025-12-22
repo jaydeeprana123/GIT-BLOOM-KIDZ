@@ -48,7 +48,7 @@ class GridItem extends StatelessWidget {
             title,
             style: const TextStyle(
               fontSize: 13,
-              fontWeight: FontWeight.w600,
+              fontFamily: fontInterSemiBold,
             ),
           )
         ],
