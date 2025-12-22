@@ -20,41 +20,57 @@ import 'package:flutter/material.dart';
 class GridItem extends StatelessWidget {
   final IconData icon;
   final String title;
-
   const GridItem(this.icon, this.title);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, color: const Color(0xff1f78c8), size: 32),
-          const SizedBox(height: 10),
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 13,
-              fontFamily: fontInterSemiBold,
+    return InkWell(
+      borderRadius: BorderRadius.circular(16),
+      onTap: () {},
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.06),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
             ),
-          )
-        ],
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Icon box
+            Container(
+              height: 44,
+              width: 44,
+              decoration: BoxDecoration(
+                color: const Color(0xffEAF3FC),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(icon, size: 24, color: const Color(0xff1F78C8)),
+            ),
+
+            const SizedBox(height: 12),
+
+            // Title
+            Text(
+              title,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                fontSize: 13,
+                fontFamily: fontInterSemiBold,
+                color: Color(0xff1A1A1A),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
-
-
