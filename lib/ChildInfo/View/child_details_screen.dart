@@ -1,3 +1,4 @@
+import 'package:bloom_kidz/CommonWidgets/common_background.dart';
 import 'package:bloom_kidz/CommonWidgets/common_green_button.dart';
 import 'package:bloom_kidz/CommonWidgets/common_text_field.dart';
 import 'package:bloom_kidz/Styles/my_colors.dart';
@@ -8,7 +9,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
+import '../../CommonWidgets/common_appbar.dart';
 import 'child_.card.dart';
 
 import 'package:flutter/material.dart';
@@ -24,33 +27,27 @@ class ChildDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xfff4f9ff),
-      appBar: AppBar(
-        backgroundColor: const Color(0xff1f78c8),
-        elevation: 0,
-        title: const Text(
-          "Child Details",
-          style: TextStyle(fontSize: 18, fontFamily: fontInterSemiBold),
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 12),
-            child: CircleAvatar(
-              backgroundColor: const Color(0xff43b8a6),
-              child: const Icon(Icons.menu, color: Colors.white),
+      backgroundColor: Colors.white,
+      appBar: const CommonAppBar(
+        title: "Child Details",
+        showMenu: true,
+        showBack: true,
+      ),
+      body: Stack(
+        children: [
+          Positioned.fill(child: SvgPicture.asset(app_bg, fit: BoxFit.cover)),
+
+          SingleChildScrollView(
+            padding: const EdgeInsets.all(14),
+            child: Column(
+              children: const [
+                ChildProfileCard(),
+                SizedBox(height: 16),
+                ChildOptionsGrid(),
+              ],
             ),
           ),
         ],
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(14),
-        child: Column(
-          children: const [
-            ChildProfileCard(),
-            SizedBox(height: 16),
-            ChildOptionsGrid(),
-          ],
-        ),
       ),
     );
   }

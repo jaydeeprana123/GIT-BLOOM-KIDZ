@@ -2,11 +2,18 @@ const icon_cancel = 'assets/images/icon_cancel.svg';
 const icon_cancel_circle = 'assets/images/icon_cancel_circle.svg';
 const icon_back_arrow = 'assets/images/icon_back.svg';
 const icon_logo = 'assets/images/logo.png';
+const app_bg = 'assets/images/app_bg.svg';
+const icon_chat = 'assets/images/chat.svg';
+const icon_profile = 'assets/images/profile.svg';
+const icon_child_info = 'assets/images/child-info.svg';
+const icon_news_feed = 'assets/images/news-feed.svg';
+const child1 = 'assets/images/child1.jpg';
+
 const icon_mobile = 'assets/images/icon_mobile.svg';
 const no_internet = 'assets/images/no_internet.svg';
 const icon_home_green = 'assets/images/icon_home_green.svg';
 const img_photo_place_holder = 'assets/images/logo.png';
-
+const img_splash = 'assets/images/splash_screen.svg';
 const icon_down_arrow = 'assets/images/icon_down_arrow.svg';
 
 const icon_event_calender = 'assets/images/icon_event_calender.svg';
@@ -52,9 +59,6 @@ const icon_calender_date_event = 'assets/images/icon_calender_date_event.svg';
 const icon_copy_paste = 'assets/images/icon_copy_paste.svg';
 const icon_cirlce_download = 'assets/images/icon_cirlce_download.svg';
 const icon_circle_share = 'assets/images/icon_circle_share.svg';
-
-const img_splash = 'assets/images/splash.jpeg';
-
 const img_bg_login = 'assets/images/login.png';
 const img_bg_signup = 'assets/images/signup.jpg';
 

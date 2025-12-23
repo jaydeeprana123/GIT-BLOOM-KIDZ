@@ -6,9 +6,9 @@ import 'package:bloom_kidz/Styles/my_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-
 import 'package:flutter/material.dart';
 
+import '../../CommonWidgets/common_appbar.dart';
 import 'news_feed_card.dart';
 
 class NewsFeedScreen extends StatelessWidget {
@@ -17,36 +17,15 @@ class NewsFeedScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xfff4f9ff),
-      appBar: AppBar(
-        backgroundColor: const Color(0xff1f78c8),
-        elevation: 0,
-        title: const Text(
-          "News Feed",
-          style: TextStyle(fontSize: 18, fontFamily: fontInterSemiBold),
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 12),
-            child: CircleAvatar(
-              backgroundColor: const Color(0xff43b8a6),
-              child: const Icon(Icons.menu, color: Colors.white),
-            ),
-          )
-        ],
-      ),
+      backgroundColor: Colors.transparent,
+      appBar: const CommonAppBar(title: "News Feed", showMenu: true),
       body: ListView.builder(
-        padding: const EdgeInsets.all(12),
+        padding: EdgeInsets.symmetric(vertical: 10),
         itemCount: 2,
         itemBuilder: (context, index) {
           return const NewsFeedCard();
         },
       ),
-
     );
   }
 }
-
-
-
-

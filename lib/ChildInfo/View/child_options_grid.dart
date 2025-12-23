@@ -31,20 +31,28 @@ class ChildOptionsGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     final items = [
       GridItem(Icons.extension, "Activity"),
-      InkWell(onTap: (){
-        Get.to(AboutScreen());
-      },child: GridItem(Icons.info, "About")),
+      InkWell(
+        onTap: () {
+          Get.to(AboutScreen());
+        },
+        child: GridItem(Icons.info, "About"),
+      ),
       GridItem(Icons.route, "Journey"),
       GridItem(Icons.shield, "Safeguarding"),
       GridItem(Icons.key, "Child Permission"),
       GridItem(Icons.event, "Booking"),
-      InkWell(onTap: (){
-        Get.to(DocumentsScreen());
-      },child: GridItem(Icons.description, "Documents")),
-      InkWell(onTap: (){
-        Get.to(FamilyContactsScreen());
-
-      },child: GridItem(Icons.group, "Family & Contacts")),
+      InkWell(
+        onTap: () {
+          Get.to(DocumentsScreen());
+        },
+        child: GridItem(Icons.description, "Documents"),
+      ),
+      InkWell(
+        onTap: () {
+          Get.to(FamilyContactsScreen());
+        },
+        child: GridItem(Icons.group, "Family & Contacts"),
+      ),
       GridItem(Icons.add_task, "Book Extra Sessions"),
       GridItem(Icons.calendar_month, "Weekly Plan"),
     ];
@@ -54,9 +62,9 @@ class ChildOptionsGrid extends StatelessWidget {
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        mainAxisSpacing: 12,
-        crossAxisSpacing: 12,
-        childAspectRatio: 1.3,
+        mainAxisSpacing: 6,
+        crossAxisSpacing: 6,
+        childAspectRatio: 1.9,
       ),
       itemCount: items.length,
       itemBuilder: (context, index) {
@@ -65,4 +73,3 @@ class ChildOptionsGrid extends StatelessWidget {
     );
   }
 }
-

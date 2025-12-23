@@ -23,58 +23,81 @@ class ChildCard extends StatelessWidget {
       onTap: () {
         Get.to(ChildDetailsScreen());
       },
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(18),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.06),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
-            ),
-          ],
+      child: Card(
+        margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        color: Colors.white,
+        shadowColor: color_secondary,
+        elevation: 6,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(
+            22,
+          ), // change 16 to any radius you like
         ),
         child: Row(
           children: [
-            CircleAvatar(radius: 35, backgroundImage: AssetImage(image)),
-            const SizedBox(width: 12),
+            Container(
+              width: 100, // same as diameter of circle avatar (2 * radius)
+              height: 100,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(
+                  12,
+                ), // change 12 for more/less rounding
+                image: DecorationImage(
+                  image: AssetImage(image),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  BlueLargeBoldText("Child Name"),
-                  const SizedBox(height: 6),
-                  Row(
-                    children: [
-                      Icon(Icons.school, size: 14, color: Colors.grey),
-                      SizedBox(width: 4),
-                      BlackSmallRegularText("Explorers"),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Icon(Icons.sick, size: 14, color: Colors.grey),
-                      SizedBox(width: 4),
-                      BlackSmallRegularText("Sick"),
-                      SizedBox(width: 12),
-                      Icon(Icons.beach_access, size: 14, color: Colors.grey),
-                      SizedBox(width: 4),
-                      BlackSmallRegularText("Holiday"),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    children: [
-                      _actionButton(Icons.chat, "Chat"),
-                      const SizedBox(width: 8),
-                      _actionButton(Icons.location_pin, "Collection Pin"),
-                    ],
-                  ),
-                ],
+              child: Container(
+                padding: EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    BlueLargeBoldText("Child Name", fontSize: 15),
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [
+                        Icon(Icons.school, size: 14, color: Colors.grey),
+                        SizedBox(width: 4),
+                        BlackSmallRegularText(
+                          "Explorers",
+                          fontSize: 11,
+                          color: Colors.black,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Icon(Icons.sick, size: 14, color: Colors.grey),
+                        SizedBox(width: 4),
+                        BlackSmallRegularText(
+                          "Sick",
+                          fontSize: 11,
+                          color: Colors.black,
+                        ),
+                        SizedBox(width: 12),
+                        Icon(Icons.beach_access, size: 14, color: Colors.grey),
+                        SizedBox(width: 4),
+                        BlackSmallRegularText(
+                          "Holiday",
+                          fontSize: 11,
+                          color: Colors.black,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        _actionButton(Icons.chat, "Chat"),
+                        const SizedBox(width: 8),
+                        _actionButton(Icons.location_pin, "Collection Pin"),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -85,10 +108,10 @@ class ChildCard extends StatelessWidget {
 
   Widget _actionButton(IconData icon, String text) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
         color: color_secondary,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
         children: [

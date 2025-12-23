@@ -1,3 +1,4 @@
+import 'package:bloom_kidz/CommonWidgets/black_medium_bold_text.dart';
 import 'package:bloom_kidz/CommonWidgets/common_green_button.dart';
 import 'package:bloom_kidz/CommonWidgets/common_text_field.dart';
 import 'package:bloom_kidz/Styles/my_colors.dart';
@@ -27,48 +28,36 @@ class GridItem extends StatelessWidget {
     return InkWell(
       borderRadius: BorderRadius.circular(16),
       onTap: () {},
-      child: Container(
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.06),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Icon box
-            Container(
-              height: 44,
-              width: 44,
-              decoration: BoxDecoration(
-                color: const Color(0xffEAF3FC),
-                borderRadius: BorderRadius.circular(10),
+      child: Card(
+        color: Colors.white,
+        shadowColor: color_secondary,
+        elevation: 6,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 0),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.06),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
               ),
-              child: Icon(icon, size: 24, color: const Color(0xff1F78C8)),
-            ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Icon box
+              Icon(icon, size: 35, color: color_secondary),
 
-            const SizedBox(height: 12),
+              const SizedBox(height: 3),
 
-            // Title
-            Text(
-              title,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 13,
-                fontFamily: fontInterSemiBold,
-                color: Color(0xff1A1A1A),
-              ),
-            ),
-          ],
+              // Title
+              BlackMediumBoldText(title, color: Colors.black, fontSize: 11),
+            ],
+          ),
         ),
       ),
     );

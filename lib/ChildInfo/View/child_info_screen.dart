@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter/material.dart';
 
+import '../../CommonWidgets/common_appbar.dart';
 import 'child_.card.dart';
 
 class ChildInfoScreen extends StatelessWidget {
@@ -17,23 +18,15 @@ class ChildInfoScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xfff4f9ff),
-      appBar: AppBar(
-        backgroundColor: const Color(0xff1f78c8),
-        elevation: 0,
-        title: const Text(
-          "Child Info",
-          style: TextStyle(fontSize: 18, fontFamily: fontInterSemiBold),
-        ),
-        actions: [IconButton(icon: const Icon(Icons.menu), onPressed: () {})],
-      ),
+      backgroundColor: Colors.transparent,
+      appBar: const CommonAppBar(title: "Child Info", showMenu: true),
       body: ListView(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.symmetric(vertical: 10),
         children: const [
-          ChildCard(image: "assets/child1.jpg"),
-          ChildCard(image: "assets/child2.jpg"),
-          ChildCard(image: "assets/child3.jpg"),
-          ChildCard(image: "assets/child4.jpg"),
+          ChildCard(image: child1),
+          ChildCard(image: child1),
+          ChildCard(image: child1),
+          ChildCard(image: child1),
         ],
       ),
     );

@@ -21,30 +21,20 @@ class NewsFeedCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 14),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(18),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.06),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _header(),
-            _titleText(),
-            _image(),
-            _description(),
-            _actions(),
-            _replyBox(),
-          ],
-        ),
+      color: Colors.white,
+      shadowColor: color_primary,
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      elevation: 8,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _header(),
+          _titleText(),
+          _image(),
+          _description(),
+          _actions(),
+          _replyBox(),
+        ],
       ),
     );
   }

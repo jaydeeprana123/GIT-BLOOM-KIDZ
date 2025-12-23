@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
-const color_primary = Color(0xFF4FB3C2);
-const color_secondary = Color(0xFF207AB8);
-
-
-const color_primary_transparent = Color(0x11363584);
+const color_primary = Color(0xFF31a4af);
+const color_secondary = Color(0xFF1f76b8);
+const color_primary_transparent = Color(0xab31a4af);
 const half_transparent = Color(0x80000000);
 const quater_transparent = Color(0x12000000);
 const title_black_15181e = Color(0xFF15181e);
 const light_grey = Color(0xffeeeef0);
 const title_color = Color(0xff9c18bc);
 const light_text_color = Color(0xff68686a);
-const text_color = Color(0xff3a3a3c);
+const text_color = Color(0xff445258);
 const coupon_green = Color(0xff199A8E);
 const hint_txt_909196 = Color(0xFF909196);
 const hint_txt_green = Color(0xFF318585);

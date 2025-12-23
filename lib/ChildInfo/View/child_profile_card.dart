@@ -5,94 +5,98 @@ import 'package:bloom_kidz/Styles/my_font.dart';
 import 'package:bloom_kidz/Styles/my_icons.dart';
 import 'package:flutter/material.dart';
 
+import '../../CommonWidgets/black_small_medium_text.dart';
+import '../../CommonWidgets/black_small_regular_text.dart';
+import '../../CommonWidgets/blue_large_bold_text.dart';
+
 class ChildProfileCard extends StatelessWidget {
   const ChildProfileCard({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.06),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
+    return Row(
+      children: [
+        Container(
+          width: 100, // same as diameter of circle avatar (2 * radius)
+          height: 100,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(
+              12,
+            ), // change 12 for more/less rounding
+            image: DecorationImage(
+              image: AssetImage(child1),
+              fit: BoxFit.cover,
+            ),
           ),
-        ],
-      ),
-      child: Row(
-        children: [
-          const CircleAvatar(
-            radius: 38,
-            backgroundImage: AssetImage("assets/child1.jpg"),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
+        ),
+
+        Expanded(
+          child: Container(
+            padding: EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  "Child Name",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontFamily: fontInterSemiBold,
-                    color: Color(0xff1f78c8),
-                  ),
-                ),
+                BlueLargeBoldText("Child Name", fontSize: 15),
                 const SizedBox(height: 6),
                 Row(
-                  children: const [
+                  children: [
                     Icon(Icons.school, size: 14, color: Colors.grey),
                     SizedBox(width: 4),
-                    Text("Explorers", style: TextStyle(fontSize: 12)),
+                    BlackSmallRegularText(
+                      "Explorers",
+                      fontSize: 11,
+                      color: Colors.black,
+                    ),
                   ],
                 ),
                 const SizedBox(height: 4),
                 Row(
-                  children: const [
+                  children: [
                     Icon(Icons.sick, size: 14, color: Colors.grey),
                     SizedBox(width: 4),
-                    Text("Sick", style: TextStyle(fontSize: 12)),
+                    BlackSmallRegularText(
+                      "Sick",
+                      fontSize: 11,
+                      color: Colors.black,
+                    ),
                     SizedBox(width: 12),
                     Icon(Icons.beach_access, size: 14, color: Colors.grey),
                     SizedBox(width: 4),
-                    Text("Holiday", style: TextStyle(fontSize: 12)),
+                    BlackSmallRegularText(
+                      "Holiday",
+                      fontSize: 11,
+                      color: Colors.black,
+                    ),
                   ],
                 ),
                 const SizedBox(height: 10),
                 Row(
                   children: [
-                    _profileButton(Icons.chat, "Chat"),
+                    _actionButton(Icons.chat, "Chat"),
                     const SizedBox(width: 8),
-                    _profileButton(Icons.location_pin, "Collection Pin"),
+                    _actionButton(Icons.location_pin, "Collection Pin"),
                   ],
-                )
+                ),
               ],
             ),
-          )
-        ],
-      ),
+          ),
+        ),
+      ],
     );
   }
 
-  Widget _profileButton(IconData icon, String title) {
+  Widget _actionButton(IconData icon, String text) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: const Color(0xff1f78c8),
-        borderRadius: BorderRadius.circular(20),
+        color: color_secondary,
+        borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
         children: [
-          Icon(icon, size: 14, color: Colors.white),
+          Icon(icon, color: Colors.white, size: 14),
           const SizedBox(width: 4),
-          Text(
-            title,
-            style: const TextStyle(color: Colors.white, fontSize: 12),
-          )
+          BlackSmallMediumText(text, color: Colors.white),
         ],
       ),
     );
