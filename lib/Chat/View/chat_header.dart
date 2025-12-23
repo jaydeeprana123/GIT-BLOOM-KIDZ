@@ -1,3 +1,5 @@
+import 'package:bloom_kidz/CommonWidgets/black_small_regular_text.dart';
+import 'package:bloom_kidz/CommonWidgets/blue_large_bold_text.dart';
 import 'package:bloom_kidz/CommonWidgets/common_green_button.dart';
 import 'package:bloom_kidz/CommonWidgets/common_text_field.dart';
 import 'package:bloom_kidz/Styles/my_colors.dart';
@@ -17,32 +19,27 @@ class ChatHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      color: Colors.white,
+    return Padding(
+      padding: EdgeInsets.all(16),
       child: Row(
         children: [
           const CircleAvatar(
             radius: 22,
-            backgroundImage: AssetImage("assets/user.jpg"),
+            backgroundImage: AssetImage(child1),
           ),
           const SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text(
+              children:  [
+                BlueLargeBoldText(
                   "Employees Name",
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontFamily: fontInterSemiBold,
-                    color: Color(0xff1f78c8),
-                  ),
+      
                 ),
                 SizedBox(height: 2),
-                Text(
+                BlackSmallRegularText(
                   "Employees Designation",
-                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                 color: Colors.black
                 ),
               ],
             ),

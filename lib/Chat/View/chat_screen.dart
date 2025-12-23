@@ -12,6 +12,7 @@ import '../../ChildInfo/View/child_info_screen.dart';
 
 import 'package:flutter/material.dart';
 
+import '../../CommonWidgets/common_appbar.dart';
 import 'chat_bubble.dart';
 import 'chat_header.dart';
 
@@ -23,31 +24,29 @@ class ChatScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xfff4f9ff),
-      appBar: AppBar(
-        backgroundColor: const Color(0xff030b4f),
-        elevation: 0,
-        title: const Text(
-          "Chat",
-          style: TextStyle(fontSize: 18, fontFamily: fontInterSemiBold),
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 12),
-            child: CircleAvatar(
-              backgroundColor: const Color(0xff43b8a6),
-              child: const Icon(Icons.menu, color: Colors.white),
-            ),
-          )
-        ],
+      backgroundColor: Colors.transparent,
+      appBar: const CommonAppBar(
+        title: "Chat",
+        showMenu: true,
       ),
-      body: Column(
-        children: [
-          const ChatHeader(),
-          const Divider(height: 1),
-          Expanded(child: _chatList()),
-          _replyBox(),
-        ],
+      body: Card(
+        color: Colors.white,
+        shadowColor: color_secondary,
+        elevation: 6,
+        margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(
+              22,
+            ), // change 16 to any radius you like
+          ),
+        child: Column(
+          children: [
+            const ChatHeader(),
+            const Divider(height: 1),
+            Expanded(child: _chatList()),
+            _replyBox(),
+          ],
+        ),
       ),
 
     );
@@ -67,7 +66,7 @@ class ChatScreen extends StatelessWidget {
         ),
         ChatBubble(
           message:
-          "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "
+          "Hmmm Ipsum is simply dummy text of the printing and typesetting industry. "
               "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.",
           isSender: true,
           time: "18:57",

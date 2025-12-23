@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import 'child_.card.dart';
 
@@ -19,7 +20,7 @@ import 'child_profile_card.dart';
 import 'package:flutter/material.dart';
 
 class GridItem extends StatelessWidget {
-  final IconData icon;
+  final String icon;
   final String title;
   const GridItem(this.icon, this.title);
 
@@ -47,7 +48,7 @@ class GridItem extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // Icon box
-            Icon(icon, size: 35, color: color_secondary),
+            SvgPicture.asset(icon, width: 35, height: 35,color: color_secondary),
 
             const SizedBox(height: 3),
 

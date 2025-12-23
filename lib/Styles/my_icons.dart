@@ -87,12 +87,23 @@ const icon_nav_notification = 'assets/images/nav_notification.svg';
 const icon_delete_account = 'assets/images/delete_1.svg';
 const icon_privacy = 'assets/images/left_menu_privacy_policy.svg';
 const icon_terms = 'assets/images/left_menu_terms_conditions.svg';
-const icon_about = 'assets/images/left_menu_about_page.svg';
 const icon_favourite = 'assets/images/left_menu_favorites.svg';
 const icon_ratings = 'assets/images/ratings.svg';
 const icon_comments = 'assets/images/comments.svg';
 const icon_signup_plus = 'assets/images/signup_plus.svg';
 const icon_password_eye = 'assets/images/password_eye.svg';
+
+const icon_about = 'assets/images/About.svg';
+const icon_activity = 'assets/images/Activity.svg';
+const icon_booking = 'assets/images/Booking.svg';
+const icon_documents = 'assets/images/Documents.svg';
+const icon_Journey = 'assets/images/Journey.svg';
+const icon_Safeguarding = 'assets/images/Safeguarding.svg';
+const icon_Book_Extra_Sessions = 'assets/images/Book_Extra_Sessions.svg';
+const icon_ChildPermission = 'assets/images/ChildPermission.svg';
+const icon_WeeklyPlan = 'assets/images/WeeklyPlan.svg';
+const icon_FamilyContacts = 'assets/images/FamilyContacts.svg';
+
 
 const icon_staklist_logo = 'assets/images/staklist_logo.png';
 const icon_upload_image = 'assets/images/upload_image.svg';

@@ -30,31 +30,23 @@ class ChildOptionsGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final items = [
-      GridItem(Icons.extension, "Activity"),
-      InkWell(
-        onTap: () {
-          Get.to(AboutScreen());
-        },
-        child: GridItem(Icons.info, "About"),
-      ),
-      GridItem(Icons.route, "Journey"),
-      GridItem(Icons.shield, "Safeguarding"),
-      GridItem(Icons.key, "Child Permission"),
-      GridItem(Icons.event, "Booking"),
-      InkWell(
-        onTap: () {
-          Get.to(DocumentsScreen());
-        },
-        child: GridItem(Icons.description, "Documents"),
-      ),
-      InkWell(
-        onTap: () {
-          Get.to(FamilyContactsScreen());
-        },
-        child: GridItem(Icons.group, "Family & Contacts"),
-      ),
-      GridItem(Icons.add_task, "Book Extra Sessions"),
-      GridItem(Icons.calendar_month, "Weekly Plan"),
+      GridItem(icon_activity, "Activity"),
+      InkWell(onTap: (){
+        Get.to(AboutScreen());
+      },child: GridItem(icon_about, "About")),
+      GridItem(icon_Journey, "Journey"),
+      GridItem(icon_Safeguarding, "Safeguarding"),
+      GridItem(icon_ChildPermission, "Child Permission"),
+      GridItem(icon_booking, "Booking"),
+      InkWell(onTap: (){
+        Get.to(DocumentsScreen());
+      },child: GridItem(icon_documents, "Documents")),
+      InkWell(onTap: (){
+        Get.to(FamilyContactsScreen());
+
+      },child: GridItem(icon_FamilyContacts, "Family & Contacts")),
+      GridItem(icon_Book_Extra_Sessions, "Book Extra Sessions"),
+      GridItem(icon_WeeklyPlan, "Weekly Plan"),
     ];
 
     return GridView.builder(
