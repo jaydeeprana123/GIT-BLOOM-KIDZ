@@ -25,39 +25,35 @@ class GridItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(16),
-      onTap: () {},
-      child: Card(
-        color: Colors.white,
-        shadowColor: color_secondary,
-        elevation: 6,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 0),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.06),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Icon box
-              Icon(icon, size: 35, color: color_secondary),
+    return Card(
+      color: Colors.white,
+      shadowColor: color_secondary,
+      elevation: 6,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.06),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Icon box
+            Icon(icon, size: 35, color: color_secondary),
 
-              const SizedBox(height: 3),
+            const SizedBox(height: 3),
 
-              // Title
-              BlackMediumBoldText(title, color: Colors.black, fontSize: 11),
-            ],
-          ),
+            // Title
+            BlackMediumBoldText(title, color: Colors.black, fontSize: 11),
+          ],
         ),
       ),
     );
