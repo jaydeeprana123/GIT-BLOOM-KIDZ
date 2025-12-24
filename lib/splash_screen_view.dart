@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:bloom_kidz/Authentication/View/login_screen.dart';
+import 'package:bloom_kidz/Authentication/model/login_response.dart';
+import 'package:bloom_kidz/BottomNavigation/View/bottom_navigation_view.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/cupertino.dart';
@@ -60,7 +62,15 @@ class _SplashScreenViewState extends State<SplashScreenView>
     Future.delayed(const Duration(seconds: 5), () async {
       SharedPreferences prefs = await SharedPreferences.getInstance();
 
-      Get.off(() => LoginScreen());
+      LoginResponse? loginResponse = (await MySharedPref().getLoginModel(
+        SharePreData.keySaveLoginModel,
+      ));
+
+      if (loginResponse == null) {
+        Get.off(() => LoginScreen());
+      } else {
+        Get.off(() => BottomNavigationView(selectTabPosition: 0));
+      }
     });
   }
 

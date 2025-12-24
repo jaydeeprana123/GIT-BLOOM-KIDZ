@@ -14,12 +14,66 @@ import '../Styles/my_icons.dart';
 import '../utils/preference_utils.dart';
 import '../utils/share_predata.dart';
 
-
 File imageFile = File("");
 final String _text =
     'Toda persona tiene derecho a la educación. La educación debe ser gratuita, al menos en lo concerniente a la instrucción elemental y fundamental. La instrucción elemental será obligatoria. La instrucción técnica y profesional habrá de ser generalizada; el acceso a los estudios superiores será igual para todos, en función de los méritos respectivos.';
 // TranslationModel _translated = TranslationModel(translatedText: '', detectedSourceLanguage: '');
 // TranslationModel _detected = TranslationModel(translatedText: '', detectedSourceLanguage: '');
+
+void showSomethingWentWrongDialog({String? message}) {
+  Get.defaultDialog(
+    title: "Error",
+    titleStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+    middleText: message ?? "Please try again later.",
+    textConfirm: "OK",
+    onConfirm: () => Get.back(),
+    radius: 10,
+  );
+}
+
+/// logout from the app
+logoutFromTheApp() async {
+  var preferences = MySharedPref();
+  await preferences.clearData(SharePreData.keySaveLoginModel);
+  Get.offAll(() => LoginScreen());
+}
+
+void showBlockedDialog() {
+  Get.defaultDialog(
+    title: "Access Denied",
+    titleStyle: const TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
+    barrierDismissible: false,
+    radius: 16,
+    content: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      child: Column(
+        children: [
+          const Text(
+            "You are blocked. Please contact support for assistance.",
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 16),
+          ),
+          const SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: () {
+              // Example: open support page or navigate
+              // Get.toNamed('/support');
+              Get.back();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.purple.shade100,
+              foregroundColor: Colors.black,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+            ),
+            child: const Text("Contact Support"),
+          ),
+        ],
+      ),
+    ),
+  );
+}
 
 snackBar(BuildContext? context, String message) {
   if (!Get.isOverlaysOpen) {
@@ -28,15 +82,15 @@ snackBar(BuildContext? context, String message) {
       duration: const Duration(seconds: 8 ?? 2),
       snackPosition: SnackPosition.TOP,
       borderRadius: 10,
-      margin: EdgeInsets.symmetric(
-        horizontal: 15,
-        vertical: 15,
-      ),
+      margin: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
       snackStyle: SnackStyle.FLOATING,
       messageText: Text(
         message,
         style: TextStyle(
-            fontFamily: fontInterRegular, fontSize: 14, color: Colors.white),
+          fontFamily: fontInterRegular,
+          fontSize: 14,
+          color: Colors.white,
+        ),
       ),
     ).show();
   }
@@ -57,15 +111,15 @@ snackBarLongTime(BuildContext? context, String message) {
       duration: const Duration(seconds: 60 ?? 2),
       snackPosition: SnackPosition.TOP,
       borderRadius: 10,
-      margin: EdgeInsets.symmetric(
-        horizontal: 15,
-        vertical: 15,
-      ),
+      margin: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
       snackStyle: SnackStyle.FLOATING,
       messageText: Text(
         message,
         style: TextStyle(
-            fontFamily: fontInterRegular, fontSize: 14, color: Colors.white),
+          fontFamily: fontInterRegular,
+          fontSize: 14,
+          color: Colors.white,
+        ),
       ),
     ).show();
   }
@@ -86,10 +140,7 @@ snackBarRed(BuildContext context, String message) {
       duration: Duration(seconds: 3 ?? 2),
       snackPosition: SnackPosition.TOP,
       borderRadius: 10,
-      margin: EdgeInsets.symmetric(
-        horizontal: 15,
-        vertical: 15,
-      ),
+      margin: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
       snackStyle: SnackStyle.FLOATING,
       messageText: Text(
         message,
@@ -110,19 +161,17 @@ snackBarRed(BuildContext context, String message) {
 
 topSnackBar(BuildContext context, String title, String description) {
   return Get.snackbar(
-      margin: const EdgeInsets.all(5),
-      title,
-      description,
-      backgroundColor: Colors.white,
-      colorText: bg_btn_199a8e);
+    margin: const EdgeInsets.all(5),
+    title,
+    description,
+    backgroundColor: Colors.white,
+    colorText: bg_btn_199a8e,
+  );
 }
 
 snackBarRapid(BuildContext context, String message) {
   return ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text(message),
-      duration: const Duration(seconds: 1),
-    ),
+    SnackBar(content: Text(message), duration: const Duration(seconds: 1)),
   );
 }
 
@@ -195,9 +244,7 @@ void showConfirmationDialog({
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
         content: Text(message),
         actions: [
@@ -286,26 +333,31 @@ Future showImagePicker(context, bool isGalleryVisible) {
         child: Container(
           padding: const EdgeInsets.only(top: 10, bottom: 10),
           decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(25.0),
-                  topRight: Radius.circular(25.0))),
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(25.0),
+              topRight: Radius.circular(25.0),
+            ),
+          ),
           child: isGalleryVisible
               ? Wrap(
                   children: <Widget>[
                     ListTile(
-                        leading: const Icon(Icons.photo_library),
-                        title: const Text('Gallery'),
-                        onTap: () {
-                          _getFile(ImageSource.gallery)
-                              .then((value) => Navigator.of(context).pop());
-                        }),
+                      leading: const Icon(Icons.photo_library),
+                      title: const Text('Gallery'),
+                      onTap: () {
+                        _getFile(
+                          ImageSource.gallery,
+                        ).then((value) => Navigator.of(context).pop());
+                      },
+                    ),
                     ListTile(
                       leading: const Icon(Icons.photo_camera),
                       title: const Text('Camera'),
                       onTap: () {
-                        _getFile(ImageSource.camera)
-                            .then((value) => Navigator.of(context).pop());
+                        _getFile(
+                          ImageSource.camera,
+                        ).then((value) => Navigator.of(context).pop());
                       },
                     ),
                   ],
@@ -316,8 +368,9 @@ Future showImagePicker(context, bool isGalleryVisible) {
                       leading: const Icon(Icons.photo_camera),
                       title: const Text('Camera'),
                       onTap: () {
-                        _getFile(ImageSource.camera)
-                            .then((value) => Navigator.of(context).pop());
+                        _getFile(
+                          ImageSource.camera,
+                        ).then((value) => Navigator.of(context).pop());
                       },
                     ),
                   ],
@@ -350,28 +403,29 @@ void onLoading(BuildContext context, String msg) {
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        return Center(child: CircularProgressIndicator()
-            // Image.asset(icon_waiting, height: 80.w, width: 80.h)
-            // SizedBox(
-            //   height: 200.w,
-            //   width: 200.h,
-            //   child: CircularProgressIndicator()
-            //
-            //   // Lottie.asset(
-            //   //   icon_loader_json,
-            //   //   repeat: true,
-            //   //   reverse: true,
-            //   //   animate: true,
-            //   // ),
-            // ),
-            // Container(
-            //     width: 50,
-            //     height: 50,
-            //     decoration: const BoxDecoration(
-            //       shape: BoxShape.circle,
-            //       color: Colors.green,
-            //       ) , child: Image.asset(icon_waiting, height: 35, width: 35)),
-            );
+        return Center(
+          child: CircularProgressIndicator(),
+          // Image.asset(icon_waiting, height: 80.w, width: 80.h)
+          // SizedBox(
+          //   height: 200.w,
+          //   width: 200.h,
+          //   child: CircularProgressIndicator()
+          //
+          //   // Lottie.asset(
+          //   //   icon_loader_json,
+          //   //   repeat: true,
+          //   //   reverse: true,
+          //   //   animate: true,
+          //   // ),
+          // ),
+          // Container(
+          //     width: 50,
+          //     height: 50,
+          //     decoration: const BoxDecoration(
+          //       shape: BoxShape.circle,
+          //       color: Colors.green,
+          //       ) , child: Image.asset(icon_waiting, height: 35, width: 35)),
+        );
         // child: const CircularProgressIndicator(
         //   backgroundColor: Colors.white,
         //   valueColor: AlwaysStoppedAnimation<Color>(

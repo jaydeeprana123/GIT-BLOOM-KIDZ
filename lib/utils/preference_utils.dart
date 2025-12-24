@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'package:bloom_kidz/Authentication/model/login_response.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 
 // Created by Vrusti Patel
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../CommonWidgets/common_widget.dart';
 
 class MySharedPref {
   static MySharedPref? classInstance;
@@ -58,6 +60,21 @@ class MySharedPref {
 
   // ---------------- MODELS ----------------
 
+  setLoginModel(LoginResponse model, String key) async {
+    preferences?.setString(key, json.encode(model.toJson()));
+  }
+
+  Future<LoginResponse?> getLoginModel(String key) async {
+    await preferences?.reload();
+    var myJson = preferences?.getString(key);
+
+    printData(runtimeType.toString(), "myJson " + myJson.toString());
+
+    if (myJson == null) {
+      return null;
+    }
+    return LoginResponse.fromJson(json.decode(myJson));
+  }
 
   setAccessToken(String accessToken, String key) async {
     await preferences?.setString(key, accessToken);
@@ -67,4 +84,3 @@ class MySharedPref {
     return preferences?.getString(key) ?? "";
   }
 }
-

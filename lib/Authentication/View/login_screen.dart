@@ -1,6 +1,8 @@
+import 'package:bloom_kidz/Authentication/controller/login_controller.dart';
 import 'package:bloom_kidz/BottomNavigation/View/bottom_navigation_view.dart';
 import 'package:bloom_kidz/CommonWidgets/common_green_button.dart';
 import 'package:bloom_kidz/CommonWidgets/common_text_field.dart';
+import 'package:bloom_kidz/CommonWidgets/common_widget.dart';
 import 'package:bloom_kidz/Styles/my_colors.dart';
 import 'package:bloom_kidz/Styles/my_font.dart';
 import 'package:bloom_kidz/Styles/my_icons.dart';
@@ -13,8 +15,17 @@ import 'package:get/get.dart';
 import '../../Chat/View/chat_screen.dart';
 import '../../ChildInfo/View/child_info_screen.dart';
 
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({Key? key}) : super(key: key);
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  bool rememberMe = false;
+
+  LoginController loginController = Get.put(LoginController());
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +90,10 @@ class LoginScreen extends StatelessWidget {
                           const SizedBox(height: 30),
 
                           /// Email
-                          CommonTextField(hint: "Email I'd...."),
+                          CommonTextField(
+                            hint: "Email I'd....",
+                            controller: loginController.emailController.value,
+                          ),
 
                           const SizedBox(height: 16),
 
@@ -87,6 +101,8 @@ class LoginScreen extends StatelessWidget {
                           CommonTextField(
                             hint: "Password....",
                             isPassword: true,
+                            controller:
+                                loginController.passwordController.value,
                           ),
 
                           const SizedBox(height: 16),
@@ -120,9 +136,25 @@ class LoginScreen extends StatelessWidget {
                             child: CommonGradientButton(
                               btnTitle: "SIGN IN",
                               onPressed: () {
-                                Get.to(
-                                  BottomNavigationView(selectTabPosition: 0),
-                                );
+                                if (loginController
+                                    .passwordController
+                                    .value
+                                    .text
+                                    .isEmpty) {
+                                  snackBarRapid(context, "Enter password");
+                                  return;
+                                }
+
+                                if (loginController
+                                    .emailController
+                                    .value
+                                    .text
+                                    .isEmpty) {
+                                  snackBarRapid(context, "Enter email");
+                                  return;
+                                }
+
+                                loginController.callLoginAPI(context);
                               },
                             ),
                           ),
@@ -141,6 +173,9 @@ class LoginScreen extends StatelessWidget {
               ],
             ),
           ),
+
+          if (loginController.isLoading.value)
+            Center(child: CircularProgressIndicator()),
         ],
       ),
     );
