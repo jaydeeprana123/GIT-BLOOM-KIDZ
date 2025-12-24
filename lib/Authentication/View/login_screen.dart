@@ -31,152 +31,157 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
-      body: Stack(
-        children: [
-          /// Background SVG
-          Positioned.fill(
-            child: SvgPicture.asset(img_splash, fit: BoxFit.cover),
-          ),
+      body: Obx(
+        () => Stack(
+          children: [
+            /// Background SVG
+            Positioned.fill(
+              child: SvgPicture.asset(img_splash, fit: BoxFit.cover),
+            ),
 
-          /// Overlay
-          Positioned.fill(child: Container(color: color_primary_transparent)),
+            /// Overlay
+            Positioned.fill(child: Container(color: color_primary_transparent)),
 
-          /// Content
-          SafeArea(
-            child: Column(
-              children: [
-                const SizedBox(height: 40),
+            /// Content
+            SafeArea(
+              child: Column(
+                children: [
+                  const SizedBox(height: 40),
 
-                /// Logo
-                Image.asset(icon_logo, height: 120),
+                  /// Logo
+                  Image.asset(icon_logo, height: 120),
 
-                const SizedBox(height: 30),
+                  const SizedBox(height: 30),
 
-                /// White Card (takes remaining space)
-                Expanded(
-                  child: Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 30,
-                    ),
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(30),
-                        topRight: Radius.circular(30),
+                  /// White Card (takes remaining space)
+                  Expanded(
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 30,
                       ),
-                    ),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          const Text(
-                            "Sign In",
-                            style: TextStyle(
-                              fontSize: 26,
-                              fontFamily: fontInterSemiBold,
-                              color: color_secondary,
-                            ),
-                          ),
-
-                          const SizedBox(height: 8),
-
-                          const Text(
-                            "Enter your username and password",
-                            style: TextStyle(color: Colors.grey),
-                          ),
-
-                          const SizedBox(height: 30),
-
-                          /// Email
-                          CommonTextField(
-                            hint: "Email I'd....",
-                            controller: loginController.emailController.value,
-                          ),
-
-                          const SizedBox(height: 16),
-
-                          /// Password
-                          CommonTextField(
-                            hint: "Password....",
-                            isPassword: true,
-                            controller:
-                                loginController.passwordController.value,
-                          ),
-
-                          const SizedBox(height: 16),
-
-                          /// Remember & Forgot
-                          Row(
-                            children: [
-                              Checkbox(
-                                value: false,
-                                onChanged: (_) {},
-                                activeColor: const Color(0xFF1F77C8),
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(30),
+                          topRight: Radius.circular(30),
+                        ),
+                      ),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const Text(
+                              "Sign In",
+                              style: TextStyle(
+                                fontSize: 26,
+                                fontFamily: fontInterSemiBold,
+                                color: color_secondary,
                               ),
-                              const Text("Remember me"),
-                              const Spacer(),
-                              TextButton(
-                                onPressed: () {},
-                                child: const Text(
-                                  "Forgot Password ?",
-                                  style: TextStyle(color: Color(0xFF1F77C8)),
+                            ),
+
+                            const SizedBox(height: 8),
+
+                            const Text(
+                              "Enter your username and password",
+                              style: TextStyle(color: Colors.grey),
+                            ),
+
+                            const SizedBox(height: 30),
+
+                            /// Email
+                            CommonTextField(
+                              hint: "Email I'd....",
+                              controller: loginController.emailController.value,
+                            ),
+
+                            const SizedBox(height: 16),
+
+                            /// Password
+                            CommonTextField(
+                              hint: "Password....",
+                              isPassword: true,
+                              controller:
+                                  loginController.passwordController.value,
+                            ),
+
+                            const SizedBox(height: 16),
+
+                            /// Remember & Forgot
+                            Row(
+                              children: [
+                                Checkbox(
+                                  value: false,
+                                  onChanged: (_) {},
+                                  activeColor: const Color(0xFF1F77C8),
                                 ),
-                              ),
-                            ],
-                          ),
-
-                          const SizedBox(height: 20),
-
-                          /// Sign In Button
-                          SizedBox(
-                            width: 160,
-                            height: 45,
-                            child: CommonGradientButton(
-                              btnTitle: "SIGN IN",
-                              onPressed: () {
-                                if (loginController
-                                    .passwordController
-                                    .value
-                                    .text
-                                    .isEmpty) {
-                                  snackBarRapid(context, "Enter password");
-                                  return;
-                                }
-
-                                if (loginController
-                                    .emailController
-                                    .value
-                                    .text
-                                    .isEmpty) {
-                                  snackBarRapid(context, "Enter email");
-                                  return;
-                                }
-
-                                loginController.callLoginAPI(context);
-                              },
+                                const Text("Remember me"),
+                                const Spacer(),
+                                TextButton(
+                                  onPressed: () {},
+                                  child: const Text(
+                                    "Forgot Password ?",
+                                    style: TextStyle(color: Color(0xFF1F77C8)),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
 
-                          const SizedBox(height: 40),
+                            const SizedBox(height: 20),
 
-                          const Text(
-                            "© 2025 Bloomkidz.net",
-                            style: TextStyle(fontSize: 12, color: Colors.grey),
-                          ),
-                        ],
+                            /// Sign In Button
+                            SizedBox(
+                              width: 160,
+                              height: 45,
+                              child: CommonGradientButton(
+                                btnTitle: "SIGN IN",
+                                onPressed: () {
+                                  if (loginController
+                                      .passwordController
+                                      .value
+                                      .text
+                                      .isEmpty) {
+                                    snackBarRapid(context, "Enter password");
+                                    return;
+                                  }
+
+                                  if (loginController
+                                      .emailController
+                                      .value
+                                      .text
+                                      .isEmpty) {
+                                    snackBarRapid(context, "Enter email");
+                                    return;
+                                  }
+
+                                  loginController.callLoginAPI(context);
+                                },
+                              ),
+                            ),
+
+                            const SizedBox(height: 40),
+
+                            const Text(
+                              "© 2025 Bloomkidz.net",
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
 
-          if (loginController.isLoading.value)
-            Center(child: CircularProgressIndicator()),
-        ],
+            if (loginController.isLoading.value)
+              Center(child: CircularProgressIndicator()),
+          ],
+        ),
       ),
     );
   }

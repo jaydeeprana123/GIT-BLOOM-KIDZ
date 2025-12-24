@@ -183,7 +183,7 @@ goToWelcomeScreen() async {
 }
 
 void printData(String str, String val) {
-  // print("$str :::::::::::::  $val");
+  print("$str :::::::::::::  $val");
 }
 
 createdDateConverted(String originalDate) {
