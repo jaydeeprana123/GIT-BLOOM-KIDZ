@@ -28,6 +28,15 @@ class ChildInfoController extends GetxController {
 
   RxBool isLoading = false.obs;
 
+  RxInt selectedDateIndex = 0.obs;
+
+  ActivityData? get selectedDayData {
+    if (activityList.isEmpty) return null;
+    if (selectedDateIndex.value >= activityList.length) return null;
+    return activityList[selectedDateIndex.value];
+  }
+
+
   getUserInfo() async {
     /// Set login model into shared preference
     loginResponse.value =
@@ -112,6 +121,9 @@ class ChildInfoController extends GetxController {
 
           if (activityResponse.status ?? false) {
             activityList.value = activityResponse.data ?? [];
+
+            /// RESET SELECTION AFTER LOAD
+            selectedDateIndex.value = 0;
           } else {
             snackBar(context, loginResponse.value.message ?? "");
           }
