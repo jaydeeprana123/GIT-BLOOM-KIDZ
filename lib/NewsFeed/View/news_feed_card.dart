@@ -3,10 +3,12 @@ import 'package:bloom_kidz/CommonWidgets/blue_medium_bold_text.dart';
 import 'package:bloom_kidz/CommonWidgets/blue_medium_regular_text.dart';
 import 'package:bloom_kidz/CommonWidgets/common_green_button.dart';
 import 'package:bloom_kidz/CommonWidgets/common_text_field.dart';
+import 'package:bloom_kidz/NewsFeed/models/news_feed_response.dart';
 import 'package:bloom_kidz/Styles/my_colors.dart';
 import 'package:bloom_kidz/Styles/my_font.dart';
 import 'package:bloom_kidz/Styles/my_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:get/get.dart';
 
 import 'package:flutter/material.dart';
@@ -16,21 +18,23 @@ import '../../CommonWidgets/black_medium_regular_text.dart';
 import '../../CommonWidgets/blue_small_regular_text.dart';
 
 class NewsFeedCard extends StatelessWidget {
-  const NewsFeedCard({super.key});
+  final Newsfeed newsFeed;
+
+  const NewsFeedCard({super.key, required this.newsFeed});
 
   @override
   Widget build(BuildContext context) {
     return Card(
       color: Colors.white,
       shadowColor: color_primary,
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       elevation: 8,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _header(),
           _titleText(),
-          _image(),
+          if ((newsFeed.media ?? []).isNotEmpty) _image(),
           _description(),
           _actions(),
           _replyBox(),
@@ -41,21 +45,52 @@ class NewsFeedCard extends StatelessWidget {
 
   Widget _header() {
     return Padding(
-      padding: const EdgeInsets.all(12),
+      padding: EdgeInsets.all(12),
       child: Row(
         children: [
-          const CircleAvatar(
-            radius: 22,
-            backgroundImage: AssetImage("assets/user.jpg"),
+          Container(
+            width: 70,
+            height: 70,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              image: DecorationImage(
+                image: NetworkImage(newsFeed.createdId?.profile ?? ""),
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
+
           const SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                BlackLargeBoldText("Dummy Name"),
+                BlackLargeBoldText(newsFeed.createdId?.name ?? ""),
                 SizedBox(height: 2),
-                BlueSmallRegularText("10% • 26-11-2025"),
+
+                Row(
+                  children: [
+                    Icon(Icons.timer, color: color_secondary, size: 14),
+
+                    BlueSmallRegularText(
+                      newsFeed.createdAt != null
+                          ? '${newsFeed.createdAt!.hour.toString().padLeft(2, '0')}:'
+                                '${newsFeed.createdAt!.minute.toString().padLeft(2, '0')}'
+                          : '',
+                    ),
+
+                    SizedBox(width: 5),
+                    Icon(Icons.date_range, color: color_secondary, size: 14),
+
+                    BlueSmallRegularText(
+                      newsFeed.createdAt != null
+                          ? '${newsFeed.createdAt!.day.toString().padLeft(2, '0')}-'
+                                '${newsFeed.createdAt!.month.toString().padLeft(2, '0')}-'
+                                '${newsFeed.createdAt!.year} • '
+                          : '',
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -68,33 +103,40 @@ class NewsFeedCard extends StatelessWidget {
   Widget _titleText() {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 12),
-      child: BlueMediumBoldText(
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-      ),
+      child: BlueMediumBoldText(newsFeed.name ?? ""),
     );
   }
 
   Widget _image() {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 10),
-      height: 180,
-      width: double.infinity,
-      decoration: const BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage("assets/news.jpg"),
-          fit: BoxFit.cover,
-        ),
-      ),
-    );
+    return ((newsFeed.media ?? []).length == 1)
+        ? (newsFeed.media?[0].extenstion == "jpeg")
+              ? Container(
+                  margin: const EdgeInsets.symmetric(vertical: 10),
+                  height: 180,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: NetworkImage(newsFeed.media?[0].file ?? ""),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                )
+              : SizedBox()
+        : SizedBox();
   }
 
   Widget _description() {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 12),
-      child: BlackMediumBoldText(
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "
-        "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.",
-        fontSize: 12,
+      child: Html(
+        data: newsFeed.description ?? "",
+        style: {
+          "*": Style(
+            fontSize: FontSize(12),
+            color: text_color,
+            lineHeight: LineHeight(1.4),
+          ),
+        },
       ),
     );
   }
@@ -106,11 +148,11 @@ class NewsFeedCard extends StatelessWidget {
         children: [
           Icon(Icons.favorite, color: color_secondary, size: 16),
           SizedBox(width: 4),
-          BlueMediumRegularText("10"),
+          BlueMediumRegularText((newsFeed.likesCount ?? 0).toString()),
           SizedBox(width: 16),
           Icon(Icons.chat, size: 16, color: color_secondary),
           SizedBox(width: 4),
-          BlueMediumRegularText("3"),
+          BlueMediumRegularText((newsFeed.commentsCount ?? 0).toString()),
         ],
       ),
     );

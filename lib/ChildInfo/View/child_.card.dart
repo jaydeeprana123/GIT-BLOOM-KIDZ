@@ -1,3 +1,4 @@
+import 'package:bloom_kidz/ChildInfo/models/child_info_list_response.dart';
 import 'package:bloom_kidz/CommonWidgets/blue_large_bold_text.dart';
 import 'package:bloom_kidz/CommonWidgets/common_green_button.dart';
 import 'package:bloom_kidz/CommonWidgets/common_text_field.dart';
@@ -13,15 +14,15 @@ import '../../CommonWidgets/black_small_regular_text.dart';
 import 'child_details_screen.dart';
 
 class ChildCard extends StatelessWidget {
-  final String image;
+  final ChildInfo childInfo;
 
-  const ChildCard({super.key, required this.image});
+  const ChildCard({super.key, required this.childInfo});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Get.to(ChildDetailsScreen());
+        Get.to(ChildDetailsScreen(childId: childInfo.id.toString()));
       },
       child: Card(
         margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -43,7 +44,7 @@ class ChildCard extends StatelessWidget {
                   12,
                 ), // change 12 for more/less rounding
                 image: DecorationImage(
-                  image: AssetImage(image),
+                  image: NetworkImage(childInfo.profile ?? ""),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -55,14 +56,17 @@ class ChildCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    BlueLargeBoldText("Child Name", fontSize: 15),
+                    BlueLargeBoldText(
+                      "${childInfo.firstName ?? ""} ${childInfo.lastName ?? ""}",
+                      fontSize: 15,
+                    ),
                     const SizedBox(height: 6),
                     Row(
                       children: [
                         Icon(Icons.school, size: 14, color: Colors.grey),
                         SizedBox(width: 4),
                         BlackSmallRegularText(
-                          "Explorers",
+                          childInfo.room ?? "",
                           fontSize: 11,
                           color: Colors.black,
                         ),

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:bloom_kidz/Authentication/model/login_response.dart';
+import 'package:bloom_kidz/NewsFeed/models/news_feed_response.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -16,17 +17,10 @@ import '../../../BottomNavigation/view/bottom_navigation_view.dart';
 import '../../Networks/api_response.dart';
 
 /// Controller
-class LoginController extends GetxController {
-  /// Editing controller for text field
-  Rx<TextEditingController> emailController = TextEditingController().obs;
-
-  Rx<TextEditingController> passwordController = TextEditingController().obs;
-
+class NewsFeedController extends GetxController {
+  RxList<Newsfeed> newsFeedList = <Newsfeed>[].obs;
+  Rx<NewsFeedData> newsFeedData = NewsFeedData().obs;
   Rx<LoginResponse> loginResponse = LoginResponse().obs;
-
-  RxBool isPolicyAccepted = false.obs;
-  String? deviceToken;
-  Rx<TextEditingController> otpText = TextEditingController().obs;
 
   RxBool isLoading = false.obs;
 
@@ -37,45 +31,39 @@ class LoginController extends GetxController {
         LoginResponse();
   }
 
-  /// login API
-  callLoginAPI(BuildContext context) async {
+  /// NewsFeed API
+  callNewsFeedAPI(BuildContext context) async {
     isLoading.value = true;
-    String url = urlBase + urlLogin;
+
+    String token = await MySharedPref().getAccessToken(
+      SharePreData.keyAccessToken,
+    );
+
+    String url = urlBase + urlNewsFeedList;
 
     final apiReq = Request();
 
-    dynamic body = {
-      'email': emailController.value.text,
-      "password": passwordController.value.text,
-    };
-
-    await apiReq.postAPIwithoutBearer(url, body).then((value) async {
+    await apiReq.getMethodAPI(url, null, token).then((value) async {
       http.StreamedResponse res = value;
-      printData(runtimeType.toString(), "Login API response ${res.statusCode}");
+      printData(
+        runtimeType.toString(),
+        "callNewsFeedAPI response ${res.statusCode}",
+      );
 
       await res.stream.bytesToString().then((valueData) async {
-        printData(runtimeType.toString(), "Login API value ${valueData}");
+        printData(runtimeType.toString(), "callNewsFeedAPI value ${valueData}");
 
         isLoading.value = false;
 
         if (res.statusCode == 200) {
           Map<String, dynamic> userModel = json.decode(valueData);
-          loginResponse.value = LoginResponse.fromJson(userModel);
+          NewsFeedResponse newsFeedResponse = NewsFeedResponse.fromJson(
+            userModel,
+          );
 
-          if (loginResponse.value.status ?? false) {
-            /// Set login model into shared preference
-
-            await MySharedPref().setAccessToken(
-              loginResponse.value.data?.token ?? "",
-              SharePreData.keyAccessToken,
-            );
-
-            await MySharedPref().setLoginModel(
-              loginResponse.value,
-              SharePreData.keySaveLoginModel,
-            );
-
-            Get.offAll(BottomNavigationView(selectTabPosition: 0));
+          if (newsFeedResponse.status ?? false) {
+            newsFeedData.value = newsFeedResponse.data ?? NewsFeedData();
+            newsFeedList.value = newsFeedData.value.newsfeeds ?? [];
           } else {
             snackBar(context, loginResponse.value.message ?? "");
           }

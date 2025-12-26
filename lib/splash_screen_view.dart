@@ -60,11 +60,13 @@ class _SplashScreenViewState extends State<SplashScreenView>
 
   void redirectOnPendingState() {
     Future.delayed(const Duration(seconds: 5), () async {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
+      /// INITIALIZE SHARED PREF
+      final prefs = MySharedPref();
 
-      LoginResponse? loginResponse = (await MySharedPref().getLoginModel(
+      /// READ LOGIN MODEL
+      LoginResponse? loginResponse = await prefs.getLoginModel(
         SharePreData.keySaveLoginModel,
-      ));
+      );
 
       if (loginResponse == null) {
         Get.off(() => LoginScreen());

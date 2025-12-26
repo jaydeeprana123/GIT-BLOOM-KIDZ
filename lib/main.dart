@@ -3,7 +3,15 @@ import 'package:bloom_kidz/splash_screen_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-void main() {
+import 'Utils/preference_utils.dart';
+
+void main() async {
+  /// 🔴 REQUIRED BEFORE ANY PLUGIN USE
+  WidgetsFlutterBinding.ensureInitialized();
+
+  /// ✅ Initialize SharedPreferences
+  await MySharedPref.getInstance();
+
   runApp(const MyApp());
 }
 

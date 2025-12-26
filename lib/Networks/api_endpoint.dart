@@ -4,3 +4,9 @@ var urlBase =
 
 //Authentication APIs
 const urlLogin = '/login';
+
+const urlNewsFeedList = '/parent/newsfeeds';
+
+const urlChildInfoList = '/parent/children';
+const urlActivityList = '/parent/children/activity';
+const urlLeaveRequest = '/parent/children/leave';

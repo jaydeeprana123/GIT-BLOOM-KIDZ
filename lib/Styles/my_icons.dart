@@ -104,7 +104,6 @@ const icon_ChildPermission = 'assets/images/ChildPermission.svg';
 const icon_WeeklyPlan = 'assets/images/WeeklyPlan.svg';
 const icon_FamilyContacts = 'assets/images/FamilyContacts.svg';
 
-
 const icon_staklist_logo = 'assets/images/staklist_logo.png';
 const icon_upload_image = 'assets/images/upload_image.svg';
 const icon_view_detail = 'assets/images/view_detail.svg';

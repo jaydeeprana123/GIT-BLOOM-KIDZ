@@ -9,15 +9,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../CommonWidgets/common_widget.dart';
 
 class MySharedPref {
-  static MySharedPref? classInstance;
+  static final MySharedPref _instance = MySharedPref._internal();
+  factory MySharedPref() => _instance;
+  MySharedPref._internal();
+
   static SharedPreferences? preferences;
 
-  static Future<MySharedPref?> getInstance() async {
-    classInstance ??= MySharedPref();
+  static Future<MySharedPref> getInstance() async {
     preferences ??= await SharedPreferences.getInstance();
-    return classInstance;
+    return _instance;
   }
-
   // ---------------- BASIC ----------------
 
   _getFromDisk(String key) async {

@@ -22,7 +22,9 @@ import 'child_profile_card.dart';
 import 'package:flutter/material.dart';
 
 class ChildDetailsScreen extends StatelessWidget {
-  const ChildDetailsScreen({super.key});
+  final String childId;
+
+  const ChildDetailsScreen({super.key, required this.childId});
 
   @override
   Widget build(BuildContext context) {
@@ -40,10 +42,10 @@ class ChildDetailsScreen extends StatelessWidget {
           SingleChildScrollView(
             padding: const EdgeInsets.all(14),
             child: Column(
-              children: const [
+              children: [
                 ChildProfileCard(),
                 SizedBox(height: 16),
-                ChildOptionsGrid(),
+                ChildOptionsGrid(childId: childId),
               ],
             ),
           ),

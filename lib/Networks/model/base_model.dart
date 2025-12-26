@@ -6,24 +6,24 @@ String baseModelToJson(BaseModel data) => json.encode(data.toJson());
 
 class BaseModel {
   BaseModel({
-    required this.success,
+    required this.status,
     required this.statusCode,
     required this.message,
   });
 
-  bool success;
+  bool status;
   int statusCode;
   String message;
 
   factory BaseModel.fromJson(Map<String, dynamic> json) => BaseModel(
-        success: json["success"],
-        statusCode: json["status_code"],
-        message: json["message"],
-      );
+    status: json["status"],
+    statusCode: json["status_code"],
+    message: json["message"],
+  );
 
   Map<String, dynamic> toJson() => {
-        "success": success,
-        "status_code": statusCode,
-        "message": message,
-      };
+    "status": status,
+    "status_code": statusCode,
+    "message": message,
+  };
 }
