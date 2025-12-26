@@ -57,22 +57,22 @@ class TimelineCard extends StatelessWidget {
                       Row(
                         children: [
                           if (item.icon != null)
-                            Padding(
-                              padding: const EdgeInsets.only(right: 8),
-                              child: Image.network(
-                                item.icon!,
-                                width: 20,
-                                height: 20,
+                            // Padding(
+                            //   padding: const EdgeInsets.only(right: 8),
+                            //   child: Image.network(
+                            //     item.icon ?? "",
+                            //     width: 20,
+                            //     height: 20,
+                            //   ),
+                            // ),
+                            Text(
+                              item.title,
+                              style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF1E78B7),
                               ),
                             ),
-                          Text(
-                            item.title,
-                            style: const TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF1E78B7),
-                            ),
-                          ),
                         ],
                       ),
                       Text(

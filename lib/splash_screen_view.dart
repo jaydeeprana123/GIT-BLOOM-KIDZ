@@ -64,11 +64,9 @@ class _SplashScreenViewState extends State<SplashScreenView>
       final prefs = MySharedPref();
 
       /// READ LOGIN MODEL
-      LoginResponse? loginResponse = await prefs.getLoginModel(
-        SharePreData.keySaveLoginModel,
-      );
+      String token = await prefs.getAccessToken(SharePreData.keyAccessToken);
 
-      if (loginResponse == null) {
+      if (token.isEmpty) {
         Get.off(() => LoginScreen());
       } else {
         Get.off(() => BottomNavigationView(selectTabPosition: 0));

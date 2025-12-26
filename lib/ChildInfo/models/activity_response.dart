@@ -174,7 +174,7 @@ class Food {
 
 class Nappy {
   String? time;
-  Type? type;
+  String? type;
   String? status;
 
   Nappy({this.time, this.type, this.status});
