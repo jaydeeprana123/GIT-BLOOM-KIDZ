@@ -38,7 +38,8 @@ class CommentListWidget extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CommonAppBar(title: "Comments", showMenu: true, showBack: true,),
-      body: Stack(
+      body: Obx(
+              () =>Stack(
         children: [
 
           Positioned.fill(child: SvgPicture.asset(app_bg, fit: BoxFit.cover)),
@@ -117,10 +118,10 @@ class CommentListWidget extends StatelessWidget {
                                         onTap: (){
                                           newsFeedController.callAddLikeAPI(context, newsFeed.id.toString(), (comment?.id??0).toString(), index);
                                         }
-                                        ,child: const Icon(
-                                          Icons.thumb_up_alt_outlined,
+                                        ,child:  Icon(
+                                         newsFeedController.isLikeList[index] == true?Icons.thumb_up : Icons.thumb_up_alt_outlined,
                                           size: 16,
-                                          color: text_color,
+                                          color: newsFeedController.isLikeList[index] == true?color_secondary:text_color,
                                         ),
                                       ),
                                       const SizedBox(width: 4),
@@ -138,8 +139,10 @@ class CommentListWidget extends StatelessWidget {
                     );
                   },
                 ),
+
+          if(newsFeedController.isLoading.value)Center(child: CircularProgressIndicator(),)
         ],
-      ),
+      )),
     );
   }
 }
