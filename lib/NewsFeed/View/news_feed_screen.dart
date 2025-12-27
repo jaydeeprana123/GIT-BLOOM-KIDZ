@@ -42,7 +42,9 @@ class _NewsFeedScreenState extends State<NewsFeedScreen> {
               itemCount: newsFeedController.newsFeedList.length,
               itemBuilder: (context, index) {
                 return NewsFeedCard(
+                  newsFeedController: newsFeedController,
                   newsFeed: newsFeedController.newsFeedList[index],
+                  index: index,
                 );
               },
             ),

@@ -14,7 +14,6 @@ class CommonTextField extends StatelessWidget {
   final bool isPassword;
   final TextInputType keyboardType;
 
-
   const CommonTextField({
     super.key,
     required this.hint,
@@ -30,31 +29,51 @@ class CommonTextField extends StatelessWidget {
       obscureText: isPassword,
       keyboardType: keyboardType,
       style: TextStyle(
-            fontSize: 16,
-            fontFamily: fontInterSemiBold,
-            color: text_color,
-          ),
+        fontSize: 14,
+        fontFamily: fontInterSemiBold,
+        color: text_color,
+      ),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle:
-            const TextStyle(
-              fontSize: 14,
-              fontFamily: fontInterRegular,
-              color: hint_txt_909196,
-            ),
+        hintStyle: const TextStyle(
+          fontSize: 13,
+          fontFamily: fontInterRegular,
+          color: light_text_color,
+        ),
         contentPadding:
         const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        border: OutlineInputBorder(
+
+        /// 🔵 Default Border
+        enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(
+            color: color_secondary,
+            width: 1.2,
+          ),
         ),
+
+        /// 🔵 Focused Border
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide:
-          const BorderSide(color: Color(0xFF1F77C8), width: 1.5),
+          borderSide: const BorderSide(
+            color: color_secondary,
+            width: 1.5,
+          ),
+        ),
+
+        /// Optional (error border)
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(
+            color: Colors.red,
+            width: 1.2,
+          ),
         ),
       ),
     );
   }
 }
+
+
 
 

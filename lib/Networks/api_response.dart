@@ -718,7 +718,6 @@ class Request {
     body,
     token,
     String strImg,
-    Uint8List? strImgBytes,
   ) async {
     Map<String, String> headersWithBearer = {
       'Content-Type': 'application/json',
@@ -733,18 +732,7 @@ class Request {
 
     request.fields.addAll(body);
 
-    if (kIsWeb && strImgBytes != null) {
-      printData("is web", "And UILISt");
-
-      // 📌 For Web → use bytes
-      request.files.add(
-        http.MultipartFile.fromBytes(
-          'image',
-          strImgBytes,
-          filename: 'upload.jpg',
-        ),
-      );
-    } else if (!kIsWeb && strImg != null && strImg.isNotEmpty) {
+     if (!kIsWeb && strImg != null && strImg.isNotEmpty) {
       request.files.add(await http.MultipartFile.fromPath('image', strImg));
     }
 

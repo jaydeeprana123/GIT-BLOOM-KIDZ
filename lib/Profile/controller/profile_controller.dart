@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:bloom_kidz/Authentication/model/login_response.dart';
-import 'package:bloom_kidz/NewsFeed/models/news_feed_response.dart';
+import 'package:bloom_kidz/Profile/model/profile_response.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -17,15 +17,20 @@ import '../../../BottomNavigation/view/bottom_navigation_view.dart';
 import '../../Networks/api_response.dart';
 
 /// Controller
-class NewsFeedController extends GetxController {
-  RxList<Newsfeed> newsFeedList = <Newsfeed>[].obs;
-  Rx<NewsFeedData> newsFeedData = NewsFeedData().obs;
+class ProfileController extends GetxController {
+  /// Editing controller for text field
+  Rx<TextEditingController> emailController = TextEditingController().obs;
+
+  Rx<TextEditingController> passwordController = TextEditingController().obs;
+  Rx<TextEditingController> newPasswordController = TextEditingController().obs;
+  Rx<TextEditingController> confirmPasswordController = TextEditingController().obs;
+
+  Rx<TextEditingController> pinController = TextEditingController().obs;
+
+
   Rx<LoginResponse> loginResponse = LoginResponse().obs;
-  RxList<TextEditingController> replyController = <TextEditingController>[].obs;
+  Rx<ProfileUser> profileUser = ProfileUser().obs;
   RxBool isLoading = false.obs;
-
-  RxList<bool> isLikeList = <bool>[].obs;
-
 
   getUserInfo() async {
     /// Set login model into shared preference
@@ -34,44 +39,33 @@ class NewsFeedController extends GetxController {
         LoginResponse();
   }
 
-  /// NewsFeed API
-  callNewsFeedAPI(BuildContext context) async {
+  /// Get Profile API
+  callGetProfileAPI(BuildContext context) async {
     isLoading.value = true;
 
     String token = await MySharedPref().getAccessToken(
       SharePreData.keyAccessToken,
     );
 
-    String url = urlBase + urlNewsFeedList;
+    String url = urlBase + urlGetProfile;
 
     final apiReq = Request();
 
     await apiReq.getMethodAPI(url, null, token).then((value) async {
       http.StreamedResponse res = value;
-      printData(
-        runtimeType.toString(),
-        "callNewsFeedAPI response ${res.statusCode}",
-      );
+      printData(runtimeType.toString(), "Login API response ${res.statusCode}");
 
       await res.stream.bytesToString().then((valueData) async {
-        printData(runtimeType.toString(), "callNewsFeedAPI value ${valueData}");
+        printData(runtimeType.toString(), "Login API value ${valueData}");
 
         isLoading.value = false;
 
         if (res.statusCode == 200) {
           Map<String, dynamic> userModel = json.decode(valueData);
-          NewsFeedResponse newsFeedResponse = NewsFeedResponse.fromJson(
-            userModel,
-          );
+         ProfileResponse profileResponse = ProfileResponse.fromJson(userModel);
 
-          if (newsFeedResponse.status ?? false) {
-            newsFeedData.value = newsFeedResponse.data ?? NewsFeedData();
-            newsFeedList.value = newsFeedData.value.newsfeeds ?? [];
-
-            for (int i = 0; i < newsFeedList.length; i++) {
-              replyController.add(TextEditingController());
-            }
-
+          if (profileResponse.status ?? false) {
+            profileUser.value = profileResponse.data?.user??ProfileUser();
           } else {
             snackBar(context, loginResponse.value.message ?? "");
           }
@@ -80,34 +74,31 @@ class NewsFeedController extends GetxController {
     });
   }
 
-  /// Add Comment API
-  callAddCommentAPI(BuildContext context, String id, String comment) async {
+
+  /// Change Password API
+  Future<void> callChangePasswordAPI(BuildContext context) async {
     isLoading.value = true;
 
     String token = await MySharedPref().getAccessToken(
       SharePreData.keyAccessToken,
     );
 
-    String url = urlBase + urlAddCommentInNewsFeed + "/${id}/comment";
+    String url = urlBase + urlChangePassword;
 
     final apiReq = Request();
 
     dynamic body = {
-      "comment": comment,
+      'current_password': passwordController.value.text,
+      "new_password": newPasswordController.value.text,
+      "new_password_confirmation": confirmPasswordController.value.text
     };
 
     await apiReq.postAPI(url, body, token).then((value) async {
       http.StreamedResponse res = value;
-      printData(
-        runtimeType.toString(),
-        "callLeaveRequestAPI response ${res.statusCode}",
-      );
+      printData(runtimeType.toString(), "Login API response ${res.statusCode}");
 
       await res.stream.bytesToString().then((valueData) async {
-        printData(
-          runtimeType.toString(),
-          "callLeaveRequestAPI value ${valueData}",
-        );
+        printData(runtimeType.toString(), "Login API value ${valueData}");
 
         isLoading.value = false;
 
@@ -116,7 +107,9 @@ class NewsFeedController extends GetxController {
           BaseModel baseModel = BaseModel.fromJson(userModel);
 
           if (baseModel.status ?? false) {
+            Navigator.pop(context);
             snackBar(context, baseModel.message ?? "");
+            logoutFromTheApp();
           } else {
             snackBar(context, baseModel.message ?? "");
           }
@@ -125,30 +118,29 @@ class NewsFeedController extends GetxController {
     });
   }
 
-  /// Add Like API
-  callAddLikeAPI(BuildContext context, String newsId, String commentId, int index) async {
+
+  /// Set Pin API
+  Future<void> callSetPinAPI(BuildContext context) async {
     isLoading.value = true;
 
     String token = await MySharedPref().getAccessToken(
       SharePreData.keyAccessToken,
     );
 
-    String url = "$urlBase$urlAddLikeInNewsFeedComment/$newsId/comment/$commentId";
+    String url = urlBase + urlSetPin;
 
     final apiReq = Request();
 
-    await apiReq.postAPI(url, null, token).then((value) async {
+    dynamic body = {
+      'pin_code': pinController.value.text,
+    };
+
+    await apiReq.postAPI(url, body, token).then((value) async {
       http.StreamedResponse res = value;
-      printData(
-        runtimeType.toString(),
-        "callLeaveRequestAPI response ${res.statusCode}",
-      );
+      printData(runtimeType.toString(), "Login API response ${res.statusCode}");
 
       await res.stream.bytesToString().then((valueData) async {
-        printData(
-          runtimeType.toString(),
-          "callLeaveRequestAPI value ${valueData}",
-        );
+        printData(runtimeType.toString(), "Login API value ${valueData}");
 
         isLoading.value = false;
 
@@ -157,10 +149,7 @@ class NewsFeedController extends GetxController {
           BaseModel baseModel = BaseModel.fromJson(userModel);
 
           if (baseModel.status ?? false) {
-
-            isLikeList[index] = true;
-            update();
-
+            Navigator.pop(context);
             snackBar(context, baseModel.message ?? "");
           } else {
             snackBar(context, baseModel.message ?? "");

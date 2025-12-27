@@ -89,14 +89,14 @@ class TimelineCard extends StatelessWidget {
                                     children: [
                                       BlackMediumBoldText(
                                         e.subTitle,
-                                        fontSize: 13,
+                                        fontSize: (item.title == "Nappy" || item.title == "Activity")?12:13,
                                         color: Colors.black,
                                       ),
 
                                       if ((e.statusForNappy ?? "").isNotEmpty)
                                         BlackMediumBoldText(
                                           " (${e.statusForNappy})",
-                                          fontSize: 13,
+                                          fontSize: (item.title == "Nappy" || item.title == "Activity")?12:13,
                                           color: Colors.black,
                                         ),
                                     ],

@@ -3,6 +3,7 @@ import 'package:bloom_kidz/CommonWidgets/blue_medium_bold_text.dart';
 import 'package:bloom_kidz/CommonWidgets/blue_medium_regular_text.dart';
 import 'package:bloom_kidz/CommonWidgets/common_green_button.dart';
 import 'package:bloom_kidz/CommonWidgets/common_text_field.dart';
+import 'package:bloom_kidz/NewsFeed/controller/news_feed_controller.dart';
 import 'package:bloom_kidz/NewsFeed/models/news_feed_response.dart';
 import 'package:bloom_kidz/Styles/my_colors.dart';
 import 'package:bloom_kidz/Styles/my_font.dart';
@@ -16,11 +17,14 @@ import 'package:flutter/material.dart';
 import '../../CommonWidgets/black_medium_bold_text.dart';
 import '../../CommonWidgets/black_medium_regular_text.dart';
 import '../../CommonWidgets/blue_small_regular_text.dart';
+import 'comment_list.dart';
 
 class NewsFeedCard extends StatelessWidget {
   final Newsfeed newsFeed;
+  final NewsFeedController newsFeedController;
+  final int index;
 
-  const NewsFeedCard({super.key, required this.newsFeed});
+  const NewsFeedCard({super.key, required this.newsFeed, required this.newsFeedController, required this.index});
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +41,7 @@ class NewsFeedCard extends StatelessWidget {
           if ((newsFeed.media ?? []).isNotEmpty) _image(),
           _description(),
           _actions(),
-          _replyBox(),
+          _replyBox(context,newsFeed.id.toString(), index),
         ],
       ),
     );
@@ -150,27 +154,37 @@ class NewsFeedCard extends StatelessWidget {
           SizedBox(width: 4),
           BlueMediumRegularText((newsFeed.likesCount ?? 0).toString()),
           SizedBox(width: 16),
-          Icon(Icons.chat, size: 16, color: color_secondary),
-          SizedBox(width: 4),
-          BlueMediumRegularText((newsFeed.commentsCount ?? 0).toString()),
+          InkWell(
+            onTap: (){
+              Get.to(CommentListWidget(newsFeed: newsFeed,newsFeedController: newsFeedController,));
+            },
+            child: Row(
+              children: [
+                Icon(Icons.chat, size: 16, color: color_secondary),
+                SizedBox(width: 4),
+                BlueMediumRegularText((newsFeed.commentsCount ?? 0).toString()),
+              ],
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _replyBox() {
+  Widget _replyBox(BuildContext context,String id, int i) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12),
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.blue),
+          border: Border.all(color: color_secondary),
           borderRadius: BorderRadius.circular(25),
         ),
         child: Row(
           children: [
-            const Expanded(
+             Expanded(
               child: TextField(
+                controller: newsFeedController.replyController[i],
                 decoration: InputDecoration(
                   hintText: "Write a reply...",
                   border: InputBorder.none,
@@ -179,7 +193,10 @@ class NewsFeedCard extends StatelessWidget {
             ),
             IconButton(
               icon: const Icon(Icons.send, color: color_secondary),
-              onPressed: () {},
+              onPressed: () async{
+               await newsFeedController.callAddCommentAPI(context, id, newsFeedController.replyController[i].text);
+               newsFeedController.replyController[i].text = "";
+              },
             ),
           ],
         ),

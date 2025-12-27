@@ -21,8 +21,8 @@ import 'child_profile_card.dart';
 
 import 'package:flutter/material.dart';
 
-import 'family_add_screen.dart';
-import 'family_contact_screen.dart';
+import '../FamilyContact/view/family_add_screen.dart';
+import '../FamilyContact/view/family_contact_screen.dart';
 import 'grid_item.dart';
 
 class ChildOptionsGrid extends StatelessWidget {

@@ -1,6 +1,8 @@
 import 'package:bloom_kidz/CommonWidgets/blue_large_bold_text.dart';
+import 'package:bloom_kidz/CommonWidgets/blue_medium_regular_text.dart';
 import 'package:bloom_kidz/CommonWidgets/common_widget.dart';
 import 'package:bloom_kidz/Styles/my_colors.dart';
+import 'package:bloom_kidz/Styles/my_font.dart';
 import 'package:flutter/material.dart';
 import '../../../CommonWidgets/blue_medium_bold_text.dart';
 import '../../../CommonWidgets/common_appbar.dart';
@@ -185,7 +187,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
   Widget _dateSelector() {
     return Obx(
           () => SizedBox(
-        height: 80,
+        height: 100,
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
           padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -204,7 +206,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
               },
 
               child: Container(
-                width: 45,
+                width: 50,
                 margin: const EdgeInsets.only(right: 10, top: 12),
                 decoration: BoxDecoration(
                   color: isSelected ? color_secondary : Colors.white,
@@ -217,13 +219,28 @@ class _ActivityScreenState extends State<ActivityScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    BlueMediumBoldText(
+                    BlueMediumRegularText(
                       day.displayDate!.split(',')[0].substring(0, 3),
                         fontSize: 12,
                         color: isSelected ? Colors.white : color_secondary,
 
                     ),
+
+                    const SizedBox(height: 2),
+
+                    /// Month (Jan)
+                    BlueMediumBoldText(
+                      day.displayDate!
+                          .split(',')[1]
+                          .trim()
+                          .split(' ')[0],
+                      fontSize: 13,
+                      fontFamily: fontInterSemiBold,
+                      color: isSelected ? Colors.white : color_secondary,
+                    ),
+
                     const SizedBox(height: 4),
+
                     Text(
                       day.displayDate!.split(' ').last,
                       style: TextStyle(

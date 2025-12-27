@@ -35,6 +35,7 @@ void showSomethingWentWrongDialog({String? message}) {
 logoutFromTheApp() async {
   var preferences = MySharedPref();
   await preferences.clearData(SharePreData.keySaveLoginModel);
+  await preferences.clearData(SharePreData.keyAccessToken);
   Get.offAll(() => LoginScreen());
 }
 

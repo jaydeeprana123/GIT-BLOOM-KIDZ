@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:bloom_kidz/Authentication/View/login_screen.dart';
 import 'package:bloom_kidz/Authentication/model/login_response.dart';
 import 'package:bloom_kidz/BottomNavigation/View/bottom_navigation_view.dart';
+import 'package:bloom_kidz/CommonWidgets/common_widget.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/cupertino.dart';
@@ -58,13 +59,15 @@ class _SplashScreenViewState extends State<SplashScreenView>
     );
   }
 
-  void redirectOnPendingState() {
+  Future<void> redirectOnPendingState() async{
+
+    /// READ LOGIN MODEL
+    String token = await MySharedPref().getAccessToken(SharePreData.keyAccessToken);
+
     Future.delayed(const Duration(seconds: 5), () async {
       /// INITIALIZE SHARED PREF
-      final prefs = MySharedPref();
 
-      /// READ LOGIN MODEL
-      String token = await prefs.getAccessToken(SharePreData.keyAccessToken);
+      printData("token", token);
 
       if (token.isEmpty) {
         Get.off(() => LoginScreen());
