@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:bloom_kidz/Authentication/model/login_response.dart';
+import 'package:bloom_kidz/ChildInfo/Documents/models/documents_response.dart';
+import 'package:bloom_kidz/ChildInfo/Permissions/models/permissions_response.dart';
 import 'package:bloom_kidz/ChildInfo/models/activity_response.dart';
 import 'package:bloom_kidz/ChildInfo/models/child_info_list_response.dart';
 import 'package:bloom_kidz/NewsFeed/models/news_feed_response.dart';
@@ -24,6 +26,11 @@ import '../models/family_contact_list_response.dart';
 /// Controller
 class ChildInfoController extends GetxController {
   RxList<ChildInfo> childInfoList = <ChildInfo>[].obs;
+
+  RxList<DocumentData> documentList = <DocumentData>[].obs;
+
+  RxList<ChildPermission> childPermissionList = <ChildPermission>[].obs;
+
   RxList<ActivityData> activityList = <ActivityData>[].obs;
   Rx<LoginResponse> loginResponse = LoginResponse().obs;
 
@@ -92,7 +99,7 @@ class ChildInfoController extends GetxController {
           if (childInfoListResponse.status ?? false) {
             childInfoList.value = childInfoListResponse.data?.children ?? [];
           } else {
-            snackBar(context, loginResponse.value.message ?? "");
+            snackBar(context, childInfoListResponse.message ?? "");
           }
         }
       });
@@ -148,14 +155,14 @@ class ChildInfoController extends GetxController {
 
 
   /// Update Family API
-  callUpdateFamilyAPI(BuildContext context) async {
+  callUpdateFamilyAPI(BuildContext context, String id) async {
     isLoading.value = true;
 
     String token = await MySharedPref().getAccessToken(
       SharePreData.keyAccessToken,
     );
 
-    String url = urlBase + urlAddFamily;
+    String url = "$urlBase$urlUpdateFamily/$id";
 
     final apiReq = Request();
 
@@ -171,10 +178,10 @@ class ChildInfoController extends GetxController {
         value,
         ) async {
       http.StreamedResponse res = value;
-      printData(runtimeType.toString(), "Login API response ${res.statusCode}");
+      printData(runtimeType.toString(), "callUpdateFamilyAPI API response ${res.statusCode}");
 
       await res.stream.bytesToString().then((valueData) async {
-        printData(runtimeType.toString(), "Login API value ${valueData}");
+        printData(runtimeType.toString(), "callUpdateFamilyAPI API value ${valueData}");
 
         isLoading.value = false;
 
@@ -234,7 +241,7 @@ class ChildInfoController extends GetxController {
             /// RESET SELECTION AFTER LOAD
             selectedDateIndex.value = 0;
           } else {
-            snackBar(context, loginResponse.value.message ?? "");
+            snackBar(context, activityResponse.message ?? "");
           }
         }
       });
@@ -277,7 +284,7 @@ class ChildInfoController extends GetxController {
             familyContactList.value =
                 familyContactListResponse.data?.contacts ?? [];
           } else {
-            snackBar(context, loginResponse.value.message ?? "");
+            snackBar(context, familyContactListResponse.message ?? "");
           }
         }
       });
@@ -339,6 +346,136 @@ class ChildInfoController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+
+  /// get Documents API
+  callGetDocumentsAPI(BuildContext context, String childId) async {
+    isLoading.value = true;
+
+    String token = await MySharedPref().getAccessToken(
+      SharePreData.keyAccessToken,
+    );
+
+    String url = "$urlBase$urlGetDocumentList/$childId";
+
+    final apiReq = Request();
+
+    await apiReq.getMethodAPI(url, null, token).then((value) async {
+      http.StreamedResponse res = value;
+      printData(
+        runtimeType.toString(),
+        "callChildInfoAPI response ${res.statusCode}",
+      );
+
+      await res.stream.bytesToString().then((valueData) async {
+        printData(
+          runtimeType.toString(),
+          "callChildInfoAPI value ${valueData}",
+        );
+
+        isLoading.value = false;
+
+        if (res.statusCode == 200) {
+          Map<String, dynamic> userModel = json.decode(valueData);
+          DocumentsResponse documentsResponse =
+          DocumentsResponse.fromJson(userModel);
+
+          if (documentsResponse.status ?? false) {
+            documentList.value = documentsResponse.data?.document ?? [];
+          } else {
+            snackBar(context, documentsResponse.message ?? "");
+          }
+        }
+      });
+    });
+  }
+
+  /// get Child Permissions API
+  callGetChildPermissionsAPI(BuildContext context, String childId) async {
+    isLoading.value = true;
+
+    String token = await MySharedPref().getAccessToken(
+      SharePreData.keyAccessToken,
+    );
+
+    String url = "$urlBase$urlGetChildPermissionsList/$childId";
+
+    final apiReq = Request();
+
+    await apiReq.getMethodAPI(url, null, token).then((value) async {
+      http.StreamedResponse res = value;
+      printData(
+        runtimeType.toString(),
+        "callGetChildPermissionsAPI response ${res.statusCode}",
+      );
+
+      await res.stream.bytesToString().then((valueData) async {
+        printData(
+          runtimeType.toString(),
+          "callGetChildPermissionsAPI value ${valueData}",
+        );
+
+        isLoading.value = false;
+
+        if (res.statusCode == 200) {
+          Map<String, dynamic> userModel = json.decode(valueData);
+          PermissionsResponse permissionsResponse =
+          PermissionsResponse.fromJson(userModel);
+
+          if (permissionsResponse.status ?? false) {
+            childPermissionList.value = permissionsResponse.data?.permissions ?? [];
+          } else {
+            snackBar(context, permissionsResponse.message ?? "");
+          }
+        }
+      });
+    });
+  }
+
+
+  /// Confirm Permission API
+  callConfirmPermissionAPI(BuildContext context,String childId, String id, bool approve) async {
+    isLoading.value = true;
+
+    String token = await MySharedPref().getAccessToken(
+      SharePreData.keyAccessToken,
+    );
+
+    String url = "$urlBase$urlConfirmChildPermission";
+
+    final apiReq = Request();
+
+    dynamic body = {
+      "permission_id": id,
+      "status": approve?"1":"0",
+      "child_id": childId
+    };
+
+    await apiReq.postAPIWithMedia(url, body, token, imagePath.value).then((
+        value,
+        ) async {
+      http.StreamedResponse res = value;
+      printData(runtimeType.toString(), "callUpdateFamilyAPI API response ${res.statusCode}");
+
+      await res.stream.bytesToString().then((valueData) async {
+        printData(runtimeType.toString(), "callUpdateFamilyAPI API value ${valueData}");
+
+        isLoading.value = false;
+
+        if (res.statusCode == 200) {
+          Map<String, dynamic> userModel = json.decode(valueData);
+          BaseModel baseModel = BaseModel.fromJson(userModel);
+
+          if (baseModel.status ?? false) {
+            snackBar(context, baseModel.message ?? "");
+            callGetChildPermissionsAPI(context, childId);
+          } else {
+            snackBar(context, baseModel.message ?? "");
+          }
+        }
+      });
+    });
   }
 
 

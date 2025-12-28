@@ -37,6 +37,19 @@ class _FamilyUpdateScreenState extends State<FamilyUpdateScreen> {
   ChildInfoController childInfoController = Get.find<ChildInfoController>();
 
   @override
+  void initState() {
+    super.initState();
+
+    childInfoController.firstNameController.value.text = childInfoController.selectedFamilyContact.value.firstName??"";
+    childInfoController.lastNameController.value.text = childInfoController.selectedFamilyContact.value.lastName??"";
+    childInfoController.emailController.value.text = childInfoController.selectedFamilyContact.value.email??"";
+    childInfoController.mobileController.value.text = childInfoController.selectedFamilyContact.value.mobile??"";
+    childInfoController.relationController.value.text = childInfoController.selectedFamilyContact.value.relation??"";
+
+
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
@@ -145,9 +158,9 @@ class _FamilyUpdateScreenState extends State<FamilyUpdateScreen> {
                                   },
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
-                                    children: const [
+                                    children:  [
                                       Text(
-                                        "Profile Image",
+                                        (childInfoController.imagePath.value.isEmpty && (childInfoController.selectedFamilyContact.value.imageUrl??"").isNotEmpty)? "Update Profile Image":"Profile Image",
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontWeight: FontWeight.w600,
@@ -206,7 +219,7 @@ class _FamilyUpdateScreenState extends State<FamilyUpdateScreen> {
                                     ),
                                     onPressed: () {
                                       childInfoController
-                                          .callAddFamilyAPI(context);
+                                          .callUpdateFamilyAPI(context, childInfoController.selectedFamilyContact.value.id.toString());
                                     },
                                     child: BlueMediumBoldText(
                                       "Save",

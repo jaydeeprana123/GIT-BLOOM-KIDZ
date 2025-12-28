@@ -110,7 +110,9 @@ class ContactCard extends StatelessWidget {
                     Navigator.pop(context);
 
                     childInfoController.selectedFamilyContact.value = familyContact;
-                    Get.to(FamilyUpdateScreen());
+                    Get.to(FamilyUpdateScreen())?.then((value) {
+                    childInfoController.callGetFamilyContactsAPI(context);
+                    });
 
                   },
                 ),

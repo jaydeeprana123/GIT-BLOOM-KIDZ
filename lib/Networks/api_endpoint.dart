@@ -15,8 +15,15 @@ const urlActivityList = '/parent/children/activity';
 
 const urlGetFamilyContacts = '/parent/contacts';
 const urlAddFamily = "/parent/contacts";
-const urlUpdateFamily = "/parent/contacts";
+const urlUpdateFamily = "/parent/contacts/update";
 const urlDeleteContact = '/parent/contacts/delete';
+
+///Documents
+const urlGetDocumentList = '/parent/children/documents';
+
+///Permissions
+const urlGetChildPermissionsList = '/parent/children/permissions';
+const urlConfirmChildPermission = '/parent/children/permissions/confirm';
 
 const urlLeaveRequest = '/parent/children/leave';
 

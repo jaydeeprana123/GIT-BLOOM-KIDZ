@@ -136,7 +136,7 @@ class NewsFeedCard extends StatelessWidget {
         data: newsFeed.description ?? "",
         style: {
           "*": Style(
-            fontSize: FontSize(12),
+            fontSize: FontSize(13),
             color: text_color,
             lineHeight: LineHeight(1.4),
           ),

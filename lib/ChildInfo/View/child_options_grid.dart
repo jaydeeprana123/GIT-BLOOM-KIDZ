@@ -1,5 +1,6 @@
+import 'package:bloom_kidz/ChildInfo/Permissions/View/child_permissions_screen.dart';
 import 'package:bloom_kidz/ChildInfo/View/ChildActivity/activity_screen.dart';
-import 'package:bloom_kidz/ChildInfo/View/document_screen.dart';
+import 'package:bloom_kidz/ChildInfo/Documents/views/document_screen.dart';
 import 'package:bloom_kidz/CommonWidgets/common_green_button.dart';
 import 'package:bloom_kidz/CommonWidgets/common_text_field.dart';
 import 'package:bloom_kidz/Styles/my_colors.dart';
@@ -47,11 +48,13 @@ class ChildOptionsGrid extends StatelessWidget {
       ),
       GridItem(icon_Journey, "Journey"),
       GridItem(icon_Safeguarding, "Safeguarding"),
-      GridItem(icon_ChildPermission, "Child Permission"),
+      InkWell(onTap: (){
+        Get.to(ChildrenPermissionScreen(childId: childId,));
+      },child: GridItem(icon_ChildPermission, "Child Permission")),
       GridItem(icon_booking, "Booking"),
       InkWell(
         onTap: () {
-          Get.to(DocumentsScreen());
+          Get.to(DocumentsScreen(childId: childId,));
         },
         child: GridItem(icon_documents, "Documents"),
       ),
