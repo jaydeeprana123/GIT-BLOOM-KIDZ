@@ -219,7 +219,7 @@ class _ChildrenPermissionScreenState extends State<ChildrenPermissionScreen> {
                 Navigator.pop(context);
                 onYes();
               },
-              child: const Text("YES"),
+              child: const Text("YES", style: TextStyle(color: Colors.white),),
             ),
           ],
         );
