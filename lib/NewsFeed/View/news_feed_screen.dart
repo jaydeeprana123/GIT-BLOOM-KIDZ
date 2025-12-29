@@ -10,6 +10,7 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 
 import '../../CommonWidgets/common_appbar.dart';
+import '../../Drawer/app_drawer.dart';
 import 'news_feed_card.dart';
 
 class NewsFeedScreen extends StatefulWidget {
@@ -21,7 +22,8 @@ class NewsFeedScreen extends StatefulWidget {
 
 class _NewsFeedScreenState extends State<NewsFeedScreen> {
   NewsFeedController newsFeedController = Get.put(NewsFeedController());
-
+  final GlobalKey<ScaffoldState> _scaffoldKey =
+  GlobalKey<ScaffoldState>();
   @override
   void initState() {
     super.initState();
@@ -32,8 +34,12 @@ class _NewsFeedScreenState extends State<NewsFeedScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: Colors.transparent,
-      appBar: CommonAppBar(title: "News Feed", showMenu: true),
+      appBar: CommonAppBar(title: "News Feed", showMenu: true, onMenuTap: (){
+        _scaffoldKey.currentState?.openDrawer(); // 👈 OPEN DRAWER
+      },),
+      drawer: const AppDrawer(), // 👈 Navigation Drawer
       body: Obx(
         () => Stack(
           children: [

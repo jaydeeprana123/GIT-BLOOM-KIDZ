@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:bloom_kidz/Authentication/model/login_response.dart';
 import 'package:bloom_kidz/NewsFeed/models/news_feed_caleneder_response.dart';
 import 'package:bloom_kidz/NewsFeed/models/news_feed_response.dart';
+import 'package:bloom_kidz/Styles/my_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -238,7 +239,7 @@ class NewsFeedController extends GetxController {
         startTime: (e.start ?? DateTime(2025)),
         endTime: (e.end ?? DateTime(2025)),
         isAllDay: e.allDay ?? false,
-        color: Colors.teal,
+        color: color_secondary,
       );
     }).toList();
   }

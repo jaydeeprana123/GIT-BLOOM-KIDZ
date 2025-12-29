@@ -14,6 +14,7 @@ import 'package:get/get.dart';
 import '../../../Styles/my_colors.dart';
 import '../../../Styles/my_icons.dart';
 import '../../CommonWidgets/custom_bottom_nav.dart';
+import '../../NewsFeed/View/event_calender_screen.dart';
 import '../../Profile/view/profile_screen.dart';
 import '../controller/bottom_navigation_controller.dart';
 
