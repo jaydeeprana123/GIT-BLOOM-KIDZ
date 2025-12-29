@@ -4,9 +4,11 @@
 
 import 'dart:convert';
 
-NewsFeedCalenerResponse newsFeedCalenerResponseFromJson(String str) => NewsFeedCalenerResponse.fromJson(json.decode(str));
+NewsFeedCalenerResponse newsFeedCalenerResponseFromJson(String str) =>
+    NewsFeedCalenerResponse.fromJson(json.decode(str));
 
-String newsFeedCalenerResponseToJson(NewsFeedCalenerResponse data) => json.encode(data.toJson());
+String newsFeedCalenerResponseToJson(NewsFeedCalenerResponse data) =>
+    json.encode(data.toJson());
 
 class NewsFeedCalenerResponse {
   bool? status;
@@ -14,19 +16,15 @@ class NewsFeedCalenerResponse {
   int? code;
   Data? data;
 
-  NewsFeedCalenerResponse({
-    this.status,
-    this.message,
-    this.code,
-    this.data,
-  });
+  NewsFeedCalenerResponse({this.status, this.message, this.code, this.data});
 
-  factory NewsFeedCalenerResponse.fromJson(Map<String, dynamic> json) => NewsFeedCalenerResponse(
-    status: json["status"],
-    message: json["message"],
-    code: json["code"],
-    data: json["data"] == null ? null : Data.fromJson(json["data"]),
-  );
+  factory NewsFeedCalenerResponse.fromJson(Map<String, dynamic> json) =>
+      NewsFeedCalenerResponse(
+        status: json["status"],
+        message: json["message"],
+        code: json["code"],
+        data: json["data"] == null ? null : Data.fromJson(json["data"]),
+      );
 
   Map<String, dynamic> toJson() => {
     "status": status,
@@ -37,26 +35,29 @@ class NewsFeedCalenerResponse {
 }
 
 class Data {
-  List<NewsEvent>? events;
+  List<CalenderNewsEvent>? events;
   int? total;
 
-  Data({
-    this.events,
-    this.total,
-  });
+  Data({this.events, this.total});
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
-    events: json["events"] == null ? [] : List<NewsEvent>.from(json["events"]!.map((x) => NewsEvent.fromJson(x))),
+    events: json["events"] == null
+        ? []
+        : List<CalenderNewsEvent>.from(
+            json["events"]!.map((x) => CalenderNewsEvent.fromJson(x)),
+          ),
     total: json["total"],
   );
 
   Map<String, dynamic> toJson() => {
-    "events": events == null ? [] : List<dynamic>.from(events!.map((x) => x.toJson())),
+    "events": events == null
+        ? []
+        : List<dynamic>.from(events!.map((x) => x.toJson())),
     "total": total,
   };
 }
 
-class NewsEvent {
+class CalenderNewsEvent {
   int? id;
   String? title;
   DateTime? start;
@@ -65,7 +66,7 @@ class NewsEvent {
   String? type;
   bool? allDay;
 
-  NewsEvent({
+  CalenderNewsEvent({
     this.id,
     this.title,
     this.start,
@@ -75,15 +76,16 @@ class NewsEvent {
     this.allDay,
   });
 
-  factory NewsEvent.fromJson(Map<String, dynamic> json) => NewsEvent(
-    id: json["id"],
-    title: json["title"],
-    start: json["start"] == null ? null : DateTime.parse(json["start"]),
-    end: json["end"] == null ? null : DateTime.parse(json["end"]),
-    description: json["description"],
-    type: json["type"],
-    allDay: json["allDay"],
-  );
+  factory CalenderNewsEvent.fromJson(Map<String, dynamic> json) =>
+      CalenderNewsEvent(
+        id: json["id"],
+        title: json["title"],
+        start: json["start"] == null ? null : DateTime.parse(json["start"]),
+        end: json["end"] == null ? null : DateTime.parse(json["end"]),
+        description: json["description"],
+        type: json["type"],
+        allDay: json["allDay"],
+      );
 
   Map<String, dynamic> toJson() => {
     "id": id,

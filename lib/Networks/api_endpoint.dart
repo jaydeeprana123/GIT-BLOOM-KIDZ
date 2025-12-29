@@ -5,10 +5,10 @@ var urlBase =
 //Authentication APIs
 const urlLogin = '/login';
 
+const urlNewsFeedCalenderList = '/parent/newsfeeds/calendar';
 const urlNewsFeedList = '/parent/newsfeeds';
 const urlAddCommentInNewsFeed = '/parent/newsfeeds';
 const urlAddLikeInNewsFeedComment = '/parent/newsfeeds';
-
 
 const urlChildInfoList = '/parent/children';
 const urlActivityList = '/parent/children/activity';
