@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:bloom_kidz/Authentication/model/login_response.dart';
+import 'package:bloom_kidz/ChildInfo/Bookings/models/bookings_response.dart';
 import 'package:bloom_kidz/ChildInfo/Documents/models/documents_response.dart';
 import 'package:bloom_kidz/ChildInfo/Permissions/models/permissions_response.dart';
 import 'package:bloom_kidz/ChildInfo/models/activity_response.dart';
@@ -19,6 +20,7 @@ import '../../../../Utils/preference_utils.dart';
 import '../../../../Utils/share_predata.dart';
 import '../../../BottomNavigation/view/bottom_navigation_view.dart';
 import '../../Networks/api_response.dart';
+import '../ExtraBookings/models/extra_bookings_response.dart';
 import '../View/ChildActivity/itemline_card.dart';
 import '../View/ChildActivity/models/timeline_item.dart';
 import '../models/family_contact_list_response.dart';
@@ -37,6 +39,11 @@ class ChildInfoController extends GetxController {
   RxList<FamilyContact> familyContactList = <FamilyContact>[].obs;
   Rx<FamilyContact> selectedFamilyContact = FamilyContact().obs;
 
+  RxList<Booking> bookingList = <Booking>[].obs;
+  RxList<ExtraBooking> extraBookingList = <ExtraBooking>[].obs;
+
+  RxInt selectedDayIndex = 0.obs;
+  RxInt selectedSlotIndex = (-1).obs;
 
   RxBool isLoading = false.obs;
 
@@ -522,6 +529,91 @@ class ChildInfoController extends GetxController {
             snackBar(context, baseModel.message ?? "");
           } else {
             snackBar(context, baseModel.message ?? "");
+          }
+        }
+      });
+    });
+  }
+
+
+  /// get Bookings API
+  callGetBookingsAPI(BuildContext context, String childId) async {
+    isLoading.value = true;
+
+    String token = await MySharedPref().getAccessToken(
+      SharePreData.keyAccessToken,
+    );
+
+    String url = "$urlBase$urlGetBookingList/$childId/bookings";
+
+    final apiReq = Request();
+
+    await apiReq.getMethodAPI(url, null, token).then((value) async {
+      http.StreamedResponse res = value;
+      printData(
+        runtimeType.toString(),
+        "callGetChildPermissionsAPI response ${res.statusCode}",
+      );
+
+      await res.stream.bytesToString().then((valueData) async {
+        printData(
+          runtimeType.toString(),
+          "callGetChildPermissionsAPI value ${valueData}",
+        );
+
+        isLoading.value = false;
+
+        if (res.statusCode == 200) {
+          Map<String, dynamic> userModel = json.decode(valueData);
+          BookingsResponse bookingsResponse =
+          BookingsResponse.fromJson(userModel);
+
+          if (bookingsResponse.status ?? false) {
+            bookingList.value = bookingsResponse.data?.bookings?? [];
+          } else {
+            snackBar(context, bookingsResponse.message ?? "");
+          }
+        }
+      });
+    });
+  }
+
+  /// get Extra Bookings API
+  callGetExtraBookingsAPI(BuildContext context, String childId) async {
+    isLoading.value = true;
+
+    String token = await MySharedPref().getAccessToken(
+      SharePreData.keyAccessToken,
+    );
+
+    String url = "$urlBase$urlGetExtraBookingList/$childId";
+
+    final apiReq = Request();
+
+    await apiReq.getMethodAPI(url, null, token).then((value) async {
+      http.StreamedResponse res = value;
+      printData(
+        runtimeType.toString(),
+        "callGetChildPermissionsAPI response ${res.statusCode}",
+      );
+
+      await res.stream.bytesToString().then((valueData) async {
+        printData(
+          runtimeType.toString(),
+          "callGetChildPermissionsAPI value ${valueData}",
+        );
+
+        isLoading.value = false;
+
+        if (res.statusCode == 200) {
+          Map<String, dynamic> userModel = json.decode(valueData);
+          ExtraBookingsResponse extraBookingsResponse =
+          ExtraBookingsResponse.fromJson(userModel);
+
+          if (extraBookingsResponse.status ?? false) {
+            extraBookingList.value = extraBookingsResponse.data?.extraBookings?? [];
+          } else {
+            snackBar(context, extraBookingsResponse.message ?? "");
           }
         }
       });

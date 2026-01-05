@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../Bookings/views/booking_screen.dart';
 import 'about_screen.dart';
 import 'child_.card.dart';
 
@@ -51,7 +52,9 @@ class ChildOptionsGrid extends StatelessWidget {
       InkWell(onTap: (){
         Get.to(ChildrenPermissionScreen(childId: childId,));
       },child: GridItem(icon_ChildPermission, "Child Permission")),
-      GridItem(icon_booking, "Booking"),
+      InkWell(onTap: (){
+        Get.to(BookingScreen(childId: childId,));
+      },child: GridItem(icon_booking, "Booking")),
       InkWell(
         onTap: () {
           Get.to(DocumentsScreen(childId: childId,));

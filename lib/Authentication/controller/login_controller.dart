@@ -84,6 +84,40 @@ class LoginController extends GetxController {
     });
   }
 
+  /// login API
+  callLogoutAPI(BuildContext context) async {
+    isLoading.value = true;
+    String url = urlBase + urlLogout;
+    String token = await MySharedPref().getAccessToken(
+      SharePreData.keyAccessToken,
+    );
+
+    final apiReq = Request();
+
+
+    await apiReq.postAPI(url, null, token).then((value) async {
+      http.StreamedResponse res = value;
+      printData(runtimeType.toString(), "Login API response ${res.statusCode}");
+
+      await res.stream.bytesToString().then((valueData) async {
+        printData(runtimeType.toString(), "Login API value ${valueData}");
+
+        isLoading.value = false;
+
+        if (res.statusCode == 200) {
+          Map<String, dynamic> userModel = json.decode(valueData);
+          BaseModel baseModel = BaseModel.fromJson(userModel);
+
+          if (baseModel.status ?? false) {
+            logoutFromTheApp();
+          } else {
+            snackBar(context, loginResponse.value.message ?? "");
+          }
+        }
+      });
+    });
+  }
+
   @override
   void onClose() {
     // TODO: implement onClose

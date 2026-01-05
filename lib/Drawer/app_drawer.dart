@@ -15,6 +15,7 @@ import '../../ChildInfo/View/child_info_screen.dart';
 
 import 'package:flutter/material.dart';
 
+import '../Authentication/controller/login_controller.dart';
 import '../NewsFeed/View/event_calender_screen.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -22,53 +23,64 @@ class AppDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    LoginController loginController = Get.find<LoginController>();
+
     return Drawer(
-      child: Column(
+      child:  Obx(
+              () =>Stack(
         children: [
-          DrawerHeader(
-            decoration: const BoxDecoration(
-              color: Color(0xff1f78c8),
-            ),
-            child: Row(
-              children:  [
-                Icon(Icons.calendar_today, color: Colors.white),
-                SizedBox(width: 12),
-                BlackLargeBoldText(
-                  'Menu',
-                  color: Colors.white,
-                  fontSize: 20
+          Column(
+            children: [
+              DrawerHeader(
+                decoration: const BoxDecoration(
+                  color: Color(0xff1f78c8),
                 ),
-              ],
-            ),
-          ),
-
-          // 🔵 Calendar Events option
-          ListTile(
-            leading: const Icon(Icons.event),
-            title:  BlackLargeBoldText('Calendar Events'),
-            onTap: () {
-              Navigator.pop(context); // close drawer
-
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => const CalendarScreen(),
+                child: Row(
+                  children:  [
+                    Icon(Icons.calendar_today, color: Colors.white),
+                    SizedBox(width: 12),
+                    BlackLargeBoldText(
+                      'Menu',
+                      color: Colors.white,
+                      fontSize: 20
+                    ),
+                  ],
                 ),
-              );
-            },
+              ),
+
+              // 🔵 Calendar Events option
+              ListTile(
+                leading: const Icon(Icons.event),
+                title:  BlackLargeBoldText('Calendar Events'),
+                onTap: () {
+                  Navigator.pop(context); // close drawer
+
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const CalendarScreen(),
+                    ),
+                  );
+                },
+              ),
+
+              const Divider(),
+
+              ListTile(
+                leading: const Icon(Icons.logout),
+                title: const Text('Logout'),
+                onTap: () {
+                  Navigator.pop(context);
+                  loginController.callLogoutAPI(context);
+                },
+              ),
+            ],
           ),
 
-          const Divider(),
-
-          ListTile(
-            leading: const Icon(Icons.logout),
-            title: const Text('Logout'),
-            onTap: () {
-              Navigator.pop(context);
-            },
-          ),
+          Center(child: CircularProgressIndicator(),)
         ],
-      ),
+      )),
     );
   }
 }

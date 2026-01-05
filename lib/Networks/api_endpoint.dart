@@ -4,6 +4,7 @@ var urlBase =
 
 //Authentication APIs
 const urlLogin = '/login';
+const urlLogout = '/logout';
 
 const urlNewsFeedCalenderList = '/parent/newsfeeds/calendar';
 const urlNewsFeedList = '/parent/newsfeeds';
@@ -20,6 +21,13 @@ const urlDeleteContact = '/parent/contacts/delete';
 
 ///Documents
 const urlGetDocumentList = '/parent/children/documents';
+
+/// bookings
+const urlGetBookingList = '/parent/children/extra-bookings';
+
+const urlGetExtraBookingList = '/parent/children/extra-bookings';
+
+
 
 ///Permissions
 const urlGetChildPermissionsList = '/parent/children/permissions';
