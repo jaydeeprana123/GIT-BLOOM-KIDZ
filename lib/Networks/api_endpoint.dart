@@ -27,6 +27,9 @@ const urlGetBookingList = '/parent/children/extra-bookings';
 
 const urlGetExtraBookingList = '/parent/children/extra-bookings';
 
+const urlGetObservationList = '/parent/children/observations';
+const urlLikeUnlikeObservation = '/parent/children/observations';
+const urlAddCommentInObservation = '/parent/children/observations';
 
 
 ///Permissions

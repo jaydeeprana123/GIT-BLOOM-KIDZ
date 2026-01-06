@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../Bookings/views/booking_screen.dart';
+import '../Observations/views/observation_list_screen.dart';
 import 'about_screen.dart';
 import 'child_.card.dart';
 
@@ -47,7 +48,9 @@ class ChildOptionsGrid extends StatelessWidget {
         },
         child: GridItem(icon_about, "About"),
       ),
-      GridItem(icon_Journey, "Journey"),
+      InkWell(onTap: (){
+        Get.to(ObservationListScreen(childId: childId,));
+      },child: GridItem(icon_Journey, "Journey")),
       GridItem(icon_Safeguarding, "Safeguarding"),
       InkWell(onTap: (){
         Get.to(ChildrenPermissionScreen(childId: childId,));
