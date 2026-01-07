@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:bloom_kidz/Authentication/model/login_response.dart';
+import 'package:bloom_kidz/ChildInfo/About/models/about_response.dart';
 import 'package:bloom_kidz/ChildInfo/Documents/models/documents_response.dart';
 import 'package:bloom_kidz/ChildInfo/Observations/models/observation_list_response.dart';
 import 'package:bloom_kidz/ChildInfo/Permissions/models/permissions_response.dart';
@@ -21,7 +22,9 @@ import '../../../../Utils/share_predata.dart';
 import '../../../BottomNavigation/view/bottom_navigation_view.dart';
 import '../../Networks/api_response.dart';
 import '../Bookings/models/bookings_response.dart';
+import '../ExtraBookings/models/extra_bookings_request.dart';
 import '../ExtraBookings/models/extra_bookings_response.dart';
+import '../ExtraBookings/models/price_band_response.dart';
 import '../View/ChildActivity/itemline_card.dart';
 import '../View/ChildActivity/models/timeline_item.dart';
 import '../models/family_contact_list_response.dart';
@@ -43,11 +46,12 @@ class ChildInfoController extends GetxController {
   Rx<FamilyContact> selectedFamilyContact = FamilyContact().obs;
 
   RxList<Booking> bookingList = <Booking>[].obs;
-  RxList<ExtraBooking> extraBookingList = <ExtraBooking>[].obs;
+  RxList<PriceBandDay> priceBandList = <PriceBandDay>[].obs;
   RxList<TextEditingController> replyController = <TextEditingController>[].obs;
 
   RxInt selectedDayIndex = 0.obs;
   RxInt selectedSlotIndex = (-1).obs;
+  RxList<ExtraBooking> extraBookingList = <ExtraBooking>[].obs;
 
   RxBool isLoading = false.obs;
 
@@ -61,6 +65,94 @@ class ChildInfoController extends GetxController {
   Rx<TextEditingController> emailController = TextEditingController().obs;
 
   RxString imagePath = "".obs;
+
+  RxDouble totalAmount = 0.0.obs;
+
+  /// session selections → DayName : [sessionIds]
+  RxMap<String, List<int>> selectedSessions = <String, List<int>>{}.obs;
+  RxMap<String, List<int>> selectedExtraCharges = <String, List<int>>{}.obs;
+
+
+  Rx<DateTime?> planStartDate = Rx<DateTime?>(null);
+  Rx<DateTime?> planEndDate = Rx<DateTime?>(null);
+
+  Rx<AboutData> aboutChildren = AboutData().obs;
+
+  void setPlanStart(DateTime date) {
+    planStartDate.value = date;
+  }
+
+  void setPlanEnd(DateTime date) {
+    planEndDate.value = date;
+  }
+
+  void toggleSession(String day, int sessionId) {
+    selectedSessions.putIfAbsent(day, () => []);
+
+    if (selectedSessions[day]!.contains(sessionId)) {
+      selectedSessions[day]!.remove(sessionId);
+      if (selectedSessions[day]!.isEmpty) {
+        selectedSessions.remove(day);
+      }
+    } else {
+      selectedSessions[day]!.add(sessionId);
+    }
+    calculateTotal();
+    selectedSessions.refresh();
+  }
+
+
+  void toggleExtraCharge(String day, int chargeId) {
+    selectedExtraCharges.putIfAbsent(day, () => []);
+
+    if (selectedExtraCharges[day]!.contains(chargeId)) {
+      selectedExtraCharges[day]!.remove(chargeId);
+      if (selectedExtraCharges[day]!.isEmpty) {
+        selectedExtraCharges.remove(day);
+      }
+    } else {
+      selectedExtraCharges[day]!.add(chargeId);
+    }
+
+    calculateTotal();
+
+    selectedExtraCharges.refresh();
+  }
+
+
+  void calculateTotal() {
+    double total = 0;
+
+    for (var day in priceBandList) {
+      final dayName = day.day ?? "";
+
+      /// sessions price (if any)
+      for (var session in day.sessions ?? []) {
+        if (selectedSessions[dayName]?.contains(session.id) ?? false) {
+          total += double.tryParse(session.price ?? "0") ?? 0;
+        }
+      }
+
+      /// extra charges
+      for (var charge in day.extraCharges ?? []) {
+        if (selectedExtraCharges[dayName]?.contains(charge.id) ?? false) {
+          total += double.tryParse(charge.price ?? "0") ?? 0;
+        }
+      }
+    }
+
+    totalAmount.value = total;
+  }
+
+  ExtraBookingsRequest buildRequest() {
+    return ExtraBookingsRequest(
+      planStart: planStartDate.value,
+      planEnd: planEndDate.value,
+      sessions: selectedSessions,
+      extraCharges: selectedExtraCharges,
+      totalAmount: totalAmount.value,
+    );
+  }
 
   ActivityData? get selectedDayData {
     if (activityList.isEmpty) return null;
@@ -164,7 +256,6 @@ class ChildInfoController extends GetxController {
     });
   }
 
-
   /// Update Family API
   callUpdateFamilyAPI(BuildContext context, String id) async {
     isLoading.value = true;
@@ -186,13 +277,19 @@ class ChildInfoController extends GetxController {
     };
 
     await apiReq.postAPIWithMedia(url, body, token, imagePath.value).then((
-        value,
-        ) async {
+      value,
+    ) async {
       http.StreamedResponse res = value;
-      printData(runtimeType.toString(), "callUpdateFamilyAPI API response ${res.statusCode}");
+      printData(
+        runtimeType.toString(),
+        "callUpdateFamilyAPI API response ${res.statusCode}",
+      );
 
       await res.stream.bytesToString().then((valueData) async {
-        printData(runtimeType.toString(), "callUpdateFamilyAPI API value ${valueData}");
+        printData(
+          runtimeType.toString(),
+          "callUpdateFamilyAPI API value ${valueData}",
+        );
 
         isLoading.value = false;
 
@@ -211,7 +308,6 @@ class ChildInfoController extends GetxController {
       });
     });
   }
-
 
   /// ActivityList API
   callActivityListAPI(BuildContext context, String childId) async {
@@ -303,10 +399,7 @@ class ChildInfoController extends GetxController {
   }
 
   /// Leave Request API
-  Future<void> callDeleteContactAPI(
-      BuildContext context,
-      String id,
-      ) async {
+  Future<void> callDeleteContactAPI(BuildContext context, String id) async {
     try {
       isLoading.value = true;
 
@@ -325,10 +418,7 @@ class ChildInfoController extends GetxController {
       String url = "$urlBase$urlDeleteContact/$id";
 
       /// 🔥 Request
-      var request = http.Request(
-        'DELETE',
-        Uri.parse(url),
-      );
+      var request = http.Request('DELETE', Uri.parse(url));
 
       request.headers.addAll(headersWithBearer);
 
@@ -359,7 +449,6 @@ class ChildInfoController extends GetxController {
     }
   }
 
-
   /// get Documents API
   callGetDocumentsAPI(BuildContext context, String childId) async {
     isLoading.value = true;
@@ -389,8 +478,9 @@ class ChildInfoController extends GetxController {
 
         if (res.statusCode == 200) {
           Map<String, dynamic> userModel = json.decode(valueData);
-          DocumentsResponse documentsResponse =
-          DocumentsResponse.fromJson(userModel);
+          DocumentsResponse documentsResponse = DocumentsResponse.fromJson(
+            userModel,
+          );
 
           if (documentsResponse.status ?? false) {
             documentList.value = documentsResponse.data?.document ?? [];
@@ -432,10 +522,11 @@ class ChildInfoController extends GetxController {
         if (res.statusCode == 200) {
           Map<String, dynamic> userModel = json.decode(valueData);
           PermissionsResponse permissionsResponse =
-          PermissionsResponse.fromJson(userModel);
+              PermissionsResponse.fromJson(userModel);
 
           if (permissionsResponse.status ?? false) {
-            childPermissionList.value = permissionsResponse.data?.permissions ?? [];
+            childPermissionList.value =
+                permissionsResponse.data?.permissions ?? [];
           } else {
             snackBar(context, permissionsResponse.message ?? "");
           }
@@ -444,9 +535,13 @@ class ChildInfoController extends GetxController {
     });
   }
 
-
   /// Confirm Permission API
-  callConfirmPermissionAPI(BuildContext context,String childId, String id, bool approve) async {
+  callConfirmPermissionAPI(
+    BuildContext context,
+    String childId,
+    String id,
+    bool approve,
+  ) async {
     isLoading.value = true;
 
     String token = await MySharedPref().getAccessToken(
@@ -459,18 +554,24 @@ class ChildInfoController extends GetxController {
 
     dynamic body = {
       "permission_id": id,
-      "status": approve?"1":"0",
-      "child_id": childId
+      "status": approve ? "1" : "0",
+      "child_id": childId,
     };
 
     await apiReq.postAPIWithMedia(url, body, token, imagePath.value).then((
-        value,
-        ) async {
+      value,
+    ) async {
       http.StreamedResponse res = value;
-      printData(runtimeType.toString(), "callUpdateFamilyAPI API response ${res.statusCode}");
+      printData(
+        runtimeType.toString(),
+        "callUpdateFamilyAPI API response ${res.statusCode}",
+      );
 
       await res.stream.bytesToString().then((valueData) async {
-        printData(runtimeType.toString(), "callUpdateFamilyAPI API value ${valueData}");
+        printData(
+          runtimeType.toString(),
+          "callUpdateFamilyAPI API value ${valueData}",
+        );
 
         isLoading.value = false;
 
@@ -488,7 +589,6 @@ class ChildInfoController extends GetxController {
       });
     });
   }
-
 
   /// Leave Request API
   callLeaveRequestAPI(BuildContext context) async {
@@ -539,7 +639,6 @@ class ChildInfoController extends GetxController {
     });
   }
 
-
   /// get Bookings API
   callGetBookingsAPI(BuildContext context, String childId) async {
     isLoading.value = true;
@@ -569,11 +668,12 @@ class ChildInfoController extends GetxController {
 
         if (res.statusCode == 200) {
           Map<String, dynamic> userModel = json.decode(valueData);
-          BookingsResponse bookingsResponse =
-          BookingsResponse.fromJson(userModel);
+          BookingsResponse bookingsResponse = BookingsResponse.fromJson(
+            userModel,
+          );
 
           if (bookingsResponse.status ?? false) {
-            bookingList.value = bookingsResponse.data?.bookings?? [];
+            bookingList.value = bookingsResponse.data?.bookings ?? [];
           } else {
             snackBar(context, bookingsResponse.message ?? "");
           }
@@ -612,10 +712,11 @@ class ChildInfoController extends GetxController {
         if (res.statusCode == 200) {
           Map<String, dynamic> userModel = json.decode(valueData);
           ExtraBookingsResponse extraBookingsResponse =
-          ExtraBookingsResponse.fromJson(userModel);
+              ExtraBookingsResponse.fromJson(userModel);
 
           if (extraBookingsResponse.status ?? false) {
-            extraBookingList.value = extraBookingsResponse.data?.extraBookings?? [];
+            extraBookingList.value =
+                extraBookingsResponse.data?.extraBookings ?? [];
           } else {
             snackBar(context, extraBookingsResponse.message ?? "");
           }
@@ -624,6 +725,105 @@ class ChildInfoController extends GetxController {
     });
   }
 
+
+  /// get About API
+  callGetAboutChildAPI(BuildContext context, String childId) async {
+    isLoading.value = true;
+
+    String token = await MySharedPref().getAccessToken(
+      SharePreData.keyAccessToken,
+    );
+
+    String url = "$urlBase$urlGetAbout/$childId";
+
+    final apiReq = Request();
+
+    await apiReq.getMethodAPI(url, null, token).then((value) async {
+      http.StreamedResponse res = value;
+      printData(
+        runtimeType.toString(),
+        "callGetAboutChildAPI response ${res.statusCode}",
+      );
+
+      await res.stream.bytesToString().then((valueData) async {
+        printData(
+          runtimeType.toString(),
+          "callGetAboutChildAPI value ${valueData}",
+        );
+
+        isLoading.value = false;
+
+        if (res.statusCode == 200) {
+          Map<String, dynamic> userModel = json.decode(valueData);
+          AboutResponse aboutResponse =
+          AboutResponse.fromJson(userModel);
+
+          if (aboutResponse.status ?? false) {
+            aboutChildren.value =
+                aboutResponse.data??AboutData();
+          } else {
+            snackBar(context, aboutResponse.message ?? "");
+          }
+        }
+      });
+    });
+  }
+
+  /// get Price Band API
+  callGetPriceBandAPI(BuildContext context, String childId) async {
+    isLoading.value = true;
+
+    String token = await MySharedPref().getAccessToken(
+      SharePreData.keyAccessToken,
+    );
+
+    String url = "$urlBase$urlGetPriceBandList/$childId/get-price-band/data";
+
+    final apiReq = Request();
+
+    String planStart = getDateFormtYYYYMMDDOnly(
+      planStartDate.value ?? DateTime(2026),
+    );
+
+    String planEnd = getDateFormtYYYYMMDDOnly(
+      planEndDate.value ?? DateTime(2026),
+    );
+
+
+
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
+    };
+    var request = http.Request('GET', Uri.parse(url));
+    request.body = json.encode({
+      "plan_start": planStart,
+      "plan_end": planEnd,
+    });
+    request.headers.addAll(headers);
+
+    http.StreamedResponse response = await request.send();
+    isLoading.value = false;
+    if (response.statusCode == 200) {
+
+      await response.stream.bytesToString().then((valueData) async {
+        Map<String, dynamic> userModel = json.decode(valueData);
+        PriceBandResponse priceBandResponse = PriceBandResponse.fromJson(
+          userModel,
+        );
+
+        if (priceBandResponse.status ?? false) {
+          priceBandList.value = priceBandResponse.data?.days ?? [];
+        } else {
+          snackBar(context, priceBandResponse.message ?? "");
+        }
+      });}
+
+    else {
+      print(response.reasonPhrase);
+    }
+
+  }
 
   /// Observation list API
   callObservationListAPI(BuildContext context, String childId) async {
@@ -655,10 +855,11 @@ class ChildInfoController extends GetxController {
         if (res.statusCode == 200) {
           Map<String, dynamic> userModel = json.decode(valueData);
           ObservationListResponse observationListResponse =
-          ObservationListResponse.fromJson(userModel);
+              ObservationListResponse.fromJson(userModel);
 
           if (observationListResponse.status ?? false) {
-            observationList.value = observationListResponse.data?.observations ?? [];
+            observationList.value =
+                observationListResponse.data?.observations ?? [];
 
             for (int i = 0; i < observationList.length; i++) {
               replyController.add(TextEditingController());
@@ -671,16 +872,21 @@ class ChildInfoController extends GetxController {
     });
   }
 
-
   /// Add Comment API
-  callAddCommentAPI(BuildContext context, String childId,String observationId, String comment) async {
+  callAddCommentAPI(
+    BuildContext context,
+    String childId,
+    String observationId,
+    String comment,
+  ) async {
     isLoading.value = true;
 
     String token = await MySharedPref().getAccessToken(
       SharePreData.keyAccessToken,
     );
 
-    String url = "$urlBase$urlAddCommentInObservation/$childId/$observationId/comment";
+    String url =
+        "$urlBase$urlAddCommentInObservation/$childId/$observationId/comment";
 
     final apiReq = Request();
 
@@ -717,12 +923,12 @@ class ChildInfoController extends GetxController {
 
   /// Add Like API
   callAddLikeAPI(
-      BuildContext context,
-      String childId,
-      String observationId,
-      String commentId,
-      int index,
-      ) async {
+    BuildContext context,
+    String childId,
+    String observationId,
+    String commentId,
+    int index,
+  ) async {
     isLoading.value = true;
 
     String token = await MySharedPref().getAccessToken(
@@ -765,6 +971,95 @@ class ChildInfoController extends GetxController {
       });
     });
   }
+
+
+  /// Add Extra bookings API
+  callAddExtraBookingsAPI(BuildContext context, ExtraBookingsRequest extraBookingsJson, String childId) async {
+    isLoading.value = true;
+
+    String token = await MySharedPref().getAccessToken(
+      SharePreData.keyAccessToken,
+    );
+
+    String url = "$urlBase$urlAddExtraBooking/$childId";
+
+    final apiReq = Request();
+    Map<String, dynamic> body = extraBookingsJson.toJson();
+
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
+    };
+    var request = http.Request('POST', Uri.parse(url));
+
+    request.headers.addAll(headers);
+    request.body = json.encode(extraBookingsJson.toJson());
+    http.StreamedResponse response = await request.send();
+    isLoading.value = false;
+    if (response.statusCode == 200) {
+
+      await response.stream.bytesToString().then((valueData) async {
+
+        printData("callAddExtraBookingsAPI", valueData);
+
+        Map<String, dynamic> userModel = json.decode(valueData);
+        BaseModel baseModel = BaseModel.fromJson(
+          userModel,
+        );
+
+        if (baseModel.status ?? false) {
+          snackBar(context, baseModel.message ?? "");
+          Navigator.pop(context);
+        } else {
+          snackBar(context, baseModel.message ?? "");
+        }
+      });}
+
+    else {
+      print(response.reasonPhrase);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // await apiReq.postAPI(url, body, token).then((
+    //     value,
+    //     ) async {
+    //   http.StreamedResponse res = value;
+    //   printData(runtimeType.toString(), "callAddExtraBookingsAPI API response ${res.statusCode}");
+    //
+    //   await res.stream.bytesToString().then((valueData) async {
+    //     printData(runtimeType.toString(), "callAddExtraBookingsAPI API value ${valueData}");
+    //
+    //     isLoading.value = false;
+    //
+    //     if (res.statusCode == 200) {
+    //       Map<String, dynamic> userModel = json.decode(valueData);
+    //       BaseModel baseModel = BaseModel.fromJson(userModel);
+    //
+    //       if (baseModel.status ?? false) {
+    //         snackBar(context, baseModel.message ?? "");
+    //
+    //         Navigator.pop(context);
+    //       } else {
+    //         snackBar(context, baseModel.message ?? "");
+    //       }
+    //     }
+    //   });
+    // });
+  }
+
 
   @override
   void onClose() {

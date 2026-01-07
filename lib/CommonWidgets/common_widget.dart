@@ -207,10 +207,9 @@ getDateOnly(String originalDate) {
   return result;
 }
 
-getDateFormtYYYYMMDDOnly(String originalDate) {
+getDateFormtYYYYMMDDOnly(DateTime originalDate) {
   String result = "";
-  var date = DateTime.parse(originalDate);
-  result = DateFormat("yyyy-MM-dd").format(date);
+  result = DateFormat("yyyy-MM-dd").format(originalDate);
   return result;
 }
 

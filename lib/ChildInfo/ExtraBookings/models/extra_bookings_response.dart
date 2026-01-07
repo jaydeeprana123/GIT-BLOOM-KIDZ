@@ -61,6 +61,7 @@ class ExtraBooking {
   String? totalAmount;
   String? status;
   dynamic priceBand;
+  List<Day>? days;
   DateTime? createdAt;
 
   ExtraBooking({
@@ -72,6 +73,7 @@ class ExtraBooking {
     this.totalAmount,
     this.status,
     this.priceBand,
+    this.days,
     this.createdAt,
   });
 
@@ -84,6 +86,7 @@ class ExtraBooking {
     totalAmount: json["total_amount"],
     status: json["status"],
     priceBand: json["price_band"],
+    days: json["days"] == null ? [] : List<Day>.from(json["days"]!.map((x) => Day.fromJson(x))),
     createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
   );
 
@@ -96,6 +99,35 @@ class ExtraBooking {
     "total_amount": totalAmount,
     "status": status,
     "price_band": priceBand,
+    "days": days == null ? [] : List<dynamic>.from(days!.map((x) => x.toJson())),
     "created_at": createdAt?.toIso8601String(),
+  };
+}
+
+class Day {
+  String? day;
+  String? startTime;
+  String? endTime;
+  String? duration;
+
+  Day({
+    this.day,
+    this.startTime,
+    this.endTime,
+    this.duration,
+  });
+
+  factory Day.fromJson(Map<String, dynamic> json) => Day(
+    day: json["day"],
+    startTime: json["start_time"],
+    endTime: json["end_time"],
+    duration: json["duration"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "day": day,
+    "start_time": startTime,
+    "end_time": endTime,
+    "duration": duration,
   };
 }

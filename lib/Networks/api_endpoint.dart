@@ -25,12 +25,16 @@ const urlGetDocumentList = '/parent/children/documents';
 /// bookings
 const urlGetBookingList = '/parent/children/extra-bookings';
 
-const urlGetExtraBookingList = '/parent/children/extra-bookings';
+const urlGetAbout = '/parent/children/about';
 
+const urlGetExtraBookingList = '/parent/children/extra-bookings';
+const urlAddExtraBooking = '/parent/children/extra-bookings';
 const urlGetObservationList = '/parent/children/observations';
 const urlLikeUnlikeObservation = '/parent/children/observations';
 const urlAddCommentInObservation = '/parent/children/observations';
 
+/// Price Band
+const urlGetPriceBandList = '/parent/children/extra-bookings';
 
 ///Permissions
 const urlGetChildPermissionsList = '/parent/children/permissions';

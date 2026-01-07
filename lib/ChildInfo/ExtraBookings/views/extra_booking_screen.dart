@@ -1,3 +1,4 @@
+import 'package:bloom_kidz/ChildInfo/ExtraBookings/views/add_extra_booking_screen.dart';
 import 'package:bloom_kidz/CommonWidgets/black_medium_regular_text.dart';
 import 'package:bloom_kidz/CommonWidgets/blue_medium_bold_text.dart';
 import 'package:bloom_kidz/CommonWidgets/blue_small_regular_text.dart';
@@ -37,209 +38,155 @@ import '../../controller/child_info_controller.dart';
 
 import 'package:flutter/material.dart';
 
-class BookingScreen extends StatefulWidget {
+class ExtraBookingScreen extends StatefulWidget {
   final String childId;
 
-  const BookingScreen({Key? key, required this.childId}) : super(key: key);
+  const ExtraBookingScreen({Key? key, required this.childId}) : super(key: key);
 
   @override
-  State<BookingScreen> createState() => _BookingScreenState();
+  State<ExtraBookingScreen> createState() => _ExtraBookingScreenState();
 }
 
-class _BookingScreenState extends State<BookingScreen> {
-  int selectedDayIndex = 0;
-  int selectedSlotIndex = 3;
-
-
-
-  ChildInfoController childInfoController = Get.find<ChildInfoController>();
+class _ExtraBookingScreenState extends State<ExtraBookingScreen> {
+  ChildInfoController controller = Get.find<ChildInfoController>();
 
   @override
   void initState() {
     super.initState();
 
-    childInfoController.callGetBookingsAPI(context, widget.childId);
+    controller.callGetExtraBookingsAPI(context, widget.childId);
   }
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor:  Colors.white,
 
-      appBar: const CommonAppBar(title: "Bookings", showMenu: true, showBack: true,),
+      appBar:  CommonAppBar(
+        title: 'Extra Bookings',
+        showBack: true,
+        showAddButton: true,
+        onAddButtonTap: (){
+          Get.to(AddExtraBookingScreen(childId: widget.childId))?.then((value) {
+            controller.callGetExtraBookingsAPI(context, widget.childId);
+          });
+        },
 
-      body:    Stack(
+      ),
+
+      body: Stack(
         children: [
           Positioned.fill(
-            child: SvgPicture.asset(app_bg, fit: BoxFit.fill),
+            child: SvgPicture.asset(app_bg, fit: BoxFit.cover),
           ),
 
           Obx(() {
-            if (childInfoController.bookingList.isEmpty) {
-              return const SizedBox();
+            if (controller.extraBookingList.isEmpty) {
+              return const Center(
+                child: Text(
+                  'No Extra Bookings Found',
+                  style: TextStyle(color: Colors.white),
+                ),
+              );
             }
+
+            if (controller.isLoading.value){
+              const Center(child: CircularProgressIndicator());
+            }
+
 
             return Card(
               color: Colors.white,
               shadowColor: color_secondary,
-              elevation: 14,
+              elevation: 6,
               margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-              child: Column(
-                children: [
-                  const SizedBox(height: 16),
+              child: ListView.builder(
+                padding: const EdgeInsets.all(16),
+                itemCount: controller.extraBookingList.length,
+                itemBuilder: (context, index) {
+                  final booking =
+                  controller.extraBookingList[index];
 
-                  for (int i = 0;
-                  i < childInfoController.bookingList.length;
-                  i++)
-                    Column(
+                  return Container(
+                    margin: const EdgeInsets.only(bottom: 16),
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // DATE
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: color_secondary,
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: BlackMediumRegularText(
-
-                              childInfoController
-                                  .bookingList[i].planStart??"",
-
-                            color: Colors.white,
-                          ),
-                        ),
-
-                        const SizedBox(height: 16),
-
-                        // DAYS ROW
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Row(
-                            mainAxisAlignment:
-                            MainAxisAlignment.spaceBetween,
-                            children: List.generate(
-                              childInfoController
-                                  .bookingList[i].days
-                                  ?.length ??
-                                  0,
-                                  (index) {
-                                final isSelected =
-                                    index == selectedDayIndex;
-
-                                final day = childInfoController
-                                    .bookingList[i]
-                                    .days?[index]
-                                    .day ??
-                                    '';
-
-                                return GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      selectedDayIndex = index;
-                                      selectedSlotIndex = -1;
-                                    });
-                                  },
-                                  child: Container(
-                                    width: 42,
-                                    height: 60,
-                                    alignment: Alignment.center,
-                                    decoration: BoxDecoration(
-                                      color: isSelected
-                                          ? color_secondary
-                                          : Colors.white,
-                                      borderRadius:
-                                      BorderRadius.circular(10),
-                                      border: Border.all(
-                                        color: color_secondary,
-                                      ),
-                                    ),
-                                    child: BlueMediumBoldText(
-                                      day.length >= 3
-                                          ? day.substring(0, 3)
-                                          : day,
-                                      color: isSelected
-                                          ? Colors.white
-                                          : Colors.blue,
-                                    ),
-                                  ),
-                                );
-                              },
+                        // DATE RANGE
+                        Row(
+                          mainAxisAlignment:
+                          MainAxisAlignment.spaceBetween,
+                          children: [
+                            BlueMediumBoldText(
+                              '${DateFormat('dd MMM yyyy').format(booking.planStart!)}'
+                                  ' - ${DateFormat('dd MMM yyyy').format(booking.planEnd!)}',
                             ),
-                          ),
+                            BlueMediumBoldText(
+                              '£${booking.totalAmount}',
+                            ),
+                          ],
                         ),
 
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 12),
 
-                        // TIME SLOTS
-                        ListView.builder(
-                          shrinkWrap: true,
-                          physics:
-                          const NeverScrollableScrollPhysics(),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16),
-                          itemCount: childInfoController
-                              .bookingList[i]
-                              .days?[selectedDayIndex]
-                              .mainSessions
-                              ?.length ??
-                              0,
-                          itemBuilder: (context, sessionIndex) {
-                            final isSelected =
-                                sessionIndex == selectedSlotIndex;
-
-                            return GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  selectedSlotIndex = sessionIndex;
-                                });
-                              },
-                              child: Container(
+                        // DAYS
+                        if (booking.days!.isNotEmpty)
+                          Column(
+                            children: booking.days!.map((day) {
+                              return Container(
                                 margin:
-                                const EdgeInsets.only(bottom: 10),
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 12),
-                                alignment: Alignment.center,
+                                const EdgeInsets.only(bottom: 8),
+                                padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
-                                  color: isSelected
-                                      ? color_secondary
-                                      : Colors.white,
+                                  border: Border.all(
+                                      color: color_secondary),
                                   borderRadius:
                                   BorderRadius.circular(8),
-                                  border: Border.all(
-                                    color: color_secondary,
-                                  ),
                                 ),
-                                child: BlueMediumBoldText(
-                                  childInfoController
-                                      .bookingList[i]
-                                      .days?[selectedDayIndex]
-                                      .mainSessions?[sessionIndex]
-                                      .label ??
-                                      '',
-                                  color: isSelected
-                                      ? Colors.white
-                                      : Colors.blue,
+                                child: Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    BlueMediumBoldText(
+                                      day.day!.substring(0, 3),
+                                    ),
+                                    BlueMediumBoldText(
+                                      '${day.startTime} - ${day.endTime}',
+                                    ),
+                                    BlueMediumBoldText(
+                                      day.duration!,
+                                    ),
+                                  ],
                                 ),
-                              ),
-                            );
-                          },
-                        ),
+                              );
+                            }).toList(),
+                          ),
 
-                        const SizedBox(height: 24),
+                        if (booking.days!.isEmpty)
+                           BlueMediumBoldText(
+                            'No sessions available',
+                          ),
                       ],
                     ),
-                ],
+                  );
+                },
               ),
             );
+
+
           }),
 
-          if (childInfoController.isLoading.value)
-            const Center(child: CircularProgressIndicator()),
+
         ],
       ),
-
     );
   }
 }
+
 

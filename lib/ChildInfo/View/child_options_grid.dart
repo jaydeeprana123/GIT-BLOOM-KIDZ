@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../Bookings/views/booking_screen.dart';
+import '../ExtraBookings/views/extra_booking_screen.dart';
 import '../Observations/views/observation_list_screen.dart';
 import 'about_screen.dart';
 import 'child_.card.dart';
@@ -44,9 +45,9 @@ class ChildOptionsGrid extends StatelessWidget {
       ),
       InkWell(
         onTap: () {
-          Get.to(AboutScreen());
-        },
-        child: GridItem(icon_about, "About"),
+          Get.to(AboutScreen(childId: childId,));
+        },        child: GridItem(icon_about, "About"),
+
       ),
       InkWell(onTap: (){
         Get.to(ObservationListScreen(childId: childId,));
@@ -70,7 +71,9 @@ class ChildOptionsGrid extends StatelessWidget {
         },
         child: GridItem(icon_FamilyContacts, "Family & Contacts"),
       ),
-      GridItem(icon_Book_Extra_Sessions, "Book Extra Sessions"),
+      InkWell(onTap: (){
+        Get.to(ExtraBookingScreen(childId: childId,));
+      },child: GridItem(icon_Book_Extra_Sessions, "Book Extra Sessions")),
       GridItem(icon_WeeklyPlan, "Weekly Plan"),
     ];
 
