@@ -11,6 +11,7 @@ import 'package:get/get.dart';
 
 import 'package:flutter/material.dart';
 import '../../../CommonWidgets/common_appbar.dart';
+import 'observation_add_screen.dart';
 import 'observation_card.dart';
 
 class ObservationListScreen extends StatefulWidget {
@@ -30,7 +31,11 @@ class _ObservationListScreenState extends State<ObservationListScreen> {
   void initState() {
     super.initState();
 
-    childInfoController.callObservationListAPI(context, widget.childId);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      childInfoController.callObservationListAPI(context, widget.childId);
+    });
+
+
   }
 
   @override
@@ -38,7 +43,9 @@ class _ObservationListScreenState extends State<ObservationListScreen> {
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: Colors.white,
-      appBar: CommonAppBar(title: "Journey", showMenu: false, showBack: true,),
+      appBar: CommonAppBar(title: "Journey", showMenu: false, showBack: true,showAddButton: true, onAddButtonTap: (){
+        Get.to(ObservationAddScreen(childId: widget.childId,));
+      },),
       body: Obx(
         () => Stack(
           children: [

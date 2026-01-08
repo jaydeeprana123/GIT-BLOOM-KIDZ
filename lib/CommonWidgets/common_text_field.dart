@@ -13,6 +13,7 @@ class CommonTextField extends StatelessWidget {
   final TextEditingController? controller;
   final bool isPassword;
   final TextInputType keyboardType;
+  final int? maxLines;
 
   const CommonTextField({
     super.key,
@@ -20,6 +21,7 @@ class CommonTextField extends StatelessWidget {
     this.controller,
     this.isPassword = false,
     this.keyboardType = TextInputType.text,
+    this.maxLines = 1,
   });
 
   @override
@@ -28,6 +30,7 @@ class CommonTextField extends StatelessWidget {
       controller: controller,
       obscureText: isPassword,
       keyboardType: keyboardType,
+      maxLines: maxLines,
       style: TextStyle(
         fontSize: 14,
         fontFamily: fontInterSemiBold,

@@ -37,14 +37,20 @@ class _ChildInfoScreenState extends State<ChildInfoScreen> {
       backgroundColor: Colors.transparent,
       appBar: const CommonAppBar(title: "Child Info", showMenu: true),
       body: Obx(
-        () => ListView.builder(
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          itemCount: childInfoController.childInfoList.length,
-          itemBuilder: (context, index) {
-            return ChildCard(
-              childInfo: childInfoController.childInfoList[index],
-            );
-          },
+        () => Stack(
+          children: [
+            ListView.builder(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              itemCount: childInfoController.childInfoList.length,
+              itemBuilder: (context, index) {
+                return ChildCard(
+                  childInfo: childInfoController.childInfoList[index],
+                );
+              },
+            ),
+
+            if(childInfoController.isLoading.value)Center(child: CircularProgressIndicator(),)
+          ],
         ),
       ),
     );

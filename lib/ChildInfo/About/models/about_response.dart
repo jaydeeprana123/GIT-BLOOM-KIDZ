@@ -192,8 +192,8 @@ class ReligionInfo {
 
 class RoomMoves {
   String? rooms;
-  DateTime? startDate;
-  dynamic endDate;
+  String? startDate;
+  String? endDate;
 
   RoomMoves({
     this.rooms,
@@ -203,13 +203,13 @@ class RoomMoves {
 
   factory RoomMoves.fromJson(Map<String, dynamic> json) => RoomMoves(
     rooms: json["rooms"],
-    startDate: json["start_date"] == null ? null : DateTime.parse(json["start_date"]),
+    startDate: json["start_date"],
     endDate: json["end_date"],
   );
 
   Map<String, dynamic> toJson() => {
     "rooms": rooms,
-    "start_date": "${startDate!.year.toString().padLeft(4, '0')}-${startDate!.month.toString().padLeft(2, '0')}-${startDate!.day.toString().padLeft(2, '0')}",
+    "start_date": startDate,
     "end_date": endDate,
   };
 }

@@ -65,7 +65,7 @@ class ChildInfoController extends GetxController {
   Rx<TextEditingController> emailController = TextEditingController().obs;
 
   RxString imagePath = "".obs;
-
+  RxList<String> observationImagePath = <String>[].obs;
   RxDouble totalAmount = 0.0.obs;
 
   /// session selections → DayName : [sessionIds]
@@ -77,6 +77,9 @@ class ChildInfoController extends GetxController {
   Rx<DateTime?> planEndDate = Rx<DateTime?>(null);
 
   Rx<AboutData> aboutChildren = AboutData().obs;
+
+
+  RxInt selectedTab = 0.obs; // 0 = Basic, 1 = Health, 2 = Sensitive
 
   void setPlanStart(DateTime date) {
     planStartDate.value = date;
