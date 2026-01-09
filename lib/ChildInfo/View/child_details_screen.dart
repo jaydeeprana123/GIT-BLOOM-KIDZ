@@ -1,3 +1,4 @@
+import 'package:bloom_kidz/ChildInfo/controller/child_info_controller.dart';
 import 'package:bloom_kidz/CommonWidgets/common_background.dart';
 import 'package:bloom_kidz/CommonWidgets/common_green_button.dart';
 import 'package:bloom_kidz/CommonWidgets/common_text_field.dart';
@@ -12,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import '../../CommonWidgets/common_appbar.dart';
+import '../models/child_info_list_response.dart';
 import 'child_.card.dart';
 
 import 'package:flutter/material.dart';
@@ -22,9 +24,9 @@ import 'child_profile_card.dart';
 import 'package:flutter/material.dart';
 
 class ChildDetailsScreen extends StatelessWidget {
-  final String childId;
-
-  const ChildDetailsScreen({super.key, required this.childId});
+  final ChildInfo childInfo;
+  final ChildInfoController childInfoController;
+  const ChildDetailsScreen({super.key, required this.childInfo, required this.childInfoController});
 
   @override
   Widget build(BuildContext context) {
@@ -43,9 +45,9 @@ class ChildDetailsScreen extends StatelessWidget {
             padding: const EdgeInsets.all(14),
             child: Column(
               children: [
-                ChildProfileCard(),
+                ChildProfileCard(childInfo: childInfo,childInfoController: childInfoController,),
                 SizedBox(height: 16),
-                ChildOptionsGrid(childId: childId),
+                ChildOptionsGrid(childId: childInfo.id.toString()),
               ],
             ),
           ),

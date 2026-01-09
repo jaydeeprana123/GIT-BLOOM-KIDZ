@@ -19,6 +19,9 @@ const urlAddFamily = "/parent/contacts";
 const urlUpdateFamily = "/parent/contacts/update";
 const urlDeleteContact = '/parent/contacts/delete';
 
+const urlLeaveRequest = '/parent/children/leave';
+
+
 ///Documents
 const urlGetDocumentList = '/parent/children/documents';
 
@@ -42,9 +45,12 @@ const urlGetPriceBandList = '/parent/children/extra-bookings';
 const urlGetChildPermissionsList = '/parent/children/permissions';
 const urlConfirmChildPermission = '/parent/children/permissions/confirm';
 
-const urlLeaveRequest = '/parent/children/leave';
+
 
 /// Profile
 const urlGetProfile = '/parent/profile';
 const urlChangePassword = '/parent/change-password';
 const urlSetPin = '/parent/profile/update-quick-pin';
+
+/// Chat
+const urlPeopleList = '/parent/chat/people';

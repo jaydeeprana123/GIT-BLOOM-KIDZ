@@ -11,18 +11,21 @@ import 'package:get/get.dart';
 import '../../CommonWidgets/black_medium_regular_text.dart';
 import '../../CommonWidgets/black_small_medium_text.dart';
 import '../../CommonWidgets/black_small_regular_text.dart';
+import '../controller/child_info_controller.dart';
 import 'child_details_screen.dart';
 
 class ChildCard extends StatelessWidget {
   final ChildInfo childInfo;
+  final ChildInfoController childInfoController;
 
-  const ChildCard({super.key, required this.childInfo});
+  const ChildCard({super.key, required this.childInfo,  required this.childInfoController});
+
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Get.to(ChildDetailsScreen(childId: childInfo.id.toString()));
+        Get.to(ChildDetailsScreen(childInfo: childInfo, childInfoController: childInfoController,));
       },
       child: Card(
         margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),

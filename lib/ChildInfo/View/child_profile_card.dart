@@ -1,3 +1,6 @@
+import 'package:bloom_kidz/ChildInfo/About/views/add_holiday_dialog.dart';
+import 'package:bloom_kidz/ChildInfo/About/views/collection_pin_dialog.dart';
+import 'package:bloom_kidz/ChildInfo/controller/child_info_controller.dart';
 import 'package:bloom_kidz/CommonWidgets/common_green_button.dart';
 import 'package:bloom_kidz/CommonWidgets/common_text_field.dart';
 import 'package:bloom_kidz/Styles/my_colors.dart';
@@ -8,9 +11,14 @@ import 'package:flutter/material.dart';
 import '../../CommonWidgets/black_small_medium_text.dart';
 import '../../CommonWidgets/black_small_regular_text.dart';
 import '../../CommonWidgets/blue_large_bold_text.dart';
+import '../models/child_info_list_response.dart';
 
 class ChildProfileCard extends StatelessWidget {
-  const ChildProfileCard({super.key});
+
+  final ChildInfo childInfo;
+  final ChildInfoController childInfoController;
+
+  const ChildProfileCard({super.key, required this.childInfo,  required this.childInfoController});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +32,7 @@ class ChildProfileCard extends StatelessWidget {
               12,
             ), // change 12 for more/less rounding
             image: DecorationImage(
-              image: AssetImage(child1),
+              image: NetworkImage(childInfo.profile ?? ""),
               fit: BoxFit.cover,
             ),
           ),
@@ -36,14 +44,17 @@ class ChildProfileCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                BlueLargeBoldText("Child Name", fontSize: 15),
+                BlueLargeBoldText(
+                  "${childInfo.firstName ?? ""} ${childInfo.lastName ?? ""}",
+                  fontSize: 15,
+                ),
                 const SizedBox(height: 6),
                 Row(
                   children: [
                     Icon(Icons.school, size: 14, color: Colors.grey),
                     SizedBox(width: 4),
                     BlackSmallRegularText(
-                      "Explorers",
+                      childInfo.room ?? "",
                       fontSize: 11,
                       color: Colors.black,
                     ),
@@ -54,18 +65,28 @@ class ChildProfileCard extends StatelessWidget {
                   children: [
                     Icon(Icons.sick, size: 14, color: Colors.grey),
                     SizedBox(width: 4),
-                    BlackSmallRegularText(
-                      "Sick",
-                      fontSize: 11,
-                      color: Colors.black,
+                    InkWell(
+                      onTap: (){
+                        showLeaveDialog(context, childInfoController, false, childInfo.id.toString());
+                      },
+                      child: BlackSmallRegularText(
+                        "Sick",
+                        fontSize: 11,
+                        color: Colors.black,
+                      ),
                     ),
                     SizedBox(width: 12),
                     Icon(Icons.beach_access, size: 14, color: Colors.grey),
                     SizedBox(width: 4),
-                    BlackSmallRegularText(
-                      "Holiday",
-                      fontSize: 11,
-                      color: Colors.black,
+                    InkWell(
+                      onTap: (){
+                        showLeaveDialog(context, childInfoController, true, childInfo.id.toString());
+                      },
+                      child: BlackSmallRegularText(
+                        "Holiday",
+                        fontSize: 11,
+                        color: Colors.black,
+                      ),
                     ),
                   ],
                 ),
@@ -74,7 +95,15 @@ class ChildProfileCard extends StatelessWidget {
                   children: [
                     _actionButton(Icons.chat, "Chat"),
                     const SizedBox(width: 8),
-                    _actionButton(Icons.location_pin, "Collection Pin"),
+                    InkWell(
+                      onTap: () {
+                        showCollectionPinDialog(context, childInfoController);
+                      },
+                      child: _actionButton(
+                        Icons.location_pin,
+                        "Collection Pin",
+                      ),
+                    ),
                   ],
                 ),
               ],
@@ -84,6 +113,36 @@ class ChildProfileCard extends StatelessWidget {
       ],
     );
   }
+
+  void showCollectionPinDialog(
+    BuildContext context,
+    ChildInfoController childInfoController,
+  ) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return CollectionPinDialog(controller: childInfoController);
+      },
+    );
+  }
+
+
+  void showLeaveDialog(
+      BuildContext context,
+      ChildInfoController childInfoController,
+      bool isHoliday,
+      String childId
+      ) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AddHolidayDialog(controller: childInfoController, childId: childId,isHoliday: isHoliday,);
+      },
+    );
+  }
+
 
   Widget _actionButton(IconData icon, String text) {
     return Container(

@@ -13,6 +13,7 @@ import 'package:get/get.dart';
 
 import '../../../Styles/my_colors.dart';
 import '../../../Styles/my_icons.dart';
+import '../../Chat/View/people_list_screen.dart';
 import '../../CommonWidgets/custom_bottom_nav.dart';
 import '../../NewsFeed/View/event_calender_screen.dart';
 import '../../Profile/view/profile_screen.dart';
@@ -37,7 +38,7 @@ class _BottomNavigationViewState extends State<BottomNavigationView> {
   final tabs = [
     NewsFeedScreen(),
     ChildInfoScreen(),
-    ChatScreen(),
+    PeopleListScreen(),
     ProfileScreen(),
   ];
 

@@ -60,6 +60,12 @@ class ChildInfoController extends GetxController {
   RxInt selectedDateIndex = 0.obs;
 
   /// Editing controller for text field
+
+  Rx<TextEditingController> noteController = TextEditingController().obs;
+
+
+  Rx<TextEditingController> collectionPinController = TextEditingController().obs;
+
   Rx<TextEditingController> observationController = TextEditingController().obs;
 
   Rx<TextEditingController> firstNameController = TextEditingController().obs;
@@ -79,6 +85,10 @@ class ChildInfoController extends GetxController {
   Rx<DateTime?> planStartDate = Rx<DateTime?>(null);
   Rx<DateTime?> planEndDate = Rx<DateTime?>(null);
 
+  Rx<DateTime?> startDate = Rx<DateTime?>(null);
+  Rx<DateTime?> endDate = Rx<DateTime?>(null);
+
+
   Rx<AboutData> aboutChildren = AboutData().obs;
 
   RxInt selectedTab = 0.obs; // 0 = Basic, 1 = Health, 2 = Sensitive
@@ -90,6 +100,16 @@ class ChildInfoController extends GetxController {
   void setPlanEnd(DateTime date) {
     planEndDate.value = date;
   }
+
+  void setStart(DateTime date) {
+    startDate.value = date;
+  }
+
+  void setEnd(DateTime date) {
+    endDate.value = date;
+  }
+
+
 
   void toggleSession(String day, int sessionId) {
     selectedSessions.putIfAbsent(day, () => []);
@@ -593,54 +613,6 @@ class ChildInfoController extends GetxController {
     });
   }
 
-  /// Leave Request API
-  callLeaveRequestAPI(BuildContext context) async {
-    isLoading.value = true;
-
-    String token = await MySharedPref().getAccessToken(
-      SharePreData.keyAccessToken,
-    );
-
-    String url = urlBase + urlLeaveRequest;
-
-    final apiReq = Request();
-
-    dynamic body = {
-      "child_id": 306,
-      "activity_id": 2,
-      "start_date": "2026-01-11",
-      "end_date": "2026-01-15",
-      "note": "Child will be sick for these days",
-    };
-
-    await apiReq.postAPI(url, body, token).then((value) async {
-      http.StreamedResponse res = value;
-      printData(
-        runtimeType.toString(),
-        "callLeaveRequestAPI response ${res.statusCode}",
-      );
-
-      await res.stream.bytesToString().then((valueData) async {
-        printData(
-          runtimeType.toString(),
-          "callLeaveRequestAPI value ${valueData}",
-        );
-
-        isLoading.value = false;
-
-        if (res.statusCode == 200) {
-          Map<String, dynamic> userModel = json.decode(valueData);
-          BaseModel baseModel = BaseModel.fromJson(userModel);
-
-          if (baseModel.status ?? false) {
-            snackBar(context, baseModel.message ?? "");
-          } else {
-            snackBar(context, baseModel.message ?? "");
-          }
-        }
-      });
-    });
-  }
 
   /// get Bookings API
   callGetBookingsAPI(BuildContext context, String childId) async {
@@ -1181,6 +1153,95 @@ class ChildInfoController extends GetxController {
           });
         });
   }
+
+
+  /// Add Leave API
+  callAddLeaveAPI(BuildContext context, String childId, String activityId) async {
+    isLoading.value = true;
+
+    String token = await MySharedPref().getAccessToken(
+      SharePreData.keyAccessToken,
+    );
+
+    String url = urlBase + urlLeaveRequest;
+
+    final apiReq = Request();
+
+    dynamic body = {
+      "child_id": 306,
+      "activity_id": 2,
+      "start_date": "2026-01-11",
+      "end_date": "2026-01-15",
+      "note": "Child will be sick for these days"
+    };
+
+    await apiReq.postAPIWithMedia(url, body, token, imagePath.value, []).then((
+        value,
+        ) async {
+      http.StreamedResponse res = value;
+      printData(runtimeType.toString(), "Login API response ${res.statusCode}");
+
+      await res.stream.bytesToString().then((valueData) async {
+        printData(runtimeType.toString(), "Login API value ${valueData}");
+
+        isLoading.value = false;
+
+        if (res.statusCode == 200) {
+          Map<String, dynamic> userModel = json.decode(valueData);
+          BaseModel baseModel = BaseModel.fromJson(userModel);
+
+          if (baseModel.status ?? false) {
+            snackBar(context, baseModel.message ?? "");
+
+            Navigator.pop(context);
+          } else {
+            snackBar(context, baseModel.message ?? "");
+          }
+        }
+      });
+    });
+  }
+
+  /// Set Pin API
+  Future<void> callCollectionSetPinAPI(BuildContext context) async {
+    isLoading.value = true;
+
+    String token = await MySharedPref().getAccessToken(
+      SharePreData.keyAccessToken,
+    );
+
+    String url = urlBase + urlSetPin;
+
+    final apiReq = Request();
+
+    dynamic body = {
+      'pin_code': collectionPinController.value.text,
+    };
+
+    await apiReq.postAPI(url, body, token).then((value) async {
+      http.StreamedResponse res = value;
+      printData(runtimeType.toString(), "callCollectionSetPinAPI API response ${res.statusCode}");
+
+      await res.stream.bytesToString().then((valueData) async {
+        printData(runtimeType.toString(), "callCollectionSetPinAPI API value ${valueData}");
+
+        isLoading.value = false;
+
+        if (res.statusCode == 200) {
+          Map<String, dynamic> userModel = json.decode(valueData);
+          BaseModel baseModel = BaseModel.fromJson(userModel);
+
+          if (baseModel.status ?? false) {
+            Navigator.pop(context);
+            snackBar(context, baseModel.message ?? "");
+          } else {
+            snackBar(context, baseModel.message ?? "");
+          }
+        }
+      });
+    });
+  }
+
 
   @override
   void onClose() {

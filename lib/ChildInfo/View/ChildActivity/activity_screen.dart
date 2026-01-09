@@ -28,8 +28,10 @@ class _ActivityScreenState extends State<ActivityScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      childInfoController.callActivityListAPI(context, widget.childId);
+    });
 
-    childInfoController.callActivityListAPI(context, widget.childId);
   }
 
   @override

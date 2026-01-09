@@ -58,7 +58,10 @@ class _BookingScreenState extends State<BookingScreen> {
   void initState() {
     super.initState();
 
-    childInfoController.callGetBookingsAPI(context, widget.childId);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      childInfoController.callGetBookingsAPI(context, widget.childId);
+    });
+
   }
 
   @override

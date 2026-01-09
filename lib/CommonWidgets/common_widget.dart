@@ -437,3 +437,21 @@ void onLoading(BuildContext context, String msg) {
     );
   });
 }
+
+
+Future<void> pickDate(
+    BuildContext context,
+    DateTime? initialDate,
+    Function(DateTime) onSelected,
+    ) async {
+  final DateTime? picked = await showDatePicker(
+    context: context,
+    initialDate: initialDate ?? DateTime.now(),
+    firstDate: DateTime.now(),
+    lastDate: DateTime(DateTime.now().year + 2),
+  );
+
+  if (picked != null) {
+    onSelected(picked);
+  }
+}

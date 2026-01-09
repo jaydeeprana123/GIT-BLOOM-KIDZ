@@ -20,6 +20,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import '../../../CommonWidgets/common_appbar.dart';
+import '../../../CommonWidgets/common_widget.dart';
 import '../../../CommonWidgets/date_field.dart';
 import '../../View/about_card.dart';
 import '../../View/about_tab.dart';
@@ -64,22 +65,7 @@ class _AddExtraBookingScreenState extends State<AddExtraBookingScreen> {
   }
 
 
-  Future<void> pickDate(
-      BuildContext context,
-      DateTime? initialDate,
-      Function(DateTime) onSelected,
-      ) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: initialDate ?? DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime(DateTime.now().year + 2),
-    );
 
-    if (picked != null) {
-      onSelected(picked);
-    }
-  }
 
 
 

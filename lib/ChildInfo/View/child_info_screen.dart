@@ -45,6 +45,7 @@ class _ChildInfoScreenState extends State<ChildInfoScreen> {
               itemBuilder: (context, index) {
                 return ChildCard(
                   childInfo: childInfoController.childInfoList[index],
+                  childInfoController: childInfoController,
                 );
               },
             ),
