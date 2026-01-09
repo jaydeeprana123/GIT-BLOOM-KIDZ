@@ -1,4 +1,5 @@
 import 'package:bloom_kidz/ChildInfo/Observations/models/observation_list_response.dart';
+import 'package:bloom_kidz/ChildInfo/Observations/views/observation_update_screen.dart';
 import 'package:bloom_kidz/ChildInfo/controller/child_info_controller.dart';
 import 'package:bloom_kidz/CommonWidgets/black_large_bold_text.dart';
 import 'package:bloom_kidz/CommonWidgets/blue_medium_bold_text.dart';
@@ -20,14 +21,19 @@ import '../../../CommonWidgets/blue_small_regular_text.dart';
 import '../../../NewsFeed/View/comment_list.dart';
 import 'observation_comment_list.dart';
 
-
 class ObservationCard extends StatelessWidget {
   final Observation observation;
   final String childId;
   final ChildInfoController childInfoController;
   final int index;
 
-  const ObservationCard({super.key, required this.observation, required this.childId, required this.childInfoController, required this.index});
+  const ObservationCard({
+    super.key,
+    required this.observation,
+    required this.childId,
+    required this.childInfoController,
+    required this.index,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -43,8 +49,8 @@ class ObservationCard extends StatelessWidget {
           _titleText(),
           if ((observation.media ?? []).isNotEmpty) _image(),
           _description(),
-          _actions(),
-          _replyBox(context,observation.id.toString(), index),
+          _actions(context),
+          _replyBox(context, observation.id.toString(), index),
         ],
       ),
     );
@@ -72,7 +78,7 @@ class ObservationCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                BlackLargeBoldText(observation.createdBy?? ""),
+                BlackLargeBoldText(observation.createdBy ?? ""),
                 SizedBox(height: 2),
 
                 Row(
@@ -101,7 +107,30 @@ class ObservationCard extends StatelessWidget {
               ],
             ),
           ),
-          const Icon(Icons.more_vert),
+          InkWell(
+            onTap: () {
+              PopupMenuButton<int>(
+                icon: const Icon(Icons.more_vert),
+                onSelected: (value) {
+                  switch (value) {
+                    case 1:
+                      childInfoController.selectedObservation.value =
+                          observation;
+                      Get.to(ObservationUpdateScreen(childId: childId));
+                      break;
+                  }
+                },
+                itemBuilder: (context) => [
+                  const PopupMenuItem(value: 1, child: Text("Edit")),
+                  // const PopupMenuItem(
+                  //   value: 2,
+                  //   child: Text("Delete"),
+                  // ),
+                ],
+              );
+            },
+            child: const Icon(Icons.more_vert),
+          ),
         ],
       ),
     );
@@ -148,24 +177,41 @@ class ObservationCard extends StatelessWidget {
     );
   }
 
-  Widget _actions() {
+  Widget _actions(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(12),
       child: Row(
         children: [
-          Icon(Icons.favorite, color: color_secondary, size: 16),
+          InkWell(
+            onTap: () {
+              childInfoController.callObservationAddLikeAPI(
+                context,
+                childId,
+                observation.id.toString(),
+              );
+            },
+            child: Icon(Icons.favorite, color: color_secondary, size: 16),
+          ),
           SizedBox(width: 4),
           BlueMediumRegularText((observation.likesCount ?? 0).toString()),
           SizedBox(width: 16),
           InkWell(
-            onTap: (){
-              Get.to(ObservationCommentListWidget(childId: childId,observation: observation,childInfoController: childInfoController,));
+            onTap: () {
+              Get.to(
+                ObservationCommentListWidget(
+                  childId: childId,
+                  observation: observation,
+                  childInfoController: childInfoController,
+                ),
+              );
             },
             child: Row(
               children: [
                 Icon(Icons.chat, size: 16, color: color_secondary),
                 SizedBox(width: 4),
-                BlueMediumRegularText((observation.commentsCount ?? 0).toString()),
+                BlueMediumRegularText(
+                  (observation.commentsCount ?? 0).toString(),
+                ),
               ],
             ),
           ),
@@ -174,7 +220,7 @@ class ObservationCard extends StatelessWidget {
     );
   }
 
-  Widget _replyBox(BuildContext context,String id, int i) {
+  Widget _replyBox(BuildContext context, String id, int i) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
       child: Container(
@@ -185,7 +231,7 @@ class ObservationCard extends StatelessWidget {
         ),
         child: Row(
           children: [
-             Expanded(
+            Expanded(
               child: TextField(
                 controller: childInfoController.replyController[i],
                 decoration: InputDecoration(
@@ -196,9 +242,14 @@ class ObservationCard extends StatelessWidget {
             ),
             IconButton(
               icon: const Icon(Icons.send, color: color_secondary),
-              onPressed: () async{
-               await childInfoController.callAddCommentAPI(context,childId, id, childInfoController.replyController[i].text);
-               childInfoController.replyController[i].text = "";
+              onPressed: () async {
+                await childInfoController.callAddCommentAPI(
+                  context,
+                  childId,
+                  id,
+                  childInfoController.replyController[i].text,
+                );
+                childInfoController.replyController[i].text = "";
               },
             ),
           ],

@@ -33,6 +33,8 @@ import '../models/family_contact_list_response.dart';
 class ChildInfoController extends GetxController {
   RxList<ChildInfo> childInfoList = <ChildInfo>[].obs;
   RxList<Observation> observationList = <Observation>[].obs;
+  RxList<int> removedMediaIds = <int>[].obs;
+  Rx<Observation> selectedObservation = Observation().obs;
 
   RxList<DocumentData> documentList = <DocumentData>[].obs;
 
@@ -912,7 +914,55 @@ class ChildInfoController extends GetxController {
   }
 
   /// Add Like API
-  callAddLikeAPI(
+  callObservationAddLikeAPI(
+    BuildContext context,
+    String childId,
+    String observationId,
+  ) async {
+    isLoading.value = true;
+
+    String token = await MySharedPref().getAccessToken(
+      SharePreData.keyAccessToken,
+    );
+
+    String url =
+        "$urlBase$urlLikeUnlikeObservation/$childId/$observationId/like";
+
+    final apiReq = Request();
+
+    await apiReq.postAPI(url, null, token).then((value) async {
+      http.StreamedResponse res = value;
+      printData(
+        runtimeType.toString(),
+        "callLeaveRequestAPI response ${res.statusCode}",
+      );
+
+      await res.stream.bytesToString().then((valueData) async {
+        printData(
+          runtimeType.toString(),
+          "callLeaveRequestAPI value ${valueData}",
+        );
+
+        isLoading.value = false;
+
+        if (res.statusCode == 200) {
+          Map<String, dynamic> userModel = json.decode(valueData);
+          BaseModel baseModel = BaseModel.fromJson(userModel);
+
+          if (baseModel.status ?? false) {
+            update();
+
+            snackBar(context, baseModel.message ?? "");
+          } else {
+            snackBar(context, baseModel.message ?? "");
+          }
+        }
+      });
+    });
+  }
+
+  /// Add Like API
+  callAddLikeCommentAPI(
     BuildContext context,
     String childId,
     String observationId,
