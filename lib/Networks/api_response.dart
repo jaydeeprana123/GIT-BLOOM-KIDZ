@@ -718,6 +718,7 @@ class Request {
     body,
     token,
     String strImg,
+    List<String>? imageList,
   ) async {
     Map<String, String> headersWithBearer = {
       'Content-Type': 'application/json',
@@ -732,8 +733,14 @@ class Request {
 
     request.fields.addAll(body);
 
-     if (!kIsWeb && strImg != null && strImg.isNotEmpty) {
+    if (!kIsWeb && strImg != null && strImg.isNotEmpty) {
       request.files.add(await http.MultipartFile.fromPath('image', strImg));
+    } else if ((imageList ?? []).isNotEmpty) {
+      for (int i = 0; i < (imageList ?? []).length; i++) {
+        request.files.add(
+          await http.MultipartFile.fromPath('images[]', imageList?[i] ?? ""),
+        );
+      }
     }
 
     request.headers.addAll(headersWithBearer);

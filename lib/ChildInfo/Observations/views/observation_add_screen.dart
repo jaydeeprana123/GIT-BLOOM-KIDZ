@@ -25,11 +25,11 @@ import 'package:flutter/material.dart';
 
 import '../../controller/child_info_controller.dart';
 
-
 class ObservationAddScreen extends StatefulWidget {
   final String childId;
 
-  const ObservationAddScreen({Key? key, required this.childId}) : super(key: key);
+  const ObservationAddScreen({Key? key, required this.childId})
+    : super(key: key);
 
   @override
   State<ObservationAddScreen> createState() => _ObservationAddScreenState();
@@ -50,20 +50,13 @@ class _ObservationAddScreenState extends State<ObservationAddScreen> {
       body: SafeArea(
         child: Stack(
           children: [
-
             /// 🔹 FULL SCREEN BACKGROUND
-            Positioned.fill(
-              child: SvgPicture.asset(
-                app_bg,
-                fit: BoxFit.cover,
-              ),
-            ),
+            Positioned.fill(child: SvgPicture.asset(app_bg, fit: BoxFit.cover)),
 
             /// 🔹 FOREGROUND CONTENT
             Obx(
-                  () => Stack(
+              () => Stack(
                 children: [
-
                   /// Scrollable Content
                   Positioned.fill(
                     child: SingleChildScrollView(
@@ -83,12 +76,11 @@ class _ObservationAddScreenState extends State<ObservationAddScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-
                               BlueMediumBoldText(
                                 "Observation For Children Name ",
                                 fontSize: 18,
                                 color: color_secondary,
-                                fontFamily: fontInterBold
+                                fontFamily: fontInterBold,
                               ),
 
                               const SizedBox(height: 16),
@@ -96,7 +88,8 @@ class _ObservationAddScreenState extends State<ObservationAddScreen> {
                               CommonTextField(
                                 hint: "Observation...",
                                 controller: childInfoController
-                                    .firstNameController.value,
+                                    .observationController
+                                    .value,
                                 maxLines: 6,
                               ),
 
@@ -114,7 +107,8 @@ class _ObservationAddScreenState extends State<ObservationAddScreen> {
                                     ),
                                   ),
                                   onPressed: () async {
-                                    childInfoController.observationImagePath.add(await selectPhoto(context, true));
+                                    childInfoController.observationImagePath
+                                        .add(await selectPhoto(context, true));
                                   },
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
@@ -127,39 +121,62 @@ class _ObservationAddScreenState extends State<ObservationAddScreen> {
                                         ),
                                       ),
                                       SizedBox(width: 6),
-                                      Icon(Icons.upload,
-                                          color: Colors.white, size: 18),
+                                      Icon(
+                                        Icons.upload,
+                                        color: Colors.white,
+                                        size: 18,
+                                      ),
                                     ],
                                   ),
                                 ),
                               ),
 
-                              if (childInfoController.observationImagePath.value.isNotEmpty)
+                              if (childInfoController
+                                  .observationImagePath
+                                  .isNotEmpty)
                                 SingleChildScrollView(
                                   scrollDirection: Axis.horizontal,
                                   child: Row(
                                     children: [
-
-                                      for(int i=0; i<childInfoController.observationImagePath.length ;i++)Padding(
-                                        padding: const EdgeInsets.only(top: 12),
-                                        child: Center(
+                                      for (
+                                        int i = 0;
+                                        i <
+                                            childInfoController
+                                                .observationImagePath
+                                                .length;
+                                        i++
+                                      )
+                                        Container(
+                                          padding: const EdgeInsets.all(2),
+                                          // space between image & border
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(
+                                              58,
+                                            ),
+                                            border: Border.all(
+                                              color: Colors.blue,
+                                              // border color
+                                              width: 2, // border width
+                                            ),
+                                          ),
                                           child: ClipRRect(
-                                            borderRadius: BorderRadius.circular(58),
+                                            borderRadius: BorderRadius.circular(
+                                              58,
+                                            ),
                                             child: Image.file(
                                               File(
-                                                  childInfoController.observationImagePath[i]),
+                                                childInfoController
+                                                    .observationImagePath[i],
+                                              ),
                                               height: 100,
                                               width: 100,
                                               fit: BoxFit.cover,
                                             ),
                                           ),
                                         ),
-                                      )
-
                                     ],
                                   ),
-                                )
-                                ,
+                                ),
 
                               const SizedBox(height: 20),
 
@@ -177,8 +194,23 @@ class _ObservationAddScreenState extends State<ObservationAddScreen> {
                                       backgroundColor: color_secondary,
                                     ),
                                     onPressed: () {
-                                      childInfoController
-                                          .callAddFamilyAPI(context);
+                                      if (childInfoController
+                                          .observationController
+                                          .value
+                                          .text
+                                          .toString()
+                                          .isEmpty) {
+                                        snackBarRapid(
+                                          context,
+                                          "Please enter observation",
+                                        );
+                                        return;
+                                      }
+
+                                      childInfoController.callAddObservationAPI(
+                                        context,
+                                        widget.childId,
+                                      );
                                     },
                                     child: BlueMediumBoldText(
                                       "Save",
@@ -203,12 +235,6 @@ class _ObservationAddScreenState extends State<ObservationAddScreen> {
           ],
         ),
       ),
-
-
     );
   }
 }
-
-
-
-

@@ -33,6 +33,8 @@ const urlGetObservationList = '/parent/children/observations';
 const urlLikeUnlikeObservation = '/parent/children/observations';
 const urlAddCommentInObservation = '/parent/children/observations';
 
+const urlAddObservation = '/parent/children/observations';
+
 /// Price Band
 const urlGetPriceBandList = '/parent/children/extra-bookings';
 

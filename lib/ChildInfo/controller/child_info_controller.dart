@@ -58,6 +58,8 @@ class ChildInfoController extends GetxController {
   RxInt selectedDateIndex = 0.obs;
 
   /// Editing controller for text field
+  Rx<TextEditingController> observationController = TextEditingController().obs;
+
   Rx<TextEditingController> firstNameController = TextEditingController().obs;
   Rx<TextEditingController> lastNameController = TextEditingController().obs;
   Rx<TextEditingController> mobileController = TextEditingController().obs;
@@ -72,12 +74,10 @@ class ChildInfoController extends GetxController {
   RxMap<String, List<int>> selectedSessions = <String, List<int>>{}.obs;
   RxMap<String, List<int>> selectedExtraCharges = <String, List<int>>{}.obs;
 
-
   Rx<DateTime?> planStartDate = Rx<DateTime?>(null);
   Rx<DateTime?> planEndDate = Rx<DateTime?>(null);
 
   Rx<AboutData> aboutChildren = AboutData().obs;
-
 
   RxInt selectedTab = 0.obs; // 0 = Basic, 1 = Health, 2 = Sensitive
 
@@ -104,7 +104,6 @@ class ChildInfoController extends GetxController {
     selectedSessions.refresh();
   }
 
-
   void toggleExtraCharge(String day, int chargeId) {
     selectedExtraCharges.putIfAbsent(day, () => []);
 
@@ -121,7 +120,6 @@ class ChildInfoController extends GetxController {
 
     selectedExtraCharges.refresh();
   }
-
 
   void calculateTotal() {
     double total = 0;
@@ -232,7 +230,7 @@ class ChildInfoController extends GetxController {
       'mobile': mobileController.value.text,
     };
 
-    await apiReq.postAPIWithMedia(url, body, token, imagePath.value).then((
+    await apiReq.postAPIWithMedia(url, body, token, imagePath.value, []).then((
       value,
     ) async {
       http.StreamedResponse res = value;
@@ -279,7 +277,7 @@ class ChildInfoController extends GetxController {
       'mobile': mobileController.value.text,
     };
 
-    await apiReq.postAPIWithMedia(url, body, token, imagePath.value).then((
+    await apiReq.postAPIWithMedia(url, body, token, imagePath.value, []).then((
       value,
     ) async {
       http.StreamedResponse res = value;
@@ -561,7 +559,7 @@ class ChildInfoController extends GetxController {
       "child_id": childId,
     };
 
-    await apiReq.postAPIWithMedia(url, body, token, imagePath.value).then((
+    await apiReq.postAPIWithMedia(url, body, token, imagePath.value, []).then((
       value,
     ) async {
       http.StreamedResponse res = value;
@@ -728,7 +726,6 @@ class ChildInfoController extends GetxController {
     });
   }
 
-
   /// get About API
   callGetAboutChildAPI(BuildContext context, String childId) async {
     isLoading.value = true;
@@ -758,12 +755,10 @@ class ChildInfoController extends GetxController {
 
         if (res.statusCode == 200) {
           Map<String, dynamic> userModel = json.decode(valueData);
-          AboutResponse aboutResponse =
-          AboutResponse.fromJson(userModel);
+          AboutResponse aboutResponse = AboutResponse.fromJson(userModel);
 
           if (aboutResponse.status ?? false) {
-            aboutChildren.value =
-                aboutResponse.data??AboutData();
+            aboutChildren.value = aboutResponse.data ?? AboutData();
           } else {
             snackBar(context, aboutResponse.message ?? "");
           }
@@ -792,23 +787,17 @@ class ChildInfoController extends GetxController {
       planEndDate.value ?? DateTime(2026),
     );
 
-
-
     var headers = {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token'
+      'Authorization': 'Bearer $token',
     };
     var request = http.Request('GET', Uri.parse(url));
-    request.body = json.encode({
-      "plan_start": planStart,
-      "plan_end": planEnd,
-    });
+    request.body = json.encode({"plan_start": planStart, "plan_end": planEnd});
     request.headers.addAll(headers);
 
     http.StreamedResponse response = await request.send();
     isLoading.value = false;
     if (response.statusCode == 200) {
-
       await response.stream.bytesToString().then((valueData) async {
         Map<String, dynamic> userModel = json.decode(valueData);
         PriceBandResponse priceBandResponse = PriceBandResponse.fromJson(
@@ -820,12 +809,10 @@ class ChildInfoController extends GetxController {
         } else {
           snackBar(context, priceBandResponse.message ?? "");
         }
-      });}
-
-    else {
+      });
+    } else {
       print(response.reasonPhrase);
     }
-
   }
 
   /// Observation list API
@@ -975,9 +962,12 @@ class ChildInfoController extends GetxController {
     });
   }
 
-
   /// Add Extra bookings API
-  callAddExtraBookingsAPI(BuildContext context, ExtraBookingsRequest extraBookingsJson, String childId) async {
+  callAddExtraBookingsAPI(
+    BuildContext context,
+    ExtraBookingsRequest extraBookingsJson,
+    String childId,
+  ) async {
     isLoading.value = true;
 
     String token = await MySharedPref().getAccessToken(
@@ -991,7 +981,7 @@ class ChildInfoController extends GetxController {
 
     var headers = {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token'
+      'Authorization': 'Bearer $token',
     };
     var request = http.Request('POST', Uri.parse(url));
 
@@ -1000,15 +990,11 @@ class ChildInfoController extends GetxController {
     http.StreamedResponse response = await request.send();
     isLoading.value = false;
     if (response.statusCode == 200) {
-
       await response.stream.bytesToString().then((valueData) async {
-
         printData("callAddExtraBookingsAPI", valueData);
 
         Map<String, dynamic> userModel = json.decode(valueData);
-        BaseModel baseModel = BaseModel.fromJson(
-          userModel,
-        );
+        BaseModel baseModel = BaseModel.fromJson(userModel);
 
         if (baseModel.status ?? false) {
           snackBar(context, baseModel.message ?? "");
@@ -1016,25 +1002,10 @@ class ChildInfoController extends GetxController {
         } else {
           snackBar(context, baseModel.message ?? "");
         }
-      });}
-
-    else {
+      });
+    } else {
       print(response.reasonPhrase);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     // await apiReq.postAPI(url, body, token).then((
     //     value,
@@ -1063,6 +1034,103 @@ class ChildInfoController extends GetxController {
     // });
   }
 
+  /// Add Observation API
+  callAddObservationAPI(BuildContext context, String childInfo) async {
+    isLoading.value = true;
+
+    String token = await MySharedPref().getAccessToken(
+      SharePreData.keyAccessToken,
+    );
+
+    String url = "$urlBase$urlAddObservation/$childInfo";
+
+    final apiReq = Request();
+
+    dynamic body = {'observation': observationController.value.text};
+
+    await apiReq
+        .postAPIWithMedia(url, body, token, "", observationImagePath)
+        .then((value) async {
+          http.StreamedResponse res = value;
+          printData(
+            runtimeType.toString(),
+            "callUpdateObservationAPI API response ${res.statusCode}",
+          );
+
+          await res.stream.bytesToString().then((valueData) async {
+            printData(
+              runtimeType.toString(),
+              "callAddObservationAPI API value ${valueData}",
+            );
+
+            isLoading.value = false;
+
+            if (res.statusCode == 200) {
+              Map<String, dynamic> userModel = json.decode(valueData);
+              BaseModel baseModel = BaseModel.fromJson(userModel);
+
+              if (baseModel.status ?? false) {
+                snackBar(context, baseModel.message ?? "");
+
+                Navigator.pop(context);
+              } else {
+                snackBar(context, baseModel.message ?? "");
+              }
+            }
+          });
+        });
+  }
+
+  /// Update Observation API
+  callUpdateObservationAPI(
+    BuildContext context,
+    String childInfo,
+    String observationId,
+  ) async {
+    isLoading.value = true;
+
+    String token = await MySharedPref().getAccessToken(
+      SharePreData.keyAccessToken,
+    );
+
+    String url = "$urlBase$urlAddObservation/$childInfo/$observationId";
+
+    final apiReq = Request();
+
+    dynamic body = {'observation': observationController.value.text};
+
+    await apiReq
+        .postAPIWithMedia(url, body, token, "", observationImagePath)
+        .then((value) async {
+          http.StreamedResponse res = value;
+          printData(
+            runtimeType.toString(),
+            "callUpdateObservationAPI API response ${res.statusCode}",
+          );
+
+          await res.stream.bytesToString().then((valueData) async {
+            printData(
+              runtimeType.toString(),
+              "callUpdateObservationAPI API value ${valueData}",
+            );
+
+            isLoading.value = false;
+
+            if (res.statusCode == 200) {
+              Map<String, dynamic> userModel = json.decode(valueData);
+              BaseModel baseModel = BaseModel.fromJson(userModel);
+
+              if (baseModel.status ?? false) {
+                snackBar(context, baseModel.message ?? "");
+
+                Navigator.pop(context);
+              } else {
+                snackBar(context, baseModel.message ?? "");
+              }
+            }
+          });
+        });
+  }
 
   @override
   void onClose() {
