@@ -1,1 +1,13 @@
-<?xml version="1.0" ?><svg enable-background="new 0 0 32 32" height="32px" id="svg2" version="1.1" viewBox="0 0 32 32" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:svg="http://www.w3.org/2000/svg"><g id="background"><rect fill="none" height="32" width="32"/></g><g id="view"><circle cx="16" cy="16" r="6"/><path d="M16,6C6,6,0,15.938,0,15.938S6,26,16,26s16-10,16-10S26,6,16,6z M16,24c-8.75,0-13.5-8-13.5-8S7.25,8,16,8s13.5,8,13.5,8   S24.75,24,16,24z"/></g></svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 32 19" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g transform="matrix(1,0,0,1,-13490.4,-462.055)">
+        <g transform="matrix(4.20423,0,0,4.20423,10567.3,-406.222)">
+            <g transform="matrix(0.0153904,0,0,0.0153904,695.292,205.005)">
+                <g>
+                    <path d="M244.425,98.725C151.025,98.725 66.325,149.825 3.825,232.825C-1.275,239.625 -1.275,249.125 3.825,255.925C66.325,339.025 151.025,390.125 244.425,390.125C337.825,390.125 422.525,339.025 485.025,256.025C490.125,249.225 490.125,239.725 485.025,232.925C422.525,149.825 337.825,98.725 244.425,98.725ZM251.125,347.025C189.125,350.925 137.925,299.825 141.825,237.725C145.025,186.525 186.525,145.025 237.725,141.825C299.725,137.925 350.925,189.025 347.025,251.125C343.725,302.225 302.225,343.725 251.125,347.025ZM248.025,299.625C214.625,301.725 187.025,274.225 189.225,240.825C190.925,213.225 213.325,190.925 240.925,189.125C274.325,187.025 301.925,214.525 299.725,247.925C297.925,275.625 275.525,297.925 248.025,299.625Z" style="fill:rgb(33,119,186);fill-rule:nonzero;"/>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

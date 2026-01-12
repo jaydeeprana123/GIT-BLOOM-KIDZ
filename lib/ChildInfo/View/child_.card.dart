@@ -6,6 +6,7 @@ import 'package:bloom_kidz/Styles/my_colors.dart';
 import 'package:bloom_kidz/Styles/my_font.dart';
 import 'package:bloom_kidz/Styles/my_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 import '../../CommonWidgets/black_medium_regular_text.dart';
@@ -76,7 +77,8 @@ class ChildCard extends StatelessWidget {
                     const SizedBox(height: 6),
                     Row(
                       children: [
-                        Icon(Icons.school, size: 14, color: Colors.grey),
+                        SvgPicture.asset(explorersIcon, width: 14, ),
+                        // Icon(Icons.school, size: 14, color: Colors.grey),
                         SizedBox(width: 4),
                         BlackSmallRegularText(
                           childInfo.room ?? "",
@@ -88,7 +90,8 @@ class ChildCard extends StatelessWidget {
                     const SizedBox(height: 4),
                     Row(
                       children: [
-                        Icon(Icons.sick, size: 14, color: Colors.grey),
+                        SvgPicture.asset(icon_sick, width: 14),
+                        // Icon(Icons.sick, size: 14, color: Colors.grey),
                         SizedBox(width: 4),
                         InkWell(
                           onTap: () {
@@ -106,7 +109,7 @@ class ChildCard extends StatelessWidget {
                           ),
                         ),
                         SizedBox(width: 12),
-                        Icon(Icons.beach_access, size: 14, color: Colors.grey),
+                        SvgPicture.asset(holidayIcon, width: 14),
                         SizedBox(width: 4),
                         InkWell(
                           onTap: () {
@@ -128,7 +131,7 @@ class ChildCard extends StatelessWidget {
                     const SizedBox(height: 10),
                     Row(
                       children: [
-                        _actionButton(Icons.chat, "Chat"),
+                        _actionButton(commentIcon, "Chat"),
                         const SizedBox(width: 8),
                         InkWell(
                           onTap: () {
@@ -139,7 +142,7 @@ class ChildCard extends StatelessWidget {
                             );
                           },
                           child: _actionButton(
-                            Icons.location_pin,
+                            pin,
                             "Collection Pin",
                           ),
                         ),
@@ -155,7 +158,7 @@ class ChildCard extends StatelessWidget {
     );
   }
 
-  Widget _actionButton(IconData icon, String text) {
+  Widget _actionButton(String icon, String text) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
@@ -164,7 +167,7 @@ class ChildCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(icon, color: Colors.white, size: 14),
+          SvgPicture.asset(icon, color: Colors.white, width: 14),
           const SizedBox(width: 4),
           BlackSmallMediumText(text, color: Colors.white),
         ],

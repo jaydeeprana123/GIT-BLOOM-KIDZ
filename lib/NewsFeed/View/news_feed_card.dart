@@ -13,6 +13,7 @@ import 'package:bloom_kidz/Styles/my_font.dart';
 import 'package:bloom_kidz/Styles/my_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 import 'package:flutter/material.dart';
@@ -82,8 +83,9 @@ class NewsFeedCard extends StatelessWidget {
 
                 Row(
                   children: [
-                    Icon(Icons.timer, color: color_secondary, size: 14),
-
+                    // Icon(Icons.timer, color: color_secondary, size: 14),
+                    SvgPicture.asset(clockIcon, width: 12),
+                    SizedBox(width: 2,),
                     BlueSmallRegularText(
                       newsFeed.createdAt != null
                           ? '${newsFeed.createdAt!.hour.toString().padLeft(2, '0')}:'
@@ -91,9 +93,9 @@ class NewsFeedCard extends StatelessWidget {
                           : '',
                     ),
 
-                    SizedBox(width: 5),
-                    Icon(Icons.date_range, color: color_secondary, size: 14),
-
+                    SizedBox(width: 7),
+                    SvgPicture.asset(dobIcon, width: 12),
+                    SizedBox(width: 2,),
                     BlueSmallRegularText(
                       newsFeed.createdAt != null
                           ? '${newsFeed.createdAt!.day.toString().padLeft(2, '0')}-'
@@ -184,14 +186,9 @@ class NewsFeedCard extends StatelessWidget {
             onTap: () {
               controller.callAddLikeInNewsFeedAPI(context, newsId, index);
             },
-            child: Icon(
-              (controller.newsFeedList[index].isLike ?? false)
-                  ? Icons.favorite
-                  : Icons.favorite_border,
-              color: (controller.newsFeedList[index].isLike ?? false)
-                  ? Colors.red
-                  : color_secondary,
-              size: 16,
+            child: SvgPicture.asset(
+              icon_like,
+              width: 16,
             ),
           ),
           SizedBox(width: 4),
@@ -210,7 +207,16 @@ class NewsFeedCard extends StatelessWidget {
             },
             child: Row(
               children: [
-                Icon(Icons.chat, size: 16, color: color_secondary),
+
+                SvgPicture.asset(
+                  icon_comment,
+                  // color: (controller.newsFeedList[index].isLike ?? false)
+                  //     ? Colors.red
+                  //     : color_secondary,
+                  width: 16,
+                ),
+
+                // Icon(Icons.chat, size: 16, color: color_secondary),
                 SizedBox(width: 4),
                 BlueMediumRegularText((newsFeed.commentsCount ?? 0).toString()),
               ],
@@ -241,8 +247,9 @@ class NewsFeedCard extends StatelessWidget {
                 ),
               ),
             ),
+
             IconButton(
-              icon: const Icon(Icons.send, color: color_secondary),
+              icon: SvgPicture.asset(send, width: 22,),
               onPressed: () async {
                 await newsFeedController.callAddCommentAPI(
                   context,

@@ -13,6 +13,7 @@ import 'package:bloom_kidz/Styles/my_font.dart';
 import 'package:bloom_kidz/Styles/my_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 import 'package:flutter/material.dart';
@@ -191,16 +192,22 @@ class ObservationCard extends StatelessWidget {
                 index,
               );
             },
-            child: Icon(
-              (childInfoController.observationList[index].isLike ?? false)
-                  ? Icons.favorite
-                  : Icons.favorite_border,
-              color:
-                  (childInfoController.observationList[index].isLike ?? false)
-                  ? Colors.red
-                  : color_secondary,
-              size: 16,
+            child: SvgPicture.asset(
+              icon_like,
+              width: 16,
             ),
+
+
+            // Icon(
+            //   (childInfoController.observationList[index].isLike ?? false)
+            //       ? Icons.favorite
+            //       : Icons.favorite_border,
+            //   color:
+            //       (childInfoController.observationList[index].isLike ?? false)
+            //       ? Colors.red
+            //       : color_secondary,
+            //   size: 16,
+            // ),
           ),
           SizedBox(width: 4),
           BlueMediumRegularText((observation.likesCount ?? 0).toString()),
@@ -219,7 +226,13 @@ class ObservationCard extends StatelessWidget {
             },
             child: Row(
               children: [
-                Icon(Icons.chat, size: 16, color: color_secondary),
+
+                SvgPicture.asset(
+                  icon_comment,
+                  width: 16,
+                ),
+
+                // Icon(Icons.chat, size: 16, color: color_secondary),
                 SizedBox(width: 4),
                 BlueMediumRegularText(
                   (observation.commentsCount ?? 0).toString(),
@@ -253,7 +266,7 @@ class ObservationCard extends StatelessWidget {
               ),
             ),
             IconButton(
-              icon: const Icon(Icons.send, color: color_secondary),
+              icon: SvgPicture.asset(send, width: 22,),
               onPressed: () async {
                 await childInfoController.callAddCommentAPI(
                   context,

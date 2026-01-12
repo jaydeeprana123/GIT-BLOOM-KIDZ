@@ -77,7 +77,31 @@ const icon_fav = 'assets/images/icon_fav.svg';
 const icon_stack = 'assets/images/icon_stack.svg';
 const icon_settings = 'assets/images/settings.svg';
 const icon_discovery = 'assets/images/discovery.svg';
-const icon_like = 'assets/images/icon_like.svg';
+const icon_like = 'assets/images/icon_Like.svg';
+const pin = 'assets/images/pin.svg';
+const email = 'assets/images/email.svg';
+const dob = 'assets/images/dob.svg';
+const send = 'assets/images/send.svg';
+const allergyIcon = 'assets/images/Allergy.svg';
+const birthPlaceIcon = 'assets/images/birthplace.svg';
+const calendarIcon = 'assets/images/calender.svg';
+const clockIcon = 'assets/images/clock.svg';
+const commentIcon = 'assets/images/comment.svg';
+const crossIcon = 'assets/images/cross.svg';
+const dobIcon = 'assets/images/dob.svg';
+const emailIcon = 'assets/images/email.svg';
+const ethnicityIcon = 'assets/images/Ethnicity.svg';
+const explorersIcon = 'assets/images/Explorers.svg';
+const eyeIcon = 'assets/images/eye.svg';
+const healthInformationIcon = 'assets/images/Health Information.svg';
+const holidayIcon = 'assets/images/Holiday.svg';
+const keyPersonIcon = 'assets/images/key perso.svg';
+const liveWithIcon = 'assets/images/livewith.svg';
+const nationalityIcon = 'assets/images/nationality.svg';
+const parentResponsibilityIcon = 'assets/images/patrentrespiniblity.svg';
+
+
+const icon_comment = 'assets/images/comment.svg';
 const icon_white = 'assets/images/icon_white.svg';
 
 const icon_faq = 'assets/images/left_menu_faq.svg';
@@ -92,6 +116,7 @@ const icon_ratings = 'assets/images/ratings.svg';
 const icon_comments = 'assets/images/comments.svg';
 const icon_signup_plus = 'assets/images/signup_plus.svg';
 const icon_password_eye = 'assets/images/password_eye.svg';
+const icon_sick = 'assets/images/sick.svg';
 
 const icon_about = 'assets/images/About.svg';
 const icon_activity = 'assets/images/Activity.svg';
