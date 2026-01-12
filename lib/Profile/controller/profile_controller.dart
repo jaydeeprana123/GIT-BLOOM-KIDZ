@@ -15,6 +15,7 @@ import '../../../../Utils/preference_utils.dart';
 import '../../../../Utils/share_predata.dart';
 import '../../../BottomNavigation/view/bottom_navigation_view.dart';
 import '../../Networks/api_response.dart';
+import '../model/quick_pin_response.dart';
 
 /// Controller
 class ProfileController extends GetxController {
@@ -23,14 +24,16 @@ class ProfileController extends GetxController {
 
   Rx<TextEditingController> passwordController = TextEditingController().obs;
   Rx<TextEditingController> newPasswordController = TextEditingController().obs;
-  Rx<TextEditingController> confirmPasswordController = TextEditingController().obs;
+  Rx<TextEditingController> confirmPasswordController =
+      TextEditingController().obs;
 
   Rx<TextEditingController> pinController = TextEditingController().obs;
-
 
   Rx<LoginResponse> loginResponse = LoginResponse().obs;
   Rx<ProfileUser> profileUser = ProfileUser().obs;
   RxBool isLoading = false.obs;
+
+  Rx<QuickPinResponse> quickPinResponse = QuickPinResponse().obs;
 
   getUserInfo() async {
     /// Set login model into shared preference
@@ -43,7 +46,7 @@ class ProfileController extends GetxController {
   callGetProfileAPI(BuildContext context) async {
     isLoading.value = true;
 
-    String token = await MySharedPref().getAccessToken(
+    String token = await MySharedPref().getStringValue(
       SharePreData.keyAccessToken,
     );
 
@@ -62,10 +65,10 @@ class ProfileController extends GetxController {
 
         if (res.statusCode == 200) {
           Map<String, dynamic> userModel = json.decode(valueData);
-         ProfileResponse profileResponse = ProfileResponse.fromJson(userModel);
+          ProfileResponse profileResponse = ProfileResponse.fromJson(userModel);
 
           if (profileResponse.status ?? false) {
-            profileUser.value = profileResponse.data?.user??ProfileUser();
+            profileUser.value = profileResponse.data?.user ?? ProfileUser();
           } else {
             snackBar(context, loginResponse.value.message ?? "");
           }
@@ -74,12 +77,11 @@ class ProfileController extends GetxController {
     });
   }
 
-
   /// Change Password API
   Future<void> callChangePasswordAPI(BuildContext context) async {
     isLoading.value = true;
 
-    String token = await MySharedPref().getAccessToken(
+    String token = await MySharedPref().getStringValue(
       SharePreData.keyAccessToken,
     );
 
@@ -90,7 +92,7 @@ class ProfileController extends GetxController {
     dynamic body = {
       'current_password': passwordController.value.text,
       "new_password": newPasswordController.value.text,
-      "new_password_confirmation": confirmPasswordController.value.text
+      "new_password_confirmation": confirmPasswordController.value.text,
     };
 
     await apiReq.postAPI(url, body, token).then((value) async {
@@ -118,12 +120,11 @@ class ProfileController extends GetxController {
     });
   }
 
-
   /// Set Pin API
   Future<void> callSetPinAPI(BuildContext context) async {
     isLoading.value = true;
 
-    String token = await MySharedPref().getAccessToken(
+    String token = await MySharedPref().getStringValue(
       SharePreData.keyAccessToken,
     );
 
@@ -131,9 +132,7 @@ class ProfileController extends GetxController {
 
     final apiReq = Request();
 
-    dynamic body = {
-      'pin_code': pinController.value.text,
-    };
+    dynamic body = {'pin_code': pinController.value.text};
 
     await apiReq.postAPI(url, body, token).then((value) async {
       http.StreamedResponse res = value;
@@ -159,6 +158,41 @@ class ProfileController extends GetxController {
     });
   }
 
+  /// Set Pin API
+  Future<void> callViewPinAPI(BuildContext context) async {
+    isLoading.value = true;
+
+    String token = await MySharedPref().getStringValue(
+      SharePreData.keyAccessToken,
+    );
+
+    String url = urlBase + urlViewPin;
+
+    final apiReq = Request();
+
+    await apiReq.getMethodAPI(url, null, token).then((value) async {
+      http.StreamedResponse res = value;
+      printData(
+        runtimeType.toString(),
+        "callViewPinAPI API response ${res.statusCode}",
+      );
+
+      await res.stream.bytesToString().then((valueData) async {
+        printData(
+          runtimeType.toString(),
+          "callViewPinAPI API value ${valueData}",
+        );
+
+        isLoading.value = false;
+
+        if (res.statusCode == 200) {
+          Map<String, dynamic> userModel = json.decode(valueData);
+          quickPinResponse.value = QuickPinResponse.fromJson(userModel);
+          pinController.value.text = quickPinResponse.value.data?.pinCode ?? "";
+        }
+      });
+    });
+  }
 
   @override
   void onClose() {

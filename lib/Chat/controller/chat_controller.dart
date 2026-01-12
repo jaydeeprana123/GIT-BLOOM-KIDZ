@@ -37,7 +37,7 @@ class ChatController extends GetxController {
   callPeopleListAPI(BuildContext context) async {
     isLoading.value = true;
 
-    String token = await MySharedPref().getAccessToken(
+    String token = await MySharedPref().getStringValue(
       SharePreData.keyAccessToken,
     );
 

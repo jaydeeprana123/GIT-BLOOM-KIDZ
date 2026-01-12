@@ -27,7 +27,12 @@ class NewsFeedCard extends StatelessWidget {
   final NewsFeedController newsFeedController;
   final int index;
 
-  const NewsFeedCard({super.key, required this.newsFeed, required this.newsFeedController, required this.index});
+  const NewsFeedCard({
+    super.key,
+    required this.newsFeed,
+    required this.newsFeedController,
+    required this.index,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +49,7 @@ class NewsFeedCard extends StatelessWidget {
           if ((newsFeed.media ?? []).isNotEmpty) _image(),
           _description(),
           _actions(context, newsFeedController, index, newsFeed.id.toString()),
-          _replyBox(context,newsFeed.id.toString(), index),
+          _replyBox(context, newsFeed.id.toString(), index),
         ],
       ),
     );
@@ -101,7 +106,7 @@ class NewsFeedCard extends StatelessWidget {
               ],
             ),
           ),
-          const Icon(Icons.more_vert),
+          // const Icon(Icons.more_vert),
         ],
       ),
     );
@@ -154,10 +159,7 @@ class NewsFeedCard extends StatelessWidget {
                 final base64Str = src.split(',').last;
                 final bytes = base64Decode(base64Str);
 
-                return Image.memory(
-                  bytes,
-                  fit: BoxFit.contain,
-                );
+                return Image.memory(bytes, fit: BoxFit.contain);
               }
 
               return const SizedBox();
@@ -168,20 +170,41 @@ class NewsFeedCard extends StatelessWidget {
     );
   }
 
-  Widget _actions(BuildContext context,NewsFeedController controller, int index, String newsId) {
+  Widget _actions(
+    BuildContext context,
+    NewsFeedController controller,
+    int index,
+    String newsId,
+  ) {
     return Padding(
       padding: const EdgeInsets.all(12),
       child: Row(
         children: [
-          InkWell(onTap: (){
-            controller.callAddLikeInNewsFeedAPI(context, newsId,index);
-          },child: Icon((controller.newsFeedList[index].isLike??false)?Icons.favorite:Icons.favorite_border, color: (controller.newsFeedList[index].isLike??false)?Colors.red:color_secondary, size: 16)),
+          InkWell(
+            onTap: () {
+              controller.callAddLikeInNewsFeedAPI(context, newsId, index);
+            },
+            child: Icon(
+              (controller.newsFeedList[index].isLike ?? false)
+                  ? Icons.favorite
+                  : Icons.favorite_border,
+              color: (controller.newsFeedList[index].isLike ?? false)
+                  ? Colors.red
+                  : color_secondary,
+              size: 16,
+            ),
+          ),
           SizedBox(width: 4),
           BlueMediumRegularText((newsFeed.likesCount ?? 0).toString()),
           SizedBox(width: 16),
           InkWell(
-            onTap: (){
-              Get.to(CommentListWidget(newsFeed: newsFeed,newsFeedController: newsFeedController,));
+            onTap: () {
+              Get.to(
+                CommentListWidget(
+                  newsFeed: newsFeed,
+                  newsFeedController: newsFeedController,
+                ),
+              );
             },
             child: Row(
               children: [
@@ -196,7 +219,7 @@ class NewsFeedCard extends StatelessWidget {
     );
   }
 
-  Widget _replyBox(BuildContext context,String id, int i) {
+  Widget _replyBox(BuildContext context, String id, int i) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
       child: Container(
@@ -207,7 +230,7 @@ class NewsFeedCard extends StatelessWidget {
         ),
         child: Row(
           children: [
-             Expanded(
+            Expanded(
               child: TextField(
                 controller: newsFeedController.replyController[i],
                 decoration: InputDecoration(
@@ -218,9 +241,13 @@ class NewsFeedCard extends StatelessWidget {
             ),
             IconButton(
               icon: const Icon(Icons.send, color: color_secondary),
-              onPressed: () async{
-               await newsFeedController.callAddCommentAPI(context, id, newsFeedController.replyController[i].text);
-               newsFeedController.replyController[i].text = "";
+              onPressed: () async {
+                await newsFeedController.callAddCommentAPI(
+                  context,
+                  id,
+                  newsFeedController.replyController[i].text,
+                );
+                newsFeedController.replyController[i].text = "";
               },
             ),
           ],

@@ -8,5 +8,7 @@ class SharePreData {
   static String keyDashboardData = "dashboardData";
   static String keyDeviceTokenSend = "deviceTokenSend";
   static String keyAccessToken = "accessToken";
+  static String keyPassword = "passwordPref";
+  static String keyEmail = "emailPref";
   static String keyRupeeSymbol = "₹";
 }

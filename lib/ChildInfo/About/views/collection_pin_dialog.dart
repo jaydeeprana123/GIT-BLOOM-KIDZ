@@ -17,104 +17,102 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
-
 import 'package:flutter/material.dart';
 
 import '../../../CommonWidgets/blue_medium_bold_text.dart';
 
-
 class CollectionPinDialog extends StatelessWidget {
-  
   final ChildInfoController controller;
-  
-  CollectionPinDialog({super.key, required this.controller});
+  final String childId;
+
+  CollectionPinDialog({
+    super.key,
+    required this.controller,
+    required this.childId,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       insetPadding: const EdgeInsets.symmetric(horizontal: 20),
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Obx(
-            () =>Stack(
-          children: [
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                /// ❌ Close Button
-                Align(
-                  alignment: Alignment.topRight,
-                  child: GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: const Icon(
-                      Icons.cancel,
-                      color: color_secondary,
+          () => Stack(
+            children: [
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  /// ❌ Close Button
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: const Icon(Icons.cancel, color: color_secondary),
                     ),
                   ),
-                ),
 
-                const SizedBox(height: 4),
+                  const SizedBox(height: 4),
 
-                /// 🔵 Title
-                BlueMediumBoldText(
-                  "Set Collection Pin",
-                  fontSize: 16,
-                ),
+                  /// 🔵 Title
+                  BlueMediumBoldText("Set Collection Pin", fontSize: 16),
 
-                const SizedBox(height: 20),
+                  const SizedBox(height: 20),
 
-                /// 🔑 Current Password
-                CommonTextField(
-                  hint: "Enter Collection Pin",
-                  controller: controller.collectionPinController.value,
-                  isPassword: false,
-                ),
+                  /// 🔑 Current Password
+                  CommonTextField(
+                    hint: "Enter Collection Pin",
+                    controller: controller.collectionPinController.value,
+                    isPassword: false,
+                  ),
 
-                const SizedBox(height: 20),
+                  const SizedBox(height: 20),
 
-                /// 💾 Save Button
-                Center(
-                  child: SizedBox(
-                    height: 38,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: color_secondary,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                  /// 💾 Save Button
+                  Center(
+                    child: SizedBox(
+                      height: 38,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: color_secondary,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
                         ),
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                      ),
-                      onPressed: () async{
+                        onPressed: () async {
+                          if (controller
+                              .collectionPinController
+                              .value
+                              .text
+                              .isEmpty) {
+                            snackBar(context, "Please Enter Pin");
+                            return;
+                          }
 
-                        if(controller.collectionPinController.value.text.isEmpty){
-                          snackBar(context, "Please Enter Pin");
-                          return;
-                        }
-
-                        await controller.callCollectionSetPinAPI(context);
-
-
-                      },
-                      child: BlueMediumBoldText(
-                        "Set Pin",
-                        color: Colors.white
+                          await controller.callCollectionSetPinAPI(
+                            context,
+                            childId,
+                          );
+                        },
+                        child: BlueMediumBoldText(
+                          "Set Pin",
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
 
-            if(controller.isLoading.value)Center(child: CircularProgressIndicator(),)
-          ],
-        )),
+              if (controller.isLoading.value)
+                Center(child: CircularProgressIndicator()),
+            ],
+          ),
+        ),
       ),
     );
   }
 }
-
-

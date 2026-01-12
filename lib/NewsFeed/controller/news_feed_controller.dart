@@ -42,7 +42,7 @@ class NewsFeedController extends GetxController {
   callNewsFeedAPI(BuildContext context) async {
     isLoading.value = true;
 
-    String token = await MySharedPref().getAccessToken(
+    String token = await MySharedPref().getStringValue(
       SharePreData.keyAccessToken,
     );
 
@@ -87,7 +87,7 @@ class NewsFeedController extends GetxController {
   callNewsFeedCalenderAPI(BuildContext context) async {
     isLoading.value = true;
 
-    String token = await MySharedPref().getAccessToken(
+    String token = await MySharedPref().getStringValue(
       SharePreData.keyAccessToken,
     );
 
@@ -132,7 +132,7 @@ class NewsFeedController extends GetxController {
   callAddCommentAPI(BuildContext context, String id, String comment) async {
     isLoading.value = true;
 
-    String token = await MySharedPref().getAccessToken(
+    String token = await MySharedPref().getStringValue(
       SharePreData.keyAccessToken,
     );
 
@@ -179,7 +179,7 @@ class NewsFeedController extends GetxController {
       ) async {
     isLoading.value = true;
 
-    String token = await MySharedPref().getAccessToken(
+    String token = await MySharedPref().getStringValue(
       SharePreData.keyAccessToken,
     );
 
@@ -229,7 +229,7 @@ class NewsFeedController extends GetxController {
   ) async {
     isLoading.value = true;
 
-    String token = await MySharedPref().getAccessToken(
+    String token = await MySharedPref().getStringValue(
       SharePreData.keyAccessToken,
     );
 

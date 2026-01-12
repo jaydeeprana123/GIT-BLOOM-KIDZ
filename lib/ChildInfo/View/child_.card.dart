@@ -11,6 +11,8 @@ import 'package:get/get.dart';
 import '../../CommonWidgets/black_medium_regular_text.dart';
 import '../../CommonWidgets/black_small_medium_text.dart';
 import '../../CommonWidgets/black_small_regular_text.dart';
+import '../About/views/add_holiday_dialog.dart';
+import '../About/views/collection_pin_dialog.dart';
 import '../controller/child_info_controller.dart';
 import 'child_details_screen.dart';
 
@@ -18,14 +20,22 @@ class ChildCard extends StatelessWidget {
   final ChildInfo childInfo;
   final ChildInfoController childInfoController;
 
-  const ChildCard({super.key, required this.childInfo,  required this.childInfoController});
-
+  const ChildCard({
+    super.key,
+    required this.childInfo,
+    required this.childInfoController,
+  });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Get.to(ChildDetailsScreen(childInfo: childInfo, childInfoController: childInfoController,));
+        Get.to(
+          ChildDetailsScreen(
+            childInfo: childInfo,
+            childInfoController: childInfoController,
+          ),
+        );
       },
       child: Card(
         margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -80,18 +90,38 @@ class ChildCard extends StatelessWidget {
                       children: [
                         Icon(Icons.sick, size: 14, color: Colors.grey),
                         SizedBox(width: 4),
-                        BlackSmallRegularText(
-                          "Sick",
-                          fontSize: 11,
-                          color: Colors.black,
+                        InkWell(
+                          onTap: () {
+                            showLeaveDialog(
+                              context,
+                              childInfoController,
+                              false,
+                              childInfo.id.toString(),
+                            );
+                          },
+                          child: BlackSmallRegularText(
+                            "Sick",
+                            fontSize: 11,
+                            color: Colors.black,
+                          ),
                         ),
                         SizedBox(width: 12),
                         Icon(Icons.beach_access, size: 14, color: Colors.grey),
                         SizedBox(width: 4),
-                        BlackSmallRegularText(
-                          "Holiday",
-                          fontSize: 11,
-                          color: Colors.black,
+                        InkWell(
+                          onTap: () {
+                            showLeaveDialog(
+                              context,
+                              childInfoController,
+                              true,
+                              childInfo.id.toString(),
+                            );
+                          },
+                          child: BlackSmallRegularText(
+                            "Holiday",
+                            fontSize: 11,
+                            color: Colors.black,
+                          ),
                         ),
                       ],
                     ),
@@ -100,7 +130,19 @@ class ChildCard extends StatelessWidget {
                       children: [
                         _actionButton(Icons.chat, "Chat"),
                         const SizedBox(width: 8),
-                        _actionButton(Icons.location_pin, "Collection Pin"),
+                        InkWell(
+                          onTap: () {
+                            showCollectionPinDialog(
+                              context,
+                              childInfoController,
+                              childInfo.id.toString(),
+                            );
+                          },
+                          child: _actionButton(
+                            Icons.location_pin,
+                            "Collection Pin",
+                          ),
+                        ),
                       ],
                     ),
                   ],
@@ -127,6 +169,42 @@ class ChildCard extends StatelessWidget {
           BlackSmallMediumText(text, color: Colors.white),
         ],
       ),
+    );
+  }
+
+  void showLeaveDialog(
+    BuildContext context,
+    ChildInfoController childInfoController,
+    bool isHoliday,
+    String childId,
+  ) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AddHolidayDialog(
+          controller: childInfoController,
+          childId: childId,
+          isHoliday: isHoliday,
+        );
+      },
+    );
+  }
+
+  void showCollectionPinDialog(
+    BuildContext context,
+    ChildInfoController childInfoController,
+    String childId,
+  ) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return CollectionPinDialog(
+          controller: childInfoController,
+          childId: childId,
+        );
+      },
     );
   }
 }

@@ -17,7 +17,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter/material.dart';
 
-import '../../models/activity_response.dart';
+import '../../models/child_activity_response.dart';
 import 'models/timeline_item.dart';
 
 class TimelineCard extends StatelessWidget {

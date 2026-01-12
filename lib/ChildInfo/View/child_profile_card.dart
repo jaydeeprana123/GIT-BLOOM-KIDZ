@@ -14,11 +14,14 @@ import '../../CommonWidgets/blue_large_bold_text.dart';
 import '../models/child_info_list_response.dart';
 
 class ChildProfileCard extends StatelessWidget {
-
   final ChildInfo childInfo;
   final ChildInfoController childInfoController;
 
-  const ChildProfileCard({super.key, required this.childInfo,  required this.childInfoController});
+  const ChildProfileCard({
+    super.key,
+    required this.childInfo,
+    required this.childInfoController,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -66,8 +69,13 @@ class ChildProfileCard extends StatelessWidget {
                     Icon(Icons.sick, size: 14, color: Colors.grey),
                     SizedBox(width: 4),
                     InkWell(
-                      onTap: (){
-                        showLeaveDialog(context, childInfoController, false, childInfo.id.toString());
+                      onTap: () {
+                        showLeaveDialog(
+                          context,
+                          childInfoController,
+                          false,
+                          childInfo.id.toString(),
+                        );
                       },
                       child: BlackSmallRegularText(
                         "Sick",
@@ -79,8 +87,13 @@ class ChildProfileCard extends StatelessWidget {
                     Icon(Icons.beach_access, size: 14, color: Colors.grey),
                     SizedBox(width: 4),
                     InkWell(
-                      onTap: (){
-                        showLeaveDialog(context, childInfoController, true, childInfo.id.toString());
+                      onTap: () {
+                        showLeaveDialog(
+                          context,
+                          childInfoController,
+                          true,
+                          childInfo.id.toString(),
+                        );
                       },
                       child: BlackSmallRegularText(
                         "Holiday",
@@ -97,7 +110,11 @@ class ChildProfileCard extends StatelessWidget {
                     const SizedBox(width: 8),
                     InkWell(
                       onTap: () {
-                        showCollectionPinDialog(context, childInfoController);
+                        showCollectionPinDialog(
+                          context,
+                          childInfoController,
+                          childInfo.id.toString(),
+                        );
                       },
                       child: _actionButton(
                         Icons.location_pin,
@@ -117,32 +134,38 @@ class ChildProfileCard extends StatelessWidget {
   void showCollectionPinDialog(
     BuildContext context,
     ChildInfoController childInfoController,
+    String childId,
   ) {
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return CollectionPinDialog(controller: childInfoController);
+        return CollectionPinDialog(
+          controller: childInfoController,
+          childId: childId,
+        );
       },
     );
   }
 
-
   void showLeaveDialog(
-      BuildContext context,
-      ChildInfoController childInfoController,
-      bool isHoliday,
-      String childId
-      ) {
+    BuildContext context,
+    ChildInfoController childInfoController,
+    bool isHoliday,
+    String childId,
+  ) {
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return AddHolidayDialog(controller: childInfoController, childId: childId,isHoliday: isHoliday,);
+        return AddHolidayDialog(
+          controller: childInfoController,
+          childId: childId,
+          isHoliday: isHoliday,
+        );
       },
     );
   }
-
 
   Widget _actionButton(IconData icon, String text) {
     return Container(

@@ -6,11 +6,14 @@ import 'package:bloom_kidz/CommonWidgets/common_widget.dart';
 import 'package:bloom_kidz/Styles/my_colors.dart';
 import 'package:bloom_kidz/Styles/my_font.dart';
 import 'package:bloom_kidz/Styles/my_icons.dart';
+import 'package:bloom_kidz/Utils/preference_utils.dart';
+import 'package:bloom_kidz/Utils/share_predata.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../Chat/View/chat_screen.dart';
 import '../../ChildInfo/View/child_info_screen.dart';
@@ -26,6 +29,28 @@ class _LoginScreenState extends State<LoginScreen> {
   bool rememberMe = false;
 
   LoginController loginController = Get.put(LoginController());
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      String password = await (MySharedPref().getStringValue(
+        SharePreData.keyPassword,
+      ));
+
+      String email = await (MySharedPref().getStringValue(
+        SharePreData.keyEmail,
+      ));
+
+      if (password.isNotEmpty) {
+        loginController.passwordController.value.text = password;
+      }
+
+      if (email.isNotEmpty) {
+        loginController.emailController.value.text = email;
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -112,14 +137,43 @@ class _LoginScreenState extends State<LoginScreen> {
                             Row(
                               children: [
                                 Checkbox(
-                                  value: false,
-                                  onChanged: (_) {},
+                                  value: rememberMe,
+                                  onChanged: (value) {
+                                    rememberMe = value ?? false;
+                                    if (value ?? false) {
+                                      MySharedPref().setString(
+                                        SharePreData.keyPassword,
+                                        loginController
+                                            .passwordController
+                                            .value
+                                            .text,
+                                      );
+
+                                      MySharedPref().setString(
+                                        SharePreData.keyEmail,
+                                        loginController
+                                            .emailController
+                                            .value
+                                            .text,
+                                      );
+                                    }
+
+                                    setState(() {});
+                                  },
                                   activeColor: const Color(0xFF1F77C8),
                                 ),
                                 const Text("Remember me"),
                                 const Spacer(),
                                 TextButton(
-                                  onPressed: () {},
+                                  onPressed: () async {
+                                    Uri launchUri = Uri.parse(
+                                      "https://staging.bloomkidz.net/",
+                                    );
+                                    await launchUrl(
+                                      launchUri,
+                                      mode: LaunchMode.externalApplication,
+                                    );
+                                  },
                                   child: const Text(
                                     "Forgot Password ?",
                                     style: TextStyle(color: Color(0xFF1F77C8)),
@@ -153,6 +207,29 @@ class _LoginScreenState extends State<LoginScreen> {
                                       .isEmpty) {
                                     snackBarRapid(context, "Enter email");
                                     return;
+                                  }
+
+                                  if (rememberMe) {
+                                    MySharedPref().setString(
+                                      SharePreData.keyPassword,
+                                      loginController
+                                          .passwordController
+                                          .value
+                                          .text,
+                                    );
+
+                                    MySharedPref().setString(
+                                      SharePreData.keyEmail,
+                                      loginController
+                                          .emailController
+                                          .value
+                                          .text,
+                                    );
+                                  } else {
+                                    MySharedPref().setString(
+                                      SharePreData.keyPassword,
+                                      "",
+                                    );
                                   }
 
                                   loginController.callLoginAPI(context);

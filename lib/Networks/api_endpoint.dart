@@ -10,12 +10,11 @@ const urlNewsFeedCalenderList = '/parent/newsfeeds/calendar';
 const urlNewsFeedList = '/parent/newsfeeds';
 const urlAddLikeInNewsFeed = '/parent/newsfeeds';
 
-
 const urlAddCommentInNewsFeed = '/parent/newsfeeds';
 const urlAddLikeInNewsFeedComment = '/parent/newsfeeds';
 
 const urlChildInfoList = '/parent/children';
-const urlActivityList = '/parent/children/activity';
+const urlChildActivityList = '/parent/children/activity';
 
 const urlGetFamilyContacts = '/parent/contacts';
 const urlAddFamily = "/parent/contacts";
@@ -54,12 +53,14 @@ const urlGetPriceBandList = '/parent/children/extra-bookings';
 const urlGetChildPermissionsList = '/parent/children/permissions';
 const urlConfirmChildPermission = '/parent/children/permissions/confirm';
 
-
-
 /// Profile
 const urlGetProfile = '/parent/profile';
 const urlChangePassword = '/parent/change-password';
 const urlSetPin = '/parent/profile/update-quick-pin';
+const urlViewPin = '/parent/profile/view-quick-pin';
+
+const urlSetCollectionPin = '/parent/children/set-collection-pin';
+const urlActivityList = '/parent/activities';
 
 /// Chat
 const urlPeopleList = '/parent/chat/people';

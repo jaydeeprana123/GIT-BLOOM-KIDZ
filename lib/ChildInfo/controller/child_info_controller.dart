@@ -6,7 +6,7 @@ import 'package:bloom_kidz/ChildInfo/About/models/about_response.dart';
 import 'package:bloom_kidz/ChildInfo/Documents/models/documents_response.dart';
 import 'package:bloom_kidz/ChildInfo/Observations/models/observation_list_response.dart';
 import 'package:bloom_kidz/ChildInfo/Permissions/models/permissions_response.dart';
-import 'package:bloom_kidz/ChildInfo/models/activity_response.dart';
+import 'package:bloom_kidz/ChildInfo/models/child_activity_response.dart';
 import 'package:bloom_kidz/ChildInfo/models/child_info_list_response.dart';
 import 'package:bloom_kidz/NewsFeed/models/news_feed_response.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +20,7 @@ import '../../../../Networks/model/base_model.dart';
 import '../../../../Utils/preference_utils.dart';
 import '../../../../Utils/share_predata.dart';
 import '../../../BottomNavigation/view/bottom_navigation_view.dart';
+import '../../Activity/model/activity_response_for_select.dart';
 import '../../Networks/api_response.dart';
 import '../Bookings/models/bookings_response.dart';
 import '../ExtraBookings/models/extra_bookings_request.dart';
@@ -46,6 +47,8 @@ class ChildInfoController extends GetxController {
   RxList<bool> isLikeList = <bool>[].obs;
 
   RxList<ActivityData> activityList = <ActivityData>[].obs;
+  RxList<ActivityForSelect> activityListForSelect = <ActivityForSelect>[].obs;
+
   Rx<LoginResponse> loginResponse = LoginResponse().obs;
 
   RxList<FamilyContact> familyContactList = <FamilyContact>[].obs;
@@ -67,8 +70,8 @@ class ChildInfoController extends GetxController {
 
   Rx<TextEditingController> noteController = TextEditingController().obs;
 
-
-  Rx<TextEditingController> collectionPinController = TextEditingController().obs;
+  Rx<TextEditingController> collectionPinController =
+      TextEditingController().obs;
 
   Rx<TextEditingController> observationController = TextEditingController().obs;
 
@@ -92,7 +95,6 @@ class ChildInfoController extends GetxController {
   Rx<DateTime?> startDate = Rx<DateTime?>(null);
   Rx<DateTime?> endDate = Rx<DateTime?>(null);
 
-
   Rx<AboutData> aboutChildren = AboutData().obs;
 
   RxInt selectedTab = 0.obs; // 0 = Basic, 1 = Health, 2 = Sensitive
@@ -114,8 +116,6 @@ class ChildInfoController extends GetxController {
   void setEnd(DateTime date) {
     endDate.value = date;
   }
-
-
 
   void toggleSession(String day, int sessionId) {
     selectedSessions.putIfAbsent(day, () => []);
@@ -200,7 +200,7 @@ class ChildInfoController extends GetxController {
   callChildInfoAPI(BuildContext context) async {
     isLoading.value = true;
 
-    String token = await MySharedPref().getAccessToken(
+    String token = await MySharedPref().getStringValue(
       SharePreData.keyAccessToken,
     );
 
@@ -242,7 +242,7 @@ class ChildInfoController extends GetxController {
   callAddFamilyAPI(BuildContext context) async {
     isLoading.value = true;
 
-    String token = await MySharedPref().getAccessToken(
+    String token = await MySharedPref().getStringValue(
       SharePreData.keyAccessToken,
     );
 
@@ -289,7 +289,7 @@ class ChildInfoController extends GetxController {
   callUpdateFamilyAPI(BuildContext context, String id) async {
     isLoading.value = true;
 
-    String token = await MySharedPref().getAccessToken(
+    String token = await MySharedPref().getStringValue(
       SharePreData.keyAccessToken,
     );
 
@@ -339,14 +339,14 @@ class ChildInfoController extends GetxController {
   }
 
   /// ActivityList API
-  callActivityListAPI(BuildContext context, String childId) async {
+  callChildActivityListAPI(BuildContext context, String childId) async {
     isLoading.value = true;
 
-    String token = await MySharedPref().getAccessToken(
+    String token = await MySharedPref().getStringValue(
       SharePreData.keyAccessToken,
     );
 
-    String url = "$urlBase$urlActivityList/$childId";
+    String url = "$urlBase$urlChildActivityList/$childId";
 
     final apiReq = Request();
 
@@ -384,11 +384,57 @@ class ChildInfoController extends GetxController {
     });
   }
 
+  /// ActivityList API
+  callActivityListForSelectAPI(BuildContext context) async {
+    isLoading.value = true;
+
+    String token = await MySharedPref().getStringValue(
+      SharePreData.keyAccessToken,
+    );
+
+    String url = "$urlBase$urlActivityList";
+
+    final apiReq = Request();
+
+    await apiReq.getMethodAPI(url, null, token).then((value) async {
+      http.StreamedResponse res = value;
+      printData(
+        runtimeType.toString(),
+        "callActivityListAPI response ${res.statusCode}",
+      );
+
+      await res.stream.bytesToString().then((valueData) async {
+        printData(
+          runtimeType.toString(),
+          "callActivityListAPI value ${valueData}",
+        );
+
+        isLoading.value = false;
+
+        if (res.statusCode == 200) {
+          Map<String, dynamic> userModel = json.decode(valueData);
+          ActivityResponseForSelect activityResponseForSelect =
+              ActivityResponseForSelect.fromJson(userModel);
+
+          if (activityResponseForSelect.status ?? false) {
+            activityListForSelect.value =
+                activityResponseForSelect.data?.activities ?? [];
+
+            /// RESET SELECTION AFTER LOAD
+            selectedDateIndex.value = 0;
+          } else {
+            snackBar(context, activityResponseForSelect.message ?? "");
+          }
+        }
+      });
+    });
+  }
+
   /// Get Family Contacts API
   callGetFamilyContactsAPI(BuildContext context) async {
     isLoading.value = true;
 
-    String token = await MySharedPref().getAccessToken(
+    String token = await MySharedPref().getStringValue(
       SharePreData.keyAccessToken,
     );
 
@@ -433,7 +479,7 @@ class ChildInfoController extends GetxController {
       isLoading.value = true;
 
       /// 🔑 Token
-      String token = await MySharedPref().getAccessToken(
+      String token = await MySharedPref().getStringValue(
         SharePreData.keyAccessToken,
       );
 
@@ -482,7 +528,7 @@ class ChildInfoController extends GetxController {
   callGetDocumentsAPI(BuildContext context, String childId) async {
     isLoading.value = true;
 
-    String token = await MySharedPref().getAccessToken(
+    String token = await MySharedPref().getStringValue(
       SharePreData.keyAccessToken,
     );
 
@@ -525,7 +571,7 @@ class ChildInfoController extends GetxController {
   callGetChildPermissionsAPI(BuildContext context, String childId) async {
     isLoading.value = true;
 
-    String token = await MySharedPref().getAccessToken(
+    String token = await MySharedPref().getStringValue(
       SharePreData.keyAccessToken,
     );
 
@@ -573,7 +619,7 @@ class ChildInfoController extends GetxController {
   ) async {
     isLoading.value = true;
 
-    String token = await MySharedPref().getAccessToken(
+    String token = await MySharedPref().getStringValue(
       SharePreData.keyAccessToken,
     );
 
@@ -619,12 +665,11 @@ class ChildInfoController extends GetxController {
     });
   }
 
-
   /// get Bookings API
   callGetBookingsAPI(BuildContext context, String childId) async {
     isLoading.value = true;
 
-    String token = await MySharedPref().getAccessToken(
+    String token = await MySharedPref().getStringValue(
       SharePreData.keyAccessToken,
     );
 
@@ -667,7 +712,7 @@ class ChildInfoController extends GetxController {
   callGetExtraBookingsAPI(BuildContext context, String childId) async {
     isLoading.value = true;
 
-    String token = await MySharedPref().getAccessToken(
+    String token = await MySharedPref().getStringValue(
       SharePreData.keyAccessToken,
     );
 
@@ -710,7 +755,7 @@ class ChildInfoController extends GetxController {
   callGetAboutChildAPI(BuildContext context, String childId) async {
     isLoading.value = true;
 
-    String token = await MySharedPref().getAccessToken(
+    String token = await MySharedPref().getStringValue(
       SharePreData.keyAccessToken,
     );
 
@@ -751,7 +796,7 @@ class ChildInfoController extends GetxController {
   callGetPriceBandAPI(BuildContext context, String childId) async {
     isLoading.value = true;
 
-    String token = await MySharedPref().getAccessToken(
+    String token = await MySharedPref().getStringValue(
       SharePreData.keyAccessToken,
     );
 
@@ -799,7 +844,7 @@ class ChildInfoController extends GetxController {
   callObservationListAPI(BuildContext context, String childId) async {
     isLoading.value = true;
 
-    String token = await MySharedPref().getAccessToken(
+    String token = await MySharedPref().getStringValue(
       SharePreData.keyAccessToken,
     );
 
@@ -851,7 +896,7 @@ class ChildInfoController extends GetxController {
   ) async {
     isLoading.value = true;
 
-    String token = await MySharedPref().getAccessToken(
+    String token = await MySharedPref().getStringValue(
       SharePreData.keyAccessToken,
     );
 
@@ -899,7 +944,7 @@ class ChildInfoController extends GetxController {
   ) async {
     isLoading.value = true;
 
-    String token = await MySharedPref().getAccessToken(
+    String token = await MySharedPref().getStringValue(
       SharePreData.keyAccessToken,
     );
 
@@ -949,7 +994,7 @@ class ChildInfoController extends GetxController {
   ) async {
     isLoading.value = true;
 
-    String token = await MySharedPref().getAccessToken(
+    String token = await MySharedPref().getStringValue(
       SharePreData.keyAccessToken,
     );
 
@@ -998,7 +1043,7 @@ class ChildInfoController extends GetxController {
   ) async {
     isLoading.value = true;
 
-    String token = await MySharedPref().getAccessToken(
+    String token = await MySharedPref().getStringValue(
       SharePreData.keyAccessToken,
     );
 
@@ -1066,7 +1111,7 @@ class ChildInfoController extends GetxController {
   callAddObservationAPI(BuildContext context, String childInfo) async {
     isLoading.value = true;
 
-    String token = await MySharedPref().getAccessToken(
+    String token = await MySharedPref().getStringValue(
       SharePreData.keyAccessToken,
     );
 
@@ -1117,7 +1162,7 @@ class ChildInfoController extends GetxController {
   ) async {
     isLoading.value = true;
 
-    String token = await MySharedPref().getAccessToken(
+    String token = await MySharedPref().getStringValue(
       SharePreData.keyAccessToken,
     );
 
@@ -1160,12 +1205,15 @@ class ChildInfoController extends GetxController {
         });
   }
 
-
   /// Add Leave API
-  callAddLeaveAPI(BuildContext context, String childId, String activityId) async {
+  callAddLeaveAPI(
+    BuildContext context,
+    String childId,
+    String activityId,
+  ) async {
     isLoading.value = true;
 
-    String token = await MySharedPref().getAccessToken(
+    String token = await MySharedPref().getStringValue(
       SharePreData.keyAccessToken,
     );
 
@@ -1178,12 +1226,12 @@ class ChildInfoController extends GetxController {
       "activity_id": 2,
       "start_date": "2026-01-11",
       "end_date": "2026-01-15",
-      "note": "Child will be sick for these days"
+      "note": "Child will be sick for these days",
     };
 
     await apiReq.postAPIWithMedia(url, body, token, imagePath.value, []).then((
-        value,
-        ) async {
+      value,
+    ) async {
       http.StreamedResponse res = value;
       printData(runtimeType.toString(), "Login API response ${res.statusCode}");
 
@@ -1209,27 +1257,36 @@ class ChildInfoController extends GetxController {
   }
 
   /// Set Pin API
-  Future<void> callCollectionSetPinAPI(BuildContext context) async {
+  Future<void> callCollectionSetPinAPI(
+    BuildContext context,
+    String childId,
+  ) async {
     isLoading.value = true;
 
-    String token = await MySharedPref().getAccessToken(
+    String token = await MySharedPref().getStringValue(
       SharePreData.keyAccessToken,
     );
 
-    String url = urlBase + urlSetPin;
+    String url = urlBase + urlSetCollectionPin + "/" + childId;
 
     final apiReq = Request();
 
     dynamic body = {
-      'pin_code': collectionPinController.value.text,
+      'set_collection_password': collectionPinController.value.text,
     };
 
     await apiReq.postAPI(url, body, token).then((value) async {
       http.StreamedResponse res = value;
-      printData(runtimeType.toString(), "callCollectionSetPinAPI API response ${res.statusCode}");
+      printData(
+        runtimeType.toString(),
+        "callCollectionSetPinAPI API response ${res.statusCode}",
+      );
 
       await res.stream.bytesToString().then((valueData) async {
-        printData(runtimeType.toString(), "callCollectionSetPinAPI API value ${valueData}");
+        printData(
+          runtimeType.toString(),
+          "callCollectionSetPinAPI API value ${valueData}",
+        );
 
         isLoading.value = false;
 
@@ -1248,12 +1305,11 @@ class ChildInfoController extends GetxController {
     });
   }
 
-
   /// Medication list API
   callMedicationListAPI(BuildContext context, String childId) async {
     isLoading.value = true;
 
-    String token = await MySharedPref().getAccessToken(
+    String token = await MySharedPref().getStringValue(
       SharePreData.keyAccessToken,
     );
 
@@ -1278,12 +1334,12 @@ class ChildInfoController extends GetxController {
 
         if (res.statusCode == 200) {
           Map<String, dynamic> userModel = json.decode(valueData);
-          MedicationListResponse medicationListResponse = MedicationListResponse.fromJson(
-            userModel,
-          );
+          MedicationListResponse medicationListResponse =
+              MedicationListResponse.fromJson(userModel);
 
           if (medicationListResponse.status ?? false) {
-            medicationList.value = medicationListResponse.data?.medications ?? [];
+            medicationList.value =
+                medicationListResponse.data?.medications ?? [];
 
             /// RESET SELECTION AFTER LOAD
             selectedDateIndex.value = 0;
@@ -1299,7 +1355,7 @@ class ChildInfoController extends GetxController {
   callAccidentListAPI(BuildContext context, String childId) async {
     isLoading.value = true;
 
-    String token = await MySharedPref().getAccessToken(
+    String token = await MySharedPref().getStringValue(
       SharePreData.keyAccessToken,
     );
 
@@ -1325,12 +1381,10 @@ class ChildInfoController extends GetxController {
 
         if (res.statusCode == 200) {
           Map<String, dynamic> userModel = json.decode(valueData);
-          AccidentListResponse accidentListResponse = AccidentListResponse.fromJson(
-            userModel,
-          );
+          AccidentListResponse accidentListResponse =
+              AccidentListResponse.fromJson(userModel);
 
           if (accidentListResponse.status ?? false) {
-
             accidentList.value = accidentListResponse.data?.accidents ?? [];
 
             /// RESET SELECTION AFTER LOAD
@@ -1343,12 +1397,16 @@ class ChildInfoController extends GetxController {
     });
   }
 
-
   /// Add Family API
-  callAddMedicationAcknowledgeAPI(BuildContext context, int medicationId, String childId) async {
-
-    medicineRefreshIndex.value = medicationList.indexWhere((e) => e.id == medicationId);
-    String token = await MySharedPref().getAccessToken(
+  callAddMedicationAcknowledgeAPI(
+    BuildContext context,
+    int medicationId,
+    String childId,
+  ) async {
+    medicineRefreshIndex.value = medicationList.indexWhere(
+      (e) => e.id == medicationId,
+    );
+    String token = await MySharedPref().getStringValue(
       SharePreData.keyAccessToken,
     );
 
@@ -1356,18 +1414,22 @@ class ChildInfoController extends GetxController {
 
     final apiReq = Request();
 
-    dynamic body = {
-      'medication_id': medicationId.toString(),
-    };
+    dynamic body = {'medication_id': medicationId.toString()};
 
     await apiReq.postAPIWithMedia(url, body, token, imagePath.value, []).then((
-        value,
-        ) async {
+      value,
+    ) async {
       http.StreamedResponse res = value;
-      printData(runtimeType.toString(), "callAddAcknowledgeAPI API response ${res.statusCode}");
+      printData(
+        runtimeType.toString(),
+        "callAddAcknowledgeAPI API response ${res.statusCode}",
+      );
 
       await res.stream.bytesToString().then((valueData) async {
-        printData(runtimeType.toString(), "callAddAcknowledgeAPI API value ${valueData}");
+        printData(
+          runtimeType.toString(),
+          "callAddAcknowledgeAPI API value ${valueData}",
+        );
 
         if (res.statusCode == 200) {
           Map<String, dynamic> userModel = json.decode(valueData);
@@ -1385,10 +1447,15 @@ class ChildInfoController extends GetxController {
   }
 
   /// Add Family API
-  callAddAccidentAcknowledgeAPI(BuildContext context, int accidentId, String childId) async {
-
-    medicineRefreshIndex.value = accidentList.indexWhere((e) => e.id == accidentId);
-    String token = await MySharedPref().getAccessToken(
+  callAddAccidentAcknowledgeAPI(
+    BuildContext context,
+    int accidentId,
+    String childId,
+  ) async {
+    medicineRefreshIndex.value = accidentList.indexWhere(
+      (e) => e.id == accidentId,
+    );
+    String token = await MySharedPref().getStringValue(
       SharePreData.keyAccessToken,
     );
 
@@ -1396,18 +1463,22 @@ class ChildInfoController extends GetxController {
 
     final apiReq = Request();
 
-    dynamic body = {
-      'accident_id': accidentId.toString(),
-    };
+    dynamic body = {'accident_id': accidentId.toString()};
 
     await apiReq.postAPIWithMedia(url, body, token, imagePath.value, []).then((
-        value,
-        ) async {
+      value,
+    ) async {
       http.StreamedResponse res = value;
-      printData(runtimeType.toString(), "callAddAccidentAcknowledgeAPI API response ${res.statusCode}");
+      printData(
+        runtimeType.toString(),
+        "callAddAccidentAcknowledgeAPI API response ${res.statusCode}",
+      );
 
       await res.stream.bytesToString().then((valueData) async {
-        printData(runtimeType.toString(), "callAddAccidentAcknowledgeAPI API value ${valueData}");
+        printData(
+          runtimeType.toString(),
+          "callAddAccidentAcknowledgeAPI API value ${valueData}",
+        );
 
         if (res.statusCode == 200) {
           Map<String, dynamic> userModel = json.decode(valueData);
@@ -1424,8 +1495,11 @@ class ChildInfoController extends GetxController {
     });
   }
 
-
-  void acknowledgeMedication(int medicationId, BuildContext context, String childId) {
+  void acknowledgeMedication(
+    int medicationId,
+    BuildContext context,
+    String childId,
+  ) {
     // call acknowledge API here
     // after success:
     final index = medicationList.indexWhere((e) => e.id == medicationId);
@@ -1434,12 +1508,15 @@ class ChildInfoController extends GetxController {
       medicationList.refresh();
     }
 
-
     medicineRefreshIndex.value = -1;
     callMedicationListAPI(context, childId);
-
   }
-  void acknowledgeAccident(int accidentId, BuildContext context, String childId) {
+
+  void acknowledgeAccident(
+    int accidentId,
+    BuildContext context,
+    String childId,
+  ) {
     // call acknowledge API here
     // after success:
     final index = accidentList.indexWhere((e) => e.id == accidentId);
@@ -1448,12 +1525,9 @@ class ChildInfoController extends GetxController {
       accidentList.refresh();
     }
 
-
     medicineRefreshIndex.value = -1;
     callMedicationListAPI(context, childId);
-
   }
-
 
   @override
   void onClose() {

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bloom_kidz/ChildInfo/Documents/models/documents_response.dart';
 import 'package:bloom_kidz/CommonWidgets/black_small_regular_text.dart';
 import 'package:bloom_kidz/CommonWidgets/blue_large_bold_text.dart';
@@ -7,9 +9,10 @@ import 'package:bloom_kidz/Styles/my_colors.dart';
 import 'package:bloom_kidz/Styles/my_font.dart';
 import 'package:bloom_kidz/Styles/my_icons.dart';
 import 'package:flutter/material.dart';
-
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
+import 'package:open_filex/open_filex.dart';
 import 'package:flutter/material.dart';
-
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -107,9 +110,12 @@ class DocumentCard extends StatelessWidget {
         const SizedBox(height: 6),
         Row(
           children: [
-            InkWell(onTap: (){
-
-            },child: _iconButton(Icons.cloud_download)),
+            InkWell(
+              onTap: () {
+                downloadAndOpenPdf(documentData.url ?? "");
+              },
+              child: _iconButton(Icons.cloud_download),
+            ),
             const SizedBox(width: 6),
             InkWell(
               onTap: () async {
@@ -136,5 +142,25 @@ class DocumentCard extends StatelessWidget {
       ),
       child: Icon(icon, size: 14, color: Colors.white),
     );
+  }
+
+  Future<void> downloadAndOpenPdf(String url) async {
+    try {
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        final dir = await getApplicationDocumentsDirectory();
+        final file = File('${dir.path}/document.pdf');
+
+        await file.writeAsBytes(response.bodyBytes);
+
+        /// Open PDF
+        await OpenFilex.open(file.path);
+      } else {
+        throw Exception("Failed to download PDF");
+      }
+    } catch (e) {
+      print("Error downloading PDF: $e");
+    }
   }
 }

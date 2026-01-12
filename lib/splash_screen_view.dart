@@ -59,10 +59,11 @@ class _SplashScreenViewState extends State<SplashScreenView>
     );
   }
 
-  Future<void> redirectOnPendingState() async{
-
+  Future<void> redirectOnPendingState() async {
     /// READ LOGIN MODEL
-    String token = await MySharedPref().getAccessToken(SharePreData.keyAccessToken);
+    String token = await MySharedPref().getStringValue(
+      SharePreData.keyAccessToken,
+    );
 
     Future.delayed(const Duration(seconds: 5), () async {
       /// INITIALIZE SHARED PREF

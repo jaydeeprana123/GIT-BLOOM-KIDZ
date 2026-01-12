@@ -65,9 +65,9 @@ class LoginController extends GetxController {
           if (loginResponse.value.status ?? false) {
             /// Set login model into shared preference
 
-            await MySharedPref().setAccessToken(
-              loginResponse.value.data?.token ?? "",
+            await MySharedPref().setString(
               SharePreData.keyAccessToken,
+              loginResponse.value.data?.token ?? "",
             );
 
             await MySharedPref().setLoginModel(
@@ -88,12 +88,11 @@ class LoginController extends GetxController {
   callLogoutAPI(BuildContext context) async {
     isLoading.value = true;
     String url = urlBase + urlLogout;
-    String token = await MySharedPref().getAccessToken(
+    String token = await MySharedPref().getStringValue(
       SharePreData.keyAccessToken,
     );
 
     final apiReq = Request();
-
 
     await apiReq.postAPI(url, null, token).then((value) async {
       http.StreamedResponse res = value;

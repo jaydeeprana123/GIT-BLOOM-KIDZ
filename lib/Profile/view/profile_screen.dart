@@ -39,16 +39,13 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   ProfileController profileController = Get.put(ProfileController());
-  final GlobalKey<ScaffoldState> _scaffoldKey =
-  GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       profileController.callGetProfileAPI(context);
     });
-
-
   }
 
   @override
@@ -56,112 +53,137 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: Colors.transparent,
-      appBar: CommonAppBar(title: "Profile", showMenu: true, onMenuTap: (){
-        _scaffoldKey.currentState?.openDrawer(); // 👈 OPEN DRAWER
-      }),
+      appBar: CommonAppBar(
+        title: "Profile",
+        showMenu: true,
+        onMenuTap: () {
+          _scaffoldKey.currentState?.openDrawer(); // 👈 OPEN DRAWER
+        },
+      ),
       drawer: const AppDrawer(), // 👈 Navigation Drawer
       body: SafeArea(
         child: Obx(
-                () =>Stack(
-                  children: [
-                    SingleChildScrollView(
-                                        child: Card(
-                                          color: Colors.white,
-                                          shadowColor: color_secondary,
-                                          elevation: 6,
-                                          margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              22,
-                                            ), // change 16 to any radius you like
-                                          ),
-                                          child: Container(
-                                            padding: EdgeInsets.all(12),
-                                            child: Column(
-                                              children: [
-                                                /// 👤 Profile Image
-                                                const CircleAvatar(
-                                                  radius: 45,
-                                                  backgroundImage: NetworkImage(
-                                                    "https://randomuser.me/api/portraits/women/44.jpg",
-                                                  ),
-                                                ),
-                                            
-                                                const SizedBox(height: 20),
-                                            
-                                                /// Name
-                                                _infoRow(
-                                                  icon: Icons.person,
-                                                  label: "Name",
-                                                  value: profileController.profileUser.value.name??"",
-                                                ),
-                                            
-                                                const Divider(),
-                                            
-                                                /// Contact No
-                                                _infoRow(
-                                                  icon: Icons.phone,
-                                                  label: "Contact No.",
-                                                  value: profileController.profileUser.value.phone??"",
-                                                ),
-                                            
-                                                const Divider(),
-                                            
-                                                /// Email
-                                                _infoRow(
-                                                  icon: Icons.email,
-                                                  label: "Email Address",
-                                                  value: profileController.profileUser.value.email??"",
-                                                ),
-                                            
-                                                const SizedBox(height: 20),
-                                            
-                                                /// 🔘 Buttons
-                                                Row(
-                                                  children: [
-                                                    Expanded(
-                                                              child: ElevatedButton(
-                                            
-                                                                style: ElevatedButton.styleFrom(
-                                                                  backgroundColor: Colors.red,
-                                                                  padding: EdgeInsets.zero,
-                                                                  shape: RoundedRectangleBorder(
-                                                                    borderRadius: BorderRadius.circular(10),
-                                                                  ),
-                                                                ),
-                                                                onPressed: () {
-                                                                  showChangePasswordDialog(context, profileController);
-                                                                },
-                                                                child:  BlackSmallMediumText("Change Password", color: Colors.white, fontSize: 11),
-                                                              ),
-                                                    ),
-                                                    const SizedBox(width: 10),
-                                                    Expanded(
-                                                              child: ElevatedButton(
-                                                                style: ElevatedButton.styleFrom(
-                                                                  padding: EdgeInsets.zero,
-                                                                  backgroundColor: color_secondary,
-                                                                  shape: RoundedRectangleBorder(
-                                                                    borderRadius: BorderRadius.circular(10),
-                                                                  ),
-                                                                ),
-                                                                onPressed: () {
-                                                                  showChangePinDialog(context, profileController);
-                                                                },
-                                                                child:  BlackSmallMediumText("Set Up Quick Access Pin", color: Colors.white, textAlign: TextAlign.center, fontSize: 11),
-                                                              ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                    ),
+          () => Stack(
+            children: [
+              SingleChildScrollView(
+                child: Card(
+                  color: Colors.white,
+                  shadowColor: color_secondary,
+                  elevation: 6,
+                  margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(
+                      22,
+                    ), // change 16 to any radius you like
+                  ),
+                  child: Container(
+                    padding: EdgeInsets.all(12),
+                    child: Column(
+                      children: [
+                        /// 👤 Profile Image
+                        const CircleAvatar(
+                          radius: 45,
+                          backgroundImage: NetworkImage(
+                            "https://randomuser.me/api/portraits/women/44.jpg",
+                          ),
+                        ),
 
-                    if(profileController.isLoading.value)Center(child: CircularProgressIndicator(),)
-                  ],
-                )),
+                        const SizedBox(height: 20),
+
+                        /// Name
+                        _infoRow(
+                          icon: Icons.person,
+                          label: "Name",
+                          value: profileController.profileUser.value.name ?? "",
+                        ),
+
+                        const Divider(),
+
+                        /// Contact No
+                        _infoRow(
+                          icon: Icons.phone,
+                          label: "Contact No.",
+                          value:
+                              profileController.profileUser.value.phone ?? "",
+                        ),
+
+                        const Divider(),
+
+                        /// Email
+                        _infoRow(
+                          icon: Icons.email,
+                          label: "Email Address",
+                          value:
+                              profileController.profileUser.value.email ?? "",
+                        ),
+
+                        const SizedBox(height: 20),
+
+                        /// 🔘 Buttons
+                        Row(
+                          children: [
+                            Expanded(
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.red,
+                                  padding: EdgeInsets.zero,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+                                onPressed: () {
+                                  showChangePasswordDialog(
+                                    context,
+                                    profileController,
+                                  );
+                                },
+                                child: BlackSmallMediumText(
+                                  "Change Password",
+                                  color: Colors.white,
+                                  fontSize: 11,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  padding: EdgeInsets.zero,
+                                  backgroundColor: color_secondary,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+                                onPressed: () async {
+                                  await profileController.callViewPinAPI(
+                                    context,
+                                  );
+                                  showChangePinDialog(
+                                    context,
+                                    profileController,
+                                  );
+                                },
+                                child: BlackSmallMediumText(
+                                  "Set Up Quick Access Pin",
+                                  color: Colors.white,
+                                  textAlign: TextAlign.center,
+                                  fontSize: 11,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+
+              if (profileController.isLoading.value)
+                Center(child: CircularProgressIndicator()),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -181,43 +203,40 @@ class _ProfileScreenState extends State<ProfileScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             /// 🔵 Blue Label Text
-            BlueMediumBoldText(
-              label,
-              fontSize: 12,
-            ),
+            BlueMediumBoldText(label, fontSize: 12),
             const SizedBox(height: 4),
 
             /// ⚫ Black Value Text
-            BlackLargeRegularText(
-              value,
-              color: Colors.black,
-            ),
+            BlackLargeRegularText(value, color: Colors.black),
           ],
         ),
       ],
     );
   }
 
-
-  void showChangePasswordDialog(BuildContext context, ProfileController profileController) {
+  void showChangePasswordDialog(
+    BuildContext context,
+    ProfileController profileController,
+  ) {
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return  ChangePasswordDialog(controller : profileController);
+        return ChangePasswordDialog(controller: profileController);
       },
     );
   }
 
-  void showChangePinDialog(BuildContext context, ProfileController profileController) {
+  void showChangePinDialog(
+    BuildContext context,
+    ProfileController profileController,
+  ) {
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return  ChangePinDialog(controller : profileController);
+        return ChangePinDialog(controller: profileController);
       },
     );
   }
-
 }
-

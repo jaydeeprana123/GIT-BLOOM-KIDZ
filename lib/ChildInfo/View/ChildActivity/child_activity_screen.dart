@@ -7,37 +7,41 @@ import 'package:flutter/material.dart';
 import '../../../CommonWidgets/blue_medium_bold_text.dart';
 import '../../../CommonWidgets/common_appbar.dart';
 import '../../controller/child_info_controller.dart';
-import '../../models/activity_response.dart';
+import '../../models/child_activity_response.dart';
 import 'itemline_card.dart';
 import 'models/sub_item.dart';
 import 'models/timeline_item.dart';
 import 'package:get/get.dart';
 
-class ActivityScreen extends StatefulWidget {
+class ChildActivityScreen extends StatefulWidget {
   final String childId;
 
-  const ActivityScreen({Key? key, required this.childId}) : super(key: key);
+  const ChildActivityScreen({Key? key, required this.childId})
+    : super(key: key);
 
   @override
-  State<ActivityScreen> createState() => _ActivityScreenState();
+  State<ChildActivityScreen> createState() => _ChildActivityScreenState();
 }
 
-class _ActivityScreenState extends State<ActivityScreen> {
+class _ChildActivityScreenState extends State<ChildActivityScreen> {
   ChildInfoController childInfoController = Get.find<ChildInfoController>();
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      childInfoController.callActivityListAPI(context, widget.childId);
+      childInfoController.callChildActivityListAPI(context, widget.childId);
     });
-
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CommonAppBar(title: "Activity", showMenu: false, showBack: true,),
+      appBar: const CommonAppBar(
+        title: "Activity",
+        showMenu: false,
+        showBack: true,
+      ),
       body: Obx(
         () => Stack(
           children: [
@@ -48,8 +52,8 @@ class _ActivityScreenState extends State<ActivityScreen> {
               ],
             ),
 
-
-            if(childInfoController.isLoading.value)const Center(child: CircularProgressIndicator())
+            if (childInfoController.isLoading.value)
+              const Center(child: CircularProgressIndicator()),
           ],
         ),
       ),
@@ -63,31 +67,29 @@ class _ActivityScreenState extends State<ActivityScreen> {
 
     List<SubItem> subItems = [];
 
-    for (int i=0; i< (data.meals??[]).length ; i++) {
-      if (data.meals?[i].mealTime == null || (data.meals?[i].mealTime??"").isEmpty) continue;
+    for (int i = 0; i < (data.meals ?? []).length; i++) {
+      if (data.meals?[i].mealTime == null ||
+          (data.meals?[i].mealTime ?? "").isEmpty)
+        continue;
 
       List<String> details = [];
 
-      for (int j=0; j< (data.meals?[i].foods??[]).length ; j++) {
-        details.add("${data.meals?[i].foods?[j].foodName??""} (${data.meals?[i].foods?[j].amount??""})");
+      for (int j = 0; j < (data.meals?[i].foods ?? []).length; j++) {
+        details.add(
+          "${data.meals?[i].foods?[j].foodName ?? ""} (${data.meals?[i].foods?[j].amount ?? ""})",
+        );
       }
 
-      subItems.add(SubItem(
-        subTitle: data.meals?[i].mealType ?? "Meal",
-        time: data.meals?[i].mealTime??"",
-        details:
-        details.isNotEmpty ? details : ["No food recorded"],
-      ));
+      subItems.add(
+        SubItem(
+          subTitle: data.meals?[i].mealType ?? "Meal",
+          time: data.meals?[i].mealTime ?? "",
+          details: details.isNotEmpty ? details : ["No food recorded"],
+        ),
+      );
     }
 
-    items.add(
-      TimelineItem(
-        title: "Meal",
-        subItems: subItems,
-      ),
-    );
-
-
+    items.add(TimelineItem(title: "Meal", subItems: subItems));
 
     // for (final meal in data.meals ?? []) {
     //   if (meal.mealTime == null || meal.mealTime!.isEmpty) continue;
@@ -118,44 +120,34 @@ class _ActivityScreenState extends State<ActivityScreen> {
     for (final nappy in data.nappy ?? []) {
       if (nappy.time == null || nappy.time!.isEmpty) continue;
 
-      subItemsNappy.add(SubItem(
-        subTitle: nappy.type ?? "Nappy",
-        time: nappy.time!,
-        details:[],
-        statusForNappy: nappy.status??""
-      ));
+      subItemsNappy.add(
+        SubItem(
+          subTitle: nappy.type ?? "Nappy",
+          time: nappy.time!,
+          details: [],
+          statusForNappy: nappy.status ?? "",
+        ),
+      );
     }
 
-
-    items.add(
-      TimelineItem(
-        title: "Nappy",
-
-        subItems: subItemsNappy,
-      ),
-    );
+    items.add(TimelineItem(title: "Nappy", subItems: subItemsNappy));
 
     /// -------- ACTIVITIES --------
     List<SubItem> subItemsActivity = [];
     for (final act in data.activities ?? []) {
       if (act.time == null || act.time!.isEmpty) continue;
 
-      subItemsActivity.add(SubItem(
+      subItemsActivity.add(
+        SubItem(
           subTitle: act.activityName ?? "",
           time: act.time!,
-          details:[],
-        icon: act.icon??""
-      ));
-
+          details: [],
+          icon: act.icon ?? "",
+        ),
+      );
     }
 
-
-    items.add(
-      TimelineItem(
-        title: "Activity",
-        subItems: subItemsActivity,
-      ),
-    );
+    items.add(TimelineItem(title: "Activity", subItems: subItemsActivity));
 
     /// -------- SORT (SAFE) --------
     // items.sort((a, b) {
@@ -164,31 +156,22 @@ class _ActivityScreenState extends State<ActivityScreen> {
     //   return ta.compareTo(tb);
     // });
 
-
     printData("Items length", items.length.toString());
 
     return List.generate(
       items.length,
-          (i) => TimelineCard(
-        item: items[i],
-        isLast: i == items.length - 1,
-      ),
+      (i) => TimelineCard(item: items[i], isLast: i == items.length - 1),
     );
   }
-
-
 
   DateTime _parseTime(String time) {
     final parts = time.split(':');
     return DateTime(0, 0, 0, int.parse(parts[0]), int.parse(parts[1]));
   }
 
-
-
-
   Widget _dateSelector() {
     return Obx(
-          () => SizedBox(
+      () => SizedBox(
         height: 100,
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
@@ -202,9 +185,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
             return GestureDetector(
               onTap: () {
                 childInfoController.selectedDateIndex.value = index;
-                setState(() {
-
-                });
+                setState(() {});
               },
 
               child: Container(
@@ -223,19 +204,15 @@ class _ActivityScreenState extends State<ActivityScreen> {
                   children: [
                     BlueMediumRegularText(
                       day.displayDate!.split(',')[0].substring(0, 3),
-                        fontSize: 12,
-                        color: isSelected ? Colors.white : color_secondary,
-
+                      fontSize: 12,
+                      color: isSelected ? Colors.white : color_secondary,
                     ),
 
                     const SizedBox(height: 2),
 
                     /// Month (Jan)
                     BlueMediumBoldText(
-                      day.displayDate!
-                          .split(',')[1]
-                          .trim()
-                          .split(' ')[0],
+                      day.displayDate!.split(',')[1].trim().split(' ')[0],
                       fontSize: 13,
                       fontFamily: fontInterSemiBold,
                       color: isSelected ? Colors.white : color_secondary,
@@ -261,7 +238,6 @@ class _ActivityScreenState extends State<ActivityScreen> {
     );
   }
 
-
   Widget _timeline() {
     return Obx(() {
       final data = childInfoController.selectedDayData;
@@ -277,14 +253,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
         return const SizedBox.shrink();
       }
 
-      return ListView(
-        padding: const EdgeInsets.only(top: 8),
-        children: items,
-      );
+      return ListView(padding: const EdgeInsets.only(top: 8), children: items);
     });
   }
-
-
-
-
 }
