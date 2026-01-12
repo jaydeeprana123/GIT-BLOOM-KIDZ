@@ -1,6 +1,8 @@
 import 'package:bloom_kidz/CommonWidgets/black_large_bold_text.dart';
 import 'package:bloom_kidz/CommonWidgets/black_medium_regular_text.dart';
+import 'package:bloom_kidz/Styles/my_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 
 import '../Styles/my_colors.dart';
@@ -47,7 +49,7 @@ class DateField extends StatelessWidget {
               ),
             ),
             
-            Icon(Icons.date_range, color: color_secondary,)
+            SvgPicture.asset(dateIcon, color: color_secondary,)
             
           ],
         ),

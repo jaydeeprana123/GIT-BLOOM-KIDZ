@@ -115,13 +115,13 @@ class _AboutScreenState extends State<AboutScreen> {
 
           SizedBox(width: 16,),
 
-          _tabItem(Icons.info, "Basic", 0),
+          _tabItem(healthInformationIcon, "Basic", 0),
           const SizedBox(width: 8),
-          _tabItem(Icons.favorite, "Health Information", 1),
+          _tabItem(HealthInformation, "Health Information", 1),
           const SizedBox(width: 8),
-          _tabItem(Icons.lock, "Sensitive Inform", 2),
+          _tabItem(SensitiveInformation, "Sensitive Inform", 2),
           const SizedBox(width: 8),
-          _tabItem(Icons.lock, "Registration & Room Moves", 3),
+          _tabItem(Rooms, "Registration & Room Moves", 3),
         ],
       ),
     );
@@ -156,11 +156,11 @@ class _AboutScreenState extends State<AboutScreen> {
                 birthPlaceIcon,
                 "Live With",
                 basic.liveWith?.join(", "),
-                icon_home,
+                liveWithIcon,
               ),
               Divider(color: Colors.grey.shade300),
               _singleInfo("Parent Responsibility",
-                  basic.parentalResponsibility?.join(", "), keyPersonIcon),
+                  basic.parentalResponsibility?.join(", "), parentResponsibilityIcon),
               _singleInfo("Key Person", basic.keyPerson, keyPersonIcon),
               if (basic.secondKeyPerson != null)
                 _singleInfo("Second Key Person", basic.secondKeyPerson,
@@ -205,7 +205,7 @@ class _AboutScreenState extends State<AboutScreen> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SvgPicture.asset(icon, width: 18, color: color_secondary),
+        SvgPicture.asset(icon, width: 16, color: color_secondary),
         const SizedBox(width: 6),
         Expanded(
           child: Column(
@@ -248,7 +248,7 @@ class _AboutScreenState extends State<AboutScreen> {
   }
 
 
-  Widget _tabItem(IconData icon, String title, int index) {
+  Widget _tabItem(String icon, String title, int index) {
     final isSelected = childInfoController.selectedTab.value == index;
 
     return InkWell(
@@ -264,7 +264,7 @@ class _AboutScreenState extends State<AboutScreen> {
         ),
         child: Row(
           children: [
-            Icon(icon, size: 16,
+            SvgPicture.asset(icon, width: 16,
                 color: isSelected ? Colors.white : color_secondary),
             const SizedBox(width: 6),
             BlackMediumBoldText(
@@ -320,29 +320,29 @@ class _AboutScreenState extends State<AboutScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _healthRow(
-                Icons.medical_services,
+                ToleratesPenicilln,
                 "Tolerates Penicillin",
                 health.toleratesPenicillin == 1 ? "Yes" : "No",
               ),
               _healthRow(
-                Icons.restaurant,
+                SpecialDietaryConsiderations,
                 "Special Dietary Considerations",
                 health.specialDietaryConsiderations,
               ),
               _healthRow(
-                Icons.vaccines,
+                Vaccines,
                 "Vaccines",
                 health.vaccines,
               ),
               _healthRow(
-                Icons.warning,
+                Allergy,
                 "Allergy",
                 health.allergy,
               ),
 
               const Divider(height: 32),
               _healthRow(
-                Icons.note_alt,
+               specailnote,
                 "Special Note",
                 health.specialNote,
               ),
@@ -361,13 +361,13 @@ class _AboutScreenState extends State<AboutScreen> {
   }
 
 
-  Widget _healthRow(IconData icon, String title, String? value) {
+  Widget _healthRow(String icon, String title, String? value) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 14),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 18, color: color_secondary),
+          SvgPicture.asset(icon, width: 18, color: color_secondary),
           const SizedBox(width: 8),
           Expanded(
             child: Column(
@@ -410,10 +410,10 @@ class _AboutScreenState extends State<AboutScreen> {
       children: [
         _sectionTitle("Doctor Info"),
         const SizedBox(height: 10),
-        _infoLine(Icons.person, "Name", "Lorem Ipsum"),
-        _infoLine(Icons.phone, "Mobile", "+91 232 1323"),
+        _infoLine(keyPersonIcon, "Name", "Lorem Ipsum"),
+        _infoLine(icon_call_video, "Mobile", "+91 232 1323"),
         _infoLine(
-            Icons.location_on, "Address", "Lorem Ipsum is simply dummy text"),
+            icon_home, "Address", "Lorem Ipsum is simply dummy text"),
       ],
     );
   }
@@ -424,21 +424,21 @@ class _AboutScreenState extends State<AboutScreen> {
       children: [
         _sectionTitle("Dentist Info"),
         const SizedBox(height: 10),
-        _infoLine(Icons.person, "Name", "Lorem Ipsum"),
-        _infoLine(Icons.phone, "Mobile", "+91 232 1323"),
+        _infoLine(keyPersonIcon, "Name", "Lorem Ipsum"),
+        _infoLine(icon_call_video, "Mobile", "+91 232 1323"),
         _infoLine(
-            Icons.location_on, "Address", "Lorem Ipsum is simply dummy text"),
+            icon_home, "Address", "Lorem Ipsum is simply dummy text"),
       ],
     );
   }
 
-  Widget _infoLine(IconData icon, String title, String value) {
+  Widget _infoLine(String icon, String title, String value) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 6),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 16, color: color_secondary),
+          SvgPicture.asset(icon, width: 16, color: color_secondary),
           const SizedBox(width: 6),
           BlueLargeBoldText("$title: ", fontFamily: fontInterBold
 
@@ -464,7 +464,7 @@ class _AboutScreenState extends State<AboutScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _sensitiveRow(
-              icon: Icons.person_outline,
+              icon:Religion,
               title: "Religion",
               value: sensitive.religion,
             ),
@@ -472,7 +472,7 @@ class _AboutScreenState extends State<AboutScreen> {
             const SizedBox(height: 16),
 
             _sensitiveRow(
-              icon: Icons.groups_outlined,
+              icon: ethnicityIcon,
               title: "Ethnicity",
               value: sensitive.ethnicity,
             ),
@@ -497,7 +497,7 @@ class _AboutScreenState extends State<AboutScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _sensitiveRow(
-              icon: Icons.room_preferences,
+              icon: Rooms,
               title: "Rooms",
               value: roomMoves.rooms,
             ),
@@ -505,7 +505,7 @@ class _AboutScreenState extends State<AboutScreen> {
             const SizedBox(height: 16),
 
             _sensitiveRow(
-              icon: Icons.date_range,
+              icon: dateIcon,
               title: "Start Date",
               value: roomMoves.startDate,
             ),
@@ -513,7 +513,7 @@ class _AboutScreenState extends State<AboutScreen> {
             const SizedBox(height: 16),
 
             _sensitiveRow(
-              icon: Icons.date_range,
+              icon: dateIcon,
               title: "End Date",
               value: roomMoves.endDate,
             ),
@@ -524,7 +524,7 @@ class _AboutScreenState extends State<AboutScreen> {
   }
 
   Widget _sensitiveRow({
-    required IconData icon,
+    required String icon,
     required String title,
     required String? value,
   }) {
@@ -533,7 +533,7 @@ class _AboutScreenState extends State<AboutScreen> {
       children: [
         Row(
           children: [
-            Icon(icon, size: 18, color: Colors.blue),
+            SvgPicture.asset(icon, width: 18, color: Colors.blue),
             const SizedBox(width: 6),
             BlueMediumBoldText(title, fontFamily: fontInterBold),
           ],

@@ -92,7 +92,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                         /// Name
                         _infoRow(
-                          icon: Icons.person,
+                          icon: keyPersonIcon,
                           label: "Name",
                           value: profileController.profileUser.value.name ?? "",
                         ),
@@ -101,7 +101,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                         /// Contact No
                         _infoRow(
-                          icon: Icons.phone,
+                          icon: icon_call_video,
                           label: "Contact No.",
                           value:
                               profileController.profileUser.value.phone ?? "",
@@ -111,7 +111,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                         /// Email
                         _infoRow(
-                          icon: Icons.email,
+                          icon: emailIcon,
                           label: "Email Address",
                           value:
                               profileController.profileUser.value.email ?? "",
@@ -190,14 +190,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   /// ℹ️ Info Row Widget
   Widget _infoRow({
-    required IconData icon,
+    required String icon,
     required String label,
     required String value,
   }) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 18, color: color_secondary),
+        SvgPicture.asset(icon, width: 18, color: color_secondary),
         const SizedBox(width: 10),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,

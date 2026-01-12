@@ -79,6 +79,13 @@ const icon_settings = 'assets/images/settings.svg';
 const icon_discovery = 'assets/images/discovery.svg';
 const icon_like = 'assets/images/icon_Like.svg';
 const pin = 'assets/images/pin.svg';
+const SpecialDietaryConsiderations = 'assets/images/SpecialDietaryConsiderations.svg';
+
+const HealthInformation = 'assets/images/HealthInformation.svg';
+const SensitiveInformation = 'assets/images/SensitiveInformation.svg';
+const Rooms = 'assets/images/Rooms.svg';
+const specailnote = 'assets/images/specailnote.svg';
+const dateIcon = 'assets/images/date.svg';
 const email = 'assets/images/email.svg';
 const dob = 'assets/images/dob.svg';
 const send = 'assets/images/send.svg';
@@ -98,9 +105,11 @@ const holidayIcon = 'assets/images/Holiday.svg';
 const keyPersonIcon = 'assets/images/key perso.svg';
 const liveWithIcon = 'assets/images/livewith.svg';
 const nationalityIcon = 'assets/images/nationality.svg';
-const parentResponsibilityIcon = 'assets/images/patrentrespiniblity.svg';
-
-
+const parentResponsibilityIcon = 'assets/images/patrentrespinbilty.svg';
+const Religion = 'assets/images/Religion.svg';
+const ToleratesPenicilln = 'assets/images/ToleratesPenicilln.svg';
+const Vaccines = 'assets/images/Vaccines.svg';
+const Allergy = 'assets/images/Allergy.svg';
 const icon_comment = 'assets/images/comment.svg';
 const icon_white = 'assets/images/icon_white.svg';
 
@@ -130,7 +139,7 @@ const icon_WeeklyPlan = 'assets/images/WeeklyPlan.svg';
 const icon_FamilyContacts = 'assets/images/FamilyContacts.svg';
 
 const icon_staklist_logo = 'assets/images/staklist_logo.png';
-const icon_upload_image = 'assets/images/upload_image.svg';
+const icon_upload_image = 'assets/images/upload.svg';
 const icon_view_detail = 'assets/images/view_detail.svg';
 
 const icon_add_square = 'assets/images/icon_add_square.svg';

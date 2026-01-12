@@ -117,7 +117,7 @@ class DocumentCard extends StatelessWidget {
               onTap: () {
                 downloadAndOpenPdf(documentData.url ?? "", controller);
               },
-              child: _iconButton(icon_cirlce_download),
+              child: _iconButton(icon_upload_image),
             ),
             const SizedBox(width: 6),
             InkWell(
