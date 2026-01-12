@@ -44,7 +44,7 @@ class _ObservationAddScreenState extends State<ObservationAddScreen> {
       backgroundColor: Colors.white,
       appBar: CommonAppBar(
         title: "New Observation",
-        showMenu: true,
+        showMenu: false,
         showBack: true,
       ),
       body: SafeArea(

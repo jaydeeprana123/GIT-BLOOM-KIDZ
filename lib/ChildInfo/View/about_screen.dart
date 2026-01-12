@@ -50,8 +50,10 @@ class _AboutScreenState extends State<AboutScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      childInfoController.callGetAboutChildAPI(context, widget.childId);
+    });
 
-    childInfoController.callGetAboutChildAPI(context, widget.childId);
   }
 
   @override
@@ -59,7 +61,7 @@ class _AboutScreenState extends State<AboutScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: const CommonAppBar(
-        title: "About", showMenu: true, showBack: true,),
+        title: "About", showMenu: false, showBack: true,),
       body: Obx(() {
         final basic = childInfoController.aboutChildren.value.basicInfo;
         final health = childInfoController.aboutChildren.value.healthInfo;

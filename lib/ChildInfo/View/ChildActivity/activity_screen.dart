@@ -37,7 +37,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CommonAppBar(title: "Activity", showMenu: true, showBack: true,),
+      appBar: const CommonAppBar(title: "Activity", showMenu: false, showBack: true,),
       body: Obx(
         () => Stack(
           children: [

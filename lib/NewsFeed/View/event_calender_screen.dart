@@ -39,8 +39,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      newsFeedController.callNewsFeedCalenderAPI(context);
+    });
 
-    newsFeedController.callNewsFeedCalenderAPI(context);
   }
 
   @override
@@ -104,21 +106,21 @@ class _CalendarScreenState extends State<CalendarScreen> {
                         final Appointment appointment =
                             details.appointments!.first as Appointment;
 
-                        showDialog(
-                          context: context,
-                          builder: (_) => AlertDialog(
-                            title: Text(appointment.subject),
-                            content: Text(
-                              "${appointment.startTime} - ${appointment.endTime}",
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.pop(context),
-                                child: const Text("OK"),
-                              ),
-                            ],
-                          ),
-                        );
+                        // showDialog(
+                        //   context: context,
+                        //   builder: (_) => AlertDialog(
+                        //     title: Text(appointment.subject),
+                        //     content: Text(
+                        //       "${appointment.startTime} - ${appointment.endTime}",
+                        //     ),
+                        //     actions: [
+                        //       TextButton(
+                        //         onPressed: () => Navigator.pop(context),
+                        //         child: const Text("OK"),
+                        //       ),
+                        //     ],
+                        //   ),
+                        // );
                       }
                     },
                   ),

@@ -8,6 +8,9 @@ const urlLogout = '/logout';
 
 const urlNewsFeedCalenderList = '/parent/newsfeeds/calendar';
 const urlNewsFeedList = '/parent/newsfeeds';
+const urlAddLikeInNewsFeed = '/parent/newsfeeds';
+
+
 const urlAddCommentInNewsFeed = '/parent/newsfeeds';
 const urlAddLikeInNewsFeedComment = '/parent/newsfeeds';
 
@@ -21,6 +24,12 @@ const urlDeleteContact = '/parent/contacts/delete';
 
 const urlLeaveRequest = '/parent/children/leave';
 
+/// Safe guarding
+const urlMedicationList = '/parent/children/medications';
+const urlAddAcknowledgeMedication = '/parent/children/medications/acknowledge';
+
+const urlAccidentList = '/parent/children/accidents';
+const urlAddAcknowledgeAccident = '/parent/children/accidents/acknowledge';
 
 ///Documents
 const urlGetDocumentList = '/parent/children/documents';

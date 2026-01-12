@@ -41,7 +41,7 @@ class ObservationCommentListWidget extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CommonAppBar(title: "Comments", showMenu: true, showBack: true),
+      appBar: CommonAppBar(title: "Comments", showMenu: false, showBack: true),
       body: Obx(
         () => Stack(
           children: [

@@ -172,6 +172,55 @@ class NewsFeedController extends GetxController {
   }
 
   /// Add Like API
+  callAddLikeInNewsFeedAPI(
+      BuildContext context,
+      String newsId,
+      int index,
+      ) async {
+    isLoading.value = true;
+
+    String token = await MySharedPref().getAccessToken(
+      SharePreData.keyAccessToken,
+    );
+
+    String url =
+        "$urlBase$urlAddLikeInNewsFeed/$newsId/like";
+
+    final apiReq = Request();
+
+    await apiReq.postAPI(url, null, token).then((value) async {
+      http.StreamedResponse res = value;
+      printData(
+        runtimeType.toString(),
+        "callAddLikeInNewsFeedAPI response ${res.statusCode}",
+      );
+
+      await res.stream.bytesToString().then((valueData) async {
+        printData(
+          runtimeType.toString(),
+          "callAddLikeInNewsFeedAPI value ${valueData}",
+        );
+
+        isLoading.value = false;
+
+        if (res.statusCode == 200) {
+          Map<String, dynamic> userModel = json.decode(valueData);
+          BaseModel baseModel = BaseModel.fromJson(userModel);
+
+          if (baseModel.status ?? false) {
+            isLikeList[index] = true;
+            update();
+
+            snackBar(context, baseModel.message ?? "");
+          } else {
+            snackBar(context, baseModel.message ?? "");
+          }
+        }
+      });
+    });
+  }
+
+  /// Add Like API
   callAddLikeAPI(
     BuildContext context,
     String newsId,
@@ -185,7 +234,7 @@ class NewsFeedController extends GetxController {
     );
 
     String url =
-        "$urlBase$urlAddLikeInNewsFeedComment/$newsId/comment/$commentId";
+        "$urlBase$urlAddLikeInNewsFeedComment/$newsId/comment/$commentId/like";
 
     final apiReq = Request();
 
@@ -193,13 +242,13 @@ class NewsFeedController extends GetxController {
       http.StreamedResponse res = value;
       printData(
         runtimeType.toString(),
-        "callLeaveRequestAPI response ${res.statusCode}",
+        "callAddLikeInNewsFeedAPI response ${res.statusCode}",
       );
 
       await res.stream.bytesToString().then((valueData) async {
         printData(
           runtimeType.toString(),
-          "callLeaveRequestAPI value ${valueData}",
+          "callAddLikeInNewsFeedAPI value ${valueData}",
         );
 
         isLoading.value = false;
@@ -209,7 +258,7 @@ class NewsFeedController extends GetxController {
           BaseModel baseModel = BaseModel.fromJson(userModel);
 
           if (baseModel.status ?? false) {
-            isLikeList[index] = true;
+            newsFeedList[index].isLike = true;
             update();
 
             snackBar(context, baseModel.message ?? "");

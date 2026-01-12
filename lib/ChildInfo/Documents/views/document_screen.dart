@@ -47,15 +47,17 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      childInfoController.callGetDocumentsAPI(context, widget.childId);
+    });
 
-    childInfoController.callGetDocumentsAPI(context, widget.childId);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: const CommonAppBar(title: "Documents", showMenu: true, showBack: true,),
+      appBar: const CommonAppBar(title: "Documents", showMenu: false, showBack: true,),
       body: Stack(
         children: [
           Positioned.fill(child: SvgPicture.asset(app_bg, fit: BoxFit.cover)),

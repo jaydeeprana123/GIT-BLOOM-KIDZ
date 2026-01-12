@@ -25,6 +25,8 @@ import '../Bookings/models/bookings_response.dart';
 import '../ExtraBookings/models/extra_bookings_request.dart';
 import '../ExtraBookings/models/extra_bookings_response.dart';
 import '../ExtraBookings/models/price_band_response.dart';
+import '../SafeGuarding/models/accident_list_response.dart';
+import '../SafeGuarding/models/medication_list_response.dart';
 import '../View/ChildActivity/itemline_card.dart';
 import '../View/ChildActivity/models/timeline_item.dart';
 import '../models/family_contact_list_response.dart';
@@ -35,6 +37,8 @@ class ChildInfoController extends GetxController {
   RxList<Observation> observationList = <Observation>[].obs;
   RxList<int> removedMediaIds = <int>[].obs;
   Rx<Observation> selectedObservation = Observation().obs;
+
+  RxInt medicineRefreshIndex = (-1).obs;
 
   RxList<DocumentData> documentList = <DocumentData>[].obs;
 
@@ -93,6 +97,8 @@ class ChildInfoController extends GetxController {
 
   RxInt selectedTab = 0.obs; // 0 = Basic, 1 = Health, 2 = Sensitive
 
+  RxList<Medication> medicationList = <Medication>[].obs;
+  RxList<Accident> accidentList = <Accident>[].obs;
   void setPlanStart(DateTime date) {
     planStartDate.value = date;
   }
@@ -1240,6 +1246,212 @@ class ChildInfoController extends GetxController {
         }
       });
     });
+  }
+
+
+  /// Medication list API
+  callMedicationListAPI(BuildContext context, String childId) async {
+    isLoading.value = true;
+
+    String token = await MySharedPref().getAccessToken(
+      SharePreData.keyAccessToken,
+    );
+
+    String url = "$urlBase$urlMedicationList/$childId";
+
+    final apiReq = Request();
+
+    await apiReq.getMethodAPI(url, null, token).then((value) async {
+      http.StreamedResponse res = value;
+      printData(
+        runtimeType.toString(),
+        "callChildInfoAPI response ${res.statusCode}",
+      );
+
+      await res.stream.bytesToString().then((valueData) async {
+        printData(
+          runtimeType.toString(),
+          "callChildInfoAPI value ${valueData}",
+        );
+
+        isLoading.value = false;
+
+        if (res.statusCode == 200) {
+          Map<String, dynamic> userModel = json.decode(valueData);
+          MedicationListResponse medicationListResponse = MedicationListResponse.fromJson(
+            userModel,
+          );
+
+          if (medicationListResponse.status ?? false) {
+            medicationList.value = medicationListResponse.data?.medications ?? [];
+
+            /// RESET SELECTION AFTER LOAD
+            selectedDateIndex.value = 0;
+          } else {
+            snackBar(context, medicationListResponse.message ?? "");
+          }
+        }
+      });
+    });
+  }
+
+  /// Accident list API
+  callAccidentListAPI(BuildContext context, String childId) async {
+    isLoading.value = true;
+
+    String token = await MySharedPref().getAccessToken(
+      SharePreData.keyAccessToken,
+    );
+
+    printData("token", token);
+    String url = "$urlBase$urlAccidentList/$childId";
+
+    final apiReq = Request();
+
+    await apiReq.getMethodAPI(url, null, token).then((value) async {
+      http.StreamedResponse res = value;
+      printData(
+        runtimeType.toString(),
+        "callChildInfoAPI response ${res.statusCode}",
+      );
+
+      await res.stream.bytesToString().then((valueData) async {
+        printData(
+          runtimeType.toString(),
+          "callChildInfoAPI value ${valueData}",
+        );
+
+        isLoading.value = false;
+
+        if (res.statusCode == 200) {
+          Map<String, dynamic> userModel = json.decode(valueData);
+          AccidentListResponse accidentListResponse = AccidentListResponse.fromJson(
+            userModel,
+          );
+
+          if (accidentListResponse.status ?? false) {
+
+            accidentList.value = accidentListResponse.data?.accidents ?? [];
+
+            /// RESET SELECTION AFTER LOAD
+            selectedDateIndex.value = 0;
+          } else {
+            snackBar(context, accidentListResponse.message ?? "");
+          }
+        }
+      });
+    });
+  }
+
+
+  /// Add Family API
+  callAddMedicationAcknowledgeAPI(BuildContext context, int medicationId, String childId) async {
+
+    medicineRefreshIndex.value = medicationList.indexWhere((e) => e.id == medicationId);
+    String token = await MySharedPref().getAccessToken(
+      SharePreData.keyAccessToken,
+    );
+
+    String url = urlBase + urlAddAcknowledgeMedication;
+
+    final apiReq = Request();
+
+    dynamic body = {
+      'medication_id': medicationId.toString(),
+    };
+
+    await apiReq.postAPIWithMedia(url, body, token, imagePath.value, []).then((
+        value,
+        ) async {
+      http.StreamedResponse res = value;
+      printData(runtimeType.toString(), "callAddAcknowledgeAPI API response ${res.statusCode}");
+
+      await res.stream.bytesToString().then((valueData) async {
+        printData(runtimeType.toString(), "callAddAcknowledgeAPI API value ${valueData}");
+
+        if (res.statusCode == 200) {
+          Map<String, dynamic> userModel = json.decode(valueData);
+          BaseModel baseModel = BaseModel.fromJson(userModel);
+
+          if (baseModel.status ?? false) {
+            snackBar(context, baseModel.message ?? "");
+            acknowledgeMedication(medicationId, context, childId);
+          } else {
+            snackBar(context, baseModel.message ?? "");
+          }
+        }
+      });
+    });
+  }
+
+  /// Add Family API
+  callAddAccidentAcknowledgeAPI(BuildContext context, int accidentId, String childId) async {
+
+    medicineRefreshIndex.value = accidentList.indexWhere((e) => e.id == accidentId);
+    String token = await MySharedPref().getAccessToken(
+      SharePreData.keyAccessToken,
+    );
+
+    String url = urlBase + urlAddAcknowledgeAccident;
+
+    final apiReq = Request();
+
+    dynamic body = {
+      'accident_id': accidentId.toString(),
+    };
+
+    await apiReq.postAPIWithMedia(url, body, token, imagePath.value, []).then((
+        value,
+        ) async {
+      http.StreamedResponse res = value;
+      printData(runtimeType.toString(), "callAddAccidentAcknowledgeAPI API response ${res.statusCode}");
+
+      await res.stream.bytesToString().then((valueData) async {
+        printData(runtimeType.toString(), "callAddAccidentAcknowledgeAPI API value ${valueData}");
+
+        if (res.statusCode == 200) {
+          Map<String, dynamic> userModel = json.decode(valueData);
+          BaseModel baseModel = BaseModel.fromJson(userModel);
+
+          if (baseModel.status ?? false) {
+            snackBar(context, baseModel.message ?? "");
+            acknowledgeAccident(accidentId, context, childId);
+          } else {
+            snackBar(context, baseModel.message ?? "");
+          }
+        }
+      });
+    });
+  }
+
+
+  void acknowledgeMedication(int medicationId, BuildContext context, String childId) {
+    // call acknowledge API here
+    // after success:
+    final index = medicationList.indexWhere((e) => e.id == medicationId);
+    if (index != -1) {
+      medicationList[index].parentAck?.status = true;
+      medicationList.refresh();
+    }
+
+
+    medicineRefreshIndex.value = -1;
+    callMedicationListAPI(context, childId);
+
+  }
+  void acknowledgeAccident(int accidentId, BuildContext context, String childId) {
+    // call acknowledge API here
+    // after success:
+    final index = accidentList.indexWhere((e) => e.id == accidentId);
+    if (index != -1) {
+      accidentList[index].acknowledgement?.status = true;
+      accidentList.refresh();
+    }
+
+
+    medicineRefreshIndex.value = -1;
+    callMedicationListAPI(context, childId);
+
   }
 
 

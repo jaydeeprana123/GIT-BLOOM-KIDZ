@@ -6,6 +6,7 @@ import 'package:bloom_kidz/Styles/my_icons.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 import '../../ChildInfo/View/child_info_screen.dart';
@@ -24,29 +25,39 @@ class ChatScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: Colors.white,
       appBar: const CommonAppBar(
         title: "Chat",
-        showMenu: true,
+        showMenu: false,
+        showBack: true,
       ),
-      body: Card(
-        color: Colors.white,
-        shadowColor: color_secondary,
-        elevation: 6,
-        margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(
-              22,
-            ), // change 16 to any radius you like
+      body: Stack(
+        children: [
+
+          Positioned.fill(
+            child: SvgPicture.asset(app_bg, fit: BoxFit.fill),
           ),
-        child: Column(
-          children: [
-            const ChatHeader(),
-            const Divider(height: 1),
-            Expanded(child: _chatList()),
-            _replyBox(),
-          ],
-        ),
+
+          Card(
+            color: Colors.white,
+            shadowColor: color_secondary,
+            elevation: 6,
+            margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(
+                  22,
+                ), // change 16 to any radius you like
+              ),
+            child: Column(
+              children: [
+                const ChatHeader(),
+                const Divider(height: 1),
+                Expanded(child: _chatList()),
+                _replyBox(),
+              ],
+            ),
+          ),
+        ],
       ),
 
     );

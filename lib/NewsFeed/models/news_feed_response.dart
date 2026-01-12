@@ -61,6 +61,7 @@ class NewsFeedData {
 
 class Newsfeed {
   int? id;
+  bool? isLike;
   String? name;
   String? description;
   String? descriptionOld;
@@ -81,6 +82,7 @@ class Newsfeed {
 
   Newsfeed({
     this.id,
+    this.isLike,
     this.name,
     this.description,
     this.descriptionOld,

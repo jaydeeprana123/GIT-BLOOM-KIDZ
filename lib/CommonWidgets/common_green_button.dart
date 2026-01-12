@@ -6,12 +6,14 @@ import '../Styles/my_font.dart';
 class CommonGradientButton extends StatelessWidget {
   final String btnTitle;
   final VoidCallback onPressed;
+  final bool? isRefresh;
 
 
   const CommonGradientButton({
     super.key,
     required this.btnTitle,
     required this.onPressed,
+    this.isRefresh,
   });
 
   @override
@@ -40,13 +42,27 @@ class CommonGradientButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
           ),
         ),
-        child: Text(
-          btnTitle,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 15,
-            fontFamily: fontInterSemiBold,
-          ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              btnTitle,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 15,
+                fontFamily: fontInterSemiBold,
+              ),
+            ),
+
+            isRefresh??false?Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(width: 6,),
+                Center(child: CircularProgressIndicator(color: Colors.white,),),
+              ],
+            ):SizedBox()
+          ],
         ),
       ),
     );

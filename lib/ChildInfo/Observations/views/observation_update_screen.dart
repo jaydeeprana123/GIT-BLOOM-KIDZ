@@ -53,7 +53,7 @@ class _ObservationUpdateScreenState extends State<ObservationUpdateScreen> {
       backgroundColor: Colors.white,
       appBar: CommonAppBar(
         title: "New Observation",
-        showMenu: true,
+        showMenu: false,
         showBack: true,
       ),
       body: SafeArea(

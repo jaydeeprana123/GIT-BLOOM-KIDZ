@@ -27,6 +27,7 @@ import '../../CommonWidgets/black_medium_bold_text.dart';
 import '../../CommonWidgets/black_medium_regular_text.dart';
 import '../../CommonWidgets/blue_medium_bold_text.dart';
 import '../../CommonWidgets/common_appbar.dart';
+import '../../Drawer/app_drawer.dart';
 import 'change_password_dialog.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -38,20 +39,27 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   ProfileController profileController = Get.put(ProfileController());
-
+  final GlobalKey<ScaffoldState> _scaffoldKey =
+  GlobalKey<ScaffoldState>();
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      profileController.callGetProfileAPI(context);
+    });
 
-    profileController.callGetProfileAPI(context);
 
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: Colors.transparent,
-      appBar: CommonAppBar(title: "Profile", showMenu: true),
+      appBar: CommonAppBar(title: "Profile", showMenu: true, onMenuTap: (){
+        _scaffoldKey.currentState?.openDrawer(); // 👈 OPEN DRAWER
+      }),
+      drawer: const AppDrawer(), // 👈 Navigation Drawer
       body: SafeArea(
         child: Obx(
                 () =>Stack(

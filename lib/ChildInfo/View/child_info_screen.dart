@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../CommonWidgets/common_appbar.dart';
+import '../../Drawer/app_drawer.dart';
 import 'child_.card.dart';
 
 class ChildInfoScreen extends StatefulWidget {
@@ -23,19 +24,26 @@ class ChildInfoScreen extends StatefulWidget {
 
 class _ChildInfoScreenState extends State<ChildInfoScreen> {
   ChildInfoController childInfoController = Get.put(ChildInfoController());
-
+  final GlobalKey<ScaffoldState> _scaffoldKey =
+  GlobalKey<ScaffoldState>();
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      childInfoController.callChildInfoAPI(context);
+    });
 
-    childInfoController.callChildInfoAPI(context);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: Colors.transparent,
-      appBar: const CommonAppBar(title: "Child Info", showMenu: true),
+      appBar:  CommonAppBar(title: "Child Info", showMenu: true, onMenuTap: (){
+        _scaffoldKey.currentState?.openDrawer(); // 👈 OPEN DRAWER
+      }),
+      drawer: const AppDrawer(), // 👈 Navigation Drawer
       body: Obx(
         () => Stack(
           children: [

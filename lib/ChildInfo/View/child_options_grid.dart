@@ -1,4 +1,5 @@
 import 'package:bloom_kidz/ChildInfo/Permissions/View/child_permissions_screen.dart';
+import 'package:bloom_kidz/ChildInfo/SafeGuarding/views/accident_list_screen.dart';
 import 'package:bloom_kidz/ChildInfo/View/ChildActivity/activity_screen.dart';
 import 'package:bloom_kidz/ChildInfo/Documents/views/document_screen.dart';
 import 'package:bloom_kidz/CommonWidgets/common_green_button.dart';
@@ -16,6 +17,8 @@ import 'package:get/get.dart';
 import '../Bookings/views/booking_screen.dart';
 import '../ExtraBookings/views/extra_booking_screen.dart';
 import '../Observations/views/observation_list_screen.dart';
+import '../SafeGuarding/views/medications_list_screen.dart';
+import '../SafeGuarding/views/safeguarding_screen.dart';
 import 'about_screen.dart';
 import 'child_.card.dart';
 
@@ -52,7 +55,10 @@ class ChildOptionsGrid extends StatelessWidget {
       InkWell(onTap: (){
         Get.to(ObservationListScreen(childId: childId,));
       },child: GridItem(icon_Journey, "Journey")),
-      GridItem(icon_Safeguarding, "Safeguarding"),
+      InkWell(onTap: (){
+
+        Get.to(SafeguardingScreen(childId: childId,));
+      },child: GridItem(icon_Safeguarding, "Safeguarding")),
       InkWell(onTap: (){
         Get.to(ChildrenPermissionScreen(childId: childId,));
       },child: GridItem(icon_ChildPermission, "Child Permission")),

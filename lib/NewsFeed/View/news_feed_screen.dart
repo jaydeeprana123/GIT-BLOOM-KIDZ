@@ -27,8 +27,10 @@ class _NewsFeedScreenState extends State<NewsFeedScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      newsFeedController.callNewsFeedAPI(context);
+    });
 
-    newsFeedController.callNewsFeedAPI(context);
   }
 
   @override

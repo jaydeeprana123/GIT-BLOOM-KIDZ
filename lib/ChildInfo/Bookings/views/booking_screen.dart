@@ -69,7 +69,7 @@ class _BookingScreenState extends State<BookingScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
 
-      appBar: const CommonAppBar(title: "Bookings", showMenu: true, showBack: true,),
+      appBar: const CommonAppBar(title: "Bookings", showMenu: false, showBack: true,),
 
       body:    Stack(
         children: [

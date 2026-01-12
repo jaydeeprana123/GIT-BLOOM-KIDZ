@@ -24,7 +24,7 @@ class AppDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    LoginController loginController = Get.find<LoginController>();
+    LoginController loginController = Get.put(LoginController());
 
     return Drawer(
       child:  Obx(
@@ -78,7 +78,7 @@ class AppDrawer extends StatelessWidget {
             ],
           ),
 
-          Center(child: CircularProgressIndicator(),)
+          if(loginController.isLoading.value)Center(child: CircularProgressIndicator(),)
         ],
       )),
     );

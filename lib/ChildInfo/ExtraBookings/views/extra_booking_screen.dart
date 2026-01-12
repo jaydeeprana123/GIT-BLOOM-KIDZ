@@ -53,8 +53,10 @@ class _ExtraBookingScreenState extends State<ExtraBookingScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.callGetExtraBookingsAPI(context, widget.childId);
+    });
 
-    controller.callGetExtraBookingsAPI(context, widget.childId);
   }
 
 

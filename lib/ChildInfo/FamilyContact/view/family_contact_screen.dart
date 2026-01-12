@@ -37,8 +37,9 @@ class _FamilyContactsScreenState extends State<FamilyContactsScreen> {
   @override
   void initState() {
     super.initState();
-
-    childInfoController.callGetFamilyContactsAPI(context);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      childInfoController.callGetFamilyContactsAPI(context);
+    });
   }
 
   @override
@@ -47,7 +48,7 @@ class _FamilyContactsScreenState extends State<FamilyContactsScreen> {
       backgroundColor: Colors.white,
       appBar: CommonAppBar(
         title: "Family & Contacts",
-        showMenu: true,
+        showMenu: false,
         showBack: true,
       ),
       body: Obx(

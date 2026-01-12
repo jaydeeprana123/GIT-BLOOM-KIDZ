@@ -42,7 +42,7 @@ class _FamilyAddScreenState extends State<FamilyAddScreen> {
       backgroundColor: Colors.white,
       appBar: CommonAppBar(
         title: "Add Family",
-        showMenu: true,
+        showMenu: false,
         showBack: true,
       ),
       body: SafeArea(

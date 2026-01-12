@@ -18,6 +18,7 @@ import '../../ChildInfo/View/child_info_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../../CommonWidgets/common_appbar.dart';
+import '../../Drawer/app_drawer.dart';
 import 'chat_bubble.dart';
 import 'chat_header.dart';
 
@@ -32,19 +33,27 @@ class PeopleListScreen extends StatefulWidget {
 
 class _PeopleListScreenState extends State<PeopleListScreen> {
   ChatController chatController = Get.put(ChatController());
-
+  final GlobalKey<ScaffoldState> _scaffoldKey =
+  GlobalKey<ScaffoldState>();
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      chatController.callPeopleListAPI(context);
+    });
 
-    chatController.callPeopleListAPI(context);
+
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: Colors.white,
-      appBar: const CommonAppBar(title: "Chat", showMenu: true, showBack: true,),
+      appBar:  CommonAppBar(title: "Chat", showMenu: true, showBack: false, onMenuTap: (){
+    _scaffoldKey.currentState?.openDrawer(); // 👈 OPEN DRAWER
+    }),
+      drawer: const AppDrawer(), // 👈 Navigation Drawer
       body: Obx(
               () =>Stack(
         children: [
@@ -105,7 +114,7 @@ class _PeopleListScreenState extends State<PeopleListScreen> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   child: ListView.separated(
-                    itemCount: 10,
+                    itemCount: chatController.peopleList.length,
                     separatorBuilder: (_, __) => const Divider(height: 1),
                     itemBuilder: (context, index) {
                       return  ChatUserTile(chatPerson: chatController.peopleList[index],);
@@ -156,7 +165,7 @@ class ChatUserTile extends StatelessWidget {
               children:  [
                 BlueLargeBoldText(
                   chatPerson.name??"",
-                  fontFamily: fontInterBold
+                  fontFamily: fontInterSemiBold
                 ),
                 SizedBox(height: 3),
                 BlackMediumRegularText(

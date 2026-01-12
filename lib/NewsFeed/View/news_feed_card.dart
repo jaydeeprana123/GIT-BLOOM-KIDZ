@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:bloom_kidz/ChildInfo/controller/child_info_controller.dart';
 import 'package:bloom_kidz/CommonWidgets/black_large_bold_text.dart';
 import 'package:bloom_kidz/CommonWidgets/blue_medium_bold_text.dart';
 import 'package:bloom_kidz/CommonWidgets/blue_medium_regular_text.dart';
@@ -40,7 +43,7 @@ class NewsFeedCard extends StatelessWidget {
           _titleText(),
           if ((newsFeed.media ?? []).isNotEmpty) _image(),
           _description(),
-          _actions(),
+          _actions(context, newsFeedController, index, newsFeed.id.toString()),
           _replyBox(context,newsFeed.id.toString(), index),
         ],
       ),
@@ -131,7 +134,7 @@ class NewsFeedCard extends StatelessWidget {
 
   Widget _description() {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Html(
         data: newsFeed.description ?? "",
         style: {
@@ -141,16 +144,38 @@ class NewsFeedCard extends StatelessWidget {
             lineHeight: LineHeight(1.4),
           ),
         },
+        extensions: [
+          TagExtension(
+            tagsToExtend: {"img"},
+            builder: (context) {
+              final src = context.attributes['src'] ?? '';
+
+              if (src.startsWith('data:image')) {
+                final base64Str = src.split(',').last;
+                final bytes = base64Decode(base64Str);
+
+                return Image.memory(
+                  bytes,
+                  fit: BoxFit.contain,
+                );
+              }
+
+              return const SizedBox();
+            },
+          ),
+        ],
       ),
     );
   }
 
-  Widget _actions() {
+  Widget _actions(BuildContext context,NewsFeedController controller, int index, String newsId) {
     return Padding(
       padding: const EdgeInsets.all(12),
       child: Row(
         children: [
-          Icon(Icons.favorite, color: color_secondary, size: 16),
+          InkWell(onTap: (){
+            controller.callAddLikeInNewsFeedAPI(context, newsId,index);
+          },child: Icon((controller.newsFeedList[index].isLike??false)?Icons.favorite:Icons.favorite_border, color: (controller.newsFeedList[index].isLike??false)?Colors.red:color_secondary, size: 16)),
           SizedBox(width: 4),
           BlueMediumRegularText((newsFeed.likesCount ?? 0).toString()),
           SizedBox(width: 16),

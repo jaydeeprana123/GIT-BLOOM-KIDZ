@@ -55,7 +55,7 @@ class _FamilyUpdateScreenState extends State<FamilyUpdateScreen> {
       backgroundColor: Colors.white,
       appBar: CommonAppBar(
         title: "Update Family",
-        showMenu: true,
+        showMenu: false,
         showBack: true,
       ),
       body: SafeArea(

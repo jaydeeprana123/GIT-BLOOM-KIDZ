@@ -126,3 +126,4 @@ const icon_time = 'assets/images/time.svg';
 const icon_employee = 'assets/images/employee.svg';
 const icon_branch = 'assets/images/branch.svg';
 const icon_membership = 'assets/images/membership.svg';
+const body_front = "assets/images/front.jpg";
