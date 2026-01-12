@@ -4,9 +4,11 @@
 
 import 'dart:convert';
 
-ObservationListResponse observationListResponseFromJson(String str) => ObservationListResponse.fromJson(json.decode(str));
+ObservationListResponse observationListResponseFromJson(String str) =>
+    ObservationListResponse.fromJson(json.decode(str));
 
-String observationListResponseToJson(ObservationListResponse data) => json.encode(data.toJson());
+String observationListResponseToJson(ObservationListResponse data) =>
+    json.encode(data.toJson());
 
 class ObservationListResponse {
   bool? status;
@@ -14,19 +16,15 @@ class ObservationListResponse {
   int? code;
   Data? data;
 
-  ObservationListResponse({
-    this.status,
-    this.message,
-    this.code,
-    this.data,
-  });
+  ObservationListResponse({this.status, this.message, this.code, this.data});
 
-  factory ObservationListResponse.fromJson(Map<String, dynamic> json) => ObservationListResponse(
-    status: json["status"],
-    message: json["message"],
-    code: json["code"],
-    data: json["data"] == null ? null : Data.fromJson(json["data"]),
-  );
+  factory ObservationListResponse.fromJson(Map<String, dynamic> json) =>
+      ObservationListResponse(
+        status: json["status"],
+        message: json["message"],
+        code: json["code"],
+        data: json["data"] == null ? null : Data.fromJson(json["data"]),
+      );
 
   Map<String, dynamic> toJson() => {
     "status": status,
@@ -40,18 +38,23 @@ class Data {
   List<Observation>? observations;
   Pagination? pagination;
 
-  Data({
-    this.observations,
-    this.pagination,
-  });
+  Data({this.observations, this.pagination});
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
-    observations: json["observations"] == null ? [] : List<Observation>.from(json["observations"]!.map((x) => Observation.fromJson(x))),
-    pagination: json["pagination"] == null ? null : Pagination.fromJson(json["pagination"]),
+    observations: json["observations"] == null
+        ? []
+        : List<Observation>.from(
+            json["observations"]!.map((x) => Observation.fromJson(x)),
+          ),
+    pagination: json["pagination"] == null
+        ? null
+        : Pagination.fromJson(json["pagination"]),
   );
 
   Map<String, dynamic> toJson() => {
-    "observations": observations == null ? [] : List<dynamic>.from(observations!.map((x) => x.toJson())),
+    "observations": observations == null
+        ? []
+        : List<dynamic>.from(observations!.map((x) => x.toJson())),
     "pagination": pagination?.toJson(),
   };
 }
@@ -65,6 +68,7 @@ class Observation {
   DateTime? createdAt;
   String? createdBy;
   List<Media>? media;
+  bool? isLike;
   List<Like>? likes;
   int? likesCount;
   List<Comment>? comments;
@@ -83,6 +87,7 @@ class Observation {
     this.likesCount,
     this.comments,
     this.commentsCount,
+    this.isLike,
   });
 
   factory Observation.fromJson(Map<String, dynamic> json) => Observation(
@@ -91,12 +96,20 @@ class Observation {
     description: json["description"],
     observations: json["observations"],
     childNames: json["child_names"],
-    createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
+    createdAt: json["created_at"] == null
+        ? null
+        : DateTime.parse(json["created_at"]),
     createdBy: json["created_by"],
-    media: json["media"] == null ? [] : List<Media>.from(json["media"]!.map((x) => Media.fromJson(x))),
-    likes: json["likes"] == null ? [] : List<Like>.from(json["likes"]!.map((x) => Like.fromJson(x))),
+    media: json["media"] == null
+        ? []
+        : List<Media>.from(json["media"]!.map((x) => Media.fromJson(x))),
+    likes: json["likes"] == null
+        ? []
+        : List<Like>.from(json["likes"]!.map((x) => Like.fromJson(x))),
     likesCount: json["likes_count"],
-    comments: json["comments"] == null ? [] : List<Comment>.from(json["comments"]!.map((x) => Comment.fromJson(x))),
+    comments: json["comments"] == null
+        ? []
+        : List<Comment>.from(json["comments"]!.map((x) => Comment.fromJson(x))),
     commentsCount: json["comments_count"],
   );
 
@@ -108,14 +121,19 @@ class Observation {
     "child_names": childNames,
     "created_at": createdAt?.toIso8601String(),
     "created_by": createdBy,
-    "media": media == null ? [] : List<dynamic>.from(media!.map((x) => x.toJson())),
-    "likes": likes == null ? [] : List<dynamic>.from(likes!.map((x) => x.toJson())),
+    "media": media == null
+        ? []
+        : List<dynamic>.from(media!.map((x) => x.toJson())),
+    "likes": likes == null
+        ? []
+        : List<dynamic>.from(likes!.map((x) => x.toJson())),
     "likes_count": likesCount,
-    "comments": comments == null ? [] : List<dynamic>.from(comments!.map((x) => x.toJson())),
+    "comments": comments == null
+        ? []
+        : List<dynamic>.from(comments!.map((x) => x.toJson())),
     "comments_count": commentsCount,
   };
 }
-
 
 class Comment {
   int? id;
@@ -124,13 +142,7 @@ class Comment {
   int? likes;
   User? user;
 
-  Comment({
-    this.id,
-    this.content,
-    this.date,
-    this.likes,
-    this.user,
-  });
+  Comment({this.id, this.content, this.date, this.likes, this.user});
 
   factory Comment.fromJson(Map<String, dynamic> json) => Comment(
     id: json["id"],
@@ -155,12 +167,7 @@ class User {
   String? profile;
   String? userType;
 
-  User({
-    this.id,
-    this.name,
-    this.profile,
-    this.userType,
-  });
+  User({this.id, this.name, this.profile, this.userType});
 
   factory User.fromJson(Map<String, dynamic> json) => User(
     id: json["id"],
@@ -177,19 +184,13 @@ class User {
   };
 }
 
-
 class Like {
   int? id;
   int? masterId;
   int? userId;
   dynamic date;
 
-  Like({
-    this.id,
-    this.masterId,
-    this.userId,
-    this.date,
-  });
+  Like({this.id, this.masterId, this.userId, this.date});
 
   factory Like.fromJson(Map<String, dynamic> json) => Like(
     id: json["id"],
@@ -213,13 +214,7 @@ class Media {
   String? extension;
   String? size;
 
-  Media({
-    this.id,
-    this.masterId,
-    this.image,
-    this.extension,
-    this.size,
-  });
+  Media({this.id, this.masterId, this.image, this.extension, this.size});
 
   factory Media.fromJson(Map<String, dynamic> json) => Media(
     id: json["id"],

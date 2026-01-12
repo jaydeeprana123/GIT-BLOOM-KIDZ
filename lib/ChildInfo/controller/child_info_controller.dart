@@ -101,6 +101,16 @@ class ChildInfoController extends GetxController {
 
   RxList<Medication> medicationList = <Medication>[].obs;
   RxList<Accident> accidentList = <Accident>[].obs;
+
+  Rx<ActivityForSelect?> selectedActivity = Rx<ActivityForSelect?>(null);
+
+  /// Load from API response
+  void setActivities(ActivityResponseForSelect response) {
+    activityListForSelect.value = response.data?.activities ?? [];
+  }
+
+  int? get selectedActivityId => selectedActivity.value?.id;
+
   void setPlanStart(DateTime date) {
     planStartDate.value = date;
   }
@@ -928,6 +938,8 @@ class ChildInfoController extends GetxController {
 
           if (baseModel.status ?? false) {
             snackBar(context, baseModel.message ?? "");
+
+            callObservationListAPI(context, childId);
           } else {
             snackBar(context, baseModel.message ?? "");
           }
@@ -941,6 +953,7 @@ class ChildInfoController extends GetxController {
     BuildContext context,
     String childId,
     String observationId,
+    int index,
   ) async {
     isLoading.value = true;
 
@@ -973,6 +986,9 @@ class ChildInfoController extends GetxController {
           BaseModel baseModel = BaseModel.fromJson(userModel);
 
           if (baseModel.status ?? false) {
+            // observationList[index].isLike = true;
+
+            callObservationListAPI(context, childId);
             update();
 
             snackBar(context, baseModel.message ?? "");
@@ -1213,47 +1229,80 @@ class ChildInfoController extends GetxController {
   ) async {
     isLoading.value = true;
 
+    var startDateStr = getDateFormtYYYYMMDDOnly(
+      startDate.value ?? DateTime(2026),
+    );
+    var endDateStr = getDateFormtYYYYMMDDOnly(endDate.value ?? DateTime(2026));
+
     String token = await MySharedPref().getStringValue(
       SharePreData.keyAccessToken,
     );
+
+    printData("toekn", token);
 
     String url = urlBase + urlLeaveRequest;
 
     final apiReq = Request();
 
     dynamic body = {
-      "child_id": 306,
-      "activity_id": 2,
-      "start_date": "2026-01-11",
-      "end_date": "2026-01-15",
-      "note": "Child will be sick for these days",
+      "child_id": childId,
+      "activity_id": activityId,
+      "start_date": startDateStr,
+      "end_date": endDateStr,
+      "note": noteController.value.text,
     };
 
-    await apiReq.postAPIWithMedia(url, body, token, imagePath.value, []).then((
-      value,
-    ) async {
-      http.StreamedResponse res = value;
-      printData(runtimeType.toString(), "Login API response ${res.statusCode}");
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+    var request = http.Request('POST', Uri.parse(url));
 
-      await res.stream.bytesToString().then((valueData) async {
-        printData(runtimeType.toString(), "Login API value ${valueData}");
+    request.headers.addAll(headers);
+    request.body = jsonEncode(body);
+    http.StreamedResponse response = await request.send();
+    isLoading.value = false;
+    if (response.statusCode == 200) {
+      await response.stream.bytesToString().then((valueData) async {
+        printData("callAddLeaveAPI", valueData);
 
-        isLoading.value = false;
+        Map<String, dynamic> userModel = json.decode(valueData);
+        BaseModel baseModel = BaseModel.fromJson(userModel);
 
-        if (res.statusCode == 200) {
-          Map<String, dynamic> userModel = json.decode(valueData);
-          BaseModel baseModel = BaseModel.fromJson(userModel);
-
-          if (baseModel.status ?? false) {
-            snackBar(context, baseModel.message ?? "");
-
-            Navigator.pop(context);
-          } else {
-            snackBar(context, baseModel.message ?? "");
-          }
+        if (baseModel.status ?? false) {
+          snackBar(context, baseModel.message ?? "");
+          Navigator.pop(context);
+        } else {
+          snackBar(context, baseModel.message ?? "");
         }
       });
-    });
+    } else {
+      print(response.reasonPhrase);
+    }
+
+    // await apiReq.postAPI(url, body, token).then((value) async {
+    //   http.StreamedResponse res = value;
+    //   printData(runtimeType.toString(), "Login API response ${res.statusCode}");
+    //
+    //   await res.stream.bytesToString().then((valueData) async {
+    //     printData(runtimeType.toString(), "Login API value ${valueData}");
+    //
+    //     isLoading.value = false;
+    //
+    //     if (res.statusCode == 200) {
+    //       Map<String, dynamic> userModel = json.decode(valueData);
+    //       BaseModel baseModel = BaseModel.fromJson(userModel);
+    //
+    //       if (baseModel.status ?? false) {
+    //         snackBar(context, baseModel.message ?? "");
+    //
+    //         Navigator.pop(context);
+    //       } else {
+    //         snackBar(context, baseModel.message ?? "");
+    //       }
+    //     }
+    //   });
+    // });
   }
 
   /// Set Pin API

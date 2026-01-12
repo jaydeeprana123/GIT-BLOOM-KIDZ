@@ -24,125 +24,142 @@ import '../../CommonWidgets/common_appbar.dart';
 class CommentListWidget extends StatelessWidget {
   Newsfeed newsFeed;
   NewsFeedController newsFeedController;
-  CommentListWidget({super.key, required this.newsFeed, required this.newsFeedController});
+  CommentListWidget({
+    super.key,
+    required this.newsFeed,
+    required this.newsFeedController,
+  });
 
   @override
   Widget build(BuildContext context) {
-
-    for(int i=0; i<(newsFeed.comments??[]).length ; i++){
+    for (int i = 0; i < (newsFeed.comments ?? []).length; i++) {
       newsFeedController.isLikeList.add(false);
     }
 
-
-
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CommonAppBar(title: "Comments", showMenu: true, showBack: true,),
+      appBar: CommonAppBar(title: "Comments", showMenu: true, showBack: true),
       body: Obx(
-              () =>Stack(
-        children: [
+        () => Stack(
+          children: [
+            Positioned.fill(child: SvgPicture.asset(app_bg, fit: BoxFit.cover)),
 
-          Positioned.fill(child: SvgPicture.asset(app_bg, fit: BoxFit.cover)),
+            ((newsFeed.comments ?? []).isEmpty)
+                ? Center(child: BlueLargeBoldText("No comments found"))
+                : ListView.builder(
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    itemCount: (newsFeed.comments ?? []).length,
+                    itemBuilder: (context, index) {
+                      final comment = newsFeed.comments?[index];
 
-          ((newsFeed.comments ?? []).isEmpty)
-              ? Center(child: BlueLargeBoldText("No comments found"))
-              : ListView.builder(
-            padding: EdgeInsets.symmetric(vertical: 12),
-                  itemCount: (newsFeed.comments ?? []).length,
-                  itemBuilder: (context, index) {
-                    final comment = newsFeed.comments?[index];
-
-                    return Card(
-                      color: Colors.white,
-                      shadowColor: color_secondary,
-                      elevation: 6,
-                      margin: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 10,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(22),
-                      ),
-                      child: Container(
-                        padding: const EdgeInsets.all(12),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            /// 👤 Profile Image
-                            CircleAvatar(
-                              radius: 22,
-                              backgroundImage: NetworkImage(
-                                comment?.user?.profile ?? "",
-                              ),
-                            ),
-
-                            const SizedBox(width: 10),
-
-                            /// 💬 Content
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  /// Name + Date
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      BlueMediumBoldText(
-                                        comment?.user?.name ?? "",
-                                        fontSize: 14,
-                                      ),
-                                      BlackSmallMediumText(
-                                        getDateOnlyInIndianFormat(
-                                          comment?.date ?? DateTime(2025),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-
-                                  const SizedBox(height: 6),
-
-                                  /// Comment Text
-                                  BlackMediumRegularText(
-                                    comment?.content ?? "",
-                                    fontSize: 13,
-                                    color: Colors.black
-                                  ),
-
-                                  const SizedBox(height: 8),
-
-                                  /// Likes
-                                  Row(
-                                    children: [
-                                      InkWell(
-                                        onTap: (){
-                                          newsFeedController.callAddLikeAPI(context, newsFeed.id.toString(), (comment?.id??0).toString(), index);
-                                        }
-                                        ,child:  Icon(
-                                         newsFeedController.isLikeList[index] == true?Icons.thumb_up : Icons.thumb_up_alt_outlined,
-                                          size: 16,
-                                          color: newsFeedController.isLikeList[index] == true?color_secondary:text_color,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 4),
-                                      BlackMediumBoldText(
-                                        (comment?.likes ?? 0).toString(),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
+                      return Card(
+                        color: Colors.white,
+                        shadowColor: color_secondary,
+                        elevation: 6,
+                        margin: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 10,
                         ),
-                      ),
-                    );
-                  },
-                ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(22),
+                        ),
+                        child: Container(
+                          padding: const EdgeInsets.all(12),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              /// 👤 Profile Image
+                              CircleAvatar(
+                                radius: 22,
+                                backgroundImage: NetworkImage(
+                                  comment?.user?.profile ?? "",
+                                ),
+                              ),
 
-          if(newsFeedController.isLoading.value)Center(child: CircularProgressIndicator(),)
-        ],
-      )),
+                              const SizedBox(width: 10),
+
+                              /// 💬 Content
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    /// Name + Date
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        BlueMediumBoldText(
+                                          comment?.user?.name ?? "",
+                                          fontSize: 14,
+                                        ),
+                                        BlackSmallMediumText(
+                                          getDateOnlyInIndianFormat(
+                                            comment?.date ?? DateTime(2025),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+
+                                    const SizedBox(height: 6),
+
+                                    /// Comment Text
+                                    BlackMediumRegularText(
+                                      comment?.content ?? "",
+                                      fontSize: 13,
+                                      color: Colors.black,
+                                    ),
+
+                                    const SizedBox(height: 8),
+
+                                    /// Likes
+                                    Row(
+                                      children: [
+                                        InkWell(
+                                          onTap: () {
+                                            newsFeedController
+                                                .callAddLikeInCommentAPI(
+                                                  context,
+                                                  newsFeed.id.toString(),
+                                                  (comment?.id ?? 0).toString(),
+                                                  index,
+                                                );
+                                          },
+                                          child: Icon(
+                                            newsFeedController
+                                                        .isLikeList[index] ==
+                                                    true
+                                                ? Icons.thumb_up
+                                                : Icons.thumb_up_alt_outlined,
+                                            size: 16,
+                                            color:
+                                                newsFeedController
+                                                        .isLikeList[index] ==
+                                                    true
+                                                ? color_secondary
+                                                : text_color,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 4),
+                                        BlackMediumBoldText(
+                                          (comment?.likes ?? 0).toString(),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+
+            if (newsFeedController.isLoading.value)
+              Center(child: CircularProgressIndicator()),
+          ],
+        ),
+      ),
     );
   }
 }

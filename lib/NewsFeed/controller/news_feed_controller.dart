@@ -75,9 +75,13 @@ class NewsFeedController extends GetxController {
             for (int i = 0; i < newsFeedList.length; i++) {
               replyController.add(TextEditingController());
             }
+          } else if (newsFeedResponse.code == 401) {
+            logoutFromTheApp();
           } else {
-            snackBar(context, loginResponse.value.message ?? "");
+            snackBarRapid(context, newsFeedResponse.message ?? "");
           }
+        } else if (res.statusCode == 401) {
+          logoutFromTheApp();
         }
       });
     });
@@ -163,6 +167,8 @@ class NewsFeedController extends GetxController {
 
           if (baseModel.status ?? false) {
             snackBar(context, baseModel.message ?? "");
+
+            callNewsFeedAPI(context);
           } else {
             snackBar(context, baseModel.message ?? "");
           }
@@ -173,18 +179,17 @@ class NewsFeedController extends GetxController {
 
   /// Add Like API
   callAddLikeInNewsFeedAPI(
-      BuildContext context,
-      String newsId,
-      int index,
-      ) async {
+    BuildContext context,
+    String newsId,
+    int index,
+  ) async {
     isLoading.value = true;
 
     String token = await MySharedPref().getStringValue(
       SharePreData.keyAccessToken,
     );
 
-    String url =
-        "$urlBase$urlAddLikeInNewsFeed/$newsId/like";
+    String url = "$urlBase$urlAddLikeInNewsFeed/$newsId/like";
 
     final apiReq = Request();
 
@@ -208,7 +213,10 @@ class NewsFeedController extends GetxController {
           BaseModel baseModel = BaseModel.fromJson(userModel);
 
           if (baseModel.status ?? false) {
-            isLikeList[index] = true;
+            // newsFeedList[index].isLike = true;
+
+            callNewsFeedAPI(context);
+
             update();
 
             snackBar(context, baseModel.message ?? "");
@@ -221,7 +229,7 @@ class NewsFeedController extends GetxController {
   }
 
   /// Add Like API
-  callAddLikeAPI(
+  callAddLikeInCommentAPI(
     BuildContext context,
     String newsId,
     String commentId,
@@ -258,7 +266,8 @@ class NewsFeedController extends GetxController {
           BaseModel baseModel = BaseModel.fromJson(userModel);
 
           if (baseModel.status ?? false) {
-            newsFeedList[index].isLike = true;
+            isLikeList[index] = true;
+
             update();
 
             snackBar(context, baseModel.message ?? "");

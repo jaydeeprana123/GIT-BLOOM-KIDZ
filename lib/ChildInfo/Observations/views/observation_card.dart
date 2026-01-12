@@ -188,9 +188,19 @@ class ObservationCard extends StatelessWidget {
                 context,
                 childId,
                 observation.id.toString(),
+                index,
               );
             },
-            child: Icon(Icons.favorite, color: color_secondary, size: 16),
+            child: Icon(
+              (childInfoController.observationList[index].isLike ?? false)
+                  ? Icons.favorite
+                  : Icons.favorite_border,
+              color:
+                  (childInfoController.observationList[index].isLike ?? false)
+                  ? Colors.red
+                  : color_secondary,
+              size: 16,
+            ),
           ),
           SizedBox(width: 4),
           BlueMediumRegularText((observation.likesCount ?? 0).toString()),
@@ -203,7 +213,9 @@ class ObservationCard extends StatelessWidget {
                   observation: observation,
                   childInfoController: childInfoController,
                 ),
-              );
+              )?.then((value) {
+                childInfoController.callObservationListAPI(context, childId);
+              });
             },
             child: Row(
               children: [

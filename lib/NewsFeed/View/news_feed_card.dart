@@ -204,7 +204,9 @@ class NewsFeedCard extends StatelessWidget {
                   newsFeed: newsFeed,
                   newsFeedController: newsFeedController,
                 ),
-              );
+              )?.then((value) {
+                controller.callNewsFeedAPI(context);
+              });
             },
             child: Row(
               children: [

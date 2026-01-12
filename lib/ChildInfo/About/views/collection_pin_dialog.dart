@@ -33,6 +33,7 @@ class CollectionPinDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    controller.isLoading.value = false;
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       insetPadding: const EdgeInsets.symmetric(horizontal: 20),

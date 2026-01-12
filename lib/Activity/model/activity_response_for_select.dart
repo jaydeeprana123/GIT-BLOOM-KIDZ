@@ -61,15 +61,15 @@ class ActivityForSelect {
   String? icon;
   String? status;
   int? nurseryId;
-  DeletedStatus? isDefault;
+  String? isDefault;
   int? createdId;
   DateTime? createdAt;
   int? updatedId;
   DateTime? updatedAt;
   int? deletedBy;
   DateTime? deletedAt;
-  DeletedStatus? deletedStatus;
-  DeletedStatus? isSigninValidate;
+  String? deletedStatus;
+  String? isSigninValidate;
 
   ActivityForSelect({
     this.id,
@@ -97,7 +97,7 @@ class ActivityForSelect {
         icon: json["icon"],
         status: json["status"],
         nurseryId: json["nursery_id"],
-        isDefault: deletedStatusValues.map[json["is_default"]]!,
+        isDefault: json["is_default"],
         createdId: json["created_id"],
         createdAt: json["created_at"] == null
             ? null
@@ -110,8 +110,8 @@ class ActivityForSelect {
         deletedAt: json["deleted_at"] == null
             ? null
             : DateTime.parse(json["deleted_at"]),
-        deletedStatus: deletedStatusValues.map[json["deleted_status"]]!,
-        isSigninValidate: deletedStatusValues.map[json["is_signin_validate"]]!,
+        deletedStatus: json["deleted_status"],
+        isSigninValidate: json["is_signin_validate"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -121,33 +121,14 @@ class ActivityForSelect {
     "icon": icon,
     "status": status,
     "nursery_id": nurseryId,
-    "is_default": deletedStatusValues.reverse[isDefault],
+    "is_default": isDefault,
     "created_id": createdId,
     "created_at": createdAt?.toIso8601String(),
     "updated_id": updatedId,
     "updated_at": updatedAt?.toIso8601String(),
     "deleted_by": deletedBy,
     "deleted_at": deletedAt?.toIso8601String(),
-    "deleted_status": deletedStatusValues.reverse[deletedStatus],
-    "is_signin_validate": deletedStatusValues.reverse[isSigninValidate],
+    "deleted_status": deletedStatus,
+    "is_signin_validate": isSigninValidate,
   };
-}
-
-enum DeletedStatus { N, Y }
-
-final deletedStatusValues = EnumValues({
-  "N": DeletedStatus.N,
-  "Y": DeletedStatus.Y,
-});
-
-class EnumValues<T> {
-  Map<String, T> map;
-  late Map<T, String> reverseMap;
-
-  EnumValues(this.map);
-
-  Map<T, String> get reverse {
-    reverseMap = map.map((k, v) => MapEntry(v, k));
-    return reverseMap;
-  }
 }
