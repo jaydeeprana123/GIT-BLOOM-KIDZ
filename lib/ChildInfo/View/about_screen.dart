@@ -145,29 +145,29 @@ class _AboutScreenState extends State<AboutScreen> {
               _twoColumnInfo(
                 "Date Of Birth",
                 _formatDate(basic.dob),
-                Icons.calendar_today,
+                dob,
                 "Nationality",
                 basic.nationality,
-                Icons.public,
+                nationalityIcon,
               ),
               _twoColumnInfo(
                 "Birth Place",
                 basic.birthPlace,
-                Icons.location_on,
+                birthPlaceIcon,
                 "Live With",
                 basic.liveWith?.join(", "),
-                Icons.home,
+                icon_home,
               ),
               Divider(color: Colors.grey.shade300),
               _singleInfo("Parent Responsibility",
-                  basic.parentalResponsibility?.join(", "), Icons.group),
-              _singleInfo("Key Person", basic.keyPerson, Icons.person),
+                  basic.parentalResponsibility?.join(", "), keyPersonIcon),
+              _singleInfo("Key Person", basic.keyPerson, keyPersonIcon),
               if (basic.secondKeyPerson != null)
                 _singleInfo("Second Key Person", basic.secondKeyPerson,
-                    Icons.person_outline),
+                    keyPersonIcon),
               Divider(color: Colors.grey.shade300),
               _singleInfo("Second Key Person", basic.secondKeyPerson,
-                  Icons.person_outline),
+                  keyPersonIcon),
               _specialNote(basic.specialNote),
             ],
           ),
@@ -179,10 +179,10 @@ class _AboutScreenState extends State<AboutScreen> {
 
   Widget _twoColumnInfo(String title1,
       String? value1,
-      IconData icon1,
+      String icon1,
       String title2,
       String? value2,
-      IconData icon2,) {
+      String icon2,) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Row(
@@ -194,18 +194,18 @@ class _AboutScreenState extends State<AboutScreen> {
     );
   }
 
-  Widget _singleInfo(String title, String? value, IconData icon) {
+  Widget _singleInfo(String title, String? value, String icon) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: _infoWithIcon(title, value, icon),
     );
   }
 
-  Widget _infoWithIcon(String title, String? value, IconData icon) {
+  Widget _infoWithIcon(String title, String? value, String icon) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 18, color: color_secondary),
+        SvgPicture.asset(icon, width: 18, color: color_secondary),
         const SizedBox(width: 6),
         Expanded(
           child: Column(

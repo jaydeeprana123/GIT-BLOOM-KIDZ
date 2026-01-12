@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:bloom_kidz/ChildInfo/Documents/models/documents_response.dart';
+import 'package:bloom_kidz/ChildInfo/controller/child_info_controller.dart';
 import 'package:bloom_kidz/CommonWidgets/black_small_regular_text.dart';
 import 'package:bloom_kidz/CommonWidgets/blue_large_bold_text.dart';
 import 'package:bloom_kidz/CommonWidgets/common_green_button.dart';
@@ -9,6 +10,7 @@ import 'package:bloom_kidz/Styles/my_colors.dart';
 import 'package:bloom_kidz/Styles/my_font.dart';
 import 'package:bloom_kidz/Styles/my_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:open_filex/open_filex.dart';
@@ -34,11 +36,12 @@ import 'package:flutter/material.dart';
 class DocumentCard extends StatelessWidget {
   final DocumentData documentData;
   final String childId;
-
+  final ChildInfoController controller;
   const DocumentCard({
     super.key,
     required this.documentData,
     required this.childId,
+    required this.controller,
   });
 
   @override
@@ -55,7 +58,7 @@ class DocumentCard extends StatelessWidget {
             _pdfIcon(),
             const SizedBox(width: 12),
             _docInfo(),
-            _actions(),
+            _actions(controller),
           ],
         ),
       ),
@@ -99,7 +102,7 @@ class DocumentCard extends StatelessWidget {
     );
   }
 
-  Widget _actions() {
+  Widget _actions(ChildInfoController controller) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
@@ -112,9 +115,9 @@ class DocumentCard extends StatelessWidget {
           children: [
             InkWell(
               onTap: () {
-                downloadAndOpenPdf(documentData.url ?? "");
+                downloadAndOpenPdf(documentData.url ?? "", controller);
               },
-              child: _iconButton(Icons.cloud_download),
+              child: _iconButton(icon_cirlce_download),
             ),
             const SizedBox(width: 6),
             InkWell(
@@ -125,7 +128,7 @@ class DocumentCard extends StatelessWidget {
                   mode: LaunchMode.externalApplication,
                 );
               },
-              child: _iconButton(Icons.remove_red_eye),
+              child: _iconButton(eyeIcon),
             ),
           ],
         ),
@@ -133,18 +136,21 @@ class DocumentCard extends StatelessWidget {
     );
   }
 
-  Widget _iconButton(IconData icon) {
+  Widget _iconButton(String icon) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
       decoration: BoxDecoration(
         color: color_secondary,
         borderRadius: BorderRadius.circular(20),
       ),
-      child: Icon(icon, size: 14, color: Colors.white),
+      child: SvgPicture.asset(icon, width: 14, color: Colors.white),
     );
   }
 
-  Future<void> downloadAndOpenPdf(String url) async {
+  Future<void> downloadAndOpenPdf(String url, ChildInfoController controller) async {
+
+
+    controller.isLoading.value = true;
     try {
       final response = await http.get(Uri.parse(url));
 
@@ -153,10 +159,11 @@ class DocumentCard extends StatelessWidget {
         final file = File('${dir.path}/document.pdf');
 
         await file.writeAsBytes(response.bodyBytes);
-
+        controller.isLoading.value = false;
         /// Open PDF
         await OpenFilex.open(file.path);
       } else {
+        controller.isLoading.value = false;
         throw Exception("Failed to download PDF");
       }
     } catch (e) {

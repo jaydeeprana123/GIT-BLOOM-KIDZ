@@ -69,7 +69,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                 padding:  EdgeInsets.symmetric(vertical: 10),
                 itemCount: childInfoController.documentList.length,
                 itemBuilder: (context, index) {
-                  return  DocumentCard(documentData: childInfoController.documentList[index], childId: widget.childId,);
+                  return  DocumentCard(documentData: childInfoController.documentList[index], childId: widget.childId,controller: childInfoController,);
                 },
               ),
 
