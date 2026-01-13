@@ -60,7 +60,7 @@ class ChildInfoController extends GetxController {
 
   RxInt selectedDayIndex = 0.obs;
   RxInt selectedSlotIndex = (-1).obs;
-  RxList<ExtraBookings> extraBookingList = <ExtraBookings>[].obs;
+  RxList<ExtraBooking> extraBookingList = <ExtraBooking>[].obs;
 
   RxBool isLoading = false.obs;
 
@@ -746,7 +746,7 @@ class ChildInfoController extends GetxController {
 
           if (extraBookingsResponse.status ?? false) {
             extraBookingList.value =
-                extraBookingsResponse.data?.extraBookingList ?? [];
+                extraBookingsResponse.data?.extraBookings ?? [];
           } else {
             snackBar(context, extraBookingsResponse.message ?? "");
           }

@@ -35,36 +35,95 @@ class ExtraBookingsResponse {
 }
 
 class Data {
-  int? priceBandId;
-  List<ExtraBookings>? extraBookingList;
+  List<ExtraBooking>? extraBookings;
 
-  Data({this.priceBandId, this.extraBookingList});
+  Data({this.extraBookings});
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
-    priceBandId: json["price_band_id"],
-    extraBookingList: json["days"] == null
+    extraBookings: json["extra_bookings"] == null
         ? []
-        : List<ExtraBookings>.from(
-            json["days"]!.map((x) => ExtraBookings.fromJson(x)),
+        : List<ExtraBooking>.from(
+            json["extra_bookings"]!.map((x) => ExtraBooking.fromJson(x)),
           ),
   );
 
   Map<String, dynamic> toJson() => {
-    "price_band_id": priceBandId,
-    "days": extraBookingList == null
+    "extra_bookings": extraBookings == null
         ? []
-        : List<dynamic>.from(extraBookingList!.map((x) => x.toJson())),
+        : List<dynamic>.from(extraBookings!.map((x) => x.toJson())),
   };
 }
 
-class ExtraBookings {
+class ExtraBooking {
+  int? id;
+  int? childId;
+  DateTime? planStart;
+  DateTime? planEnd;
+  String? subtotal;
+  String? totalAmount;
+  String? status;
+  int? priceBand;
+  List<Day>? days;
+  DateTime? createdAt;
+
+  ExtraBooking({
+    this.id,
+    this.childId,
+    this.planStart,
+    this.planEnd,
+    this.subtotal,
+    this.totalAmount,
+    this.status,
+    this.priceBand,
+    this.days,
+    this.createdAt,
+  });
+
+  factory ExtraBooking.fromJson(Map<String, dynamic> json) => ExtraBooking(
+    id: json["id"],
+    childId: json["child_id"],
+    planStart: json["plan_start"] == null
+        ? null
+        : DateTime.parse(json["plan_start"]),
+    planEnd: json["plan_end"] == null ? null : DateTime.parse(json["plan_end"]),
+    subtotal: json["subtotal"],
+    totalAmount: json["total_amount"],
+    status: json["status"],
+    priceBand: json["price_band"],
+    days: json["days"] == null
+        ? []
+        : List<Day>.from(json["days"]!.map((x) => Day.fromJson(x))),
+    createdAt: json["created_at"] == null
+        ? null
+        : DateTime.parse(json["created_at"]),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "child_id": childId,
+    "plan_start":
+        "${planStart!.year.toString().padLeft(4, '0')}-${planStart!.month.toString().padLeft(2, '0')}-${planStart!.day.toString().padLeft(2, '0')}",
+    "plan_end":
+        "${planEnd!.year.toString().padLeft(4, '0')}-${planEnd!.month.toString().padLeft(2, '0')}-${planEnd!.day.toString().padLeft(2, '0')}",
+    "subtotal": subtotal,
+    "total_amount": totalAmount,
+    "status": status,
+    "price_band": priceBand,
+    "days": days == null
+        ? []
+        : List<dynamic>.from(days!.map((x) => x.toJson())),
+    "created_at": createdAt?.toIso8601String(),
+  };
+}
+
+class Day {
   String? day;
   List<Session>? sessions;
   List<ExtraCharge>? extraCharges;
 
-  ExtraBookings({this.day, this.sessions, this.extraCharges});
+  Day({this.day, this.sessions, this.extraCharges});
 
-  factory ExtraBookings.fromJson(Map<String, dynamic> json) => ExtraBookings(
+  factory Day.fromJson(Map<String, dynamic> json) => Day(
     day: json["day"],
     sessions: json["sessions"] == null
         ? []

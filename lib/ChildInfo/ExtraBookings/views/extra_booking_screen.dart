@@ -112,7 +112,7 @@ class _ExtraBookingScreenState extends State<ExtraBookingScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        BlueMediumBoldText(booking.day ?? ""),
+                        BlueMediumBoldText(booking.days? ?? ""),
 
                         SizedBox(height: 6),
 
