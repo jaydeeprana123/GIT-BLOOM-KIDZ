@@ -36,6 +36,8 @@ class NewsFeedController extends GetxController {
     loginResponse.value =
         (await MySharedPref().getLoginModel(SharePreData.keySaveLoginModel)) ??
         LoginResponse();
+    update();
+
   }
 
   /// NewsFeed API

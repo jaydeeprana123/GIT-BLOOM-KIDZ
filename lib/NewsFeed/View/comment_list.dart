@@ -39,6 +39,8 @@ class CommentListWidget extends StatelessWidget {
 
     newsFeedController.getUserInfo();
 
+
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CommonAppBar(title: "Comments", showMenu: true, showBack: true),
@@ -149,7 +151,7 @@ class CommentListWidget extends StatelessWidget {
 
                                         SizedBox(width: 16,),
 
-                                        if(comment?.user?.id == newsFeedController.loginResponse?.value.data?.user?.id)InkWell(onTap: (){
+                                        if(comment?.user?.id == newsFeedController.loginResponse.value.data?.user?.id)InkWell(onTap: (){
 
                                           showDeleteWarningDialog(context, onConfirm: (){
                                             newsFeedController.callNewsDeleteCommentAPI(context, newsFeed.id.toString(), (comment?.id??0).toString());
