@@ -4,7 +4,6 @@ import 'package:bloom_kidz/Styles/my_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-
 import '../Styles/my_colors.dart';
 import '../Styles/my_font.dart';
 import 'package:get/get.dart';
@@ -28,8 +27,9 @@ class DateField extends StatelessWidget {
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
         decoration: BoxDecoration(
-          border: Border.all(color: color_secondary,width: 1),
+          border: Border.all(color: color_secondary, width: 1),
           borderRadius: BorderRadius.circular(8),
+          color: Colors.white,
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -42,19 +42,19 @@ class DateField extends StatelessWidget {
                 value == null
                     ? "Select $label"
                     : "${value!.day.toString().padLeft(2, '0')}-"
-                    "${value!.month.toString().padLeft(2, '0')}-"
-                    "${value!.year}",
-                color: value == null?hint_txt_909196:Colors.black,
-                fontFamily: value == null?fontInterRegular:fontInterSemiBold
+                          "${value!.month.toString().padLeft(2, '0')}-"
+                          "${value!.year}",
+                color: value == null ? hint_txt_909196 : Colors.black,
+                fontFamily: value == null
+                    ? fontInterRegular
+                    : fontInterSemiBold,
               ),
             ),
-            
-            SvgPicture.asset(dateIcon, color: color_secondary,)
-            
+
+            SvgPicture.asset(dateIcon, color: color_secondary, width: 18),
           ],
         ),
       ),
     );
   }
 }
-

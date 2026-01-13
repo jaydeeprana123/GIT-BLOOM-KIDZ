@@ -1,10 +1,14 @@
 import 'package:bloom_kidz/ChildInfo/ExtraBookings/views/add_extra_booking_screen.dart';
+import 'package:bloom_kidz/ChildInfo/ExtraBookings/views/update_extra_booking_screen.dart';
+import 'package:bloom_kidz/CommonWidgets/black_large_bold_text.dart';
 import 'package:bloom_kidz/CommonWidgets/black_medium_regular_text.dart';
+import 'package:bloom_kidz/CommonWidgets/blue_large_bold_text.dart';
 import 'package:bloom_kidz/CommonWidgets/blue_medium_bold_text.dart';
 import 'package:bloom_kidz/CommonWidgets/blue_small_regular_text.dart';
 import 'package:bloom_kidz/CommonWidgets/common_background.dart';
 import 'package:bloom_kidz/CommonWidgets/common_green_button.dart';
 import 'package:bloom_kidz/CommonWidgets/common_text_field.dart';
+import 'package:bloom_kidz/CommonWidgets/dotted_line.dart';
 import 'package:bloom_kidz/Styles/my_colors.dart';
 import 'package:bloom_kidz/Styles/my_font.dart';
 import 'package:bloom_kidz/Styles/my_icons.dart';
@@ -36,6 +40,8 @@ import 'package:flutter/material.dart';
 import '../../controller/child_info_controller.dart';
 
 import 'package:flutter/material.dart';
+
+import '../models/extra_bookings_response.dart';
 
 class ExtraBookingScreen extends StatefulWidget {
   final String childId;
@@ -91,93 +97,359 @@ class _ExtraBookingScreenState extends State<ExtraBookingScreen> {
               const Center(child: CircularProgressIndicator());
             }
 
-            return Card(
-              color: Colors.white,
-              shadowColor: color_secondary,
-              elevation: 6,
-              margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-              child: ListView.builder(
-                padding: const EdgeInsets.all(16),
-                itemCount: controller.extraBookingList.length,
-                itemBuilder: (context, index) {
-                  final booking = controller.extraBookingList[index];
+            return ListView.builder(
+              padding: EdgeInsets.symmetric(vertical: 16),
+              itemCount: controller.extraBookingList.length,
+              itemBuilder: (context, index) {
+                final booking = controller.extraBookingList[index];
 
-                  return Container(
-                    margin: const EdgeInsets.only(bottom: 16),
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
+                return Card(
+                  color: Colors.white,
+                  shadowColor: color_secondary,
+                  elevation: 6,
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 10,
+                  ),
+                  child: Container(
+                    padding: EdgeInsets.all(12),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        BlueMediumBoldText(booking.days? ?? ""),
-
-                        SizedBox(height: 6),
-
-                        for (
-                          int i = 0;
-                          i <
-                              (controller.extraBookingList[index].sessions ??
-                                      [])
-                                  .length;
-                          i++
-                        )
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              BlueMediumBoldText(
-                                '${(controller.extraBookingList[index].sessions?[i].startTime ?? "")}'
-                                ' - ${(controller.extraBookingList[index].sessions?[i].endTime ?? "")}',
+                        // DATE RANGE
+                        Row(
+                          children: [
+                            Expanded(
+                              child: BlueLargeBoldText(
+                                '${DateFormat('dd MMM yyyy').format(booking.planStart!)}'
+                                ' - ${DateFormat('dd MMM yyyy').format(booking.planEnd!)}',
+                                fontSize: 15,
                               ),
-                              BlueMediumBoldText(
-                                '£${controller.extraBookingList[index].sessions?[i].price ?? "0"}',
+                            ),
+
+                            InkWell(
+                              onTap: () {
+                                showUpdateDeleteDialog(
+                                  context,
+                                  widget.childId,
+                                  (controller.extraBookingList[index].id ?? 0)
+                                      .toString(),
+                                  controller.extraBookingList[index],
+                                );
+                              },
+                              child: Icon(
+                                Icons.more_vert,
+                                color: color_secondary,
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
+                        ),
 
                         const SizedBox(height: 12),
 
-                        for (
-                          int i = 0;
-                          i <
-                              (controller
-                                          .extraBookingList[index]
-                                          .extraCharges ??
-                                      [])
-                                  .length;
-                          i++
-                        )
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              BlueMediumBoldText(
-                                '${(controller.extraBookingList[index].extraCharges?[i].name ?? "")}',
-                              ),
-                              BlueMediumBoldText(
-                                '£${controller.extraBookingList[index].extraCharges?[i].price ?? "0"}',
-                              ),
-                            ],
-                          ),
+                        // DAYS
+                        if (booking.days!.isNotEmpty)
+                          Column(
+                            children: booking.days!.map((day) {
+                              return Container(
+                                margin: const EdgeInsets.only(bottom: 8),
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: color_secondary),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      flex: 1,
+                                      child: BlueMediumBoldText(
+                                        day.day!.substring(0, 3),
+                                        fontFamily: fontInterBold,
+                                      ),
+                                    ),
 
-                        if ((controller.extraBookingList[index].sessions ?? [])
-                                .isEmpty &&
-                            (controller.extraBookingList[index].extraCharges ??
-                                    [])
-                                .isEmpty)
+                                    if ((day.sessions ?? []).isNotEmpty)
+                                      Expanded(
+                                        flex: 2,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Row(
+                                              children: [
+                                                BlueMediumBoldText(
+                                                  '${day.sessions?[0].startTime} - ${day.sessions?[0].endTime}',
+                                                ),
+
+                                                SizedBox(width: 3),
+                                                BlueMediumBoldText(
+                                                  fontFamily: fontInterSemiBold,
+                                                  "(${calculateTotalHours(day.sessions?[0].startTime ?? "", day.sessions?[0].endTime ?? "")})",
+                                                ),
+                                              ],
+                                            ),
+                                            SizedBox(height: 8),
+
+                                            if ((day.extraCharges ?? [])
+                                                .isNotEmpty)
+                                              BlueMediumBoldText(
+                                                '${day.extraCharges?[0].name}',
+                                              ),
+                                          ],
+                                        ),
+                                      ),
+
+                                    if ((day.sessions ?? []).isNotEmpty)
+                                      Expanded(
+                                        flex: 1,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.end,
+                                          children: [
+                                            BlueMediumBoldText(
+                                              "£" +
+                                                  (day.sessions?[0].price ??
+                                                      "0"),
+                                              fontFamily: fontInterSemiBold,
+                                            ),
+                                            SizedBox(height: 8),
+                                            if ((day.extraCharges ?? [])
+                                                .isNotEmpty)
+                                              BlueMediumBoldText(
+                                                "£" +
+                                                    ('${day.extraCharges?[0].price}'),
+                                                fontFamily: fontInterSemiBold,
+                                              ),
+                                          ],
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        SizedBox(height: 8),
+                        DottedLine(color: color_secondary),
+
+                        SizedBox(height: 8),
+
+                        Row(
+                          children: [
+                            Expanded(
+                              child: BlueLargeBoldText(
+                                "Total",
+
+                                fontFamily: fontInterBold,
+                              ),
+                            ),
+
+                            BlueLargeBoldText(
+                              controller.extraBookingList[index].totalAmount ??
+                                  "0",
+                              fontFamily: fontInterBold,
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 8),
+                        DottedLine(color: color_secondary),
+
+                        SizedBox(height: 8),
+
+                        if (booking.days!.isEmpty)
                           BlueMediumBoldText(
-                            'No sessions & extra charges available',
+                            'No sessions or extra charges available',
                           ),
                       ],
                     ),
-                  );
-                },
-              ),
+                  ),
+                );
+              },
             );
           }),
         ],
       ),
+    );
+  }
+
+  String calculateTotalHours(String? startTime, String? endTime) {
+    if (startTime == null || endTime == null) return '--';
+
+    final startParts = startTime.split(':');
+    final endParts = endTime.split(':');
+
+    if (startParts.length < 2 || endParts.length < 2) return '--';
+
+    final startMinutes =
+        int.parse(startParts[0]) * 60 + int.parse(startParts[1]);
+    final endMinutes = int.parse(endParts[0]) * 60 + int.parse(endParts[1]);
+
+    final diffMinutes = endMinutes - startMinutes;
+    if (diffMinutes <= 0) return '0';
+
+    final hours = diffMinutes ~/ 60;
+    final minutes = diffMinutes % 60;
+
+    if (hours > 0 && minutes > 0) {
+      return '${hours}h ${minutes}m';
+    } else if (hours > 0) {
+      return '${hours}h';
+    } else if (minutes > 0) {
+      return '${minutes}m';
+    }
+
+    return '0';
+  }
+
+  void showUpdateDeleteDialog(
+    BuildContext context,
+    String childId,
+    String id,
+    ExtraBooking extraBooking,
+  ) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                BlueMediumBoldText(
+                  "Action",
+                  fontSize: 16,
+                  color: color_secondary,
+                ),
+
+                const SizedBox(height: 16),
+
+                /// ✏️ Update
+                ListTile(
+                  leading: const Icon(Icons.edit_note, color: color_secondary),
+                  title: BlueMediumBoldText("Update"),
+                  onTap: () {
+                    controller.selectedExtraBooking.value = extraBooking;
+                    Navigator.pop(context);
+                    Get.to(UpdateExtraBookingScreen(childId: childId));
+                  },
+                ),
+
+                const Divider(),
+
+                /// 🗑 Delete
+                ListTile(
+                  leading: const Icon(Icons.delete_forever, color: Colors.red),
+                  title: const Text(
+                    "Delete",
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+
+                    showDeleteWarningDialog(
+                      context,
+                      onConfirm: () {
+                        controller.callDeleteExtraBookingsAPI(
+                          context,
+                          childId,
+                          id,
+                        );
+                      },
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void showDeleteWarningDialog(
+    BuildContext context, {
+    required VoidCallback onConfirm,
+  }) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                /// ⚠️ Icon
+                const Icon(
+                  Icons.warning_amber_rounded,
+                  color: Colors.red,
+                  size: 50,
+                ),
+
+                const SizedBox(height: 12),
+
+                /// Title
+                BlueMediumBoldText(
+                  "Delete Contact",
+                  fontSize: 16,
+                  color: Colors.red,
+                ),
+
+                const SizedBox(height: 8),
+
+                /// Message
+                const Text(
+                  "Are you sure you want to delete this contact?\nThis action cannot be undone.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 13),
+                ),
+
+                const SizedBox(height: 20),
+
+                /// Buttons
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Text("Cancel"),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                          onConfirm();
+                        },
+                        child: const Text(
+                          "Delete",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

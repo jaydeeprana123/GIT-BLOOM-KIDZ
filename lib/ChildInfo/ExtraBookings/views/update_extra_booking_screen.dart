@@ -43,25 +43,32 @@ import 'package:flutter/material.dart';
 
 import '../models/extra_bookings_request.dart';
 
-class AddExtraBookingScreen extends StatefulWidget {
+class UpdateExtraBookingScreen extends StatefulWidget {
   final String childId;
 
-  const AddExtraBookingScreen({Key? key, required this.childId})
+  const UpdateExtraBookingScreen({Key? key, required this.childId})
     : super(key: key);
 
   @override
-  State<AddExtraBookingScreen> createState() => _AddExtraBookingScreenState();
+  State<UpdateExtraBookingScreen> createState() =>
+      _UpdateExtraBookingScreenState();
 }
 
-class _AddExtraBookingScreenState extends State<AddExtraBookingScreen> {
+class _UpdateExtraBookingScreenState extends State<UpdateExtraBookingScreen> {
   ChildInfoController controller = Get.find<ChildInfoController>();
 
   @override
   void initState() {
     super.initState();
-
     controller.selectedSessions.value = <String, List<int>>{};
     controller.selectedExtraCharges.value = <String, List<int>>{};
+    controller.planStartDate.value =
+        controller.selectedExtraBooking.value.planStart;
+    controller.planEndDate.value =
+        controller.selectedExtraBooking.value.planEnd;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.callGetPriceBandAPI(context, widget.childId, true);
+    });
   }
 
   @override
@@ -111,7 +118,7 @@ class _AddExtraBookingScreenState extends State<AddExtraBookingScreen> {
                               controller.callGetPriceBandAPI(
                                 context,
                                 widget.childId,
-                                false,
+                                true,
                               );
                             },
                           ),
@@ -148,10 +155,7 @@ class _AddExtraBookingScreenState extends State<AddExtraBookingScreen> {
                               Wrap(
                                 spacing: 8,
                                 children: day.sessions!.map((session) {
-                                  final isSelected =
-                                      controller.selectedSessions[day.day]
-                                          ?.contains(session.id) ??
-                                      false;
+                                  final isSelected = session.selected ?? false;
 
                                   return Container(
                                     margin: EdgeInsets.symmetric(vertical: 4),
@@ -200,10 +204,7 @@ class _AddExtraBookingScreenState extends State<AddExtraBookingScreen> {
                               Wrap(
                                 spacing: 8,
                                 children: day.extraCharges!.map((charge) {
-                                  final isSelected =
-                                      controller.selectedExtraCharges[day.day]
-                                          ?.contains(charge.id) ??
-                                      false;
+                                  final isSelected = charge.selected ?? false;
 
                                   return FilterChip(
                                     label: BlackMediumBoldText(

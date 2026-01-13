@@ -38,6 +38,7 @@ class ChildInfoController extends GetxController {
   RxList<Observation> observationList = <Observation>[].obs;
   RxList<int> removedMediaIds = <int>[].obs;
   Rx<Observation> selectedObservation = Observation().obs;
+  Rx<ExtraBooking> selectedExtraBooking = ExtraBooking().obs;
 
   RxInt medicineRefreshIndex = (-1).obs;
 
@@ -528,6 +529,61 @@ class ChildInfoController extends GetxController {
     }
   }
 
+  /// Delete Extra Bookings API
+  Future<void> callDeleteExtraBookingsAPI(
+    BuildContext context,
+    String chidlId,
+    String bookingId,
+  ) async {
+    try {
+      isLoading.value = true;
+
+      /// 🔑 Token
+      String token = await MySharedPref().getStringValue(
+        SharePreData.keyAccessToken,
+      );
+
+      /// 🧾 Headers
+      Map<String, String> headersWithBearer = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      };
+
+      /// 🌐 URL
+      String url = "$urlBase$urlDeleteExtraBooking/$chidlId/delete/$bookingId";
+
+      /// 🔥 Request
+      var request = http.Request('DELETE', Uri.parse(url));
+
+      request.headers.addAll(headersWithBearer);
+
+      /// 📡 Send Request
+      http.StreamedResponse response = await request.send();
+
+      /// 📥 Read Response Body
+      final responseBody = await response.stream.bytesToString();
+      final Map<String, dynamic> jsonData = json.decode(responseBody);
+
+      /// 📦 Parse Base Model
+      BaseModel baseModel = BaseModel.fromJson(jsonData);
+
+      if (response.statusCode == 200) {
+        if (baseModel.status == true) {
+          snackBar(context, baseModel.message ?? "Deleted successfully");
+          callGetExtraBookingsAPI(context, chidlId);
+        } else {
+          snackBar(context, baseModel.message ?? "Something went wrong");
+        }
+      } else {
+        snackBar(context, "Server error (${response.statusCode})");
+      }
+    } catch (e) {
+      snackBar(context, "Error: ${e.toString()}");
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   /// get Documents API
   callGetDocumentsAPI(BuildContext context, String childId) async {
     isLoading.value = true;
@@ -797,7 +853,11 @@ class ChildInfoController extends GetxController {
   }
 
   /// get Price Band API
-  callGetPriceBandAPI(BuildContext context, String childId) async {
+  callGetPriceBandAPI(
+    BuildContext context,
+    String childId,
+    bool isUpdate,
+  ) async {
     isLoading.value = true;
 
     String token = await MySharedPref().getStringValue(
@@ -835,6 +895,87 @@ class ChildInfoController extends GetxController {
 
         if (priceBandResponse.status ?? false) {
           priceBandList.value = priceBandResponse.data?.days ?? [];
+
+          if (isUpdate) {
+            for (
+              int j = 0;
+              j < (selectedExtraBooking.value.days ?? []).length;
+              j++
+            ) {
+              for (int i = 0; i < priceBandList.length; i++) {
+                if (selectedExtraBooking.value.days?[j].day ==
+                    priceBandList[i].day) {
+                  for (
+                    int z = 0;
+                    z <
+                        (selectedExtraBooking.value.days?[j].sessions ?? [])
+                            .length;
+                    z++
+                  ) {
+                    for (
+                      int x = 0;
+                      x < (priceBandList[i].sessions ?? []).length;
+                      x++
+                    ) {
+                      if (selectedExtraBooking.value.days?[j].sessions?[z].id ==
+                          priceBandList[i].sessions?[x].id) {
+                        priceBandList[i].sessions?[x].selected =
+                            selectedExtraBooking
+                                .value
+                                .days?[j]
+                                .sessions?[z]
+                                .selected;
+
+                        toggleSession(
+                          selectedExtraBooking.value.days?[j].day ?? "",
+                          selectedExtraBooking.value.days?[j].sessions?[z].id ??
+                              0,
+                        );
+                      }
+                    }
+                  }
+
+                  for (
+                    int z = 0;
+                    z <
+                        (selectedExtraBooking.value.days?[j].extraCharges ?? [])
+                            .length;
+                    z++
+                  ) {
+                    for (
+                      int x = 0;
+                      x < (priceBandList[i].extraCharges ?? []).length;
+                      x++
+                    ) {
+                      if (selectedExtraBooking
+                              .value
+                              .days?[j]
+                              .extraCharges?[z]
+                              .id ==
+                          priceBandList[i].extraCharges?[x].id) {
+                        priceBandList[i].extraCharges?[x].selected =
+                            selectedExtraBooking
+                                .value
+                                .days?[j]
+                                .extraCharges?[z]
+                                .selected;
+
+                        toggleExtraCharge(
+                          selectedExtraBooking.value.days?[j].day ?? "",
+                          selectedExtraBooking
+                                  .value
+                                  .days?[j]
+                                  .extraCharges?[z]
+                                  .id ??
+                              0,
+                        );
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
         } else {
           snackBar(context, priceBandResponse.message ?? "");
         }
@@ -1115,6 +1256,53 @@ class ChildInfoController extends GetxController {
     //     }
     //   });
     // });
+  }
+
+  /// Update Extra bookings API
+  callUpdateExtraBookingsAPI(
+    BuildContext context,
+    ExtraBookingsRequest extraBookingsJson,
+    String childId,
+    String bookingId,
+  ) async {
+    isLoading.value = true;
+
+    String token = await MySharedPref().getStringValue(
+      SharePreData.keyAccessToken,
+    );
+
+    String url = "$urlBase$urlAddExtraBooking/$childId/update/$bookingId";
+
+    final apiReq = Request();
+    Map<String, dynamic> body = extraBookingsJson.toJson();
+
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+    var request = http.Request('POST', Uri.parse(url));
+
+    request.headers.addAll(headers);
+    request.body = json.encode(extraBookingsJson.toJson());
+    http.StreamedResponse response = await request.send();
+    isLoading.value = false;
+    if (response.statusCode == 200) {
+      await response.stream.bytesToString().then((valueData) async {
+        printData("callAddExtraBookingsAPI", valueData);
+
+        Map<String, dynamic> userModel = json.decode(valueData);
+        BaseModel baseModel = BaseModel.fromJson(userModel);
+
+        if (baseModel.status ?? false) {
+          snackBar(context, baseModel.message ?? "");
+          Navigator.pop(context);
+        } else {
+          snackBar(context, baseModel.message ?? "");
+        }
+      });
+    } else {
+      print(response.reasonPhrase);
+    }
   }
 
   /// Add Observation API
