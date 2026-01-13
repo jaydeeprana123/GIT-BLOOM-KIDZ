@@ -60,7 +60,7 @@ class ChildInfoController extends GetxController {
 
   RxInt selectedDayIndex = 0.obs;
   RxInt selectedSlotIndex = (-1).obs;
-  RxList<ExtraBooking> extraBookingList = <ExtraBooking>[].obs;
+  RxList<ExtraBookings> extraBookingList = <ExtraBookings>[].obs;
 
   RxBool isLoading = false.obs;
 
@@ -128,34 +128,28 @@ class ChildInfoController extends GetxController {
   }
 
   void toggleSession(String day, int sessionId) {
-    selectedSessions.putIfAbsent(day, () => []);
-
-    if (selectedSessions[day]!.contains(sessionId)) {
-      selectedSessions[day]!.remove(sessionId);
-      if (selectedSessions[day]!.isEmpty) {
-        selectedSessions.remove(day);
-      }
+    // If already selected → remove
+    if (selectedSessions[day]?.contains(sessionId) ?? false) {
+      selectedSessions.remove(day);
     } else {
-      selectedSessions[day]!.add(sessionId);
+      // Replace any previous selection
+      selectedSessions[day] = [sessionId];
     }
+
     calculateTotal();
     selectedSessions.refresh();
   }
 
   void toggleExtraCharge(String day, int chargeId) {
-    selectedExtraCharges.putIfAbsent(day, () => []);
-
-    if (selectedExtraCharges[day]!.contains(chargeId)) {
-      selectedExtraCharges[day]!.remove(chargeId);
-      if (selectedExtraCharges[day]!.isEmpty) {
-        selectedExtraCharges.remove(day);
-      }
+    // If already selected → remove
+    if (selectedExtraCharges[day]?.contains(chargeId) ?? false) {
+      selectedExtraCharges.remove(day);
     } else {
-      selectedExtraCharges[day]!.add(chargeId);
+      // Replace any previous selection
+      selectedExtraCharges[day] = [chargeId];
     }
 
     calculateTotal();
-
     selectedExtraCharges.refresh();
   }
 
@@ -734,13 +728,13 @@ class ChildInfoController extends GetxController {
       http.StreamedResponse res = value;
       printData(
         runtimeType.toString(),
-        "callGetChildPermissionsAPI response ${res.statusCode}",
+        "callGetExtraBookingsAPI response ${res.statusCode}",
       );
 
       await res.stream.bytesToString().then((valueData) async {
         printData(
           runtimeType.toString(),
-          "callGetChildPermissionsAPI value ${valueData}",
+          "callGetExtraBookingsAPI value ${valueData}",
         );
 
         isLoading.value = false;
@@ -752,7 +746,7 @@ class ChildInfoController extends GetxController {
 
           if (extraBookingsResponse.status ?? false) {
             extraBookingList.value =
-                extraBookingsResponse.data?.extraBookings ?? [];
+                extraBookingsResponse.data?.extraBookingList ?? [];
           } else {
             snackBar(context, extraBookingsResponse.message ?? "");
           }

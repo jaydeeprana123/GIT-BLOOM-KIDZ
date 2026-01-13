@@ -46,14 +46,12 @@ class AboutScreen extends StatefulWidget {
 class _AboutScreenState extends State<AboutScreen> {
   ChildInfoController childInfoController = Get.find<ChildInfoController>();
 
-
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       childInfoController.callGetAboutChildAPI(context, widget.childId);
     });
-
   }
 
   @override
@@ -61,7 +59,10 @@ class _AboutScreenState extends State<AboutScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: const CommonAppBar(
-        title: "About", showMenu: false, showBack: true,),
+        title: "About",
+        showMenu: false,
+        showBack: true,
+      ),
       body: Obx(() {
         final basic = childInfoController.aboutChildren.value.basicInfo;
         final health = childInfoController.aboutChildren.value.healthInfo;
@@ -72,7 +73,6 @@ class _AboutScreenState extends State<AboutScreen> {
 
         return Stack(
           children: [
-
             Positioned.fill(child: SvgPicture.asset(app_bg, fit: BoxFit.cover)),
 
             Column(
@@ -80,30 +80,37 @@ class _AboutScreenState extends State<AboutScreen> {
                 const SizedBox(height: 22),
                 _topTabs(),
                 Expanded(
-                    child: Padding(
-                        padding: const EdgeInsets.all(22.0),
-                        child: (childInfoController.selectedTab.value == 0)
-                            ? _mainCard(childInfoController.aboutChildren.value.basicInfo??BasicInfo())
-                            :
-                        (childInfoController.selectedTab.value == 1)
-                            ? _healthCard(health)
-                            : (childInfoController.selectedTab.value == 2)
-                            ? _sensitiveInfoCard(
-                          childInfoController.aboutChildren.value.religionInfo,
-                        ):(childInfoController.selectedTab.value == 3)
-                            ? _registrationInfoCard(
-                          childInfoController.aboutChildren.value.roomMoves,
-                        ):SizedBox()))
-
+                  child: Padding(
+                    padding: const EdgeInsets.all(22.0),
+                    child: (childInfoController.selectedTab.value == 0)
+                        ? _mainCard(
+                            childInfoController.aboutChildren.value.basicInfo ??
+                                BasicInfo(),
+                          )
+                        : (childInfoController.selectedTab.value == 1)
+                        ? _healthCard(health)
+                        : (childInfoController.selectedTab.value == 2)
+                        ? _sensitiveInfoCard(
+                            childInfoController
+                                .aboutChildren
+                                .value
+                                .religionInfo,
+                          )
+                        : (childInfoController.selectedTab.value == 3)
+                        ? _registrationInfoCard(
+                            childInfoController.aboutChildren.value.roomMoves,
+                          )
+                        : SizedBox(),
+                  ),
+                ),
               ],
             ),
 
-            if(childInfoController.isLoading.value)Center(
-              child: CircularProgressIndicator(),)
+            if (childInfoController.isLoading.value)
+              Center(child: CircularProgressIndicator()),
           ],
         );
       }),
-
     );
   }
 
@@ -112,10 +119,9 @@ class _AboutScreenState extends State<AboutScreen> {
       scrollDirection: Axis.horizontal,
       child: Row(
         children: [
+          SizedBox(width: 16),
 
-          SizedBox(width: 16,),
-
-          _tabItem(healthInformationIcon, "Basic", 0),
+          _tabItem(basicIcon, "Basic", 0),
           const SizedBox(width: 8),
           _tabItem(HealthInformation, "Health Information", 1),
           const SizedBox(width: 8),
@@ -126,7 +132,6 @@ class _AboutScreenState extends State<AboutScreen> {
       ),
     );
   }
-
 
   Widget _mainCard(BasicInfo basic) {
     return SingleChildScrollView(
@@ -159,15 +164,24 @@ class _AboutScreenState extends State<AboutScreen> {
                 liveWithIcon,
               ),
               Divider(color: Colors.grey.shade300),
-              _singleInfo("Parent Responsibility",
-                  basic.parentalResponsibility?.join(", "), parentResponsibilityIcon),
+              _singleInfo(
+                "Parent Responsibility",
+                basic.parentalResponsibility?.join(", "),
+                parentResponsibilityIcon,
+              ),
               _singleInfo("Key Person", basic.keyPerson, keyPersonIcon),
               if (basic.secondKeyPerson != null)
-                _singleInfo("Second Key Person", basic.secondKeyPerson,
-                    keyPersonIcon),
+                _singleInfo(
+                  "Second Key Person",
+                  basic.secondKeyPerson,
+                  keyPersonIcon,
+                ),
               Divider(color: Colors.grey.shade300),
-              _singleInfo("Second Key Person", basic.secondKeyPerson,
-                  keyPersonIcon),
+              _singleInfo(
+                "Second Key Person",
+                basic.secondKeyPerson,
+                keyPersonIcon,
+              ),
               _specialNote(basic.specialNote),
             ],
           ),
@@ -176,13 +190,14 @@ class _AboutScreenState extends State<AboutScreen> {
     );
   }
 
-
-  Widget _twoColumnInfo(String title1,
-      String? value1,
-      String icon1,
-      String title2,
-      String? value2,
-      String icon2,) {
+  Widget _twoColumnInfo(
+    String title1,
+    String? value1,
+    String icon1,
+    String title2,
+    String? value2,
+    String icon2,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Row(
@@ -221,7 +236,6 @@ class _AboutScreenState extends State<AboutScreen> {
     );
   }
 
-
   Widget _specialNote(String? note) {
     if (note == null || note.isEmpty) return const SizedBox();
 
@@ -247,7 +261,6 @@ class _AboutScreenState extends State<AboutScreen> {
     );
   }
 
-
   Widget _tabItem(String icon, String title, int index) {
     final isSelected = childInfoController.selectedTab.value == index;
 
@@ -264,8 +277,11 @@ class _AboutScreenState extends State<AboutScreen> {
         ),
         child: Row(
           children: [
-            SvgPicture.asset(icon, width: 16,
-                color: isSelected ? Colors.white : color_secondary),
+            SvgPicture.asset(
+              icon,
+              width: 16,
+              color: isSelected ? Colors.white : color_secondary,
+            ),
             const SizedBox(width: 6),
             BlackMediumBoldText(
               title,
@@ -286,14 +302,11 @@ class _AboutScreenState extends State<AboutScreen> {
         ),
         const SizedBox(height: 8),
         BlueLargeBoldText(
-            basic.firstName ?? "",
-            color: Colors.black,
-            fontSize: 18
-        ),
-        BlackMediumBoldText(
-          basic.lastName ?? "",
+          basic.firstName ?? "",
           color: Colors.black,
+          fontSize: 18,
         ),
+        BlackMediumBoldText(basic.lastName ?? "", color: Colors.black),
       ],
     );
   }
@@ -304,7 +317,6 @@ class _AboutScreenState extends State<AboutScreen> {
         "${date.month.toString().padLeft(2, '0')}-"
         "${date.year}";
   }
-
 
   Widget _healthCard(HealthInfo? health) {
     if (health == null) return const SizedBox();
@@ -329,24 +341,11 @@ class _AboutScreenState extends State<AboutScreen> {
                 "Special Dietary Considerations",
                 health.specialDietaryConsiderations,
               ),
-              _healthRow(
-                Vaccines,
-                "Vaccines",
-                health.vaccines,
-              ),
-              _healthRow(
-                Allergy,
-                "Allergy",
-                health.allergy,
-              ),
+              _healthRow(Vaccines, "Vaccines", health.vaccines),
+              _healthRow(Allergy, "Allergy", health.allergy),
 
               const Divider(height: 32),
-              _healthRow(
-               specailnote,
-                "Special Note",
-                health.specialNote,
-              ),
-
+              _healthRow(specailnote, "Special Note", health.specialNote),
 
               const Divider(height: 32),
 
@@ -360,14 +359,13 @@ class _AboutScreenState extends State<AboutScreen> {
     );
   }
 
-
   Widget _healthRow(String icon, String title, String? value) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 14),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SvgPicture.asset(icon, width: 18, color: color_secondary),
+          SvgPicture.asset(icon, width: 18),
           const SizedBox(width: 8),
           Expanded(
             child: Column(
@@ -387,7 +385,6 @@ class _AboutScreenState extends State<AboutScreen> {
     );
   }
 
-
   Widget _sectionTitle(String title) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -398,11 +395,12 @@ class _AboutScreenState extends State<AboutScreen> {
       child: Text(
         title,
         style: const TextStyle(
-            color: Colors.white, fontWeight: FontWeight.bold),
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }
-
 
   Widget _doctorInfo() {
     return Column(
@@ -412,8 +410,7 @@ class _AboutScreenState extends State<AboutScreen> {
         const SizedBox(height: 10),
         _infoLine(keyPersonIcon, "Name", "Lorem Ipsum"),
         _infoLine(icon_call_video, "Mobile", "+91 232 1323"),
-        _infoLine(
-            icon_home, "Address", "Lorem Ipsum is simply dummy text"),
+        _infoLine(icon_home, "Address", "Lorem Ipsum is simply dummy text"),
       ],
     );
   }
@@ -426,8 +423,7 @@ class _AboutScreenState extends State<AboutScreen> {
         const SizedBox(height: 10),
         _infoLine(keyPersonIcon, "Name", "Lorem Ipsum"),
         _infoLine(icon_call_video, "Mobile", "+91 232 1323"),
-        _infoLine(
-            icon_home, "Address", "Lorem Ipsum is simply dummy text"),
+        _infoLine(icon_home, "Address", "Lorem Ipsum is simply dummy text"),
       ],
     );
   }
@@ -440,15 +436,12 @@ class _AboutScreenState extends State<AboutScreen> {
         children: [
           SvgPicture.asset(icon, width: 16, color: color_secondary),
           const SizedBox(width: 6),
-          BlueLargeBoldText("$title: ", fontFamily: fontInterBold
-
-          ),
+          BlueLargeBoldText("$title: ", fontFamily: fontInterBold),
           Expanded(child: BlackMediumBoldText(value, color: Colors.black)),
         ],
       ),
     );
   }
-
 
   Widget _sensitiveInfoCard(ReligionInfo? sensitive) {
     if (sensitive == null) return const SizedBox();
@@ -464,7 +457,7 @@ class _AboutScreenState extends State<AboutScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _sensitiveRow(
-              icon:Religion,
+              icon: Religion,
               title: "Religion",
               value: sensitive.religion,
             ),
@@ -482,7 +475,6 @@ class _AboutScreenState extends State<AboutScreen> {
     );
   }
 
-
   Widget _registrationInfoCard(RoomMoves? roomMoves) {
     if (roomMoves == null) return const SizedBox();
 
@@ -496,11 +488,7 @@ class _AboutScreenState extends State<AboutScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _sensitiveRow(
-              icon: Rooms,
-              title: "Rooms",
-              value: roomMoves.rooms,
-            ),
+            _sensitiveRow(icon: Rooms, title: "Rooms", value: roomMoves.rooms),
 
             const SizedBox(height: 16),
 
@@ -546,8 +534,4 @@ class _AboutScreenState extends State<AboutScreen> {
       ],
     );
   }
-
-
 }
-
-

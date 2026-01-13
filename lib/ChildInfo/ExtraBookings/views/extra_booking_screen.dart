@@ -35,7 +35,6 @@ import 'package:flutter/material.dart';
 
 import '../../controller/child_info_controller.dart';
 
-
 import 'package:flutter/material.dart';
 
 class ExtraBookingScreen extends StatefulWidget {
@@ -56,32 +55,27 @@ class _ExtraBookingScreenState extends State<ExtraBookingScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       controller.callGetExtraBookingsAPI(context, widget.childId);
     });
-
   }
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:  Colors.white,
+      backgroundColor: Colors.white,
 
-      appBar:  CommonAppBar(
+      appBar: CommonAppBar(
         title: 'Extra Bookings',
         showBack: true,
         showAddButton: true,
-        onAddButtonTap: (){
+        onAddButtonTap: () {
           Get.to(AddExtraBookingScreen(childId: widget.childId))?.then((value) {
             controller.callGetExtraBookingsAPI(context, widget.childId);
           });
         },
-
       ),
 
       body: Stack(
         children: [
-          Positioned.fill(
-            child: SvgPicture.asset(app_bg, fit: BoxFit.cover),
-          ),
+          Positioned.fill(child: SvgPicture.asset(app_bg, fit: BoxFit.cover)),
 
           Obx(() {
             if (controller.extraBookingList.isEmpty) {
@@ -93,10 +87,9 @@ class _ExtraBookingScreenState extends State<ExtraBookingScreen> {
               );
             }
 
-            if (controller.isLoading.value){
+            if (controller.isLoading.value) {
               const Center(child: CircularProgressIndicator());
             }
-
 
             return Card(
               color: Colors.white,
@@ -107,8 +100,7 @@ class _ExtraBookingScreenState extends State<ExtraBookingScreen> {
                 padding: const EdgeInsets.all(16),
                 itemCount: controller.extraBookingList.length,
                 itemBuilder: (context, index) {
-                  final booking =
-                  controller.extraBookingList[index];
+                  final booking = controller.extraBookingList[index];
 
                   return Container(
                     margin: const EdgeInsets.only(bottom: 16),
@@ -120,59 +112,62 @@ class _ExtraBookingScreenState extends State<ExtraBookingScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // DATE RANGE
-                        Row(
-                          mainAxisAlignment:
-                          MainAxisAlignment.spaceBetween,
-                          children: [
-                            BlueMediumBoldText(
-                              '${DateFormat('dd MMM yyyy').format(booking.planStart!)}'
-                                  ' - ${DateFormat('dd MMM yyyy').format(booking.planEnd!)}',
-                            ),
-                            BlueMediumBoldText(
-                              '£${booking.totalAmount}',
-                            ),
-                          ],
-                        ),
+                        BlueMediumBoldText(booking.day ?? ""),
+
+                        SizedBox(height: 6),
+
+                        for (
+                          int i = 0;
+                          i <
+                              (controller.extraBookingList[index].sessions ??
+                                      [])
+                                  .length;
+                          i++
+                        )
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              BlueMediumBoldText(
+                                '${(controller.extraBookingList[index].sessions?[i].startTime ?? "")}'
+                                ' - ${(controller.extraBookingList[index].sessions?[i].endTime ?? "")}',
+                              ),
+                              BlueMediumBoldText(
+                                '£${controller.extraBookingList[index].sessions?[i].price ?? "0"}',
+                              ),
+                            ],
+                          ),
 
                         const SizedBox(height: 12),
 
-                        // DAYS
-                        if (booking.days!.isNotEmpty)
-                          Column(
-                            children: booking.days!.map((day) {
-                              return Container(
-                                margin:
-                                const EdgeInsets.only(bottom: 8),
-                                padding: const EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color: color_secondary),
-                                  borderRadius:
-                                  BorderRadius.circular(8),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    BlueMediumBoldText(
-                                      day.day!.substring(0, 3),
-                                    ),
-                                    BlueMediumBoldText(
-                                      '${day.startTime} - ${day.endTime}',
-                                    ),
-                                    BlueMediumBoldText(
-                                      day.duration!,
-                                    ),
-                                  ],
-                                ),
-                              );
-                            }).toList(),
+                        for (
+                          int i = 0;
+                          i <
+                              (controller
+                                          .extraBookingList[index]
+                                          .extraCharges ??
+                                      [])
+                                  .length;
+                          i++
+                        )
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              BlueMediumBoldText(
+                                '${(controller.extraBookingList[index].extraCharges?[i].name ?? "")}',
+                              ),
+                              BlueMediumBoldText(
+                                '£${controller.extraBookingList[index].extraCharges?[i].price ?? "0"}',
+                              ),
+                            ],
                           ),
 
-                        if (booking.days!.isEmpty)
-                           BlueMediumBoldText(
-                            'No sessions available',
+                        if ((controller.extraBookingList[index].sessions ?? [])
+                                .isEmpty &&
+                            (controller.extraBookingList[index].extraCharges ??
+                                    [])
+                                .isEmpty)
+                          BlueMediumBoldText(
+                            'No sessions & extra charges available',
                           ),
                       ],
                     ),
@@ -180,15 +175,9 @@ class _ExtraBookingScreenState extends State<ExtraBookingScreen> {
                 },
               ),
             );
-
-
           }),
-
-
         ],
       ),
     );
   }
 }
-
-

@@ -39,16 +39,15 @@ import 'package:flutter/material.dart';
 
 import '../../controller/child_info_controller.dart';
 
-
 import 'package:flutter/material.dart';
 
 import '../models/extra_bookings_request.dart';
 
-
 class AddExtraBookingScreen extends StatefulWidget {
   final String childId;
 
-  const AddExtraBookingScreen({Key? key, required this.childId}) : super(key: key);
+  const AddExtraBookingScreen({Key? key, required this.childId})
+    : super(key: key);
 
   @override
   State<AddExtraBookingScreen> createState() => _AddExtraBookingScreenState();
@@ -60,69 +59,60 @@ class _AddExtraBookingScreenState extends State<AddExtraBookingScreen> {
   @override
   void initState() {
     super.initState();
-
-
   }
-
-
-
-
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:  CommonAppBar(
-        title: 'Add Extra Booking',
-        showBack: true,
-      ),
+      appBar: CommonAppBar(title: 'Add Extra Booking', showBack: true),
       body: Obx(() {
         return Stack(
           children: [
-
-            Positioned.fill(
-              child: SvgPicture.asset(app_bg, fit: BoxFit.cover),
-            ),
+            Positioned.fill(child: SvgPicture.asset(app_bg, fit: BoxFit.cover)),
 
             Column(
               children: [
-
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Row(
                     children: [
                       Expanded(
-                        child: Obx(() => DateField(
-                          label: "Plan Start",
-                          value: controller.planStartDate.value,
-                          onTap: () => pickDate(
-                            context,
-                            controller.planStartDate.value,
-                            controller.setPlanStart,
+                        child: Obx(
+                          () => DateField(
+                            label: "Plan Start",
+                            value: controller.planStartDate.value,
+                            onTap: () => pickDate(
+                              context,
+                              controller.planStartDate.value,
+                              controller.setPlanStart,
+                            ),
                           ),
-                        )),
+                        ),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
-                        child: Obx(() => DateField(
-                          label: "Plan End",
-                          value: controller.planEndDate.value,
-                          onTap: () async{ await pickDate(
-                            context,
-                            controller.planEndDate.value,
-                            controller.setPlanEnd,
-                          );
+                        child: Obx(
+                          () => DateField(
+                            label: "Plan End",
+                            value: controller.planEndDate.value,
+                            onTap: () async {
+                              await pickDate(
+                                context,
+                                controller.planEndDate.value,
+                                controller.setPlanEnd,
+                              );
 
-                          controller.callGetPriceBandAPI(context, widget.childId);
-
+                              controller.callGetPriceBandAPI(
+                                context,
+                                widget.childId,
+                              );
                             },
-                        )),
+                          ),
+                        ),
                       ),
                     ],
                   ),
                 ),
-
-
 
                 Expanded(
                   child: ListView.builder(
@@ -130,7 +120,7 @@ class _AddExtraBookingScreenState extends State<AddExtraBookingScreen> {
                     itemCount: controller.priceBandList.length,
                     itemBuilder: (_, index) {
                       final day = controller.priceBandList[index];
-                  
+
                       return Card(
                         margin: const EdgeInsets.only(bottom: 12),
                         child: Padding(
@@ -138,26 +128,24 @@ class _AddExtraBookingScreenState extends State<AddExtraBookingScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                  
                               /// DAY TITLE
-                              BlueLargeBoldText(
-                                day.day ?? "",
-                                fontSize: 18
-                              ),
-                  
+                              BlueLargeBoldText(day.day ?? "", fontSize: 18),
+
                               const SizedBox(height: 8),
-                  
+
                               /// SESSIONS
-                              BlackMediumBoldText("Sessions",
-                                color: Colors.black),
+                              BlackMediumBoldText(
+                                "Sessions",
+                                color: Colors.black,
+                              ),
                               Wrap(
                                 spacing: 8,
                                 children: day.sessions!.map((session) {
-                                  final isSelected = controller
-                                      .selectedSessions[day.day]
-                                      ?.contains(session.id) ??
+                                  final isSelected =
+                                      controller.selectedSessions[day.day]
+                                          ?.contains(session.id) ??
                                       false;
-                  
+
                                   return Container(
                                     margin: EdgeInsets.symmetric(vertical: 4),
                                     child: ChoiceChip(
@@ -165,63 +153,69 @@ class _AddExtraBookingScreenState extends State<AddExtraBookingScreen> {
                                         children: [
                                           BlackMediumBoldText(
                                             "${session.startTime}-${session.endTime} ",
-                                              fontSize: 12,
-                                              color: isSelected?Colors.white:Colors.black
+                                            fontSize: 12,
+                                            color: isSelected
+                                                ? Colors.white
+                                                : Colors.black,
                                           ),
 
                                           BlackMediumBoldText(
                                             "(£${session.price})",
                                             fontSize: 12,
-                                            color: isSelected?Colors.white:Colors.black
+                                            color: isSelected
+                                                ? Colors.white
+                                                : Colors.black,
                                           ),
-
                                         ],
                                       ),
                                       selected: isSelected,
                                       selectedColor: color_secondary,
-                                        checkmarkColor: Colors.white,
+                                      checkmarkColor: Colors.white,
                                       onSelected: (_) {
-                                        controller.toggleSession(day.day!, session.id??0);
-                                        setState(() {
-
-                                        });
-                                      }
-                                          ,
+                                        controller.toggleSession(
+                                          day.day!,
+                                          session.id ?? 0,
+                                        );
+                                        setState(() {});
+                                      },
                                     ),
                                   );
                                 }).toList(),
                               ),
-                  
+
                               const SizedBox(height: 10),
-                  
+
                               /// EXTRA CHARGES
-                               BlackMediumBoldText("Extra Charges",
-                                  color: Colors.black),
+                              BlackMediumBoldText(
+                                "Extra Charges",
+                                color: Colors.black,
+                              ),
                               Wrap(
                                 spacing: 8,
                                 children: day.extraCharges!.map((charge) {
-                                  final isSelected = controller
-                                      .selectedExtraCharges[day.day]
-                                      ?.contains(charge.id) ??
+                                  final isSelected =
+                                      controller.selectedExtraCharges[day.day]
+                                          ?.contains(charge.id) ??
                                       false;
-                  
+
                                   return FilterChip(
                                     label: BlackMediumBoldText(
                                       "${charge.name} (£${charge.price})",
-                                        fontSize: 12,
-                                        color: isSelected?Colors.white:Colors.black
-
+                                      fontSize: 12,
+                                      color: isSelected
+                                          ? Colors.white
+                                          : Colors.black,
                                     ),
                                     selected: isSelected,
                                     selectedColor: color_secondary,
-                                      checkmarkColor: Colors.white,
+                                    checkmarkColor: Colors.white,
                                     onSelected: (_) {
-                                      controller.toggleExtraCharge(day.day!, charge.id??0);
-                                      setState(() {
-
-                                      });
-                                    }
-                                       ,
+                                      controller.toggleExtraCharge(
+                                        day.day!,
+                                        charge.id ?? 0,
+                                      );
+                                      setState(() {});
+                                    },
                                   );
                                 }).toList(),
                               ),
@@ -236,24 +230,23 @@ class _AddExtraBookingScreenState extends State<AddExtraBookingScreen> {
                 CommonGradientButton(
                   btnTitle: "Submit  (£${controller.totalAmount.value})",
                   onPressed: () {
-
-                    controller.callAddExtraBookingsAPI(context, (controller.buildRequest()), widget.childId);
+                    controller.callAddExtraBookingsAPI(
+                      context,
+                      (controller.buildRequest()),
+                      widget.childId,
+                    );
 
                     // print(extraBookingsRequestToJson(controller.buildRequest()));
                   },
-                )
-
+                ),
               ],
             ),
 
-            if(controller.isLoading.value)Center(child: CircularProgressIndicator(),)
+            if (controller.isLoading.value)
+              Center(child: CircularProgressIndicator()),
           ],
         );
       }),
-
     );
   }
 }
-
-
-
