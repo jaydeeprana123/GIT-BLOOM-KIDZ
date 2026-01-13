@@ -39,6 +39,8 @@ class ObservationCommentListWidget extends StatelessWidget {
       childInfoController.isLikeList.add(false);
     }
 
+    childInfoController.getUserInfo();
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CommonAppBar(title: "Comments", showMenu: false, showBack: true),
@@ -147,6 +149,29 @@ class ObservationCommentListWidget extends StatelessWidget {
                                         BlackMediumBoldText(
                                           (comment?.likes ?? 0).toString(),
                                         ),
+
+                                        SizedBox(width: 16,),
+
+                                        if(comment?.user?.id == childInfoController.loginResponse?.value.data?.user?.id)InkWell(onTap: (){
+
+                                          showDeleteWarningDialog(context, onConfirm: (){
+                                            childInfoController.callObservationDeleteCommentAPI(context, childId, observation.id.toString(), (comment?.id??0).toString());
+
+                                          });
+
+                                                                                  },child: Row(
+                                          children: [
+                                            Icon(Icons.delete_forever, color: Colors.red,size: 16,),
+
+                                            BlackSmallMediumText(
+                                             "Delete",
+                                              color: Colors.red,
+                                              fontSize: 11
+
+                                            )
+                                          ],
+                                        ))
+
                                       ],
                                     ),
                                   ],
@@ -164,6 +189,89 @@ class ObservationCommentListWidget extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+
+  void showDeleteWarningDialog(
+      BuildContext context, {
+        required VoidCallback onConfirm,
+      }) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+
+                /// ⚠️ Icon
+                const Icon(
+                  Icons.warning_amber_rounded,
+                  color: Colors.red,
+                  size: 50,
+                ),
+
+                const SizedBox(height: 12),
+
+                /// Title
+                BlueMediumBoldText(
+                  "Delete Comment",
+                  fontSize: 16,
+                  color: Colors.red,
+                ),
+
+                const SizedBox(height: 8),
+
+                /// Message
+                const Text(
+                  "Are you sure you want to delete this comment?\nThis action cannot be undone.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 13),
+                ),
+
+                const SizedBox(height: 20),
+
+                /// Buttons
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Text("Cancel"),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                          onConfirm();
+                        },
+                        child: const Text(
+                          "Delete",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

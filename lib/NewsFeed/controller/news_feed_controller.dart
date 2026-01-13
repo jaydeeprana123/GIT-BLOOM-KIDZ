@@ -177,6 +177,63 @@ class NewsFeedController extends GetxController {
     });
   }
 
+  /// Leave Request API
+  Future<void> callNewsDeleteCommentAPI(BuildContext context, String newsId ,String id) async {
+    try {
+      isLoading.value = true;
+
+      /// 🔑 Token
+      String token = await MySharedPref().getStringValue(
+        SharePreData.keyAccessToken,
+      );
+
+      /// 🧾 Headers
+      Map<String, String> headersWithBearer = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      };
+
+      /// 🌐 URL
+      String url = "$urlBase$urlAddCommentInNewsFeed/$newsId/comment/$id";
+
+      /// 🔥 Request
+      var request = http.Request('DELETE', Uri.parse(url));
+      printData(
+        runtimeType.toString(),
+        "callDeleteCommentAPI response ${url}",
+      );
+      request.headers.addAll(headersWithBearer);
+
+      /// 📡 Send Request
+      http.StreamedResponse response = await request.send();
+
+      /// 📥 Read Response Body
+      final responseBody = await response.stream.bytesToString();
+      final Map<String, dynamic> jsonData = json.decode(responseBody);
+
+      /// 📦 Parse Base Model
+      BaseModel baseModel = BaseModel.fromJson(jsonData);
+      printData(
+          runtimeType.toString(),
+          "callDeleteCommentAPI response ${response.statusCode}");
+      if (response.statusCode == 200) {
+        if (baseModel.status == true) {
+          snackBar(context, baseModel.message ?? "Deleted successfully");
+          Navigator.pop(context);
+        } else {
+          snackBar(context, baseModel.message ?? "Something went wrong");
+        }
+      } else {
+        snackBar(context, "Server error (${response.statusCode})");
+      }
+    } catch (e) {
+      snackBar(context, "Error: ${e.toString()}");
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+
   /// Add Like API
   callAddLikeInNewsFeedAPI(
     BuildContext context,

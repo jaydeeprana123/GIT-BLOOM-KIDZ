@@ -74,7 +74,7 @@ class _UpdateExtraBookingScreenState extends State<UpdateExtraBookingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CommonAppBar(title: 'Add Extra Booking', showBack: true),
+      appBar: CommonAppBar(title: 'Update Extra Booking', showBack: true),
       body: Obx(() {
         return Stack(
           children: [
@@ -155,8 +155,10 @@ class _UpdateExtraBookingScreenState extends State<UpdateExtraBookingScreen> {
                               Wrap(
                                 spacing: 8,
                                 children: day.sessions!.map((session) {
-                                  final isSelected = session.selected ?? false;
-
+                                  final isSelected =
+                                      controller.selectedSessions[day.day]
+                                          ?.contains(session.id) ??
+                                          false;
                                   return Container(
                                     margin: EdgeInsets.symmetric(vertical: 4),
                                     child: ChoiceChip(
@@ -204,8 +206,10 @@ class _UpdateExtraBookingScreenState extends State<UpdateExtraBookingScreen> {
                               Wrap(
                                 spacing: 8,
                                 children: day.extraCharges!.map((charge) {
-                                  final isSelected = charge.selected ?? false;
-
+                                  final isSelected =
+                                      controller.selectedExtraCharges[day.day]
+                                          ?.contains(charge.id) ??
+                                          false;
                                   return FilterChip(
                                     label: BlackMediumBoldText(
                                       "${charge.name} (£${charge.price})",
@@ -238,10 +242,11 @@ class _UpdateExtraBookingScreenState extends State<UpdateExtraBookingScreen> {
                 CommonGradientButton(
                   btnTitle: "Submit  (£${controller.totalAmount.value})",
                   onPressed: () {
-                    controller.callAddExtraBookingsAPI(
+                    controller.callUpdateExtraBookingsAPI(
                       context,
                       (controller.buildRequest()),
                       widget.childId,
+                        (controller.selectedExtraBooking.value.id??0).toString()
                     );
 
                     // print(extraBookingsRequestToJson(controller.buildRequest()));

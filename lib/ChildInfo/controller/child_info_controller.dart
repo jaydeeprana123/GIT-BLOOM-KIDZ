@@ -529,6 +529,64 @@ class ChildInfoController extends GetxController {
     }
   }
 
+
+  /// Leave Request API
+  Future<void> callObservationDeleteCommentAPI(BuildContext context,String childId, String observationId ,String id) async {
+    try {
+      isLoading.value = true;
+
+      /// 🔑 Token
+      String token = await MySharedPref().getStringValue(
+        SharePreData.keyAccessToken,
+      );
+
+      /// 🧾 Headers
+      Map<String, String> headersWithBearer = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      };
+
+      /// 🌐 URL
+      String url = "$urlBase$urlAddCommentInObservation/$childId/$observationId/comment/$id";
+
+      /// 🔥 Request
+      var request = http.Request('DELETE', Uri.parse(url));
+      printData(
+        runtimeType.toString(),
+        "callDeleteCommentAPI response ${url}",
+      );
+      request.headers.addAll(headersWithBearer);
+
+      /// 📡 Send Request
+      http.StreamedResponse response = await request.send();
+
+      /// 📥 Read Response Body
+      final responseBody = await response.stream.bytesToString();
+      final Map<String, dynamic> jsonData = json.decode(responseBody);
+
+      /// 📦 Parse Base Model
+      BaseModel baseModel = BaseModel.fromJson(jsonData);
+      printData(
+          runtimeType.toString(),
+          "callDeleteCommentAPI response ${response.statusCode}");
+      if (response.statusCode == 200) {
+        if (baseModel.status == true) {
+          snackBar(context, baseModel.message ?? "Deleted successfully");
+         Navigator.pop(context);
+        } else {
+          snackBar(context, baseModel.message ?? "Something went wrong");
+        }
+      } else {
+        snackBar(context, "Server error (${response.statusCode})");
+      }
+    } catch (e) {
+      snackBar(context, "Error: ${e.toString()}");
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+
   /// Delete Extra Bookings API
   Future<void> callDeleteExtraBookingsAPI(
     BuildContext context,
@@ -918,7 +976,7 @@ class ChildInfoController extends GetxController {
                       x++
                     ) {
                       if (selectedExtraBooking.value.days?[j].sessions?[z].id ==
-                          priceBandList[i].sessions?[x].id) {
+                          priceBandList[i].sessions?[x].id && (selectedExtraBooking.value.days?[j].sessions?[z].selected??false)) {
                         priceBandList[i].sessions?[x].selected =
                             selectedExtraBooking
                                 .value
@@ -952,7 +1010,7 @@ class ChildInfoController extends GetxController {
                               .days?[j]
                               .extraCharges?[z]
                               .id ==
-                          priceBandList[i].extraCharges?[x].id) {
+                          priceBandList[i].extraCharges?[x].id && (selectedExtraBooking.value.days?[j].extraCharges?[z].selected??false)) {
                         priceBandList[i].extraCharges?[x].selected =
                             selectedExtraBooking
                                 .value
@@ -1364,7 +1422,7 @@ class ChildInfoController extends GetxController {
       SharePreData.keyAccessToken,
     );
 
-    String url = "$urlBase$urlAddObservation/$childInfo/$observationId";
+    String url = "$urlBase$urlAddObservation/$childInfo/update/$observationId";
 
     final apiReq = Request();
 

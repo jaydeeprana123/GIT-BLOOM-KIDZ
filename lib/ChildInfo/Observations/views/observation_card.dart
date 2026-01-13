@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:bloom_kidz/ChildInfo/Observations/models/observation_list_response.dart';
 import 'package:bloom_kidz/ChildInfo/Observations/views/observation_update_screen.dart';
 import 'package:bloom_kidz/ChildInfo/controller/child_info_controller.dart';
@@ -6,6 +8,7 @@ import 'package:bloom_kidz/CommonWidgets/blue_medium_bold_text.dart';
 import 'package:bloom_kidz/CommonWidgets/blue_medium_regular_text.dart';
 import 'package:bloom_kidz/CommonWidgets/common_green_button.dart';
 import 'package:bloom_kidz/CommonWidgets/common_text_field.dart';
+import 'package:bloom_kidz/CommonWidgets/common_widget.dart';
 import 'package:bloom_kidz/NewsFeed/controller/news_feed_controller.dart';
 import 'package:bloom_kidz/NewsFeed/models/news_feed_response.dart';
 import 'package:bloom_kidz/Styles/my_colors.dart';
@@ -46,7 +49,7 @@ class ObservationCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _header(),
+          _header(context),
           _titleText(),
           if ((observation.media ?? []).isNotEmpty) _image(),
           _description(),
@@ -57,7 +60,7 @@ class ObservationCard extends StatelessWidget {
     );
   }
 
-  Widget _header() {
+  Widget _header(BuildContext context) {
     return Padding(
       padding: EdgeInsets.all(12),
       child: Row(
@@ -110,25 +113,30 @@ class ObservationCard extends StatelessWidget {
           ),
           InkWell(
             onTap: () {
-              PopupMenuButton<int>(
-                icon: const Icon(Icons.more_vert),
-                onSelected: (value) {
-                  switch (value) {
-                    case 1:
-                      childInfoController.selectedObservation.value =
-                          observation;
-                      Get.to(ObservationUpdateScreen(childId: childId));
-                      break;
-                  }
-                },
-                itemBuilder: (context) => [
-                  const PopupMenuItem(value: 1, child: Text("Edit")),
-                  // const PopupMenuItem(
-                  //   value: 2,
-                  //   child: Text("Delete"),
-                  // ),
-                ],
-              );
+              showUpdateDialog(context, childId, observation.id.toString(), observation, childInfoController);
+              printData("update", "val");
+              // PopupMenuButton<int>(
+              //   icon: const Icon(Icons.more_vert),
+              //   onSelected: (value) {
+              //     switch (value) {
+              //       case 1:
+              //         childInfoController.selectedObservation.value =
+              //             observation;
+              //
+              //
+              //
+              //         Get.to(ObservationUpdateScreen(childId: childId));
+              //         break;
+              //     }
+              //   },
+              //   itemBuilder: (context) => [
+              //     const PopupMenuItem(value: 1, child: Text("Edit")),
+              //     // const PopupMenuItem(
+              //     //   value: 2,
+              //     //   child: Text("Delete"),
+              //     // ),
+              //   ],
+              // );
             },
             child: const Icon(Icons.more_vert),
           ),
@@ -162,9 +170,12 @@ class ObservationCard extends StatelessWidget {
         : SizedBox();
   }
 
+
+
+
   Widget _description() {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Html(
         data: observation.observations ?? "",
         style: {
@@ -174,6 +185,23 @@ class ObservationCard extends StatelessWidget {
             lineHeight: LineHeight(1.4),
           ),
         },
+        extensions: [
+          TagExtension(
+            tagsToExtend: {"img"},
+            builder: (context) {
+              final src = context.attributes['src'] ?? '';
+
+              if (src.startsWith('data:image')) {
+                final base64Str = src.split(',').last;
+                final bytes = base64Decode(base64Str);
+
+                return Image.memory(bytes, fit: BoxFit.contain);
+              }
+
+              return const SizedBox();
+            },
+          ),
+        ],
       ),
     );
   }
@@ -282,4 +310,81 @@ class ObservationCard extends StatelessWidget {
       ),
     );
   }
+
+
+  void showUpdateDialog(
+      BuildContext context,
+      String childId,
+      String id,
+      Observation observation,
+      ChildInfoController controller
+      ) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                BlueMediumBoldText(
+                  "Action",
+                  fontSize: 16,
+                  color: color_secondary,
+                ),
+
+                const SizedBox(height: 16),
+
+                /// ✏️ Update
+                ListTile(
+                  leading: const Icon(Icons.edit_note, color: color_secondary),
+                  title: BlueMediumBoldText("Update"),
+                  onTap: () {
+                    controller.selectedObservation.value = observation;
+                    Navigator.pop(context);
+                    Get.to(ObservationUpdateScreen(childId: childId))?.then((value) {
+                      controller.callObservationListAPI(context, childId);
+                    });
+                  },
+                ),
+
+                // const Divider(),
+                //
+                // /// 🗑 Delete
+                // ListTile(
+                //   leading: const Icon(Icons.delete_forever, color: Colors.red),
+                //   title: const Text(
+                //     "Delete",
+                //     style: TextStyle(
+                //       color: Colors.red,
+                //       fontWeight: FontWeight.w600,
+                //     ),
+                //   ),
+                //   onTap: () {
+                //     Navigator.pop(context);
+                //
+                //     showDeleteWarningDialog(
+                //       context,
+                //       onConfirm: () {
+                //         controller.callDeleteExtraBookingsAPI(
+                //           context,
+                //           childId,
+                //           id,
+                //         );
+                //       },
+                //     );
+                //   },
+                // ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
 }

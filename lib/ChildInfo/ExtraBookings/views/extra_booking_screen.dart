@@ -178,13 +178,13 @@ class _ExtraBookingScreenState extends State<ExtraBookingScreen> {
                                             Row(
                                               children: [
                                                 BlueMediumBoldText(
-                                                  '${day.sessions?[0].startTime} - ${day.sessions?[0].endTime}',
+                                                  '${selectedSession(day)?.startTime} - ${selectedSession(day)?.endTime}',
                                                 ),
 
                                                 SizedBox(width: 3),
                                                 BlueMediumBoldText(
                                                   fontFamily: fontInterSemiBold,
-                                                  "(${calculateTotalHours(day.sessions?[0].startTime ?? "", day.sessions?[0].endTime ?? "")})",
+                                                  "(${calculateTotalHours(selectedSession(day)?.startTime ?? "", selectedSession(day)?.endTime ?? "")})",
                                                 ),
                                               ],
                                             ),
@@ -193,7 +193,7 @@ class _ExtraBookingScreenState extends State<ExtraBookingScreen> {
                                             if ((day.extraCharges ?? [])
                                                 .isNotEmpty)
                                               BlueMediumBoldText(
-                                                '${day.extraCharges?[0].name}',
+                                                '${selectedExtraCharge(day)?.name}',
                                               ),
                                           ],
                                         ),
@@ -216,8 +216,7 @@ class _ExtraBookingScreenState extends State<ExtraBookingScreen> {
                                             if ((day.extraCharges ?? [])
                                                 .isNotEmpty)
                                               BlueMediumBoldText(
-                                                "£" +
-                                                    ('${day.extraCharges?[0].price}'),
+                                                "£${selectedExtraCharge(day)?.price??""}",
                                                 fontFamily: fontInterSemiBold,
                                               ),
                                           ],
@@ -333,7 +332,9 @@ class _ExtraBookingScreenState extends State<ExtraBookingScreen> {
                   onTap: () {
                     controller.selectedExtraBooking.value = extraBooking;
                     Navigator.pop(context);
-                    Get.to(UpdateExtraBookingScreen(childId: childId));
+                    Get.to(UpdateExtraBookingScreen(childId: childId))?.then((value) {
+                      controller.callGetExtraBookingsAPI(context, widget.childId);
+                    });
                   },
                 ),
 
@@ -409,7 +410,7 @@ class _ExtraBookingScreenState extends State<ExtraBookingScreen> {
 
                 /// Message
                 const Text(
-                  "Are you sure you want to delete this contact?\nThis action cannot be undone.",
+                  "Are you sure you want to delete this booking?\nThis action cannot be undone.",
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 13),
                 ),
@@ -451,5 +452,29 @@ class _ExtraBookingScreenState extends State<ExtraBookingScreen> {
         );
       },
     );
+
+
+
   }
+
+  Session? selectedSession(Day day){
+    Session? selectedSession = day.sessions
+        ?.firstWhere(
+          (s) => s.selected == true,
+      orElse: () => Session(),
+    );
+
+    return selectedSession;
+  }
+
+  ExtraCharge? selectedExtraCharge(Day day){
+    ExtraCharge? selectedExtraCharge = day.extraCharges
+        ?.firstWhere(
+          (s) => s.selected == true,
+      orElse: () => ExtraCharge(),
+    );
+
+    return selectedExtraCharge;
+  }
+
 }
