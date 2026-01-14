@@ -126,9 +126,9 @@ class _ChildrenPermissionScreenState extends State<ChildrenPermissionScreen> {
                 const SizedBox(width: 8),
                 Row(
                   children: [
-                    _yesNoButton("YES", true, childPermission.id.toString()),
+                    _yesNoButton("YES", (childPermission.selectedStatus??"0") == "1"?true:false, childPermission.permissionId.toString(), true),
                     const SizedBox(width: 6),
-                    _yesNoButton("NO", false, childPermission.id.toString()),
+                    _yesNoButton("NO", (childPermission.selectedStatus??"0") == "0"?true:false, childPermission.permissionId.toString(), false),
                   ],
                 ),
               ],
@@ -154,15 +154,15 @@ class _ChildrenPermissionScreenState extends State<ChildrenPermissionScreen> {
   }
 
   /// YES / NO Button
-  Widget _yesNoButton(String text, bool selected, String permissionId) {
+  Widget _yesNoButton(String text, bool selected, String permissionId, bool isYesButton) {
     return InkWell(
       onTap: (){
         showWarningDialog(
           context: context,
           title: "Confirmation",
-          message: selected?"Are you sure you want to approve this?":"Are you sure you want to reject this?",
+          message: isYesButton?"Are you sure you want to approve this?":"Are you sure you want to reject this?",
           onYes: () {
-            childInfoController.callConfirmPermissionAPI(context, widget.childId, permissionId, selected);
+            childInfoController.callConfirmPermissionAPI(context, widget.childId, permissionId, isYesButton);
           },
         );
 

@@ -53,120 +53,46 @@ class Data {
 }
 
 class ChildPermission {
-  int? id;
+  int? permissionId;
   String? name;
   String? description;
-  int? nurseryId;
-  int? createdId;
-  DateTime? createdAt;
-  int? updatedId;
-  DateTime? updatedAt;
-  dynamic deletedId;
-  dynamic deletedAt;
-  DeletedStatus? deletedStatus;
-  List<Detail>? details;
+  String? selectedStatus;
+  SelectedLabel? selectedLabel;
 
   ChildPermission({
-    this.id,
+    this.permissionId,
     this.name,
     this.description,
-    this.nurseryId,
-    this.createdId,
-    this.createdAt,
-    this.updatedId,
-    this.updatedAt,
-    this.deletedId,
-    this.deletedAt,
-    this.deletedStatus,
-    this.details,
+    this.selectedStatus,
+    this.selectedLabel,
   });
 
   factory ChildPermission.fromJson(Map<String, dynamic> json) => ChildPermission(
-    id: json["id"],
+    permissionId: json["permission_id"],
     name: json["name"],
     description: json["description"],
-    nurseryId: json["nursery_id"],
-    createdId: json["created_id"],
-    createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
-    updatedId: json["updated_id"],
-    updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),
-    deletedId: json["deleted_id"],
-    deletedAt: json["deleted_at"],
-    deletedStatus: deletedStatusValues.map[json["deleted_status"]]!,
-    details: json["details"] == null ? [] : List<Detail>.from(json["details"]!.map((x) => Detail.fromJson(x))),
+    selectedStatus: json["selected_status"],
+    selectedLabel: selectedLabelValues.map[json["selected_label"]]!,
   );
 
   Map<String, dynamic> toJson() => {
-    "id": id,
+    "permission_id": permissionId,
     "name": name,
     "description": description,
-    "nursery_id": nurseryId,
-    "created_id": createdId,
-    "created_at": createdAt?.toIso8601String(),
-    "updated_id": updatedId,
-    "updated_at": updatedAt?.toIso8601String(),
-    "deleted_id": deletedId,
-    "deleted_at": deletedAt,
-    "deleted_status": deletedStatusValues.reverse[deletedStatus],
-    "details": details == null ? [] : List<dynamic>.from(details!.map((x) => x.toJson())),
+    "selected_status": selectedStatus,
+    "selected_label": selectedLabelValues.reverse[selectedLabel],
   };
 }
 
-enum DeletedStatus {
-  N
+enum SelectedLabel {
+  NO,
+  YES
 }
 
-final deletedStatusValues = EnumValues({
-  "N": DeletedStatus.N
+final selectedLabelValues = EnumValues({
+  "NO": SelectedLabel.NO,
+  "YES": SelectedLabel.YES
 });
-
-class Detail {
-  int? id;
-  int? masterId;
-  int? childId;
-  String? status;
-  int? nurseryId;
-  int? createdId;
-  DateTime? createdAt;
-  int? updatedId;
-  DateTime? updatedAt;
-
-  Detail({
-    this.id,
-    this.masterId,
-    this.childId,
-    this.status,
-    this.nurseryId,
-    this.createdId,
-    this.createdAt,
-    this.updatedId,
-    this.updatedAt,
-  });
-
-  factory Detail.fromJson(Map<String, dynamic> json) => Detail(
-    id: json["id"],
-    masterId: json["master_id"],
-    childId: json["child_id"],
-    status: json["status"],
-    nurseryId: json["nursery_id"],
-    createdId: json["created_id"],
-    createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
-    updatedId: json["updated_id"],
-    updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),
-  );
-
-  Map<String, dynamic> toJson() => {
-    "id": id,
-    "master_id": masterId,
-    "child_id": childId,
-    "status": status,
-    "nursery_id": nurseryId,
-    "created_id": createdId,
-    "created_at": createdAt?.toIso8601String(),
-    "updated_id": updatedId,
-    "updated_at": updatedAt?.toIso8601String(),
-  };
-}
 
 class EnumValues<T> {
   Map<String, T> map;

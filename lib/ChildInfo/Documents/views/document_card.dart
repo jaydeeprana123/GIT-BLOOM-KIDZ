@@ -66,7 +66,7 @@ class DocumentCard extends StatelessWidget {
   }
 
   Widget _pdfIcon() {
-    return Container(
+    return (documentData.extension ?? "").toLowerCase() == "pdf"?SvgPicture.asset(pdf, width: 34,):Container(
       height: 40,
       width: 40,
       decoration: BoxDecoration(
@@ -96,6 +96,7 @@ class DocumentCard extends StatelessWidget {
           BlackSmallRegularText(
             documentData.uploadedAt ?? "",
             color: Colors.black,
+            fontSize: 11
           ),
         ],
       ),
