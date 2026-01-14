@@ -37,6 +37,9 @@ class NewsFeedCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    newsFeedController.getUserInfo();
+
     return Card(
       color: Colors.white,
       shadowColor: color_primary,
@@ -187,7 +190,7 @@ class NewsFeedCard extends StatelessWidget {
               controller.callAddLikeInNewsFeedAPI(context, newsId, index);
             },
             child: SvgPicture.asset(
-              icon_like,
+              isLikeOrNot()?icon_like:unlike,
               width: 16,
             ),
           ),
@@ -263,5 +266,11 @@ class NewsFeedCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+
+  bool isLikeOrNot(){
+    bool isLikedByMe = newsFeed.likes?.any((like) => like.userId == newsFeedController.loginResponse.value.data?.user?.id) ?? false;
+    return isLikedByMe;
   }
 }

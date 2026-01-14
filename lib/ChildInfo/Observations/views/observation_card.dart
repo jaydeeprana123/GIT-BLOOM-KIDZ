@@ -41,6 +41,9 @@ class ObservationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    childInfoController.getUserInfo();
+
     return Card(
       color: Colors.white,
       shadowColor: color_primary,
@@ -221,7 +224,7 @@ class ObservationCard extends StatelessWidget {
               );
             },
             child: SvgPicture.asset(
-              icon_like,
+              isLikeOrNot()?icon_like:unlike,
               width: 16,
             ),
 
@@ -385,6 +388,12 @@ class ObservationCard extends StatelessWidget {
         );
       },
     );
+  }
+
+
+  bool isLikeOrNot(){
+    bool isLikedByMe = observation.likes?.any((like) => like.userId == childInfoController.loginResponse.value.data?.user?.id) ?? false;
+    return isLikedByMe;
   }
 
 }

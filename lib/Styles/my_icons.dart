@@ -165,3 +165,4 @@ const icon_branch = 'assets/images/branch.svg';
 const icon_membership = 'assets/images/membership.svg';
 const body_front = "assets/images/front.jpg";
 const pdf = "assets/images/pdf.svg";
+const unlike = "assets/images/unlike.svg";

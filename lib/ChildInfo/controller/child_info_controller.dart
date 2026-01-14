@@ -504,7 +504,7 @@ class ChildInfoController extends GetxController {
 
       /// 📡 Send Request
       http.StreamedResponse response = await request.send();
-
+      isLoading.value = false;
       /// 📥 Read Response Body
       final responseBody = await response.stream.bytesToString();
       final Map<String, dynamic> jsonData = json.decode(responseBody);
@@ -559,7 +559,7 @@ class ChildInfoController extends GetxController {
 
       /// 📡 Send Request
       http.StreamedResponse response = await request.send();
-
+      isLoading.value = false;
       /// 📥 Read Response Body
       final responseBody = await response.stream.bytesToString();
       final Map<String, dynamic> jsonData = json.decode(responseBody);
@@ -580,6 +580,7 @@ class ChildInfoController extends GetxController {
         snackBar(context, "Server error (${response.statusCode})");
       }
     } catch (e) {
+      isLoading.value = false;
       snackBar(context, "Error: ${e.toString()}");
     } finally {
       isLoading.value = false;
@@ -617,7 +618,7 @@ class ChildInfoController extends GetxController {
 
       /// 📡 Send Request
       http.StreamedResponse response = await request.send();
-
+      isLoading.value = false;
       /// 📥 Read Response Body
       final responseBody = await response.stream.bytesToString();
       final Map<String, dynamic> jsonData = json.decode(responseBody);
