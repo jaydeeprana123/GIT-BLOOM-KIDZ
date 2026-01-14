@@ -66,3 +66,7 @@ const urlActivityList = '/parent/activities';
 
 /// Chat
 const urlPeopleList = '/parent/chat/people';
+const urlSendMessage = '/parent/chat/send';
+const urlGetGroupChat = '/parent/chat/messages';
+const urlDeleteMessage = '/parent/chat/delete-message';
+const urlAddGroupMember = '/parent/chat/add-members';
