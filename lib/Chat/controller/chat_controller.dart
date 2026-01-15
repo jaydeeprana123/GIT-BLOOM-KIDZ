@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:bloom_kidz/Authentication/model/login_response.dart';
+import 'package:bloom_kidz/Chat/models/conversation_list_response.dart';
 import 'package:bloom_kidz/Chat/models/create_group_member_request.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -25,6 +26,7 @@ class ChatController extends GetxController {
   Rx<LoginResponse> loginResponse = LoginResponse().obs;
 
   RxList<ChatPerson> peopleList = <ChatPerson>[].obs;
+  RxList<ConversationData> conversationList = <ConversationData>[].obs;
 
   RxBool isLoading = false.obs;
   RxList<String> imagePath = <String>[].obs;
@@ -82,6 +84,51 @@ class ChatController extends GetxController {
       });
     });
   }
+
+  /// Conversation List API
+  callConversationListAPI(BuildContext context) async {
+    isLoading.value = true;
+
+    String token = await MySharedPref().getStringValue(
+      SharePreData.keyAccessToken,
+    );
+
+    String url = "$urlBase$urlConversations";
+
+    final apiReq = Request();
+
+    await apiReq.getMethodAPI(url, null, token).then((value) async {
+      http.StreamedResponse res = value;
+      printData(
+        runtimeType.toString(),
+        "callConversationListAPI response ${res.statusCode}",
+      );
+
+      await res.stream.bytesToString().then((valueData) async {
+        printData(
+          runtimeType.toString(),
+          "callConversationListAPI value ${valueData}",
+        );
+
+        isLoading.value = false;
+
+        if (res.statusCode == 200) {
+          Map<String, dynamic> userModel = json.decode(valueData);
+          ConversationListResponse conversationListResponse = ConversationListResponse.fromJson(
+            userModel,
+          );
+
+          if (conversationListResponse.status ?? false) {
+            conversationList.value = conversationListResponse.data ?? [];
+
+          } else {
+            snackBar(context, conversationListResponse.message ?? "");
+          }
+        }
+      });
+    });
+  }
+
 
   /// Send Message Not Group API
   callSendMessageNotGroupAPI(

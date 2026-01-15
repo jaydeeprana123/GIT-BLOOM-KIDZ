@@ -50,10 +50,8 @@ class _PeopleListScreenState extends State<PeopleListScreen> {
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: Colors.white,
-      appBar:  CommonAppBar(title: "Chat", showMenu: true, showBack: false, onMenuTap: (){
-    _scaffoldKey.currentState?.openDrawer(); // 👈 OPEN DRAWER
-    }),
-      drawer: const AppDrawer(), // 👈 Navigation Drawer
+
+       // 👈 Navigation Drawer
       body: Obx(
               () =>Stack(
         children: [

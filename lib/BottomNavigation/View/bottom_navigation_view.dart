@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:bloom_kidz/Chat/View/chat_screen.dart';
+import 'package:bloom_kidz/Chat/View/users_screen.dart';
 import 'package:bloom_kidz/ChildInfo/View/child_info_screen.dart';
 import 'package:bloom_kidz/CommonWidgets/common_background.dart';
 import 'package:bloom_kidz/NewsFeed/View/news_feed_screen.dart';
@@ -38,7 +39,7 @@ class _BottomNavigationViewState extends State<BottomNavigationView> {
   final tabs = [
     NewsFeedScreen(),
     ChildInfoScreen(),
-    PeopleListScreen(),
+    UsersScreen(),
     ProfileScreen(),
   ];
 

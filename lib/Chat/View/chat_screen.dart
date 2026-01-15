@@ -1,3 +1,4 @@
+import 'package:bloom_kidz/Chat/controller/chat_controller.dart';
 import 'package:bloom_kidz/CommonWidgets/common_green_button.dart';
 import 'package:bloom_kidz/CommonWidgets/common_text_field.dart';
 import 'package:bloom_kidz/Styles/my_colors.dart';
@@ -17,10 +18,32 @@ import '../../CommonWidgets/common_appbar.dart';
 import 'chat_bubble.dart';
 import 'chat_header.dart';
 
-class ChatScreen extends StatelessWidget {
-  ChatScreen({super.key});
 
-  final TextEditingController messageCtrl = TextEditingController();
+class ChatScreen extends StatefulWidget {
+  final String groupId;
+
+  const ChatScreen({Key? key, required this.groupId}) : super(key: key);
+
+  @override
+  State<ChatScreen> createState() => _ChatScreenState();
+}
+
+class _ChatScreenState extends State<ChatScreen> {
+
+  ChatController chatController = Get.find<ChatController>();
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+
+      if(widget.groupId.isNotEmpty){
+        chatController.callGetGroupChatAPI(context, widget.groupId);
+      }
+
+    });
+
+  }
 
   @override
   Widget build(BuildContext context) {

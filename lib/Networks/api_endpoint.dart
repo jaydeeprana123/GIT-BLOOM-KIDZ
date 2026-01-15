@@ -70,3 +70,5 @@ const urlSendMessage = '/parent/chat/send';
 const urlGetGroupChat = '/parent/chat/messages';
 const urlDeleteMessage = '/parent/chat/delete-message';
 const urlAddGroupMember = '/parent/chat/add-members';
+const urlConversations = '/parent/chat/conversations';
+
