@@ -12,6 +12,7 @@ import 'package:bloom_kidz/Styles/my_icons.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 import '../../ChildInfo/View/child_info_screen.dart';
@@ -54,21 +55,21 @@ class _ConversationListScreenState extends State<ConversationListScreen> {
       body: Obx(
               () =>Stack(
         children: [
+
+          Positioned.fill(child: SvgPicture.asset(app_bg, fit: BoxFit.cover)),
+
           Column(
             children: [
               const SizedBox(height: 16),
 
               /// 👥 Employee List
               Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  child: ListView.separated(
-                    itemCount: chatController.conversationList.length,
-                    separatorBuilder: (_, __) => const Divider(height: 1),
-                    itemBuilder: (context, index) {
-                      return  ConversationTile(conversationData: chatController.conversationList[index],);
-                    },
-                  ),
+                child: ListView.separated(
+                  itemCount: chatController.conversationList.length,
+                  separatorBuilder: (_, __) => const Divider(height: 1),
+                  itemBuilder: (context, index) {
+                    return  ConversationTile(conversationData: chatController.conversationList[index],chatController: chatController,);
+                  },
                 ),
               ),
             ],
@@ -85,39 +86,52 @@ class _ConversationListScreenState extends State<ConversationListScreen> {
 class ConversationTile extends StatelessWidget {
 
   final ConversationData conversationData;
+  final ChatController chatController;
 
-  const ConversationTile({super.key, required this.conversationData});
+  const ConversationTile({super.key, required this.conversationData, required this.chatController});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: (){
-        Get.to(ChatScreen());
+        Get.to(ChatScreen(groupId: (conversationData.groupId??0).toString(),))?.then((value) {
+          chatController.callConversationListAPI(context);
+        });;
       },
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        child: Row(
-          children: [
+      child: Card(
+        color: Colors.white,
+        shadowColor: color_primary,
+        margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        elevation: 8,
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+          child: Row(
+            children: [
 
-            const SizedBox(width: 12),
+              Icon(Icons.groups, color: color_secondary,),
 
-            /// Name & Designation
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children:  [
-                BlueLargeBoldText(
-                    getMembersName(conversationData.members??[]),
-                  fontFamily: fontInterSemiBold
+              const SizedBox(width: 12),
+
+              /// Name & Designation
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children:  [
+                    BlueLargeBoldText(
+                        getMembersName(conversationData.members??[]),
+                      fontFamily: fontInterSemiBold
+                    ),
+                    SizedBox(height: 3),
+                    BlackMediumRegularText(
+                        conversationData.lastMessage??"",
+                      fontSize: 12,
+                      color: Colors.black
+                    ),
+                  ],
                 ),
-                SizedBox(height: 3),
-                BlackMediumRegularText(
-                    conversationData.lastMessage??"",
-                  fontSize: 12,
-                  color: Colors.black
-                ),
-              ],
-            ),
-          ],
+              ),
+            ],
+          ),
         ),
       ),
     );

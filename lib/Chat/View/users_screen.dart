@@ -53,9 +53,69 @@ class UsersScreen extends StatelessWidget {
       child: Scaffold(
         key: _scaffoldKey,
         drawer: const AppDrawer(),
-        appBar:  CommonAppBar(title: "Chat", showMenu: true, showBack: false, onMenuTap: (){
-          _scaffoldKey.currentState?.openDrawer(); // 👈 OPEN DRAWER
-        }),
+
+
+        appBar : AppBar(
+          automaticallyImplyLeading: true,
+          backgroundColor: const Color(0xff1f78c8),
+          elevation: 0,
+
+          /// 👇 THIS MAKES BACK ARROW WHITE
+          iconTheme: const IconThemeData(color: Colors.white),
+
+          titleSpacing: 0,
+          title: Text(
+            "Safeguarding",
+            style: const TextStyle(
+              fontSize: 18,
+              fontFamily: fontInterSemiBold,
+              color: Colors.white,
+            ),
+          ),
+          actions: [
+              InkWell(
+                onTap: (){
+                  _scaffoldKey.currentState?.openDrawer();
+                }, // 👈 callback call
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 12),
+                  child: CircleAvatar(
+                    radius: 16,
+                    backgroundColor: color_primary,
+                    child: const Icon(
+                      Icons.menu_open_outlined,
+                      color: Colors.white,
+                      size: 20,
+                    ),
+                  ),
+                ),
+              ),
+
+          ],
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(
+              bottom: Radius.circular(34), // curved bottom
+            ),
+          ),
+
+          bottom: const TabBar(
+            labelColor: Colors.white,
+            unselectedLabelColor: Colors.white,
+            indicatorColor: Colors.white,
+            labelStyle: const TextStyle(
+                fontSize: 15,
+                fontFamily: fontInterSemiBold
+            ),
+            unselectedLabelStyle: const TextStyle(
+                fontSize: 14,
+                fontFamily: fontInterSemiBold
+            ),
+            tabs: [
+              Tab(text: "All"),
+              Tab(text: "Conversations"),
+            ],
+          ),
+        ),
 
         body:  TabBarView(
           children: [

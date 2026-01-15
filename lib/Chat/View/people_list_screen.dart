@@ -141,7 +141,7 @@ class ChatUserTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: (){
-        Get.to(ChatScreen());
+        Get.to(ChatScreen(groupId: "",));
       },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12),

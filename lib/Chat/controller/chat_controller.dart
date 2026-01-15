@@ -24,6 +24,7 @@ import '../models/send_message_not_group_request.dart';
 class ChatController extends GetxController {
 
   Rx<LoginResponse> loginResponse = LoginResponse().obs;
+   ScrollController scrollController = ScrollController();
 
   RxList<ChatPerson> peopleList = <ChatPerson>[].obs;
   RxList<ConversationData> conversationList = <ConversationData>[].obs;
@@ -32,13 +33,27 @@ class ChatController extends GetxController {
   RxList<String> imagePath = <String>[].obs;
 
   Rx<GroupChatResponse> groupChatResponse = GroupChatResponse().obs;
-  RxList<TextEditingController> messageController = <TextEditingController>[].obs;
+  Rx<TextEditingController> messageController = TextEditingController().obs;
 
   getUserInfo() async {
     /// Set login model into shared preference
     loginResponse.value =
         (await MySharedPref().getLoginModel(SharePreData.keySaveLoginModel)) ??
         LoginResponse();
+
+    update();
+  }
+
+  void scrollToBottom(ScrollController scrollController) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (scrollController.hasClients) {
+        scrollController.animateTo(
+          scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
   }
 
   /// People List API
@@ -134,7 +149,6 @@ class ChatController extends GetxController {
   callSendMessageNotGroupAPI(
       BuildContext context,
       SendMessageNotGroupRequest sendMessageNotGroupRequest,
-      String childId,
       ) async {
     isLoading.value = true;
 
@@ -201,6 +215,59 @@ class ChatController extends GetxController {
     //   });
     // });
   }
+
+
+  /// Delete Message API
+  callSendMessageInGroupAPI(
+      BuildContext context,
+      String groupId,
+      String message
+      ) async {
+    isLoading.value = true;
+
+    String token = await MySharedPref().getStringValue(
+      SharePreData.keyAccessToken,
+    );
+
+    String url =
+        "$urlBase$urlSendMessage";
+
+    final apiReq = Request();
+
+    dynamic body = {"group_id": groupId, "message": message};
+
+    await apiReq.postAPI(url, body, token).then((value) async {
+      http.StreamedResponse res = value;
+      printData(
+        runtimeType.toString(),
+        "callSendMessageInGroupAPI response ${res.statusCode}",
+      );
+
+      await res.stream.bytesToString().then((valueData) async {
+        printData(
+          runtimeType.toString(),
+          "callSendMessageInGroupAPI value ${valueData}",
+        );
+
+        isLoading.value = false;
+
+        if (res.statusCode == 200) {
+          Map<String, dynamic> userModel = json.decode(valueData);
+          BaseModel baseModel = BaseModel.fromJson(userModel);
+
+          if (baseModel.status ?? false) {
+            snackBar(context, baseModel.message ?? "");
+            messageController.value.text = "";
+
+            callGetGroupChatAPI(context, groupId);
+          } else {
+            snackBar(context, baseModel.message ?? "");
+          }
+        }
+      });
+    });
+  }
+
 
 
 
@@ -287,6 +354,8 @@ class ChatController extends GetxController {
           );
 
           if (groupChatResponse.value.status ?? false) {
+
+            scrollToBottom(scrollController);
           } else {
             snackBar(context, groupChatResponse.value.message ?? "");
           }

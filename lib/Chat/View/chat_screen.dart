@@ -1,4 +1,5 @@
 import 'package:bloom_kidz/Chat/controller/chat_controller.dart';
+import 'package:bloom_kidz/Chat/models/group_chat_response.dart';
 import 'package:bloom_kidz/CommonWidgets/common_green_button.dart';
 import 'package:bloom_kidz/CommonWidgets/common_text_field.dart';
 import 'package:bloom_kidz/Styles/my_colors.dart';
@@ -15,9 +16,9 @@ import '../../ChildInfo/View/child_info_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../../CommonWidgets/common_appbar.dart';
+import '../../CommonWidgets/common_widget.dart';
 import 'chat_bubble.dart';
 import 'chat_header.dart';
-
 
 class ChatScreen extends StatefulWidget {
   final String groupId;
@@ -29,20 +30,18 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-
   ChatController chatController = Get.find<ChatController>();
   @override
   void initState() {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-
-      if(widget.groupId.isNotEmpty){
+      chatController.scrollController = ScrollController();
+      chatController.getUserInfo();
+      if (widget.groupId.isNotEmpty) {
         chatController.callGetGroupChatAPI(context, widget.groupId);
       }
-
     });
-
   }
 
   @override
@@ -54,23 +53,21 @@ class _ChatScreenState extends State<ChatScreen> {
         showMenu: false,
         showBack: true,
       ),
-      body: Stack(
+      body: Obx(
+              () =>Stack(
         children: [
-
-          Positioned.fill(
-            child: SvgPicture.asset(app_bg, fit: BoxFit.fill),
-          ),
+          Positioned.fill(child: SvgPicture.asset(app_bg, fit: BoxFit.fill)),
 
           Card(
             color: Colors.white,
             shadowColor: color_secondary,
             elevation: 6,
             margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(
-                  22,
-                ), // change 16 to any radius you like
-              ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(
+                22,
+              ), // change 16 to any radius you like
+            ),
             child: Column(
               children: [
                 const ChatHeader(),
@@ -80,38 +77,72 @@ class _ChatScreenState extends State<ChatScreen> {
               ],
             ),
           ),
-        ],
-      ),
 
+          if(chatController.isLoading.value)Center(child: CircularProgressIndicator(),)
+        ],
+      )),
     );
   }
 
   /// 🔹 Chat Messages
   Widget _chatList() {
-    return ListView(
-      padding: const EdgeInsets.all(12),
-      children: const [
-        ChatBubble(
+    return ListView.builder(
+      controller: chatController.scrollController,
+      padding: const EdgeInsets.all(16),
+      itemCount:
+          (chatController.groupChatResponse.value.data?.messages ?? []).length,
+      itemBuilder: (context, index) {
+
+        final messages =
+            chatController.groupChatResponse.value.data?.messages ?? [];
+
+        final currentMessage = messages[index];
+        final previousMessage =
+        index > 0 ? messages[index - 1] : null;
+
+        /// ✅ WhatsApp-style condition
+        final bool showSenderName =
+            index == 0 ||
+                currentMessage.senderId != previousMessage?.senderId;
+
+        return ChatBubble(
           message:
-          "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "
-              "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.",
-          isSender: false,
-          time: "18:57",
-        ),
-        ChatBubble(
-          message:
-          "Hmmm Ipsum is simply dummy text of the printing and typesetting industry. "
-              "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.",
-          isSender: true,
-          time: "18:57",
-        ),
-        ChatBubble(
-          message:
-          "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-          isSender: false,
-          time: "18:57",
-        ),
-      ],
+              chatController
+                  .groupChatResponse
+                  .value
+                  .data
+                  ?.messages?[index]
+                  .message ??
+              "",
+          isSender:
+              chatController.loginResponse.value.data?.user?.id ==
+              chatController
+                  .groupChatResponse
+                  .value
+                  .data
+                  ?.messages?[index]
+                  .senderId,
+          time: getTimeInAmPM(
+            chatController
+                    .groupChatResponse
+                    .value
+                    .data
+                    ?.messages?[index]
+                    .createdAt ??
+                DateTime(2026),
+          ),
+          isGroup: true,
+          nameOfUser:
+              chatController
+                  .groupChatResponse
+                  .value
+                  .data
+                  ?.messages?[index]
+                  .senderName ??
+              "",
+          showSenderName: showSenderName,
+        );
+      },
     );
   }
 
@@ -130,7 +161,7 @@ class _ChatScreenState extends State<ChatScreen> {
           children: [
             Expanded(
               child: TextField(
-                controller: messageCtrl,
+                controller: chatController.messageController.value,
                 decoration: const InputDecoration(
                   hintText: "Write a reply...",
                   border: InputBorder.none,
@@ -139,13 +170,15 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
             IconButton(
               icon: const Icon(Icons.send, color: Color(0xff1f78c8)),
-              onPressed: () {},
-            )
+              onPressed: () {
+                chatController.callSendMessageInGroupAPI(context, (chatController.groupChatResponse.value.data?.group?.id??0).toString(), chatController.messageController.value.text);
+              },
+            ),
           ],
         ),
       ),
     );
   }
+
+
 }
-
-
