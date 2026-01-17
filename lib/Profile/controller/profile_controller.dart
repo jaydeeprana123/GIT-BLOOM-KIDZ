@@ -203,4 +203,10 @@ class ProfileController extends GetxController {
     // printData("onClose", "onClose login controller");
     // Get.delete<LoginController>();
   }
+
+  clearPasswordFields(){
+    passwordController.value.text = "";
+    newPasswordController.value.text = "";
+    confirmPasswordController.value.text = "";
+  }
 }

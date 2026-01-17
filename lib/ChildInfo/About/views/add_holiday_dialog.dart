@@ -37,8 +37,11 @@ class AddHolidayDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.clearDateField();
+      controller.selectedActivity.value = ActivityForSelect();
       controller.selectedActivity.value = null;
       controller.callActivityListForSelectAPI(context);
+
     });
 
     return Dialog(

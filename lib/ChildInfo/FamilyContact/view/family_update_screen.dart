@@ -39,7 +39,7 @@ class _FamilyUpdateScreenState extends State<FamilyUpdateScreen> {
   @override
   void initState() {
     super.initState();
-
+    childInfoController.clearFamilyFields();
     childInfoController.firstNameController.value.text = childInfoController.selectedFamilyContact.value.firstName??"";
     childInfoController.lastNameController.value.text = childInfoController.selectedFamilyContact.value.lastName??"";
     childInfoController.emailController.value.text = childInfoController.selectedFamilyContact.value.email??"";

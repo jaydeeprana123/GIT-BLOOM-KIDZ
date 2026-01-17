@@ -238,6 +238,8 @@ class ChildInfoController extends GetxController {
           } else {
             snackBar(context, childInfoListResponse.message ?? "");
           }
+        }else if (res.statusCode == 401) {
+          logoutFromTheApp();
         }
       });
     });
@@ -681,6 +683,8 @@ class ChildInfoController extends GetxController {
           } else {
             snackBar(context, documentsResponse.message ?? "");
           }
+        }else if (res.statusCode == 401) {
+          logoutFromTheApp();
         }
       });
     });
@@ -865,6 +869,8 @@ class ChildInfoController extends GetxController {
           } else {
             snackBar(context, extraBookingsResponse.message ?? "");
           }
+        }else if (res.statusCode == 401) {
+          logoutFromTheApp();
         }
       });
     });
@@ -1817,6 +1823,30 @@ class ChildInfoController extends GetxController {
 
     medicineRefreshIndex.value = -1;
     callMedicationListAPI(context, childId);
+  }
+
+
+  clearFamilyFields(){
+    firstNameController.value.text = "";
+    lastNameController.value.text = "";
+    mobileController.value.text = "";
+    relationController.value.text = "";
+    emailController.value.text = "";
+
+    imagePath.value = "";
+  }
+
+  clearObservation(){
+    observationImagePath.clear();
+    observationController.value.text = "";
+  }
+
+  clearDateField(){
+    startDate.value = null;
+    endDate.value = null;
+    planStartDate.value = null;
+    planEndDate.value = null;
+    noteController.value.text = "";
   }
 
   @override

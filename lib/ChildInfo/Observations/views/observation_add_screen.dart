@@ -39,6 +39,13 @@ class _ObservationAddScreenState extends State<ObservationAddScreen> {
   ChildInfoController childInfoController = Get.find<ChildInfoController>();
 
   @override
+  void initState() {
+    super.initState();
+
+    childInfoController.clearObservation();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,

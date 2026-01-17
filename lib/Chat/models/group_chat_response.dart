@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'conversation_list_response.dart';
+
 GroupChatResponse groupChatResponseFromJson(String str) => GroupChatResponse.fromJson(json.decode(str));
 
 String groupChatResponseToJson(GroupChatResponse data) => json.encode(data.toJson());
@@ -84,29 +86,6 @@ class Group {
   };
 }
 
-class Member {
-  int? id;
-  String? name;
-  String? profile;
-
-  Member({
-    this.id,
-    this.name,
-    this.profile,
-  });
-
-  factory Member.fromJson(Map<String, dynamic> json) => Member(
-    id: json["id"],
-    name: json["name"],
-    profile: json["profile"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "id": id,
-    "name": name,
-    "profile": profile,
-  };
-}
 
 class Message {
   int? id;

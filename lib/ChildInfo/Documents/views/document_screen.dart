@@ -48,6 +48,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      childInfoController.documentList.clear();
       childInfoController.callGetDocumentsAPI(context, widget.childId);
     });
 

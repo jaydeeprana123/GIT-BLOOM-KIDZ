@@ -2,8 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:bloom_kidz/Authentication/model/login_response.dart';
+import 'package:bloom_kidz/Chat/View/chat_screen.dart';
 import 'package:bloom_kidz/Chat/models/conversation_list_response.dart';
 import 'package:bloom_kidz/Chat/models/create_group_member_request.dart';
+import 'package:bloom_kidz/Chat/models/send_message_response.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -22,18 +24,22 @@ import '../models/send_message_not_group_request.dart';
 
 /// Controller
 class ChatController extends GetxController {
+  late TabController tabController;
 
   Rx<LoginResponse> loginResponse = LoginResponse().obs;
    ScrollController scrollController = ScrollController();
 
   RxList<ChatPerson> peopleList = <ChatPerson>[].obs;
+  RxList<ChatPerson> allPeopleList = <ChatPerson>[].obs;
   RxList<ConversationData> conversationList = <ConversationData>[].obs;
 
+  RxInt selectedIndex = 0.obs;
   RxBool isLoading = false.obs;
   RxList<String> imagePath = <String>[].obs;
 
   Rx<GroupChatResponse> groupChatResponse = GroupChatResponse().obs;
   Rx<TextEditingController> messageController = TextEditingController().obs;
+  Rx<TextEditingController> searchController = TextEditingController().obs;
 
   getUserInfo() async {
     /// Set login model into shared preference
@@ -91,17 +97,19 @@ class ChatController extends GetxController {
 
           if (peopleListResponse.status ?? false) {
             peopleList.value = peopleListResponse.data?.people ?? [];
-
+            allPeopleList.value = peopleListResponse.data?.people ?? [];
           } else {
             snackBar(context, peopleListResponse.message ?? "");
           }
+        }else if (res.statusCode == 401) {
+          logoutFromTheApp();
         }
       });
     });
   }
 
   /// Conversation List API
-  callConversationListAPI(BuildContext context) async {
+  callConversationListAPI(BuildContext context, {List<ChatPerson>? selectedPersons}) async {
     isLoading.value = true;
 
     String token = await MySharedPref().getStringValue(
@@ -136,9 +144,78 @@ class ChatController extends GetxController {
           if (conversationListResponse.status ?? false) {
             conversationList.value = conversationListResponse.data ?? [];
 
+            if((selectedPersons??[]).isNotEmpty){
+              if (selectedPersons!.length == 1) {
+                List<ConversationData> conversationList =  getGroupForSingle(selectedPersons[0].id??0);
+
+                if(conversationList.length == 1){
+                  printData("Here", "Here");
+                  Get.to(ChatScreen(groupId: (conversationList[0].groupId??0).toString(),))?.then((value) {
+                    callConversationListAPI(context);
+                  });
+                }else if(conversationList.length > 1){
+
+                  printData("get conversationList", "more than 1");
+                  tabController.animateTo(1); // ✅ SWITCH TAB
+                }else{
+                  SendMessageNotGroupRequest sendMessageNotGroupRequest  = SendMessageNotGroupRequest();
+                  sendMessageNotGroupRequest.message = "Hello";
+                  sendMessageNotGroupRequest.receivers = [];
+
+                  for(int i=0; i<(selectedPersons??[]).length; i++){
+                    sendMessageNotGroupRequest.receivers?.add(Receiver(id: selectedPersons[i].id??0, name: selectedPersons[i].name??""));
+
+                  }
+
+                  callSendMessageNotGroupAPI(context, sendMessageNotGroupRequest);
+                }
+
+              }else{
+
+                List<ConversationData> conversationList =  getExactGroupConversation(selectedPersons);
+                printData("conversationList length", conversationList.length.toString());
+                if(conversationList.length == 1){
+
+                  Get.to(ChatScreen(groupId: (conversationList[0].groupId??0).toString(),))?.then((value) {
+                    callConversationListAPI(context);
+                  });
+                }else if(conversationList.length > 1){
+                  tabController.animateTo(1); // ✅ SWITCH TAB
+                }else{
+
+                  SendMessageNotGroupRequest sendMessageNotGroupRequest  = SendMessageNotGroupRequest();
+                  sendMessageNotGroupRequest.message = "Hello";
+                  sendMessageNotGroupRequest.receivers = [];
+
+                  for(int i=0; i<(selectedPersons??[]).length; i++){
+                    sendMessageNotGroupRequest.receivers?.add(Receiver(id: selectedPersons[i].id??0, name: selectedPersons[i].name??""));
+
+                  }
+
+                  callSendMessageNotGroupAPI(context, sendMessageNotGroupRequest);
+                }
+              }
+
+
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
           } else {
             snackBar(context, conversationListResponse.message ?? "");
           }
+        }else if (res.statusCode == 401) {
+          logoutFromTheApp();
         }
       });
     });
@@ -176,11 +253,14 @@ class ChatController extends GetxController {
         printData("callSendMessageNotGroupAPI", valueData);
 
         Map<String, dynamic> userModel = json.decode(valueData);
-        BaseModel baseModel = BaseModel.fromJson(userModel);
+        SendMessageResponse baseModel = SendMessageResponse.fromJson(userModel);
 
         if (baseModel.status ?? false) {
-          snackBar(context, baseModel.message ?? "");
-          Navigator.pop(context);
+
+          Get.to(ChatScreen(groupId: (baseModel.data?.groupId??0).toString()))?.then((value) {
+            callConversationListAPI(context);
+          });
+
         } else {
           snackBar(context, baseModel.message ?? "");
         }
@@ -485,6 +565,82 @@ class ChatController extends GetxController {
     //     }
     //   });
     // });
+  }
+
+
+  List<ConversationData> getGroupForSingle(int userId) {
+    return conversationList
+        .where((conversation) =>
+    conversation.isGroup == "single" &&
+        (conversation.members?.any(
+              (member) => member.id == userId,
+        ) ??
+            false))
+        .toList();
+  }
+
+
+  List<ConversationData> getExactGroupConversation(
+      List<ChatPerson> users,
+      ) {
+
+    List<ConversationData> availableConversations = [];
+
+
+    // convert selected users to ID set
+    final Set<int> userIdSet = users
+        .map((u) => u.id)
+        .whereType<int>()
+        .toSet();
+
+
+    userIdSet.add(loginResponse.value.data?.user?.id??0);
+
+    printData("userIdSet length", userIdSet.length.toString());
+
+    return conversationList.where((conversation) {
+      if (conversation.isGroup != "group") return false;
+
+      final members = conversation.members;
+
+      printData("members", (members?.length??0).toString());
+
+      if (members == null) return false;
+
+      final Set<int> memberIdSet = members
+          .map((m) => m.id)
+          .whereType<int>()
+          .toSet();
+
+
+      printData("memberIdSet", (memberIdSet.length??0).toString());
+
+      if(memberIdSet.containsAll(userIdSet) && memberIdSet.length == userIdSet.length){
+        availableConversations.add(conversation);
+
+        printData("memberIdSet", "trueeeee");
+      }
+
+      // EXACT MATCH: count + same IDs
+      return memberIdSet.length == userIdSet.length &&
+          memberIdSet.containsAll(userIdSet);
+    }).toList();
+  }
+
+
+  void filterPeople(String search) {
+    if (search.isEmpty) {
+      peopleList.assignAll(allPeopleList);
+      return;
+    }
+
+    peopleList.assignAll(
+      allPeopleList.where((person) =>
+          (person.name ?? '')
+              .toLowerCase()
+              .contains(search.toLowerCase())
+      ).toList(),
+    );
   }
 
 

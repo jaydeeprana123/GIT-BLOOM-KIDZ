@@ -64,6 +64,7 @@ class ChatPerson {
   String? onlineStatus;
   int? unreadCount;
   bool? isDefault;
+  bool? isSelected;
 
   ChatPerson({
     this.id,
@@ -73,6 +74,7 @@ class ChatPerson {
     this.onlineStatus,
     this.unreadCount,
     this.isDefault,
+    this.isSelected
   });
 
   factory ChatPerson.fromJson(Map<String, dynamic> json) => ChatPerson(

@@ -39,94 +39,145 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../Drawer/app_drawer.dart';
+import '../controller/chat_controller.dart';
 
 
-class UsersScreen extends StatelessWidget {
+class UsersScreen extends StatefulWidget {
+  const UsersScreen({super.key});
+
+  @override
+  State<UsersScreen> createState() => _UsersScreenState();
+}
+
+class _UsersScreenState extends State<UsersScreen>
+    with SingleTickerProviderStateMixin {
+
+  final ChatController chatController = Get.put(ChatController());
   final GlobalKey<ScaffoldState> _scaffoldKey =
   GlobalKey<ScaffoldState>();
-   UsersScreen({super.key});
+
+  @override
+  void initState() {
+    super.initState();
+
+    chatController.getUserInfo();
+    chatController.peopleList.clear();
+    chatController.conversationList.clear();
+    chatController.tabController = TabController(
+      length: 2,
+      vsync: this,
+      initialIndex: chatController.selectedIndex.value,
+    );
+
+    chatController.tabController.addListener(() {
+      if (!chatController.tabController.indexIsChanging) {
+        chatController.selectedIndex.value =
+            chatController.tabController.index;
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
+
+
+
+    return Obx(
+            () => DefaultTabController(
       length: 2,
-      child: Scaffold(
-        key: _scaffoldKey,
-        drawer: const AppDrawer(),
+      initialIndex: chatController.selectedIndex.value, // 👈 predefined index
+      child: Builder(
+        builder: (context) {
+          final TabController tabController =
+          DefaultTabController.of(context);
+
+          tabController.addListener(() {
+            if (!tabController.indexIsChanging) {
+              chatController.selectedIndex.value = tabController.index;
+              print("Selected tab index: ${tabController.index}");
+            }
+          });
 
 
-        appBar : AppBar(
-          automaticallyImplyLeading: true,
-          backgroundColor: const Color(0xff1f78c8),
-          elevation: 0,
+          return Scaffold(
+            key: _scaffoldKey,
+            drawer: const AppDrawer(),
 
-          /// 👇 THIS MAKES BACK ARROW WHITE
-          iconTheme: const IconThemeData(color: Colors.white),
-
-          titleSpacing: 0,
-          title: Text(
-            "Safeguarding",
-            style: const TextStyle(
-              fontSize: 18,
-              fontFamily: fontInterSemiBold,
-              color: Colors.white,
-            ),
-          ),
-          actions: [
-              InkWell(
-                onTap: (){
-                  _scaffoldKey.currentState?.openDrawer();
-                }, // 👈 callback call
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 12),
-                  child: CircleAvatar(
-                    radius: 16,
-                    backgroundColor: color_primary,
-                    child: const Icon(
-                      Icons.menu_open_outlined,
-                      color: Colors.white,
-                      size: 20,
+            appBar: AppBar(
+              backgroundColor: const Color(0xff1f78c8),
+              iconTheme:
+              const IconThemeData(color: Colors.white),
+              title: const Text(
+                "Safeguarding",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontFamily: fontInterSemiBold,
+                  color: Colors.white,
+                ),
+              ),
+              actions: [
+                InkWell(
+                  onTap: () {
+                    _scaffoldKey.currentState?.openDrawer();
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.only(right: 12),
+                    child: CircleAvatar(
+                      radius: 16,
+                      backgroundColor: color_primary,
+                      child: Icon(
+                        Icons.menu_open_outlined,
+                        color: Colors.white,
+                        size: 20,
+                      ),
                     ),
                   ),
                 ),
+              ],
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(
+                  bottom: Radius.circular(34),
+                ),
+              ),
+              bottom:  TabBar(
+                controller: chatController.tabController,
+
+                labelColor: Colors.white,                 // selected text
+                unselectedLabelColor: Colors.white70,     // unselected text
+                indicatorColor: Colors.white,             // underline color
+                indicatorWeight: 3,                       // thickness of line
+
+                labelStyle: const TextStyle(
+                  fontSize: 15,
+                  fontFamily: fontInterSemiBold,
+                ),
+                unselectedLabelStyle: const TextStyle(
+                  fontSize: 14,
+                  fontFamily: fontInterSemiBold,
+                ),
+
+                tabs: const [
+                  Tab(text: "All"),
+                  Tab(text: "Conversations"),
+                ],
               ),
 
-          ],
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(
-              bottom: Radius.circular(34), // curved bottom
             ),
-          ),
 
-          bottom: const TabBar(
-            labelColor: Colors.white,
-            unselectedLabelColor: Colors.white,
-            indicatorColor: Colors.white,
-            labelStyle: const TextStyle(
-                fontSize: 15,
-                fontFamily: fontInterSemiBold
+            body:  TabBarView(
+              controller: chatController.tabController,
+              children: [
+                PeopleListScreen(),
+                ConversationListScreen(),
+              ],
             ),
-            unselectedLabelStyle: const TextStyle(
-                fontSize: 14,
-                fontFamily: fontInterSemiBold
-            ),
-            tabs: [
-              Tab(text: "All"),
-              Tab(text: "Conversations"),
-            ],
-          ),
-        ),
-
-        body:  TabBarView(
-          children: [
-            PeopleListScreen(),
-            ConversationListScreen(),
-          ],
-        ),
+          );
+        },
       ),
-    );
+    ));
   }
 }
+
 
 
 

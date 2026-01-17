@@ -38,7 +38,9 @@ class _FamilyContactsScreenState extends State<FamilyContactsScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      childInfoController.familyContactList.clear();
       childInfoController.callGetFamilyContactsAPI(context);
+
     });
   }
 

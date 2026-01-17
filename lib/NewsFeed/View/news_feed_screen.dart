@@ -28,6 +28,7 @@ class _NewsFeedScreenState extends State<NewsFeedScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      newsFeedController.newsFeedList.clear();
       newsFeedController.callNewsFeedAPI(context);
     });
 

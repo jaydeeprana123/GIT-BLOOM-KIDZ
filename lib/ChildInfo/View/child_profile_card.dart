@@ -113,6 +113,9 @@ class ChildProfileCard extends StatelessWidget {
                     const SizedBox(width: 8),
                     InkWell(
                       onTap: () {
+
+                        childInfoController.collectionPinController.value.text = "";
+
                         showCollectionPinDialog(
                           context,
                           childInfoController,

@@ -39,6 +39,7 @@ class _ChatScreenState extends State<ChatScreen> {
       chatController.scrollController = ScrollController();
       chatController.getUserInfo();
       if (widget.groupId.isNotEmpty) {
+        chatController.groupChatResponse.value = GroupChatResponse();
         chatController.callGetGroupChatAPI(context, widget.groupId);
       }
     });
@@ -70,7 +71,7 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
             child: Column(
               children: [
-                const ChatHeader(),
+                 ChatHeader(),
                 const Divider(height: 1),
                 Expanded(child: _chatList()),
                 _replyBox(),

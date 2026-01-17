@@ -42,7 +42,7 @@ class _ObservationUpdateScreenState extends State<ObservationUpdateScreen> {
   @override
   void initState() {
     super.initState();
-
+    childInfoController.clearObservation();
     childInfoController.observationController.value.text =
         childInfoController.selectedObservation.value.observations ?? "";
   }

@@ -132,6 +132,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ),
                                 ),
                                 onPressed: () {
+
+
+
                                   showChangePasswordDialog(
                                     context,
                                     profileController,
@@ -222,6 +225,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
+
         return ChangePasswordDialog(controller: profileController);
       },
     );

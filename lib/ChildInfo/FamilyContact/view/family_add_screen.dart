@@ -37,6 +37,13 @@ class _FamilyAddScreenState extends State<FamilyAddScreen> {
   ChildInfoController childInfoController = Get.find<ChildInfoController>();
 
   @override
+  void initState() {
+    super.initState();
+
+    childInfoController.clearFamilyFields();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,

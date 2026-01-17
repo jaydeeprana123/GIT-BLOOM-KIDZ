@@ -96,7 +96,7 @@ class ConversationTile extends StatelessWidget {
       onTap: (){
         Get.to(ChatScreen(groupId: (conversationData.groupId??0).toString(),))?.then((value) {
           chatController.callConversationListAPI(context);
-        });;
+        });
       },
       child: Card(
         color: Colors.white,
@@ -139,7 +139,7 @@ class ConversationTile extends StatelessWidget {
 
  String getMembersName(List<Member> members){
     String membersNameString = members
-        ?.where((m) => m.name != null && m.name!.isNotEmpty)
+        ?.where((m) => m.name != null && m.name!.isNotEmpty && m.id != chatController.loginResponse.value.data?.user?.id)
         .map((m) => m.name!)
         .join(', ')
         ?? '';

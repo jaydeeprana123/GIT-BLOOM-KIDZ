@@ -30,6 +30,7 @@ class _ChildInfoScreenState extends State<ChildInfoScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      childInfoController.childInfoList.clear();
       childInfoController.callChildInfoAPI(context);
     });
 

@@ -55,6 +55,7 @@ class _ChildrenPermissionScreenState extends State<ChildrenPermissionScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      childInfoController.childPermissionList.clear();
       childInfoController.callGetChildPermissionsAPI(context, widget.childId);
     });
 

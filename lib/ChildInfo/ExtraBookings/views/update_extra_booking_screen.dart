@@ -60,6 +60,9 @@ class _UpdateExtraBookingScreenState extends State<UpdateExtraBookingScreen> {
   @override
   void initState() {
     super.initState();
+
+    controller.clearDateField();
+    controller.priceBandList.clear();
     controller.selectedSessions.value = <String, List<int>>{};
     controller.selectedExtraCharges.value = <String, List<int>>{};
     controller.planStartDate.value =

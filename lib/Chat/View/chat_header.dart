@@ -14,8 +14,14 @@ import '../../ChildInfo/View/child_info_screen.dart';
 
 import 'package:flutter/material.dart';
 
+import '../controller/chat_controller.dart';
+import '../models/conversation_list_response.dart';
+
 class ChatHeader extends StatelessWidget {
-  const ChatHeader({super.key});
+
+  ChatController chatController = Get.find<ChatController>();
+
+   ChatHeader({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +39,7 @@ class ChatHeader extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children:  [
                 BlueLargeBoldText(
-                  "Employees Name",
+                  getMembersName((chatController.groupChatResponse.value.data?.members??[])),
       
                 ),
                 SizedBox(height: 2),
@@ -47,6 +53,17 @@ class ChatHeader extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String getMembersName(List<Member> members){
+    String membersNameString = members
+        ?.where((m) => m.name != null && m.name!.isNotEmpty && m.id != chatController.loginResponse.value.data?.user?.id)
+        .map((m) => m.name!)
+        .join(', ')
+        ?? '';
+
+    return membersNameString;
+
   }
 }
 

@@ -59,6 +59,9 @@ class _ExtraBookingScreenState extends State<ExtraBookingScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+
+      controller.extraBookingList.clear();
+
       controller.callGetExtraBookingsAPI(context, widget.childId);
     });
   }
@@ -84,18 +87,21 @@ class _ExtraBookingScreenState extends State<ExtraBookingScreen> {
           Positioned.fill(child: SvgPicture.asset(app_bg, fit: BoxFit.cover)),
 
           Obx(() {
+
+            if (controller.isLoading.value) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
             if (controller.extraBookingList.isEmpty) {
               return const Center(
                 child: Text(
                   'No Extra Bookings Found',
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: color_secondary),
                 ),
               );
             }
 
-            if (controller.isLoading.value) {
-              const Center(child: CircularProgressIndicator());
-            }
+
 
             return ListView.builder(
               padding: EdgeInsets.symmetric(vertical: 16),
@@ -265,6 +271,8 @@ class _ExtraBookingScreenState extends State<ExtraBookingScreen> {
               },
             );
           }),
+
+
         ],
       ),
     );

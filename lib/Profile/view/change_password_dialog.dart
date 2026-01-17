@@ -33,8 +33,11 @@ class ChangePasswordDialog extends StatelessWidget {
   
   ChangePasswordDialog({super.key, required this.controller});
 
+
+
   @override
   Widget build(BuildContext context) {
+    controller.clearPasswordFields();
     return Dialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
