@@ -41,7 +41,7 @@ class _ChildInfoScreenState extends State<ChildInfoScreen> {
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: Colors.transparent,
-      appBar:  CommonAppBar(title: "Child Info", showMenu: true, onMenuTap: (){
+      appBar:  CommonAppBar(title: "Child", showMenu: true, onMenuTap: (){
         _scaffoldKey.currentState?.openDrawer(); // 👈 OPEN DRAWER
       }),
       drawer: const AppDrawer(), // 👈 Navigation Drawer

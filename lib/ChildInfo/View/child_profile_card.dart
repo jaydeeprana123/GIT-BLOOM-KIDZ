@@ -62,6 +62,7 @@ class ChildProfileCard extends StatelessWidget {
                       childInfo.room ?? "",
                       fontSize: 11,
                       color: Colors.black,
+                        fontFamily: fontInterMedium
                     ),
                   ],
                 ),
@@ -84,6 +85,7 @@ class ChildProfileCard extends StatelessWidget {
                         "Sick",
                         fontSize: 11,
                         color: Colors.black,
+                          fontFamily: fontInterMedium
                       ),
                     ),
                     SizedBox(width: 12),
@@ -102,6 +104,7 @@ class ChildProfileCard extends StatelessWidget {
                         "Holiday",
                         fontSize: 11,
                         color: Colors.black,
+                          fontFamily: fontInterMedium
                       ),
                     ),
                   ],

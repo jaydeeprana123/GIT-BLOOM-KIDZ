@@ -40,14 +40,15 @@ class AddHolidayDialog extends StatelessWidget {
       controller.clearDateField();
       controller.selectedActivity.value = ActivityForSelect();
       controller.selectedActivity.value = null;
-      controller.callActivityListForSelectAPI(context);
+      controller.callActivityListForSelectAPI(context, isHoliday);
 
     });
 
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       insetPadding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Padding(
+      child: Container(
+        color: Colors.white,
         padding: const EdgeInsets.all(20),
         child: Obx(
           () => Stack(
@@ -184,4 +185,7 @@ class AddHolidayDialog extends StatelessWidget {
       ),
     );
   }
+
+
+
 }

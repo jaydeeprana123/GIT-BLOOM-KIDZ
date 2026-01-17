@@ -153,33 +153,66 @@ class _ObservationAddScreenState extends State<ObservationAddScreen> {
                                                 .length;
                                         i++
                                       )
-                                        Container(
-                                          padding: const EdgeInsets.all(2),
-                                          // space between image & border
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(
-                                              58,
-                                            ),
-                                            border: Border.all(
-                                              color: Colors.blue,
-                                              // border color
-                                              width: 2, // border width
-                                            ),
-                                          ),
-                                          child: ClipRRect(
-                                            borderRadius: BorderRadius.circular(
-                                              58,
-                                            ),
-                                            child: Image.file(
-                                              File(
-                                                childInfoController
-                                                    .observationImagePath[i],
+                                        Stack(
+                                          children: [
+                                            Container(
+                                              padding: const EdgeInsets.all(2),
+                                              margin: const EdgeInsets.only(
+                                                top: 16,
+                                                right: 12,
                                               ),
-                                              height: 100,
-                                              width: 100,
-                                              fit: BoxFit.cover,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                // ⬅ square with small radius
+                                                border: Border.all(
+                                                  color: Colors.blue,
+                                                  width: 2,
+                                                ),
+                                              ),
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(6),
+                                                child: Image.file(
+                                                  File(
+                                                    childInfoController
+                                                        .observationImagePath[i],
+                                                  ),
+                                                  height: 100,
+                                                  width: 100,
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              ),
                                             ),
-                                          ),
+
+                                            /// ❌ Close Button
+                                            Positioned(
+                                              top: 6,
+                                              right: 6,
+                                              child: GestureDetector(
+                                                onTap: () {
+                                                  childInfoController
+                                                      .observationImagePath
+                                                      .removeAt(i);
+                                                },
+                                                child: Container(
+                                                  decoration:
+                                                      const BoxDecoration(
+                                                        color: Colors.black,
+                                                        shape: BoxShape.circle,
+                                                      ),
+                                                  padding: const EdgeInsets.all(
+                                                    4,
+                                                  ),
+                                                  child: const Icon(
+                                                    Icons.close,
+                                                    size: 14,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                     ],
                                   ),

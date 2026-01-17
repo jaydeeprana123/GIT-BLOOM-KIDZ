@@ -25,17 +25,20 @@ import '../models/send_message_not_group_request.dart';
 /// Controller
 class ChatController extends GetxController {
   late TabController tabController;
-
   Rx<LoginResponse> loginResponse = LoginResponse().obs;
    ScrollController scrollController = ScrollController();
 
+  List<ChatPerson> _allPeopleMaster = [];
   RxList<ChatPerson> peopleList = <ChatPerson>[].obs;
-  RxList<ChatPerson> allPeopleList = <ChatPerson>[].obs;
+
+
+
+
   RxList<ConversationData> conversationList = <ConversationData>[].obs;
 
   RxInt selectedIndex = 0.obs;
   RxBool isLoading = false.obs;
-  RxList<String> imagePath = <String>[].obs;
+  RxString imagePath = "".obs;
 
   Rx<GroupChatResponse> groupChatResponse = GroupChatResponse().obs;
   Rx<TextEditingController> messageController = TextEditingController().obs;
@@ -96,8 +99,14 @@ class ChatController extends GetxController {
           );
 
           if (peopleListResponse.status ?? false) {
-            peopleList.value = peopleListResponse.data?.people ?? [];
-            allPeopleList.value = peopleListResponse.data?.people ?? [];
+
+
+            _allPeopleMaster = List<ChatPerson>.from(
+                peopleListResponse.data?.people ?? []
+            );
+
+            peopleList.assignAll(List<ChatPerson>.from(peopleListResponse.data?.people ?? []));
+
           } else {
             snackBar(context, peopleListResponse.message ?? "");
           }
@@ -366,7 +375,7 @@ class ChatController extends GetxController {
     dynamic body = {'group_id': groupId, groupName : message,};
 
     await apiReq
-        .postAPIWithMedia(url, body, token, "", imagePath)
+        .postAPIWithAttachment(url, body, token, "", imagePath.value)
         .then((value) async {
       http.StreamedResponse res = value;
       printData(
@@ -389,7 +398,8 @@ class ChatController extends GetxController {
           if (baseModel.status ?? false) {
             snackBar(context, baseModel.message ?? "");
 
-            Navigator.pop(context);
+            callGetGroupChatAPI(context, groupId);
+
           } else {
             snackBar(context, baseModel.message ?? "");
           }
@@ -629,19 +639,22 @@ class ChatController extends GetxController {
 
 
   void filterPeople(String search) {
-    if (search.isEmpty) {
-      peopleList.assignAll(allPeopleList);
+    printData("all people list", _allPeopleMaster.length.toString());
+
+    if (search.trim().isEmpty) {
+      peopleList.assignAll(_allPeopleMaster);
       return;
     }
 
     peopleList.assignAll(
-      allPeopleList.where((person) =>
-          (person.name ?? '')
-              .toLowerCase()
-              .contains(search.toLowerCase())
-      ).toList(),
+      _allPeopleMaster.where((person) {
+        final name = person.name?.toLowerCase() ?? '';
+        return name.contains(search.toLowerCase());
+      }).toList(),
     );
   }
+
+
 
 
 

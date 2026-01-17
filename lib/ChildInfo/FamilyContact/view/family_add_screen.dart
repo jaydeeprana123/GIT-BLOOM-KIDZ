@@ -169,21 +169,68 @@ class _FamilyAddScreenState extends State<FamilyAddScreen> {
                               ),
 
                               if (childInfoController.imagePath.value.isNotEmpty)
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 12),
-                                  child: Center(
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(58),
-                                      child: Image.file(
-                                        File(
-                                            childInfoController.imagePath.value),
-                                        height: 200,
-                                        width: 200,
-                                        fit: BoxFit.cover,
+                                Center(
+                                  child: Stack(
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.all(2),
+                                        margin: const EdgeInsets.only(
+                                          top: 16,
+                                          right: 12,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                          BorderRadius.circular(8),
+                                          // ⬅ square with small radius
+                                          border: Border.all(
+                                            color: Colors.blue,
+                                            width: 2,
+                                          ),
+                                        ),
+                                        child: ClipRRect(
+                                          borderRadius:
+                                          BorderRadius.circular(6),
+                                          child: Image.file(
+                                            File(
+                                              childInfoController.imagePath.value,
+                                            ),
+                                            height: 100,
+                                            width: 100,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
                                       ),
-                                    ),
+
+                                      /// ❌ Close Button
+                                      Positioned(
+                                        top: 6,
+                                        right: 6,
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            childInfoController.imagePath.value = "";
+                                          },
+                                          child: Container(
+                                            decoration:
+                                            const BoxDecoration(
+                                              color: Colors.black,
+                                              shape: BoxShape.circle,
+                                            ),
+                                            padding: const EdgeInsets.all(
+                                              4,
+                                            ),
+                                            child: const Icon(
+                                              Icons.close,
+                                              size: 14,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
+
+
 
                               const SizedBox(height: 20),
 

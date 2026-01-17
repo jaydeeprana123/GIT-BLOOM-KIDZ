@@ -30,6 +30,8 @@ class _ChildActivityScreenState extends State<ChildActivityScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      childInfoController.activityList.clear();
+      childInfoController.selectedDateIndex.value = 0;
       childInfoController.callChildActivityListAPI(context, widget.childId);
     });
   }
@@ -91,29 +93,6 @@ class _ChildActivityScreenState extends State<ChildActivityScreen> {
 
     items.add(TimelineItem(title: "Meal", subItems: subItems));
 
-    // for (final meal in data.meals ?? []) {
-    //   if (meal.mealTime == null || meal.mealTime!.isEmpty) continue;
-    //
-    //
-    //   final foodDetails = (meal.foods ?? [])
-    //       .where((f) => f.foodName != null)
-    //       .map<String>((f) => "${f.foodName} (${f.amount})")
-    //       .toList();
-    //
-    //   items.add(
-    //     TimelineItem(
-    //       title: "Meal",
-    //       time: meal.mealTime!,
-    //       subItems: [
-    //         SubItem(
-    //           subTitle: meal.mealType ?? "Meal",
-    //           details:
-    //           foodDetails.isNotEmpty ? foodDetails : ["No food recorded"],
-    //         ),
-    //       ],
-    //     ),
-    //   );
-    // }
 
     /// -------- NAPPY --------
     List<SubItem> subItemsNappy = [];

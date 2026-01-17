@@ -29,9 +29,20 @@ class ChatHeader extends StatelessWidget {
       padding: EdgeInsets.all(16),
       child: Row(
         children: [
-          const CircleAvatar(
+           CircleAvatar(
             radius: 22,
-            backgroundImage: AssetImage(child1),
+            backgroundColor: color_secondary,
+            child: Text(
+                (chatController.groupChatResponse.value.data?.group?.name??"")
+              .isNotEmpty
+                  ? (chatController.groupChatResponse.value.data?.group?.name??"")[0].toUpperCase()
+                  : '',
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
           const SizedBox(width: 10),
           Expanded(
@@ -42,11 +53,11 @@ class ChatHeader extends StatelessWidget {
                   getMembersName((chatController.groupChatResponse.value.data?.members??[])),
       
                 ),
-                SizedBox(height: 2),
-                BlackSmallRegularText(
-                  "Employees Designation",
-                 color: Colors.black
-                ),
+                // SizedBox(height: 2),
+                // BlackSmallRegularText(
+                //   "Employees Designation",
+                //  color: Colors.black
+                // ),
               ],
             ),
           ),

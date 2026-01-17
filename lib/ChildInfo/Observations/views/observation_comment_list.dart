@@ -68,117 +68,123 @@ class ObservationCommentListWidget extends StatelessWidget {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(22),
                         ),
-                        child: Container(
-                          padding: const EdgeInsets.all(12),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              /// 👤 Profile Image
-                              CircleAvatar(
-                                radius: 22,
-                                backgroundImage: NetworkImage(
-                                  comment?.user?.profile ?? "",
-                                ),
-                              ),
+                        child: Column(
+                          children: [
 
-                              const SizedBox(width: 10),
+                            if(comment?.user?.id == childInfoController.loginResponse.value.data?.user?.id)InkWell(onTap: (){
 
-                              /// 💬 Content
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    /// Name + Date
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        BlueMediumBoldText(
-                                          comment?.user?.name ?? "",
-                                          fontSize: 14,
-                                        ),
-                                        BlackSmallMediumText(
-                                          getDateOnlyInIndianFormat(
-                                            comment?.date ?? DateTime(2025),
-                                          ),
-                                        ),
-                                      ],
+                              showDeleteWarningDialog(context, onConfirm: (){
+                                childInfoController.callObservationDeleteCommentAPI(context, childId, observation.id.toString(), (comment?.id??0).toString());
+
+                              });
+
+                            },child: Align(
+                              alignment: Alignment.topRight
+                              ,child: InkWell(onTap: (){
+
+                              showDeleteWarningDialog(context, onConfirm: (){
+                                childInfoController.callObservationDeleteCommentAPI(context, childId, observation.id.toString(), (comment?.id??0).toString());
+
+                              });
+
+                            },child: Container(margin: EdgeInsets.only(top: 8, bottom: 4, right: 8),child: Icon(Icons.cancel, color: Colors.red,size: 16,))),
+                            )),
+
+
+                            Container(
+                              padding: const EdgeInsets.only(left: 12, right: 12, bottom: 12),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  /// 👤 Profile Image
+                                  CircleAvatar(
+                                    radius: 22,
+                                    backgroundImage: NetworkImage(
+                                      comment?.user?.profile ?? "",
                                     ),
+                                  ),
 
-                                    const SizedBox(height: 6),
+                                  const SizedBox(width: 10),
 
-                                    /// Comment Text
-                                    BlackMediumRegularText(
-                                      comment?.content ?? "",
-                                      fontSize: 13,
-                                      color: Colors.black,
-                                    ),
-
-                                    const SizedBox(height: 8),
-
-                                    /// Likes
-                                    Row(
+                                  /// 💬 Content
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        InkWell(
-                                          onTap: () {
-                                            childInfoController
-                                                .callAddLikeCommentAPI(
-                                                  context,
-                                                  childId,
-                                                  observation.id.toString(),
-                                                  (comment?.id ?? 0).toString(),
-                                                  index,
-                                                );
-                                          },
-                                          child: Icon(
-                                            childInfoController
-                                                        .isLikeList[index] ==
-                                                    true
-                                                ? Icons.thumb_up
-                                                : Icons.thumb_up_alt_outlined,
-                                            size: 16,
-                                            color:
-                                                childInfoController
-                                                        .isLikeList[index] ==
-                                                    true
-                                                ? color_secondary
-                                                : text_color,
-                                          ),
-                                        ),
-                                        const SizedBox(width: 4),
-                                        BlackMediumBoldText(
-                                          (comment?.likes ?? 0).toString(),
-                                        ),
-
-                                        SizedBox(width: 16,),
-
-                                        if(comment?.user?.id == childInfoController.loginResponse?.value.data?.user?.id)InkWell(onTap: (){
-
-                                          showDeleteWarningDialog(context, onConfirm: (){
-                                            childInfoController.callObservationDeleteCommentAPI(context, childId, observation.id.toString(), (comment?.id??0).toString());
-
-                                          });
-
-                                                                                  },child: Row(
+                                        /// Name + Date
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
                                           children: [
-                                            Icon(Icons.delete_forever, color: Colors.red,size: 16,),
-
+                                            BlueMediumBoldText(
+                                              comment?.user?.name ?? "",
+                                              fontSize: 14,
+                                            ),
                                             BlackSmallMediumText(
-                                             "Delete",
-                                              color: Colors.red,
-                                              fontSize: 11
-
-                                            )
+                                              getDateOnlyInIndianFormat(
+                                                comment?.date ?? DateTime(2025),
+                                              ),
+                                            ),
                                           ],
-                                        ))
+                                        ),
 
+                                        const SizedBox(height: 6),
+
+                                        /// Comment Text
+                                        BlackMediumRegularText(
+                                          comment?.content ?? "",
+                                          fontSize: 13,
+                                          color: Colors.black,
+                                        ),
+
+                                        const SizedBox(height: 8),
+
+                                        /// Likes
+                                        Row(
+                                          children: [
+                                            InkWell(
+                                              onTap: () {
+                                                childInfoController
+                                                    .callAddLikeCommentAPI(
+                                                      context,
+                                                      childId,
+                                                      observation.id.toString(),
+                                                      (comment?.id ?? 0).toString(),
+                                                      index,
+                                                    );
+                                              },
+                                              child: Icon(
+                                                childInfoController
+                                                            .isLikeList[index] ==
+                                                        true
+                                                    ? Icons.thumb_up
+                                                    : Icons.thumb_up_alt_outlined,
+                                                size: 16,
+                                                color:
+                                                    childInfoController
+                                                            .isLikeList[index] ==
+                                                        true
+                                                    ? color_secondary
+                                                    : text_color,
+                                              ),
+                                            ),
+                                            const SizedBox(width: 4),
+                                            BlackMediumBoldText(
+                                              (comment?.likes ?? 0).toString(),
+                                            ),
+
+                                            SizedBox(width: 16,),
+
+
+                                          ],
+                                        ),
                                       ],
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       );
                     },

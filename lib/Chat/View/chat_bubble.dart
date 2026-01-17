@@ -1,3 +1,4 @@
+import 'package:bloom_kidz/Chat/models/group_chat_response.dart';
 import 'package:bloom_kidz/CommonWidgets/black_medium_regular_text.dart';
 import 'package:bloom_kidz/CommonWidgets/black_small_regular_text.dart';
 import 'package:bloom_kidz/CommonWidgets/blue_medium_bold_text.dart';
@@ -22,6 +23,7 @@ class ChatBubble extends StatelessWidget {
   final String time;
   final bool isGroup;
   final bool showSenderName;
+  final List<Attachment>? attachments;
 
   const ChatBubble({
     super.key,
@@ -31,6 +33,7 @@ class ChatBubble extends StatelessWidget {
     required this.time,
     required this.isGroup,
     required this.showSenderName,
+    this.attachments,
   });
 
   @override
@@ -55,7 +58,38 @@ class ChatBubble extends StatelessWidget {
 
             ),
           ),
-          Container(
+          (attachments??[]).isNotEmpty?
+          Row(
+    mainAxisAlignment: isSender ?MainAxisAlignment.end:MainAxisAlignment.start,children: [
+
+            for(int i = 0; i< (attachments??[]).length; i++)
+              InkWell(
+                onTap: (){
+                  showFullImageDialog(context, attachments?[i].url??"");
+                },
+                child: Container(
+                  margin: const EdgeInsets.symmetric(vertical: 10),
+                  height: 180,
+                  width: 220,
+                  padding:  EdgeInsets.all(2),
+                  decoration: BoxDecoration(
+                    borderRadius:
+                    BorderRadius.circular(12),
+                    // ⬅ square with small radius
+                    border: Border.all(
+                      color: Colors.blue,
+                      width: 2,
+                    ),
+                  ),
+                  child: ClipRRect(
+                    borderRadius:
+                    BorderRadius.circular(6),
+                    child: Image.network(attachments?[i].url??""),
+                  ),
+                ),
+              ),
+          ],)
+           :  Container(
             margin: const EdgeInsets.only(top: 3, bottom: 12),
             padding: const EdgeInsets.all(12),
             constraints: const BoxConstraints(maxWidth: 280),
@@ -76,6 +110,62 @@ class ChatBubble extends StatelessWidget {
       ),
     );
   }
+
+
+  void showFullImageDialog(BuildContext context, String imageUrl) {
+    showDialog(
+      context: context,
+      barrierColor: Colors.black,
+      builder: (_) {
+        return Dialog(
+          insetPadding: EdgeInsets.zero,
+          backgroundColor: Colors.black,
+          child: Stack(
+            children: [
+
+              /// 🔍 Zoomable Image
+              InteractiveViewer(
+                child: Center(
+                  child: Image.network(
+                    imageUrl,
+                    fit: BoxFit.contain,
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return const Center(
+                        child: CircularProgressIndicator(color: Colors.white),
+                      );
+                    },
+                    errorBuilder: (context, error, stackTrace) {
+                      return const Icon(
+                        Icons.broken_image,
+                        color: Colors.white,
+                        size: 80,
+                      );
+                    },
+                  ),
+                ),
+              ),
+
+              /// ❌ Close Button
+              Positioned(
+                top: 40,
+                right: 20,
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.close,
+                    color: Colors.white,
+                    size: 28,
+                  ),
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
 }
 
 

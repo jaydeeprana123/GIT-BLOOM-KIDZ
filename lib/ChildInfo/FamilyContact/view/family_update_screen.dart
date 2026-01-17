@@ -25,7 +25,6 @@ import 'package:flutter/material.dart';
 
 import '../../controller/child_info_controller.dart';
 
-
 class FamilyUpdateScreen extends StatefulWidget {
   const FamilyUpdateScreen({Key? key}) : super(key: key);
 
@@ -40,13 +39,16 @@ class _FamilyUpdateScreenState extends State<FamilyUpdateScreen> {
   void initState() {
     super.initState();
     childInfoController.clearFamilyFields();
-    childInfoController.firstNameController.value.text = childInfoController.selectedFamilyContact.value.firstName??"";
-    childInfoController.lastNameController.value.text = childInfoController.selectedFamilyContact.value.lastName??"";
-    childInfoController.emailController.value.text = childInfoController.selectedFamilyContact.value.email??"";
-    childInfoController.mobileController.value.text = childInfoController.selectedFamilyContact.value.mobile??"";
-    childInfoController.relationController.value.text = childInfoController.selectedFamilyContact.value.relation??"";
-
-
+    childInfoController.firstNameController.value.text =
+        childInfoController.selectedFamilyContact.value.firstName ?? "";
+    childInfoController.lastNameController.value.text =
+        childInfoController.selectedFamilyContact.value.lastName ?? "";
+    childInfoController.emailController.value.text =
+        childInfoController.selectedFamilyContact.value.email ?? "";
+    childInfoController.mobileController.value.text =
+        childInfoController.selectedFamilyContact.value.mobile ?? "";
+    childInfoController.relationController.value.text =
+        childInfoController.selectedFamilyContact.value.relation ?? "";
   }
 
   @override
@@ -61,20 +63,13 @@ class _FamilyUpdateScreenState extends State<FamilyUpdateScreen> {
       body: SafeArea(
         child: Stack(
           children: [
-
             /// 🔹 FULL SCREEN BACKGROUND
-            Positioned.fill(
-              child: SvgPicture.asset(
-                app_bg,
-                fit: BoxFit.cover,
-              ),
-            ),
+            Positioned.fill(child: SvgPicture.asset(app_bg, fit: BoxFit.cover)),
 
             /// 🔹 FOREGROUND CONTENT
             Obx(
-                  () => Stack(
+              () => Stack(
                 children: [
-
                   /// Scrollable Content
                   Positioned.fill(
                     child: SingleChildScrollView(
@@ -94,7 +89,6 @@ class _FamilyUpdateScreenState extends State<FamilyUpdateScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-
                               BlueMediumBoldText(
                                 "Update Contact",
                                 fontSize: 16,
@@ -106,36 +100,39 @@ class _FamilyUpdateScreenState extends State<FamilyUpdateScreen> {
                               CommonTextField(
                                 hint: "First Name",
                                 controller: childInfoController
-                                    .firstNameController.value,
+                                    .firstNameController
+                                    .value,
                               ),
                               const SizedBox(height: 12),
 
                               CommonTextField(
                                 hint: "Last Name",
                                 controller: childInfoController
-                                    .lastNameController.value,
+                                    .lastNameController
+                                    .value,
                               ),
                               const SizedBox(height: 12),
 
                               CommonTextField(
                                 hint: "Relation to Child",
                                 controller: childInfoController
-                                    .relationController.value,
+                                    .relationController
+                                    .value,
                               ),
                               const SizedBox(height: 12),
 
                               CommonTextField(
                                 hint: "Mobile",
-                                controller: childInfoController
-                                    .mobileController.value,
+                                controller:
+                                    childInfoController.mobileController.value,
                                 keyboardType: TextInputType.phone,
                               ),
                               const SizedBox(height: 12),
 
                               CommonTextField(
                                 hint: "Email",
-                                controller: childInfoController
-                                    .emailController.value,
+                                controller:
+                                    childInfoController.emailController.value,
                                 keyboardType: TextInputType.emailAddress,
                               ),
 
@@ -154,53 +151,181 @@ class _FamilyUpdateScreenState extends State<FamilyUpdateScreen> {
                                   ),
                                   onPressed: () async {
                                     childInfoController.imagePath.value =
-                                    await selectPhoto(context, true);
+                                        await selectPhoto(context, true);
                                   },
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
-                                    children:  [
+                                    children: [
                                       Text(
-                                        (childInfoController.imagePath.value.isEmpty && (childInfoController.selectedFamilyContact.value.imageUrl??"").isNotEmpty)? "Update Profile Image":"Profile Image",
+                                        (childInfoController
+                                                    .imagePath
+                                                    .value
+                                                    .isEmpty &&
+                                                (childInfoController
+                                                            .selectedFamilyContact
+                                                            .value
+                                                            .imageUrl ??
+                                                        "")
+                                                    .isNotEmpty)
+                                            ? "Update Profile Image"
+                                            : "Profile Image",
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontWeight: FontWeight.w600,
                                         ),
                                       ),
                                       SizedBox(width: 6),
-                                      Icon(Icons.upload,
-                                          color: Colors.white, size: 18),
+                                      Icon(
+                                        Icons.upload,
+                                        color: Colors.white,
+                                        size: 18,
+                                      ),
                                     ],
                                   ),
                                 ),
                               ),
 
-                               (childInfoController.imagePath.value.isNotEmpty)?
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 12),
-                                  child: Center(
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(58),
-                                      child: Image.file(
-                                        File(
-                                            childInfoController.imagePath.value),
-                                        height: 200,
-                                        width: 200,
-                                        fit: BoxFit.cover,
+                              (childInfoController.imagePath.value.isNotEmpty)
+                                  ? Center(
+                                      child: Stack(
+                                        children: [
+                                          Container(
+                                            padding: const EdgeInsets.all(2),
+                                            margin: const EdgeInsets.only(
+                                              top: 16,
+                                              right: 12,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              // ⬅ square with small radius
+                                              border: Border.all(
+                                                color: Colors.blue,
+                                                width: 2,
+                                              ),
+                                            ),
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(6),
+                                              child: Image.file(
+                                                File(
+                                                  childInfoController
+                                                      .imagePath
+                                                      .value,
+                                                ),
+                                                height: 100,
+                                                width: 100,
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                          ),
+
+                                          /// ❌ Close Button
+                                          Positioned(
+                                            top: 6,
+                                            right: 6,
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                childInfoController
+                                                        .imagePath
+                                                        .value =
+                                                    "";
+                                              },
+                                              child: Container(
+                                                decoration: const BoxDecoration(
+                                                  color: Colors.black,
+                                                  shape: BoxShape.circle,
+                                                ),
+                                                padding: const EdgeInsets.all(
+                                                  4,
+                                                ),
+                                                child: const Icon(
+                                                  Icons.close,
+                                                  size: 14,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  : (childInfoController
+                                                .selectedFamilyContact
+                                                .value
+                                                .imageUrl ??
+                                            "")
+                                        .isNotEmpty
+                                  ? Center(
+                                child: Stack(
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.all(2),
+                                      margin: const EdgeInsets.only(
+                                        top: 16,
+                                        right: 12,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        borderRadius:
+                                        BorderRadius.circular(8),
+                                        // ⬅ square with small radius
+                                        border: Border.all(
+                                          color: Colors.blue,
+                                          width: 2,
+                                        ),
+                                      ),
+                                      child: ClipRRect(
+                                        borderRadius:
+                                        BorderRadius.circular(6),
+                                        child: Image.network(
+                                          childInfoController
+                                              .selectedFamilyContact
+                                              .value
+                                              .imageUrl ??
+                                              "",
+                                          height: 200,
+                                          width: 200,
+                                          fit: BoxFit.cover,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ):(childInfoController.selectedFamilyContact.value.imageUrl??"").isNotEmpty?Padding(
-                                 padding: const EdgeInsets.only(top: 12),
-                                 child: Center(
-                                   child: ClipRRect(
-                                     borderRadius: BorderRadius.circular(58),
-                                     child: Image.network(childInfoController.selectedFamilyContact.value.imageUrl??"",    height: 200,
-                                       width: 200,
-                                       fit: BoxFit.cover,)
-                                      ,
-                                   ),
-                                 ),
-                               ):SizedBox(),
+
+                                    /// ❌ Close Button
+                                    Positioned(
+                                      top: 6,
+                                      right: 6,
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          childInfoController
+                                              .selectedFamilyContact
+                                              .value
+                                              .imageUrl  =
+                                          "";
+
+                                          setState(() {
+
+                                          });
+                                        },
+                                        child: Container(
+                                          decoration: const BoxDecoration(
+                                            color: Colors.black,
+                                            shape: BoxShape.circle,
+                                          ),
+                                          padding: const EdgeInsets.all(
+                                            4,
+                                          ),
+                                          child: const Icon(
+                                            Icons.close,
+                                            size: 14,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                                  : SizedBox(),
 
                               const SizedBox(height: 20),
 
@@ -218,8 +343,14 @@ class _FamilyUpdateScreenState extends State<FamilyUpdateScreen> {
                                       backgroundColor: color_secondary,
                                     ),
                                     onPressed: () {
-                                      childInfoController
-                                          .callUpdateFamilyAPI(context, childInfoController.selectedFamilyContact.value.id.toString());
+                                      childInfoController.callUpdateFamilyAPI(
+                                        context,
+                                        childInfoController
+                                            .selectedFamilyContact
+                                            .value
+                                            .id
+                                            .toString(),
+                                      );
                                     },
                                     child: BlueMediumBoldText(
                                       "Save",
@@ -244,12 +375,6 @@ class _FamilyUpdateScreenState extends State<FamilyUpdateScreen> {
           ],
         ),
       ),
-
-
     );
   }
 }
-
-
-
-

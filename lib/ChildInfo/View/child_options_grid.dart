@@ -94,7 +94,7 @@ class ChildOptionsGrid extends StatelessWidget {
         },
         child: GridItem(icon_Book_Extra_Sessions, "Book Extra Sessions"),
       ),
-      GridItem(icon_WeeklyPlan, "Weekly Plan"),
+      // GridItem(icon_WeeklyPlan, "Weekly Plan"),
     ];
 
     return GridView.builder(

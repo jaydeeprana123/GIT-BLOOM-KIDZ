@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bloom_kidz/Chat/controller/chat_controller.dart';
 import 'package:bloom_kidz/Chat/models/group_chat_response.dart';
 import 'package:bloom_kidz/CommonWidgets/common_green_button.dart';
@@ -31,11 +33,13 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   ChatController chatController = Get.find<ChatController>();
+
   @override
   void initState() {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      chatController.imagePath.value = "";
       chatController.scrollController = ScrollController();
       chatController.getUserInfo();
       if (widget.groupId.isNotEmpty) {
@@ -55,33 +59,35 @@ class _ChatScreenState extends State<ChatScreen> {
         showBack: true,
       ),
       body: Obx(
-              () =>Stack(
-        children: [
-          Positioned.fill(child: SvgPicture.asset(app_bg, fit: BoxFit.fill)),
+        () => Stack(
+          children: [
+            Positioned.fill(child: SvgPicture.asset(app_bg, fit: BoxFit.fill)),
 
-          Card(
-            color: Colors.white,
-            shadowColor: color_secondary,
-            elevation: 6,
-            margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(
-                22,
-              ), // change 16 to any radius you like
+            Card(
+              color: Colors.white,
+              shadowColor: color_secondary,
+              elevation: 6,
+              margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(
+                  22,
+                ), // change 16 to any radius you like
+              ),
+              child: Column(
+                children: [
+                  ChatHeader(),
+                  const Divider(height: 1),
+                  Expanded(child: _chatList()),
+                  _replyBox(),
+                ],
+              ),
             ),
-            child: Column(
-              children: [
-                 ChatHeader(),
-                const Divider(height: 1),
-                Expanded(child: _chatList()),
-                _replyBox(),
-              ],
-            ),
-          ),
 
-          if(chatController.isLoading.value)Center(child: CircularProgressIndicator(),)
-        ],
-      )),
+            if (chatController.isLoading.value)
+              Center(child: CircularProgressIndicator()),
+          ],
+        ),
+      ),
     );
   }
 
@@ -93,18 +99,15 @@ class _ChatScreenState extends State<ChatScreen> {
       itemCount:
           (chatController.groupChatResponse.value.data?.messages ?? []).length,
       itemBuilder: (context, index) {
-
         final messages =
             chatController.groupChatResponse.value.data?.messages ?? [];
 
         final currentMessage = messages[index];
-        final previousMessage =
-        index > 0 ? messages[index - 1] : null;
+        final previousMessage = index > 0 ? messages[index - 1] : null;
 
         /// ✅ WhatsApp-style condition
         final bool showSenderName =
-            index == 0 ||
-                currentMessage.senderId != previousMessage?.senderId;
+            index == 0 || currentMessage.senderId != previousMessage?.senderId;
 
         return ChatBubble(
           message:
@@ -142,6 +145,11 @@ class _ChatScreenState extends State<ChatScreen> {
                   .senderName ??
               "",
           showSenderName: showSenderName,
+          attachments: chatController
+              .groupChatResponse
+              .value
+              .data
+              ?.messages?[index].attachments??[],
         );
       },
     );
@@ -149,7 +157,8 @@ class _ChatScreenState extends State<ChatScreen> {
 
   /// 🔹 Reply Box
   Widget _replyBox() {
-    return Padding(
+    return Obx(
+            () =>Padding(
       padding: const EdgeInsets.all(12),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -167,19 +176,90 @@ class _ChatScreenState extends State<ChatScreen> {
                   hintText: "Write a reply...",
                   border: InputBorder.none,
                 ),
+                onChanged: (value){
+                  setState(() {
+
+                  });
+                },
               ),
             ),
-            IconButton(
+
+            if(chatController.messageController.value.text.isEmpty)IconButton(
+              icon: const Icon(Icons.attach_file, color: Color(0xff1f78c8)),
+              onPressed: () async {
+
+                chatController.imagePath.value = await selectPhoto(
+                  context,
+                  true,
+                );
+
+
+                printData("chatController.imagePath",chatController.imagePath.value);
+
+                showImageDialog(context, chatController.imagePath.value,chatController.groupChatResponse.value.data?.group?.id??0,chatController.groupChatResponse.value.data?.group?.name??"");
+
+              },
+            ),
+
+            if(chatController.messageController.value.text.isNotEmpty) IconButton(
               icon: const Icon(Icons.send, color: Color(0xff1f78c8)),
               onPressed: () {
-                chatController.callSendMessageInGroupAPI(context, (chatController.groupChatResponse.value.data?.group?.id??0).toString(), chatController.messageController.value.text);
+                chatController.callSendMessageInGroupAPI(
+                  context,
+                  (chatController.groupChatResponse.value.data?.group?.id ?? 0)
+                      .toString(),
+                  chatController.messageController.value.text,
+                );
               },
             ),
           ],
         ),
       ),
-    );
+    ));
   }
 
+
+  void showImageDialog(BuildContext context, String imagePath, int groupId, String groupName) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+
+                /// 🖼 Image
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.file(
+                    File(imagePath),
+                    height: 200,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                /// ✅ Submit Button
+                CommonGradientButton(btnTitle: "Submit", onPressed: (){
+
+                  Navigator.pop(context);
+                  chatController.callSendMessageWithMediaInGroupAPI(context, groupId.toString(), groupName, chatController.messageController.value.text);
+                }),
+
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 
 }

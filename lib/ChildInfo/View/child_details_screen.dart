@@ -32,8 +32,8 @@ class ChildDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: const CommonAppBar(
-        title: "Child Details",
+      appBar:  CommonAppBar(
+        title: "${childInfo.firstName??""} ${childInfo.lastName??""} Details",
         showMenu: true,
         showBack: true,
       ),

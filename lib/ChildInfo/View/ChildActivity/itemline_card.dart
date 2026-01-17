@@ -113,16 +113,16 @@ class TimelineCard extends StatelessWidget {
                             const SizedBox(height: 4),
 
                             /// BULLETS
-                            if ((e.details ?? []).isNotEmpty)
-                              ...e.details!.map(
+                            if ((e.details).isNotEmpty)
+                              ...e.details.map(
                                     (f) => Padding(
                                   padding:
                                   const EdgeInsets.only(bottom: 4),
                                   child: Row(
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                    CrossAxisAlignment.center,
                                     children: [
-                                      const Icon(
+                                     if((f != "No food recorded")) const Icon(
                                         Icons.circle,
                                         size: 6,
                                         color: Color(0xFF1E78B7),

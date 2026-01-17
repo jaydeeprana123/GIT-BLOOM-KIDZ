@@ -347,11 +347,11 @@ class _AboutScreenState extends State<AboutScreen> {
               const Divider(height: 32),
               _healthRow(specailnote, "Special Note", health.specialNote),
 
-              const Divider(height: 32),
+              // const Divider(height: 32),
 
-              _doctorInfo(),
-              const Divider(height: 32),
-              _dentistInfo(),
+              // _doctorInfo(),
+              // const Divider(height: 32),
+              // _dentistInfo(),
             ],
           ),
         ),

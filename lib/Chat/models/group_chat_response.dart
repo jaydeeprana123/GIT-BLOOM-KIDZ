@@ -92,7 +92,7 @@ class Message {
   int? senderId;
   String? senderName;
   String? message;
-  List<dynamic>? attachments;
+  List<Attachment>? attachments;
   DateTime? createdAt;
 
   Message({
@@ -109,7 +109,7 @@ class Message {
     senderId: json["sender_id"],
     senderName: json["sender_name"],
     message: json["message"],
-    attachments: json["attachments"] == null ? [] : List<dynamic>.from(json["attachments"]!.map((x) => x)),
+    attachments: json["attachments"] == null ? [] : List<Attachment>.from(json["attachments"]!.map((x) => Attachment.fromJson(x))),
     createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
   );
 
@@ -118,7 +118,28 @@ class Message {
     "sender_id": senderId,
     "sender_name": senderName,
     "message": message,
-    "attachments": attachments == null ? [] : List<dynamic>.from(attachments!.map((x) => x)),
+    "attachments": attachments == null ? [] : List<dynamic>.from(attachments!.map((x) => x.toJson())),
     "created_at": createdAt?.toIso8601String(),
+  };
+}
+
+
+class Attachment {
+  String? url;
+  String? type;
+
+  Attachment({
+    this.url,
+    this.type,
+  });
+
+  factory Attachment.fromJson(Map<String, dynamic> json) => Attachment(
+    url: json["url"],
+    type: json["type"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "url": url,
+    "type": type,
   };
 }

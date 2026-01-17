@@ -44,7 +44,9 @@ class _ObservationListScreenState extends State<ObservationListScreen> {
       key: _scaffoldKey,
       backgroundColor: Colors.white,
       appBar: CommonAppBar(title: "Journey", showMenu: false, showBack: true,showAddButton: true, onAddButtonTap: (){
-        Get.to(ObservationAddScreen(childId: widget.childId,));
+        Get.to(ObservationAddScreen(childId: widget.childId,))?.then((value) {
+          childInfoController.callObservationListAPI(context, widget.childId);
+        });
       },),
       body: Obx(
         () => Stack(

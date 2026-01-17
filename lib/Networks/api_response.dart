@@ -753,6 +753,43 @@ class Request {
     return response;
   }
 
+
+  Future<http.StreamedResponse> postAPIWithAttachment(
+      url,
+      body,
+      token,
+      String strImg,
+      String? imageList,
+      ) async {
+    Map<String, String> headersWithBearer = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + token,
+    };
+    printData("url", url);
+    printData("Body", body.toString());
+    printData("Header", headersWithBearer.toString());
+    printData("strImg", strImg);
+
+    var request = http.MultipartRequest('POST', Uri.parse(url));
+
+    request.fields.addAll(body);
+
+     if ((imageList ??"").isNotEmpty) {
+      request.files.add(
+        await http.MultipartFile.fromPath('attachments[]', imageList?? ""),
+      );
+    }
+
+    request.headers.addAll(headersWithBearer);
+    http.StreamedResponse response = await request.send();
+
+    if (response.statusCode == 403) {
+      showBlockedDialog();
+    }
+
+    return response;
+  }
+
   Future<http.StreamedResponse> postAPIWithMediaWithoutBearer(
     url,
     body,

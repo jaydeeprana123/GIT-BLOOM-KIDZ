@@ -48,111 +48,119 @@ class ChildCard extends StatelessWidget {
             22,
           ), // change 16 to any radius you like
         ),
-        child: Row(
-          children: [
-            Container(
-              width: 100, // same as diameter of circle avatar (2 * radius)
-              height: 100,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(
-                  12,
-                ), // change 12 for more/less rounding
-                image: DecorationImage(
-                  image: NetworkImage(childInfo.profile ?? ""),
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
+        child: Container(
+          height: 122,
+          child: Row(
+            children: [
 
-            Expanded(
-              child: Container(
-                padding: EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    BlueLargeBoldText(
-                      "${childInfo.firstName ?? ""} ${childInfo.lastName ?? ""}",
-                      fontSize: 15,
-                    ),
-                    const SizedBox(height: 6),
-                    Row(
-                      children: [
-                        SvgPicture.asset(explorersIcon, width: 14, ),
-                        // Icon(Icons.school, size: 14, color: Colors.grey),
-                        SizedBox(width: 4),
-                        BlackSmallRegularText(
-                          childInfo.room ?? "",
-                          fontSize: 11,
-                          color: Colors.black,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        SvgPicture.asset(icon_sick, width: 14),
-                        // Icon(Icons.sick, size: 14, color: Colors.grey),
-                        SizedBox(width: 4),
-                        InkWell(
-                          onTap: () {
-                            showLeaveDialog(
-                              context,
-                              childInfoController,
-                              false,
-                              childInfo.id.toString(),
-                            );
-                          },
-                          child: BlackSmallRegularText(
-                            "Sick",
-                            fontSize: 11,
-                            color: Colors.black,
-                          ),
-                        ),
-                        SizedBox(width: 12),
-                        SvgPicture.asset(holidayIcon, width: 14),
-                        SizedBox(width: 4),
-                        InkWell(
-                          onTap: () {
-                            showLeaveDialog(
-                              context,
-                              childInfoController,
-                              true,
-                              childInfo.id.toString(),
-                            );
-                          },
-                          child: BlackSmallRegularText(
-                            "Holiday",
-                            fontSize: 11,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                    Row(
-                      children: [
-                        _actionButton(commentIcon, "Chat"),
-                        const SizedBox(width: 8),
-                        InkWell(
-                          onTap: () {
-                            showCollectionPinDialog(
-                              context,
-                              childInfoController,
-                              childInfo.id.toString(),
-                            );
-                          },
-                          child: _actionButton(
-                            pin,
-                            "Collection Pin",
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+              Container(
+
+                width: 120, // same as diameter of circle avatar (2 * radius)
+                height: 122,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(
+                    12,
+                  ), // change 12 for more/less rounding
+                  image: DecorationImage(
+                    image: NetworkImage(childInfo.profile ?? ""),
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
-            ),
-          ],
+
+              Expanded(
+                child: Container(
+                  padding: EdgeInsets.all(12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      BlueLargeBoldText(
+                        "${childInfo.firstName ?? ""} ${childInfo.lastName ?? ""}",
+                        fontSize: 15,
+                      ),
+                      const SizedBox(height: 6),
+                      Row(
+                        children: [
+                          SvgPicture.asset(explorersIcon, width: 14, ),
+                          // Icon(Icons.school, size: 14, color: Colors.grey),
+                          SizedBox(width: 4),
+                          BlackSmallRegularText(
+                            childInfo.room ?? "",
+                            fontSize: 11,
+                            color: Colors.black,
+                            fontFamily: fontInterMedium
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          SvgPicture.asset(icon_sick, width: 14),
+                          // Icon(Icons.sick, size: 14, color: Colors.grey),
+                          SizedBox(width: 4),
+                          InkWell(
+                            onTap: () {
+                              showLeaveDialog(
+                                context,
+                                childInfoController,
+                                false,
+                                childInfo.id.toString(),
+                              );
+                            },
+                            child: BlackSmallRegularText(
+                              "Sick",
+                              fontSize: 11,
+                              color: Colors.black,
+                                fontFamily: fontInterMedium
+                            ),
+                          ),
+                          SizedBox(width: 12),
+                          SvgPicture.asset(holidayIcon, width: 14),
+                          SizedBox(width: 4),
+                          InkWell(
+                            onTap: () {
+                              showLeaveDialog(
+                                context,
+                                childInfoController,
+                                true,
+                                childInfo.id.toString(),
+                              );
+                            },
+                            child: BlackSmallRegularText(
+                              "Holiday",
+                              fontSize: 11,
+                              color: Colors.black,
+                                fontFamily: fontInterMedium
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        children: [
+                          _actionButton(commentIcon, "Chat"),
+                          const SizedBox(width: 8),
+                          InkWell(
+                            onTap: () {
+                              showCollectionPinDialog(
+                                context,
+                                childInfoController,
+                                childInfo.id.toString(),
+                              );
+                            },
+                            child: _actionButton(
+                              pin,
+                              "Collection Pin",
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

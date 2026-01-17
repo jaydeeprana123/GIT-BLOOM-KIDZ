@@ -38,7 +38,7 @@ class CustomBottomNav extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _navItem(icon_news_feed, "News", 0),
+          _navItem(icon_news_feed, "NewsFeed", 0),
           _navItem(icon_child_info, "Child Info", 1),
           _navItem(icon_chat, "Chat", 2),
           _navItem(icon_profile, "My Profile", 3),

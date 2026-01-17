@@ -381,8 +381,33 @@ class ChildInfoController extends GetxController {
           if (activityResponse.status ?? false) {
             activityList.value = activityResponse.data ?? [];
 
-            /// RESET SELECTION AFTER LOAD
-            selectedDateIndex.value = 0;
+            activityList.removeWhere((item) {
+              if (item.date == null) return true;
+
+              final itemDate = DateTime(
+                item.date!.year,
+                item.date!.month,
+                item.date!.day,
+              );
+
+              if (itemDate.isAfter(DateTime.now())) {
+                return true; // remove future dates
+              }
+
+              if (itemDate.isAtSameMomentAs(DateTime.now())) {
+                selectedDateIndex.value = activityList.indexOf(item);
+              }
+
+              return false;
+            });
+
+            if (selectedDateIndex.value != null) {
+              selectedDateIndex.value = selectedDateIndex.value!;
+            }
+
+
+
+
           } else {
             snackBar(context, activityResponse.message ?? "");
           }
@@ -391,8 +416,10 @@ class ChildInfoController extends GetxController {
     });
   }
 
+
+
   /// ActivityList API
-  callActivityListForSelectAPI(BuildContext context) async {
+  callActivityListForSelectAPI(BuildContext context, bool isHoliday) async {
     isLoading.value = true;
 
     String token = await MySharedPref().getStringValue(
@@ -427,8 +454,12 @@ class ChildInfoController extends GetxController {
             activityListForSelect.value =
                 activityResponseForSelect.data?.activities ?? [];
 
-            /// RESET SELECTION AFTER LOAD
-            selectedDateIndex.value = 0;
+            if(isHoliday){
+              getHolidayLeave();
+            }else{
+              getSickLeave();
+            }
+
           } else {
             snackBar(context, activityResponseForSelect.message ?? "");
           }
@@ -1858,4 +1889,24 @@ class ChildInfoController extends GetxController {
     // printData("onClose", "onClose login controller");
     // Get.delete<LoginController>();
   }
+
+  getSickLeave(){
+    ActivityForSelect? sickLeave = activityListForSelect
+        .firstWhereOrNull(
+          (activity) => activity.name == "Sick Leave",
+    );
+
+    selectedActivity.value = sickLeave;
+
+  }
+
+  getHolidayLeave(){
+    ActivityForSelect? holiday = activityListForSelect
+        .firstWhereOrNull(
+          (activity) => activity.name == "Holiday",
+    );
+    selectedActivity.value = holiday;
+
+  }
+
 }
