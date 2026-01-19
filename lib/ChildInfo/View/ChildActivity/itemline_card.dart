@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../models/child_activity_response.dart';
 import 'models/timeline_item.dart';
@@ -41,7 +42,9 @@ class TimelineCard extends StatelessWidget {
             width: 40,
             child: Column(
               children: [
-                _dot(),
+
+                SizedBox(height: 2,),
+                exactTimelineDot(),
 
                 /// LINE MATCHES CARD HEIGHT
                 // if (!isLast)
@@ -49,7 +52,7 @@ class TimelineCard extends StatelessWidget {
                     child: Container(
                       width: 2,
                       margin: EdgeInsets.only(bottom: 20),
-                      color: Colors.blue.shade300,
+                      color: color_secondary,
                     ),
                   ),
               ],
@@ -59,6 +62,7 @@ class TimelineCard extends StatelessWidget {
           /// CARD
           Expanded(
             child: Card(
+              color: Colors.white,
               margin: const EdgeInsets.only(right: 16, bottom: 16),
               elevation: 4,
               shape: RoundedRectangleBorder(
@@ -67,7 +71,13 @@ class TimelineCard extends StatelessWidget {
               child: Stack(
                 children: [
 
-                  item.title == "Nappy"?Align(alignment: Alignment.bottomRight, child: Icon(Icons.nature, color: Colors.grey,size: 40,)):item.title == "Activity"?Align(alignment: Alignment.bottomRight,child: Icon(Icons.local_activity_outlined, color: Colors.grey,size: 40,)):Align(alignment: Alignment.bottomRight,child: Icon(Icons.food_bank_outlined, color: Colors.grey,size: 40,)),
+
+                  Container(
+                    padding: EdgeInsets.all(8),
+                    child: item.title == "Nappy"?Align(alignment: Alignment.bottomRight, child: SvgPicture.asset(NappyIcon,width: 70,)):item.title == "Activity"?Align(alignment: Alignment.bottomRight,child: SvgPicture.asset(SignOutIcon,width: 70,)):Align(alignment: Alignment.bottomRight,child: SvgPicture.asset(MealIcon,width: 70,)),
+                      
+                  ),
+
 
 
                   Padding(
@@ -166,17 +176,51 @@ class TimelineCard extends StatelessWidget {
     );
   }
 
-  Widget _dot() {
-    return Container(
-      margin: const EdgeInsets.only(top: 10),
-      width: 14,
-      height: 14,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: Colors.white,
-        border: Border.all(color: Colors.blue, width: 3),
+  Widget exactTimelineDot() {
+    return SizedBox(
+      width: 20,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          /// Vertical line (behind)
+          Positioned.fill(
+            child: Align(
+              alignment: Alignment.center,
+              child: Container(
+                width: 2,
+                height: double.infinity,
+                color: color_secondary,
+              ),
+            ),
+          ),
+
+          /// Outer circle (hollow)
+          Container(
+            width: 16,
+            height: 16,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.white,
+              border: Border.all(
+                color: color_secondary,
+                width: 2,
+              ),
+            ),
+          ),
+
+          /// Inner filled dot
+          Container(
+            width: 9,
+            height: 9,
+            decoration: const BoxDecoration(
+              shape: BoxShape.circle,
+              color: color_secondary,
+            ),
+          ),
+        ],
       ),
     );
   }
+
 }
 
