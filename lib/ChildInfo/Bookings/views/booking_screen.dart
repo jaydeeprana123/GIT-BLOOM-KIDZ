@@ -1,4 +1,5 @@
 import 'package:bloom_kidz/CommonWidgets/black_medium_regular_text.dart';
+import 'package:bloom_kidz/CommonWidgets/blue_large_bold_text.dart';
 import 'package:bloom_kidz/CommonWidgets/blue_medium_bold_text.dart';
 import 'package:bloom_kidz/CommonWidgets/blue_small_regular_text.dart';
 import 'package:bloom_kidz/CommonWidgets/common_background.dart';
@@ -34,7 +35,6 @@ import 'package:flutter/material.dart';
 
 import '../../controller/child_info_controller.dart';
 
-
 import 'package:flutter/material.dart';
 
 class BookingScreen extends StatefulWidget {
@@ -50,8 +50,6 @@ class _BookingScreenState extends State<BookingScreen> {
   int selectedDayIndex = 0;
   int selectedSlotIndex = 3;
 
-
-
   ChildInfoController childInfoController = Get.find<ChildInfoController>();
 
   @override
@@ -61,7 +59,6 @@ class _BookingScreenState extends State<BookingScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       childInfoController.callGetBookingsAPI(context, widget.childId);
     });
-
   }
 
   @override
@@ -69,13 +66,15 @@ class _BookingScreenState extends State<BookingScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
 
-      appBar: const CommonAppBar(title: "Bookings", showMenu: false, showBack: true,),
+      appBar: const CommonAppBar(
+        title: "Bookings",
+        showMenu: false,
+        showBack: true,
+      ),
 
-      body:    Stack(
+      body: Stack(
         children: [
-          Positioned.fill(
-            child: SvgPicture.asset(app_bg, fit: BoxFit.fill),
-          ),
+          Positioned.fill(child: SvgPicture.asset(app_bg, fit: BoxFit.fill)),
 
           Obx(() {
             if (childInfoController.bookingList.isEmpty) {
@@ -91,23 +90,25 @@ class _BookingScreenState extends State<BookingScreen> {
                 children: [
                   const SizedBox(height: 16),
 
-                  for (int i = 0;
-                  i < childInfoController.bookingList.length;
-                  i++)
+                  for (
+                    int i = 0;
+                    i < childInfoController.bookingList.length;
+                    i++
+                  )
                     Column(
                       children: [
                         // DATE
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 6),
+                            horizontal: 16,
+                            vertical: 6,
+                          ),
                           decoration: BoxDecoration(
                             color: color_secondary,
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: BlackMediumRegularText(
-
-                              childInfoController
-                                  .bookingList[i].planStart??"",
+                            childInfoController.bookingList[i].planStart ?? "",
 
                             color: Colors.white,
                           ),
@@ -119,21 +120,18 @@ class _BookingScreenState extends State<BookingScreen> {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: Row(
-                            mainAxisAlignment:
-                            MainAxisAlignment.spaceBetween,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: List.generate(
-                              childInfoController
-                                  .bookingList[i].days
-                                  ?.length ??
+                              childInfoController.bookingList[i].days?.length ??
                                   0,
-                                  (index) {
-                                final isSelected =
-                                    index == selectedDayIndex;
+                              (index) {
+                                final isSelected = index == selectedDayIndex;
 
-                                final day = childInfoController
-                                    .bookingList[i]
-                                    .days?[index]
-                                    .day ??
+                                final day =
+                                    childInfoController
+                                        .bookingList[i]
+                                        .days?[index]
+                                        .day ??
                                     '';
 
                                 return GestureDetector(
@@ -151,8 +149,7 @@ class _BookingScreenState extends State<BookingScreen> {
                                       color: isSelected
                                           ? color_secondary
                                           : Colors.white,
-                                      borderRadius:
-                                      BorderRadius.circular(10),
+                                      borderRadius: BorderRadius.circular(10),
                                       border: Border.all(
                                         color: color_secondary,
                                       ),
@@ -174,18 +171,35 @@ class _BookingScreenState extends State<BookingScreen> {
 
                         const SizedBox(height: 16),
 
+                        Row(
+                          children: [
+                            BlueLargeBoldText("Status : "),
+
+                            BlueLargeBoldText(
+                              childInfoController.bookingList[i].statusLabel ??
+                                  "",
+                              color:
+                                  (childInfoController.bookingList[i].status ??
+                                          "0") ==
+                                      "1"
+                                  ? Colors.green
+                                  : Colors.red,
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 16),
                         // TIME SLOTS
                         ListView.builder(
                           shrinkWrap: true,
-                          physics:
-                          const NeverScrollableScrollPhysics(),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16),
-                          itemCount: childInfoController
-                              .bookingList[i]
-                              .days?[selectedDayIndex]
-                              .mainSessions
-                              ?.length ??
+                          physics: const NeverScrollableScrollPhysics(),
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          itemCount:
+                              childInfoController
+                                  .bookingList[i]
+                                  .days?[selectedDayIndex]
+                                  .mainSessions
+                                  ?.length ??
                               0,
                           itemBuilder: (context, sessionIndex) {
                             final isSelected =
@@ -198,27 +212,24 @@ class _BookingScreenState extends State<BookingScreen> {
                                 });
                               },
                               child: Container(
-                                margin:
-                                const EdgeInsets.only(bottom: 10),
+                                margin: const EdgeInsets.only(bottom: 10),
                                 padding: const EdgeInsets.symmetric(
-                                    vertical: 12),
+                                  vertical: 12,
+                                ),
                                 alignment: Alignment.center,
                                 decoration: BoxDecoration(
                                   color: isSelected
                                       ? color_secondary
                                       : Colors.white,
-                                  borderRadius:
-                                  BorderRadius.circular(8),
-                                  border: Border.all(
-                                    color: color_secondary,
-                                  ),
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(color: color_secondary),
                                 ),
                                 child: BlueMediumBoldText(
                                   childInfoController
-                                      .bookingList[i]
-                                      .days?[selectedDayIndex]
-                                      .mainSessions?[sessionIndex]
-                                      .label ??
+                                          .bookingList[i]
+                                          .days?[selectedDayIndex]
+                                          .mainSessions?[sessionIndex]
+                                          .label ??
                                       '',
                                   color: isSelected
                                       ? Colors.white
@@ -241,8 +252,6 @@ class _BookingScreenState extends State<BookingScreen> {
             const Center(child: CircularProgressIndicator()),
         ],
       ),
-
     );
   }
 }
-
