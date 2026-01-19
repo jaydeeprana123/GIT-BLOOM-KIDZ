@@ -57,6 +57,7 @@ class _BookingScreenState extends State<BookingScreen> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      childInfoController.bookingList.clear();
       childInfoController.callGetBookingsAPI(context, widget.childId);
     });
   }
@@ -79,7 +80,7 @@ class _BookingScreenState extends State<BookingScreen> {
           Obx(() {
 
             if (childInfoController.isLoading.value){
-              const Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             }
 
 
@@ -141,51 +142,54 @@ class _BookingScreenState extends State<BookingScreen> {
 
                         const SizedBox(height: 12),
 
-                        // DAYS ROW
+
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          child: Column(
                             children: List.generate(
-                              childInfoController.bookingList[i].days?.length ??
-                                  0,
-                              (index) {
-                                final isSelected = index == selectedDayIndex;
+                              childInfoController.bookingList[i].days?.length ?? 0,
+                                  (dayIndex) {
+                                final dayObj =
+                                childInfoController.bookingList[i].days![dayIndex];
 
-                                final day =
-                                    childInfoController
-                                        .bookingList[i]
-                                        .days?[index]
-                                        .day ??
-                                    '';
+                                final isSelected = dayIndex == selectedDayIndex;
 
                                 return GestureDetector(
                                   onTap: () {
                                     setState(() {
-                                      selectedDayIndex = index;
-                                      selectedSlotIndex = -1;
+                                      selectedDayIndex = dayIndex;
                                     });
                                   },
                                   child: Container(
-                                    width: 42,
-                                    height: 60,
-                                    alignment: Alignment.center,
-                                    decoration: BoxDecoration(
-                                      color: isSelected
-                                          ? color_secondary
-                                          : Colors.white,
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(
-                                        color: color_secondary,
-                                      ),
+                                    margin: const EdgeInsets.only(bottom: 12),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 10,
                                     ),
-                                    child: BlueMediumBoldText(
-                                      day.length >= 3
-                                          ? day.substring(0, 3)
-                                          : day,
-                                      color: isSelected
-                                          ? Colors.white
-                                          : Colors.blue,
+                                    decoration: BoxDecoration(
+                                      color: isSelected ? color_secondary : Colors.white,
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(color: color_secondary),
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        /// DAY
+                                        BlueMediumBoldText(
+                                          (dayObj.day ?? '').length >= 3
+                                              ? dayObj.day!.substring(0, 3)
+                                              : dayObj.day ?? '',
+                                          color: isSelected ? Colors.white : Colors.blue,
+                                        ),
+
+                                        /// SLOT (Only one)
+                                        BlueMediumBoldText(
+                                          dayObj.mainSessions?.isNotEmpty == true
+                                              ? dayObj.mainSessions![0].label ?? ''
+                                              : '',
+                                          color: isSelected ? Colors.white : Colors.blue,
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 );
@@ -194,63 +198,6 @@ class _BookingScreenState extends State<BookingScreen> {
                           ),
                         ),
 
-
-
-                  SizedBox(height: 16,),
-
-
-                        // TIME SLOTS
-                        ListView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          itemCount:
-                              childInfoController
-                                  .bookingList[i]
-                                  .days?[selectedDayIndex]
-                                  .mainSessions
-                                  ?.length ??
-                              0,
-                          itemBuilder: (context, sessionIndex) {
-                            final isSelected =
-                                sessionIndex == selectedSlotIndex;
-
-                            return GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  selectedSlotIndex = sessionIndex;
-                                });
-                              },
-                              child: Container(
-                                margin: const EdgeInsets.only(bottom: 10),
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 12,
-                                ),
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                  color: isSelected
-                                      ? color_secondary
-                                      : Colors.white,
-                                  borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(color: color_secondary),
-                                ),
-                                child: BlueMediumBoldText(
-                                  childInfoController
-                                          .bookingList[i]
-                                          .days?[selectedDayIndex]
-                                          .mainSessions?[sessionIndex]
-                                          .label ??
-                                      '',
-                                  color: isSelected
-                                      ? Colors.white
-                                      : Colors.blue,
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-
-                        const SizedBox(height: 24),
                       ],
                     ),
                 ],
