@@ -8,7 +8,9 @@ import 'package:bloom_kidz/Styles/my_font.dart';
 import 'package:bloom_kidz/Styles/my_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-
+import 'package:get/get.dart';
+import '../../Chat/controller/chat_controller.dart';
+import '../../Chat/models/people_list_response.dart';
 import '../../CommonWidgets/black_small_medium_text.dart';
 import '../../CommonWidgets/black_small_regular_text.dart';
 import '../../CommonWidgets/blue_large_bold_text.dart';
@@ -112,7 +114,15 @@ class ChildProfileCard extends StatelessWidget {
                 const SizedBox(height: 10),
                 Row(
                   children: [
-                    _actionButton(commentIcon, "Chat"),
+                    InkWell(onTap: ()async{
+
+
+                      List<ChatPerson> selectedPerson = [];
+                      selectedPerson.add(ChatPerson(id: childInfo.id, name: "${childInfo.firstName??""} ${childInfo.lastName??""}"));
+                      ChatController chatController = Get.put(ChatController());
+                      await chatController.callConversationListAPI(context,  selectedPersons: selectedPerson);
+
+                    },child: _actionButton(commentIcon, "Chat")),
                     const SizedBox(width: 8),
                     InkWell(
                       onTap: () {

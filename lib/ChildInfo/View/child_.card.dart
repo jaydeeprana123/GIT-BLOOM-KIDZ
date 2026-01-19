@@ -1,3 +1,5 @@
+import 'package:bloom_kidz/Chat/controller/chat_controller.dart';
+import 'package:bloom_kidz/Chat/models/people_list_response.dart';
 import 'package:bloom_kidz/ChildInfo/models/child_info_list_response.dart';
 import 'package:bloom_kidz/CommonWidgets/blue_large_bold_text.dart';
 import 'package:bloom_kidz/CommonWidgets/common_green_button.dart';
@@ -138,7 +140,17 @@ class ChildCard extends StatelessWidget {
                       const SizedBox(height: 10),
                       Row(
                         children: [
-                          _actionButton(commentIcon, "Chat"),
+
+                          InkWell(onTap: ()async{
+
+                            childInfoController.isLoading.value = true;
+
+                            List<ChatPerson> selectedPerson = [];
+                            selectedPerson.add(ChatPerson(id: childInfo.id, name: "${childInfo.firstName??""} ${childInfo.lastName??""}"));
+                            ChatController chatController = Get.put(ChatController());
+                           await chatController.callConversationListAPI(context,  selectedPersons: selectedPerson);
+                            childInfoController.isLoading.value = true;
+                          },child: _actionButton(commentIcon, "Chat")),
                           const SizedBox(width: 8),
                           InkWell(
                             onTap: () {

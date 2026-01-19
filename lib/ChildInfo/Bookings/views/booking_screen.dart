@@ -78,6 +78,12 @@ class _BookingScreenState extends State<BookingScreen> {
           ),
 
           Obx(() {
+
+            if (childInfoController.isLoading.value){
+              const Center(child: CircularProgressIndicator());
+            }
+
+
             if (childInfoController.bookingList.isEmpty) {
               return const SizedBox();
             }
@@ -237,8 +243,7 @@ class _BookingScreenState extends State<BookingScreen> {
             );
           }),
 
-          if (childInfoController.isLoading.value)
-            const Center(child: CircularProgressIndicator()),
+
         ],
       ),
 

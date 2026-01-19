@@ -64,87 +64,100 @@ class TimelineCard extends StatelessWidget {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    /// TITLE
-                    BlueLargeBoldText(item.title),
+              child: Stack(
+                children: [
 
-                    const SizedBox(height: 8),
+                  item.title == "Nappy"?Align(alignment: Alignment.bottomRight, child: Icon(Icons.nature, color: Colors.grey,size: 40,)):item.title == "Activity"?Align(alignment: Alignment.bottomRight,child: Icon(Icons.local_activity_outlined, color: Colors.grey,size: 40,)):Align(alignment: Alignment.bottomRight,child: Icon(Icons.food_bank_outlined, color: Colors.grey,size: 40,)),
 
-                    /// DETAILS
-                    ...item.subItems.map(
-                          (e) => Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            /// SUBTITLE + TIME
-                            Row(
+
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        /// TITLE
+                        BlueLargeBoldText(item.title),
+
+                        const SizedBox(height: 8),
+
+                        /// DETAILS
+                        ...item.subItems.map(
+                              (e) => Padding(
+                            padding: const EdgeInsets.only(bottom: 8),
+                            child: Stack(
                               children: [
-                                Expanded(
-                                  child: Row(
-                                    children: [
-                                      BlackMediumBoldText(
-                                        e.subTitle,
-                                        fontSize: (item.title == "Nappy" || item.title == "Activity")?12:13,
-                                        color: Colors.black,
-                                      ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    /// SUBTITLE + TIME
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Row(
+                                            children: [
+                                              BlackMediumBoldText(
+                                                e.subTitle,
+                                                fontSize: (item.title == "Nappy" || item.title == "Activity")?12:13,
+                                                color: Colors.black,
+                                              ),
 
-                                      if ((e.statusForNappy ?? "").isNotEmpty)
-                                        BlackMediumBoldText(
-                                          " (${e.statusForNappy})",
-                                          fontSize: (item.title == "Nappy" || item.title == "Activity")?12:13,
-                                          color: Colors.black,
+                                              if ((e.statusForNappy ?? "").isNotEmpty)
+                                                BlackMediumBoldText(
+                                                  " (${e.statusForNappy})",
+                                                  fontSize: (item.title == "Nappy" || item.title == "Activity")?12:13,
+                                                  color: Colors.black,
+                                                ),
+                                            ],
+                                          ),
                                         ),
-                                    ],
-                                  ),
+
+                                        BlueMediumBoldText(
+                                          e.time,
+                                          fontSize: 12,
+                                        ),
+                                      ],
+                                    ),
+
+                                    const SizedBox(height: 4),
+
+                                    /// BULLETS
+                                    if ((e.details).isNotEmpty)
+                                      ...e.details.map(
+                                            (f) => Padding(
+                                          padding:
+                                          const EdgeInsets.only(bottom: 4),
+                                          child: Row(
+                                            crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                            children: [
+                                             if((f != "No food recorded")) const Icon(
+                                                Icons.circle,
+                                                size: 6,
+                                                color: Color(0xFF1E78B7),
+                                              ),
+                                              const SizedBox(width: 8),
+                                              Expanded(
+                                                child: BlackSmallMediumText(
+                                                  f,
+                                                  fontSize: 11,
+                                                  color: Colors.black,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                  ],
                                 ),
 
-                                BlueMediumBoldText(
-                                  e.time,
-                                  fontSize: 12,
-                                ),
-                              ],
+                                                         ],
                             ),
-
-                            const SizedBox(height: 4),
-
-                            /// BULLETS
-                            if ((e.details).isNotEmpty)
-                              ...e.details.map(
-                                    (f) => Padding(
-                                  padding:
-                                  const EdgeInsets.only(bottom: 4),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment.center,
-                                    children: [
-                                     if((f != "No food recorded")) const Icon(
-                                        Icons.circle,
-                                        size: 6,
-                                        color: Color(0xFF1E78B7),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Expanded(
-                                        child: BlackSmallMediumText(
-                                          f,
-                                          fontSize: 11,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                          ],
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),

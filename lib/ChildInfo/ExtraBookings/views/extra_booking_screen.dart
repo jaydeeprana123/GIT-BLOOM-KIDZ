@@ -349,7 +349,7 @@ class _ExtraBookingScreenState extends State<ExtraBookingScreen> {
                 const Divider(),
 
                 /// 🗑 Delete
-                ListTile(
+               if((extraBooking.status??"0") != "3") ListTile(
                   leading: const Icon(Icons.delete_forever, color: Colors.red),
                   title: const Text(
                     "Delete",

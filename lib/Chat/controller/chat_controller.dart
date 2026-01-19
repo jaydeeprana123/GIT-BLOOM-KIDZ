@@ -118,7 +118,7 @@ class ChatController extends GetxController {
   }
 
   /// Conversation List API
-  callConversationListAPI(BuildContext context, {List<ChatPerson>? selectedPersons}) async {
+ Future<void> callConversationListAPI(BuildContext context, {List<ChatPerson>? selectedPersons , bool? fromChildInfo} ) async {
     isLoading.value = true;
 
     String token = await MySharedPref().getStringValue(
