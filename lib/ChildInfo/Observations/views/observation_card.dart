@@ -156,22 +156,42 @@ class ObservationCard extends StatelessWidget {
   }
 
   Widget _image() {
-    return ((observation.media ?? []).length == 1)
-        ? (observation.media?[0].extension == "jpeg")
-              ? Container(
-                  margin: const EdgeInsets.symmetric(vertical: 10),
-                  height: 180,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: NetworkImage(observation.media?[0].image ?? ""),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                )
-              : SizedBox()
-        : SizedBox();
+    if ((observation.media ?? []).isEmpty) {
+      return const SizedBox();
+    }
+
+    return SizedBox(
+      height: 200,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: observation.media!.length,
+        itemBuilder: (context, index) {
+          final media = observation.media![index];
+
+          if (media.extension != "jpg" &&
+              media.extension != "jpeg" &&
+              media.extension != "png") {
+            return const SizedBox();
+          }
+
+          return Container(
+            width: (observation.media??[]).length == 1?double.infinity:280,
+            height: 200,
+            margin: const EdgeInsets.only(right: 10),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              image: DecorationImage(
+                image: NetworkImage(media.image ?? ""),
+                fit: BoxFit.cover,
+              ),
+            ),
+          );
+        },
+      ),
+    );
   }
+
+
 
 
 

@@ -48,8 +48,9 @@ class ChildrenPermissionScreen extends StatefulWidget {
   State<ChildrenPermissionScreen> createState() => _ChildrenPermissionScreenState();
 }
 
-class _ChildrenPermissionScreenState extends State<ChildrenPermissionScreen> {
+class _ChildrenPermissionScreenState extends State<ChildrenPermissionScreen> with TickerProviderStateMixin{
   ChildInfoController childInfoController = Get.find<ChildInfoController>();
+  int expandedIndex = 0; // first index open initially
 
   @override
   void initState() {
@@ -85,7 +86,7 @@ class _ChildrenPermissionScreenState extends State<ChildrenPermissionScreen> {
                   padding: const EdgeInsets.all(16),
                   itemCount: childInfoController.childPermissionList.length,
                   itemBuilder: (context, index) {
-                    return _permissionCard(childInfoController.childPermissionList[index]);
+                    return _permissionCard(childInfoController.childPermissionList[index], index);
                   },
                 ),
 
@@ -100,59 +101,86 @@ class _ChildrenPermissionScreenState extends State<ChildrenPermissionScreen> {
   }
 
   /// 🧾 Permission Card
-  Widget _permissionCard(ChildPermission childPermission) {
-    return Card(
-      elevation: 6,
-      color: Colors.white,
-      shadowColor: color_secondary,
-      margin: const EdgeInsets.only(bottom: 16),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            /// Title + Buttons
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: BlueMediumBoldText(
-                    childPermission.name??"",
-                    fontSize: 14,
+  Widget _permissionCard(ChildPermission childPermission, int index) {
+    final bool isExpanded = expandedIndex == index;
+
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          expandedIndex = isExpanded ? -1 : index;
+        });
+      },
+      child: Card(
+        elevation: 6,
+        margin: const EdgeInsets.only(bottom: 16),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+
+              /// Header
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: BlueMediumBoldText(
+                      childPermission.name ?? "",
+                      fontSize: 14,
+                    ),
                   ),
-                ),
-                const SizedBox(width: 8),
-                Row(
-                  children: [
-                    _yesNoButton("YES", (childPermission.selectedStatus??"0") == "1"?true:false, childPermission.permissionId.toString(), true),
-                    const SizedBox(width: 6),
-                    _yesNoButton("NO", (childPermission.selectedStatus??"0") == "0"?true:false, childPermission.permissionId.toString(), false),
-                  ],
-                ),
-              ],
-            ),
+                  const SizedBox(width: 8),
+                  Row(
+                    children: [
+                      _yesNoButton(
+                        "YES",
+                        (childPermission.selectedStatus ?? "0") == "1",
+                        childPermission.permissionId.toString(),
+                        true,
+                      ),
+                      const SizedBox(width: 6),
+                      _yesNoButton(
+                        "NO",
+                        (childPermission.selectedStatus ?? "0") == "0",
+                        childPermission.permissionId.toString(),
+                        false,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
 
-            // const SizedBox(height: 10),
-
-            /// Description
-            Html(
-              data: childPermission.description??"",
-              style: {
-                "*": Style(
-                  fontSize: FontSize(13),
-                  color: text_color,
-                  lineHeight: LineHeight(1.4),
-                ),
-              },
-            )
-          ],
+              /// Expandable Content
+              AnimatedSize(
+                duration: const Duration(milliseconds: 250),
+                curve: Curves.easeInOut,
+                child: isExpanded
+                    ? Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: Html(
+                    data: childPermission.description ?? "",
+                    style: {
+                      "*": Style(
+                        fontSize: FontSize(13),
+                        color: text_color,
+                        lineHeight: LineHeight(1.4),
+                      ),
+                    },
+                  ),
+                )
+                    : const SizedBox(),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
+
+
 
   /// YES / NO Button
   Widget _yesNoButton(String text, bool selected, String permissionId, bool isYesButton) {

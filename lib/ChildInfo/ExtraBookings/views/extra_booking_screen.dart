@@ -260,6 +260,27 @@ class _ExtraBookingScreenState extends State<ExtraBookingScreen> {
 
                         SizedBox(height: 8),
 
+                        if ((booking.approvedUser??"").isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: Row(
+                              children: [
+                                BlueLargeBoldText(
+                                  "Approved By : ",
+
+                                  fontFamily: fontInterMedium,
+                                ),
+
+                                BlueLargeBoldText(
+                                  booking.approvedUser??"",
+
+                                  fontFamily: fontInterBold,
+                                ),
+                              ],
+                            ),
+                          ),
+
+
                         if (booking.days!.isEmpty)
                           BlueMediumBoldText(
                             'No sessions or extra charges available',
@@ -271,8 +292,6 @@ class _ExtraBookingScreenState extends State<ExtraBookingScreen> {
               },
             );
           }),
-
-
         ],
       ),
     );
@@ -349,7 +368,7 @@ class _ExtraBookingScreenState extends State<ExtraBookingScreen> {
                 const Divider(),
 
                 /// 🗑 Delete
-               if((extraBooking.status??"0") != "3") ListTile(
+                if ((extraBooking.approvedUser??"").isEmpty) ListTile(
                   leading: const Icon(Icons.delete_forever, color: Colors.red),
                   title: const Text(
                     "Delete",

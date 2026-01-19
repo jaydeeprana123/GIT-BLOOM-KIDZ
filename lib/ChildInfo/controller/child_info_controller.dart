@@ -310,7 +310,10 @@ class ChildInfoController extends GetxController {
       'relation': relationController.value.text,
       'email': emailController.value.text,
       'mobile': mobileController.value.text,
+
     };
+
+    printData("callUpdateFamilyAPI body", body);
 
     await apiReq.postAPIWithMedia(url, body, token, imagePath.value, []).then((
       value,
@@ -835,13 +838,13 @@ class ChildInfoController extends GetxController {
       http.StreamedResponse res = value;
       printData(
         runtimeType.toString(),
-        "callGetChildPermissionsAPI response ${res.statusCode}",
+        "callGetBookingsAPI response ${res.statusCode}",
       );
 
       await res.stream.bytesToString().then((valueData) async {
         printData(
           runtimeType.toString(),
-          "callGetChildPermissionsAPI value ${valueData}",
+          "callGetBookingsAPI value ${valueData}",
         );
 
         isLoading.value = false;
@@ -1415,6 +1418,9 @@ class ChildInfoController extends GetxController {
 
     dynamic body = {'observation': observationController.value.text};
 
+
+
+
     await apiReq
         .postAPIWithMedia(url, body, token, "", observationImagePath)
         .then((value) async {
@@ -1464,8 +1470,12 @@ class ChildInfoController extends GetxController {
 
     final apiReq = Request();
 
-    dynamic body = {'observation': observationController.value.text};
+    String removedIds = removedMediaIds.join(',');
 
+
+    dynamic body = {'observation': observationController.value.text,
+      "delete_media_ids[]" : removedIds};
+    printData("callUpdateObservationAPI body", body.toString());
     await apiReq
         .postAPIWithMedia(url, body, token, "", observationImagePath)
         .then((value) async {

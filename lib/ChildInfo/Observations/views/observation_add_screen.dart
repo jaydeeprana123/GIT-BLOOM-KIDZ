@@ -194,6 +194,10 @@ class _ObservationAddScreenState extends State<ObservationAddScreen> {
                                                   childInfoController
                                                       .observationImagePath
                                                       .removeAt(i);
+
+                                                  setState(() {
+
+                                                  });
                                                 },
                                                 child: Container(
                                                   decoration:

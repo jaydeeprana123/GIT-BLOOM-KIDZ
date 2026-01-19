@@ -42,6 +42,8 @@ class _ObservationUpdateScreenState extends State<ObservationUpdateScreen> {
   @override
   void initState() {
     super.initState();
+    childInfoController
+        .removedMediaIds.value = [];
     childInfoController.clearObservation();
     childInfoController.observationController.value.text =
         childInfoController.selectedObservation.value.observations ?? "";
@@ -220,6 +222,11 @@ class _ObservationUpdateScreenState extends State<ObservationUpdateScreen> {
                                                       .media ??
                                                       [])
                                                       .removeAt(i);
+
+
+                                                  setState(() {
+
+                                                  });
                                                 },
                                                 child: Container(
                                                   decoration:
@@ -304,6 +311,10 @@ class _ObservationUpdateScreenState extends State<ObservationUpdateScreen> {
                                                     childInfoController
                                                         .observationImagePath
                                                         .removeAt(i);
+
+                                                    setState(() {
+
+                                                    });
                                                   },
                                                   child: Container(
                                                     decoration:

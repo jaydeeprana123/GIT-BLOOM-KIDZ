@@ -124,23 +124,43 @@ class NewsFeedCard extends StatelessWidget {
     );
   }
 
+
   Widget _image() {
-    return ((newsFeed.media ?? []).length == 1)
-        ? (newsFeed.media?[0].extenstion == "jpeg")
-              ? Container(
-                  margin: const EdgeInsets.symmetric(vertical: 10),
-                  height: 180,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: NetworkImage(newsFeed.media?[0].file ?? ""),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                )
-              : SizedBox()
-        : SizedBox();
+    if ((newsFeed.media ?? []).isEmpty) {
+      return const SizedBox();
+    }
+
+    return SizedBox(
+      height: 200,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: newsFeed.media!.length,
+        itemBuilder: (context, index) {
+          final media = newsFeed.media![index];
+
+          if (media.extenstion != "jpg" &&
+              media.extenstion != "jpeg" &&
+              media.extenstion != "png") {
+            return const SizedBox();
+          }
+
+          return Container(
+            width: (newsFeed.media??[]).length == 1?double.infinity:280,
+            height: 200,
+            margin: const EdgeInsets.only(right: 10),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              image: DecorationImage(
+                image: NetworkImage(media.file ?? ""),
+                fit: BoxFit.cover,
+              ),
+            ),
+          );
+        },
+      ),
+    );
   }
+
 
   Widget _description() {
     return Padding(

@@ -104,23 +104,42 @@ class _BookingScreenState extends State<BookingScreen> {
                     Column(
                       children: [
                         // DATE
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: color_secondary,
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: BlackMediumRegularText(
-                            childInfoController.bookingList[i].planStart ?? "",
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center
+                          ,children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: color_secondary,
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: BlackMediumRegularText(
+                                childInfoController.bookingList[i].planStart ?? "",
 
-                            color: Colors.white,
-                          ),
+                                color: Colors.white,
+                              ),
+                            ),
+
+                            Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: BlueLargeBoldText(
+                                childInfoController.bookingList[i].statusLabel ??
+                                    "",
+                                color:
+                                (childInfoController.bookingList[i].status ??
+                                    "1") ==
+                                    "0"
+                                    ? Colors.green
+                                    : Colors.red,
+                              ),
+                            ),
+                          ],
                         ),
 
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 12),
 
                         // DAYS ROW
                         Padding(
@@ -175,26 +194,11 @@ class _BookingScreenState extends State<BookingScreen> {
                           ),
                         ),
 
-                        const SizedBox(height: 16),
 
-                        Row(
-                          children: [
-                            BlueLargeBoldText("Status : "),
 
-                            BlueLargeBoldText(
-                              childInfoController.bookingList[i].statusLabel ??
-                                  "",
-                              color:
-                                  (childInfoController.bookingList[i].status ??
-                                          "0") ==
-                                      "1"
-                                  ? Colors.green
-                                  : Colors.red,
-                            ),
-                          ],
-                        ),
+                  SizedBox(height: 16,),
 
-                        const SizedBox(height: 16),
+
                         // TIME SLOTS
                         ListView.builder(
                           shrinkWrap: true,

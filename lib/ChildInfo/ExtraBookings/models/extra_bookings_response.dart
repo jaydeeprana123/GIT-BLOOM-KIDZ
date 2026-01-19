@@ -64,6 +64,9 @@ class ExtraBooking {
   String? status;
   int? priceBand;
   List<Day>? days;
+  int? approvedBy;
+  DateTime? approvedAt;
+  String? approvedUser;
   DateTime? createdAt;
 
   ExtraBooking({
@@ -77,6 +80,9 @@ class ExtraBooking {
     this.priceBand,
     this.days,
     this.createdAt,
+    this.approvedBy,
+    this.approvedAt,
+    this.approvedUser,
   });
 
   factory ExtraBooking.fromJson(Map<String, dynamic> json) => ExtraBooking(
@@ -96,6 +102,10 @@ class ExtraBooking {
     createdAt: json["created_at"] == null
         ? null
         : DateTime.parse(json["created_at"]),
+    approvedBy: json["approved_by"],
+    approvedAt: json["approved_at"] == null ? null : DateTime.parse(json["approved_at"]),
+    approvedUser: json["approved_user"],
+
   );
 
   Map<String, dynamic> toJson() => {
@@ -113,6 +123,9 @@ class ExtraBooking {
         ? []
         : List<dynamic>.from(days!.map((x) => x.toJson())),
     "created_at": createdAt?.toIso8601String(),
+    "approved_by": approvedBy,
+    "approved_at": approvedAt?.toIso8601String(),
+    "approved_user": approvedUser,
   };
 }
 
