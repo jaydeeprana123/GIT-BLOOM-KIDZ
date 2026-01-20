@@ -1,5 +1,11 @@
 // To parse this JSON data, do
 //
+//     final bookingsResponse = bookingsResponseFromJson(jsonString);
+
+import 'dart:convert';
+
+// To parse this JSON data, do
+//
 //     final aboutResponse = aboutResponseFromJson(jsonString);
 
 import 'dart:convert';
@@ -151,8 +157,6 @@ class HealthInfo {
   String? vaccines;
   String? allergy;
   String? specialNote;
-  Dentist? doctor;
-  Dentist? dentist;
 
   HealthInfo({
     this.toleratesPenicillin,
@@ -160,8 +164,6 @@ class HealthInfo {
     this.vaccines,
     this.allergy,
     this.specialNote,
-    this.doctor,
-    this.dentist,
   });
 
   factory HealthInfo.fromJson(Map<String, dynamic> json) => HealthInfo(
@@ -170,8 +172,6 @@ class HealthInfo {
     vaccines: json["vaccines"],
     allergy: json["allergy"],
     specialNote: json["special_note"],
-    doctor: json["doctor"] == null ? null : Dentist.fromJson(json["doctor"]),
-    dentist: json["dentist"] == null ? null : Dentist.fromJson(json["dentist"]),
   );
 
   Map<String, dynamic> toJson() => {
@@ -180,44 +180,6 @@ class HealthInfo {
     "vaccines": vaccines,
     "allergy": allergy,
     "special_note": specialNote,
-    "doctor": doctor?.toJson(),
-    "dentist": dentist?.toJson(),
-  };
-}
-
-class Dentist {
-  String? name;
-  String? mobile;
-  String? street;
-  String? city;
-  String? country;
-  String? postcode;
-
-  Dentist({
-    this.name,
-    this.mobile,
-    this.street,
-    this.city,
-    this.country,
-    this.postcode,
-  });
-
-  factory Dentist.fromJson(Map<String, dynamic> json) => Dentist(
-    name: json["name"],
-    mobile: json["mobile"],
-    street: json["street"],
-    city: json["city"],
-    country: json["country"],
-    postcode: json["postcode"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "name": name,
-    "mobile": mobile,
-    "street": street,
-    "city": city,
-    "country": country,
-    "postcode": postcode,
   };
 }
 
@@ -239,7 +201,7 @@ class ReligionInfo {
 class RoomMoves {
   String? rooms;
   String? startDate;
-  dynamic endDate;
+  String? endDate;
 
   RoomMoves({this.rooms, this.startDate, this.endDate});
 
