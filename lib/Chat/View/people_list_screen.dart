@@ -271,7 +271,10 @@ class _ChatUserTileState extends State<ChatUserTile> {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: (){
-        Get.to(ChatScreen(groupId: "",));
+        widget.chatPerson.isSelected = !(widget.chatPerson.isSelected??false);
+        setState(() {
+
+        });
       },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12),
@@ -288,12 +291,29 @@ setState(() {
 
 
             /// Avatar
-             CircleAvatar(
-              radius: 26,
-              backgroundImage: NetworkImage(
-                widget.chatPerson.profileImage??"",
+          CircleAvatar(
+            radius: 26,
+            backgroundColor: Colors.blue.shade100,
+            backgroundImage: (widget.chatPerson.profileImage != null &&
+                widget.chatPerson.profileImage!.isNotEmpty)
+                ? NetworkImage(widget.chatPerson.profileImage!)
+                : null,
+            child: (widget.chatPerson.profileImage == null ||
+                widget.chatPerson.profileImage!.isEmpty)
+                ? Text(
+              (widget.chatPerson.name != null &&
+                  widget.chatPerson.name!.isNotEmpty)
+                  ? widget.chatPerson.name![0].toUpperCase()
+                  : "",
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.blue,
               ),
-            ),
+            )
+                : null,
+          ),
+
 
             const SizedBox(width: 12),
 
