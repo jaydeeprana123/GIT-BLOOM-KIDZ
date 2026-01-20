@@ -33,7 +33,7 @@ class ChildDetailsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar:  CommonAppBar(
-        title: "${childInfo.firstName??""} ${childInfo.lastName??""} Details",
+        title: "${childInfo.firstName??""} ${childInfo.lastName??""} Profile",
         showMenu: true,
         showBack: true,
       ),

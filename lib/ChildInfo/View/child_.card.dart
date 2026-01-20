@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
+import '../../BottomNavigation/controller/bottom_navigation_controller.dart';
 import '../../CommonWidgets/black_medium_regular_text.dart';
 import '../../CommonWidgets/black_small_medium_text.dart';
 import '../../CommonWidgets/black_small_regular_text.dart';
@@ -31,6 +32,11 @@ class ChildCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    BottomNavigationController bottomNavController = Get.find<
+      BottomNavigationController>()
+    ;
+
     return InkWell(
       onTap: () {
         Get.to(
@@ -51,7 +57,7 @@ class ChildCard extends StatelessWidget {
           ), // change 16 to any radius you like
         ),
         child: Container(
-          height: 122,
+          height: 132,
           child: Row(
             children: [
 
@@ -97,9 +103,9 @@ class ChildCard extends StatelessWidget {
                       const SizedBox(height: 4),
                       Row(
                         children: [
-                          SvgPicture.asset(icon_sick, width: 14),
-                          // Icon(Icons.sick, size: 14, color: Colors.grey),
-                          SizedBox(width: 4),
+                          // SvgPicture.asset(icon_sick, width: 14),
+                          // // Icon(Icons.sick, size: 14, color: Colors.grey),
+                          // SizedBox(width: 4),
                           InkWell(
                             onTap: () {
                               showLeaveDialog(
@@ -109,16 +115,9 @@ class ChildCard extends StatelessWidget {
                                 childInfo.id.toString(),
                               );
                             },
-                            child: BlackSmallRegularText(
-                              "Sick",
-                              fontSize: 11,
-                              color: Colors.black,
-                                fontFamily: fontInterMedium
-                            ),
+                            child: _actionButton(icon_sick, "Sick"),
                           ),
-                          SizedBox(width: 12),
-                          SvgPicture.asset(holidayIcon, width: 14),
-                          SizedBox(width: 4),
+                          const SizedBox(width: 8),
                           InkWell(
                             onTap: () {
                               showLeaveDialog(
@@ -128,12 +127,7 @@ class ChildCard extends StatelessWidget {
                                 childInfo.id.toString(),
                               );
                             },
-                            child: BlackSmallRegularText(
-                              "Holiday",
-                              fontSize: 11,
-                              color: Colors.black,
-                                fontFamily: fontInterMedium
-                            ),
+                            child: _actionButton(holidayIcon, "Holiday"),
                           ),
                         ],
                       ),
@@ -143,13 +137,16 @@ class ChildCard extends StatelessWidget {
 
                           InkWell(onTap: ()async{
 
+                            bottomNavController.currentIndex.value = 2;
+
+
                             childInfoController.isLoading.value = true;
 
-                            List<ChatPerson> selectedPerson = [];
-                            selectedPerson.add(ChatPerson(id: childInfo.id, name: "${childInfo.firstName??""} ${childInfo.lastName??""}"));
-                            ChatController chatController = Get.put(ChatController());
-                           await chatController.callConversationListAPI(context,  selectedPersons: selectedPerson);
-                            childInfoController.isLoading.value = true;
+                           //  List<ChatPerson> selectedPerson = [];
+                           //  selectedPerson.add(ChatPerson(id: childInfo.id, name: "${childInfo.firstName??""} ${childInfo.lastName??""}"));
+                           //  ChatController chatController = Get.put(ChatController());
+                           // await chatController.callConversationListAPI(context,  selectedPersons: selectedPerson);
+                           //  childInfoController.isLoading.value = true;
                           },child: _actionButton(commentIcon, "Chat")),
                           const SizedBox(width: 8),
                           InkWell(

@@ -124,19 +124,34 @@ class _BookingScreenState extends State<BookingScreen> {
                               ),
                             ),
 
-                            Padding(
-                              padding: const EdgeInsets.all(16.0),
+                          Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 5),
+                              decoration: BoxDecoration(
+                                color: (childInfoController.bookingList[i].status ??
+                                    "1") == "0"
+                                    ? Colors.green.withOpacity(0.15)
+                                    : Colors.red.withOpacity(0.15),
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                  color: (childInfoController.bookingList[i].status ??
+                                      "1") == "0"
+                                      ? Colors.green
+                                      : Colors.red,
+                                  width: 1,
+                                ),
+                              ),
                               child: BlueLargeBoldText(
-                                childInfoController.bookingList[i].statusLabel ??
-                                    "",
-                                color:
-                                (childInfoController.bookingList[i].status ??
-                                    "1") ==
-                                    "0"
+                                childInfoController.bookingList[i].statusLabel ?? "",
+                                color: (childInfoController.bookingList[i].status ??
+                                    "1") == "0"
                                     ? Colors.green
                                     : Colors.red,
                               ),
                             ),
+                          ),
                           ],
                         ),
 

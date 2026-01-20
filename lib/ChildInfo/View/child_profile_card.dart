@@ -1,3 +1,4 @@
+import 'package:bloom_kidz/BottomNavigation/View/bottom_navigation_view.dart';
 import 'package:bloom_kidz/ChildInfo/About/views/add_holiday_dialog.dart';
 import 'package:bloom_kidz/ChildInfo/About/views/collection_pin_dialog.dart';
 import 'package:bloom_kidz/ChildInfo/controller/child_info_controller.dart';
@@ -71,9 +72,9 @@ class ChildProfileCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 Row(
                   children: [
-                    SvgPicture.asset(icon_sick, width: 14),
-                    // Icon(Icons.sick, size: 14, color: Colors.grey),
-                    SizedBox(width: 4),
+                    // SvgPicture.asset(icon_sick, width: 14),
+                    // // Icon(Icons.sick, size: 14, color: Colors.grey),
+                    // SizedBox(width: 4),
                     InkWell(
                       onTap: () {
                         showLeaveDialog(
@@ -83,16 +84,9 @@ class ChildProfileCard extends StatelessWidget {
                           childInfo.id.toString(),
                         );
                       },
-                      child: BlackSmallRegularText(
-                        "Sick",
-                        fontSize: 11,
-                        color: Colors.black,
-                          fontFamily: fontInterMedium
-                      ),
+                      child: _actionButton(icon_sick, "Sick"),
                     ),
-                    SizedBox(width: 12),
-                    SvgPicture.asset(holidayIcon, width: 14),
-                    SizedBox(width: 4),
+                    const SizedBox(width: 8),
                     InkWell(
                       onTap: () {
                         showLeaveDialog(
@@ -102,12 +96,7 @@ class ChildProfileCard extends StatelessWidget {
                           childInfo.id.toString(),
                         );
                       },
-                      child: BlackSmallRegularText(
-                        "Holiday",
-                        fontSize: 11,
-                        color: Colors.black,
-                          fontFamily: fontInterMedium
-                      ),
+                      child: _actionButton(holidayIcon, "Holiday"),
                     ),
                   ],
                 ),
@@ -117,10 +106,16 @@ class ChildProfileCard extends StatelessWidget {
                     InkWell(onTap: ()async{
 
 
-                      List<ChatPerson> selectedPerson = [];
-                      selectedPerson.add(ChatPerson(id: childInfo.id, name: "${childInfo.firstName??""} ${childInfo.lastName??""}"));
-                      ChatController chatController = Get.put(ChatController());
-                      await chatController.callConversationListAPI(context,  selectedPersons: selectedPerson);
+                      Get.offUntil(
+                        GetPageRoute(
+                          page: () => BottomNavigationView(selectTabPosition: 2),
+                        ),
+                            (route) => false,
+                      );
+                      // List<ChatPerson> selectedPerson = [];
+                      // selectedPerson.add(ChatPerson(id: childInfo.id, name: "${childInfo.firstName??""} ${childInfo.lastName??""}"));
+                      // ChatController chatController = Get.put(ChatController());
+                      // await chatController.callConversationListAPI(context,  selectedPersons: selectedPerson);
 
                     },child: _actionButton(commentIcon, "Chat")),
                     const SizedBox(width: 8),

@@ -108,7 +108,7 @@ class _UsersScreenState extends State<UsersScreen>
               iconTheme:
               const IconThemeData(color: Colors.white),
               title: const Text(
-                "Safeguarding",
+                "Chat",
                 style: TextStyle(
                   fontSize: 18,
                   fontFamily: fontInterSemiBold,
