@@ -348,10 +348,9 @@ class _AboutScreenState extends State<AboutScreen> {
               _healthRow(specailnote, "Special Note", health.specialNote),
 
               // const Divider(height: 32),
-
-              // _doctorInfo(),
+              _doctorInfo(health),
               // const Divider(height: 32),
-              // _dentistInfo(),
+              _dentistInfo(health),
             ],
           ),
         ),
@@ -402,28 +401,37 @@ class _AboutScreenState extends State<AboutScreen> {
     );
   }
 
-  Widget _doctorInfo() {
+  Widget _doctorInfo(HealthInfo health) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _sectionTitle("Doctor Info"),
         const SizedBox(height: 10),
-        _infoLine(keyPersonIcon, "Name", "Lorem Ipsum"),
-        _infoLine(icon_call_video, "Mobile", "+91 232 1323"),
-        _infoLine(icon_home, "Address", "Lorem Ipsum is simply dummy text"),
+        _infoLine(keyPersonIcon, "Name", health.doctor?.name ?? "-"),
+        _infoLine(icon_call_video, "Mobile", health.doctor?.mobile ?? "-"),
+        _infoLine(
+          icon_home,
+          "Address",
+          "${health.doctor?.city ?? ""}, ${health.doctor?.country ?? ""} - ${health.doctor?.postcode ?? ""}",
+        ),
       ],
     );
   }
 
-  Widget _dentistInfo() {
+  Widget _dentistInfo(HealthInfo health) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _sectionTitle("Dentist Info"),
         const SizedBox(height: 10),
-        _infoLine(keyPersonIcon, "Name", "Lorem Ipsum"),
-        _infoLine(icon_call_video, "Mobile", "+91 232 1323"),
-        _infoLine(icon_home, "Address", "Lorem Ipsum is simply dummy text"),
+
+        _infoLine(keyPersonIcon, "Name", health.dentist?.name ?? "-"),
+        _infoLine(icon_call_video, "Mobile", health.dentist?.mobile ?? "-"),
+        _infoLine(
+          icon_home,
+          "Address",
+          "${health.dentist?.city ?? ""}, ${health.dentist?.country ?? ""} - ${health.dentist?.postcode ?? ""}",
+        ),
       ],
     );
   }

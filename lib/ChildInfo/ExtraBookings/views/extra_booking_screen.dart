@@ -59,7 +59,6 @@ class _ExtraBookingScreenState extends State<ExtraBookingScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-
       controller.extraBookingList.clear();
 
       controller.callGetExtraBookingsAPI(context, widget.childId);
@@ -87,7 +86,6 @@ class _ExtraBookingScreenState extends State<ExtraBookingScreen> {
           Positioned.fill(child: SvgPicture.asset(app_bg, fit: BoxFit.cover)),
 
           Obx(() {
-
             if (controller.isLoading.value) {
               return const Center(child: CircularProgressIndicator());
             }
@@ -100,8 +98,6 @@ class _ExtraBookingScreenState extends State<ExtraBookingScreen> {
                 ),
               );
             }
-
-
 
             return ListView.builder(
               padding: EdgeInsets.symmetric(vertical: 16),
@@ -198,9 +194,22 @@ class _ExtraBookingScreenState extends State<ExtraBookingScreen> {
 
                                             if ((day.extraCharges ?? [])
                                                 .isNotEmpty)
-                                              BlueMediumBoldText(
-                                                '${selectedExtraCharge(day)?.name}',
-                                              ),
+                                              for (
+                                                int i = 0;
+                                                i <
+                                                    (day.extraCharges ?? [])
+                                                        .length;
+                                                i++
+                                              )
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                        top: 8.0,
+                                                      ),
+                                                  child: BlueMediumBoldText(
+                                                    '${day.extraCharges?[i].name}',
+                                                  ),
+                                                ),
                                           ],
                                         ),
                                       ),
@@ -221,10 +230,22 @@ class _ExtraBookingScreenState extends State<ExtraBookingScreen> {
                                             SizedBox(height: 8),
                                             if ((day.extraCharges ?? [])
                                                 .isNotEmpty)
-                                              BlueMediumBoldText(
-                                                "£${selectedExtraCharge(day)?.price??""}",
-                                                fontFamily: fontInterSemiBold,
-                                              ),
+                                              for (
+                                                int i = 0;
+                                                i <
+                                                    (day.extraCharges ?? [])
+                                                        .length;
+                                                i++
+                                              )
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                        top: 8.0,
+                                                      ),
+                                                  child: BlueMediumBoldText(
+                                                    '£${day.extraCharges?[i].price}',
+                                                  ),
+                                                ),
                                           ],
                                         ),
                                       ),
@@ -260,7 +281,7 @@ class _ExtraBookingScreenState extends State<ExtraBookingScreen> {
 
                         SizedBox(height: 8),
 
-                        if ((booking.approvedUser??"").isNotEmpty)
+                        if ((booking.approvedUser ?? "").isNotEmpty)
                           Padding(
                             padding: const EdgeInsets.only(bottom: 8.0),
                             child: Row(
@@ -272,14 +293,13 @@ class _ExtraBookingScreenState extends State<ExtraBookingScreen> {
                                 ),
 
                                 BlueLargeBoldText(
-                                  booking.approvedUser??"",
+                                  booking.approvedUser ?? "",
 
                                   fontFamily: fontInterBold,
                                 ),
                               ],
                             ),
                           ),
-
 
                         if (booking.days!.isEmpty)
                           BlueMediumBoldText(
@@ -359,8 +379,13 @@ class _ExtraBookingScreenState extends State<ExtraBookingScreen> {
                   onTap: () {
                     controller.selectedExtraBooking.value = extraBooking;
                     Navigator.pop(context);
-                    Get.to(UpdateExtraBookingScreen(childId: childId))?.then((value) {
-                      controller.callGetExtraBookingsAPI(context, widget.childId);
+                    Get.to(UpdateExtraBookingScreen(childId: childId))?.then((
+                      value,
+                    ) {
+                      controller.callGetExtraBookingsAPI(
+                        context,
+                        widget.childId,
+                      );
                     });
                   },
                 ),
@@ -368,30 +393,34 @@ class _ExtraBookingScreenState extends State<ExtraBookingScreen> {
                 const Divider(),
 
                 /// 🗑 Delete
-                if ((extraBooking.approvedUser??"").isEmpty) ListTile(
-                  leading: const Icon(Icons.delete_forever, color: Colors.red),
-                  title: const Text(
-                    "Delete",
-                    style: TextStyle(
+                if ((extraBooking.approvedUser ?? "").isEmpty)
+                  ListTile(
+                    leading: const Icon(
+                      Icons.delete_forever,
                       color: Colors.red,
-                      fontWeight: FontWeight.w600,
                     ),
-                  ),
-                  onTap: () {
-                    Navigator.pop(context);
+                    title: const Text(
+                      "Delete",
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    onTap: () {
+                      Navigator.pop(context);
 
-                    showDeleteWarningDialog(
-                      context,
-                      onConfirm: () {
-                        controller.callDeleteExtraBookingsAPI(
-                          context,
-                          childId,
-                          id,
-                        );
-                      },
-                    );
-                  },
-                ),
+                      showDeleteWarningDialog(
+                        context,
+                        onConfirm: () {
+                          controller.callDeleteExtraBookingsAPI(
+                            context,
+                            childId,
+                            id,
+                          );
+                        },
+                      );
+                    },
+                  ),
               ],
             ),
           ),
@@ -479,29 +508,23 @@ class _ExtraBookingScreenState extends State<ExtraBookingScreen> {
         );
       },
     );
-
-
-
   }
 
-  Session? selectedSession(Day day){
-    Session? selectedSession = day.sessions
-        ?.firstWhere(
-          (s) => s.selected == true,
+  Session? selectedSession(Day day) {
+    Session? selectedSession = day.sessions?.firstWhere(
+      (s) => s.selected == true,
       orElse: () => Session(),
     );
 
     return selectedSession;
   }
 
-  ExtraCharge? selectedExtraCharge(Day day){
-    ExtraCharge? selectedExtraCharge = day.extraCharges
-        ?.firstWhere(
-          (s) => s.selected == true,
+  ExtraCharge? selectedExtraCharge(Day day) {
+    ExtraCharge? selectedExtraCharge = day.extraCharges?.firstWhere(
+      (s) => s.selected == true,
       orElse: () => ExtraCharge(),
     );
 
     return selectedExtraCharge;
   }
-
 }

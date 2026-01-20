@@ -81,10 +81,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: Column(
                       children: [
                         /// 👤 Profile Image
-                        const CircleAvatar(
-                          radius: 45,
+                        CircleAvatar(
+                          radius: 50,
                           backgroundImage: NetworkImage(
-                            "https://randomuser.me/api/portraits/women/44.jpg",
+                            profileController.profileUser.value.imageUrl ?? "",
                           ),
                         ),
 
@@ -132,9 +132,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ),
                                 ),
                                 onPressed: () {
-
-
-
                                   showChangePasswordDialog(
                                     context,
                                     profileController,
@@ -225,7 +222,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
-
         return ChangePasswordDialog(controller: profileController);
       },
     );

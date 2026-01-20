@@ -141,13 +141,34 @@ class ChildInfoController extends GetxController {
     selectedSessions.refresh();
   }
 
+  // void toggleExtraCharge(String day, int chargeId) {
+  //   // If already selected → remove
+  //   if (selectedExtraCharges[day]?.contains(chargeId) ?? false) {
+  //     selectedExtraCharges.remove(day);
+  //   } else {
+  //     // Replace any previous selection
+  //     selectedExtraCharges[day] = [chargeId];
+  //   }
+  //
+  //   calculateTotal();
+  //   selectedExtraCharges.refresh();
+  // }
+
   void toggleExtraCharge(String day, int chargeId) {
-    // If already selected → remove
-    if (selectedExtraCharges[day]?.contains(chargeId) ?? false) {
+    final charges = selectedExtraCharges[day] ?? [];
+
+    if (charges.contains(chargeId)) {
+      // remove if already selected
+      charges.remove(chargeId);
+    } else {
+      // add for multi selection
+      charges.add(chargeId);
+    }
+
+    if (charges.isEmpty) {
       selectedExtraCharges.remove(day);
     } else {
-      // Replace any previous selection
-      selectedExtraCharges[day] = [chargeId];
+      selectedExtraCharges[day] = charges;
     }
 
     calculateTotal();
@@ -238,7 +259,7 @@ class ChildInfoController extends GetxController {
           } else {
             snackBar(context, childInfoListResponse.message ?? "");
           }
-        }else if (res.statusCode == 401) {
+        } else if (res.statusCode == 401) {
           logoutFromTheApp();
         }
       });
@@ -310,7 +331,6 @@ class ChildInfoController extends GetxController {
       'relation': relationController.value.text,
       'email': emailController.value.text,
       'mobile': mobileController.value.text,
-
     };
 
     printData("callUpdateFamilyAPI body", body);
@@ -407,10 +427,6 @@ class ChildInfoController extends GetxController {
             if (selectedDateIndex.value != null) {
               selectedDateIndex.value = selectedDateIndex.value!;
             }
-
-
-
-
           } else {
             snackBar(context, activityResponse.message ?? "");
           }
@@ -418,8 +434,6 @@ class ChildInfoController extends GetxController {
       });
     });
   }
-
-
 
   /// ActivityList API
   callActivityListForSelectAPI(BuildContext context, bool isHoliday) async {
@@ -457,12 +471,11 @@ class ChildInfoController extends GetxController {
             activityListForSelect.value =
                 activityResponseForSelect.data?.activities ?? [];
 
-            if(isHoliday){
+            if (isHoliday) {
               getHolidayLeave();
-            }else{
+            } else {
               getSickLeave();
             }
-
           } else {
             snackBar(context, activityResponseForSelect.message ?? "");
           }
@@ -541,6 +554,7 @@ class ChildInfoController extends GetxController {
       /// 📡 Send Request
       http.StreamedResponse response = await request.send();
       isLoading.value = false;
+
       /// 📥 Read Response Body
       final responseBody = await response.stream.bytesToString();
       final Map<String, dynamic> jsonData = json.decode(responseBody);
@@ -565,9 +579,13 @@ class ChildInfoController extends GetxController {
     }
   }
 
-
   /// Leave Request API
-  Future<void> callObservationDeleteCommentAPI(BuildContext context,String childId, String observationId ,String id) async {
+  Future<void> callObservationDeleteCommentAPI(
+    BuildContext context,
+    String childId,
+    String observationId,
+    String id,
+  ) async {
     try {
       isLoading.value = true;
 
@@ -583,19 +601,18 @@ class ChildInfoController extends GetxController {
       };
 
       /// 🌐 URL
-      String url = "$urlBase$urlAddCommentInObservation/$childId/$observationId/comment/$id";
+      String url =
+          "$urlBase$urlAddCommentInObservation/$childId/$observationId/comment/$id";
 
       /// 🔥 Request
       var request = http.Request('DELETE', Uri.parse(url));
-      printData(
-        runtimeType.toString(),
-        "callDeleteCommentAPI response ${url}",
-      );
+      printData(runtimeType.toString(), "callDeleteCommentAPI response ${url}");
       request.headers.addAll(headersWithBearer);
 
       /// 📡 Send Request
       http.StreamedResponse response = await request.send();
       isLoading.value = false;
+
       /// 📥 Read Response Body
       final responseBody = await response.stream.bytesToString();
       final Map<String, dynamic> jsonData = json.decode(responseBody);
@@ -603,12 +620,13 @@ class ChildInfoController extends GetxController {
       /// 📦 Parse Base Model
       BaseModel baseModel = BaseModel.fromJson(jsonData);
       printData(
-          runtimeType.toString(),
-          "callDeleteCommentAPI response ${response.statusCode}");
+        runtimeType.toString(),
+        "callDeleteCommentAPI response ${response.statusCode}",
+      );
       if (response.statusCode == 200) {
         if (baseModel.status == true) {
           snackBar(context, baseModel.message ?? "Deleted successfully");
-         Navigator.pop(context);
+          Navigator.pop(context);
         } else {
           snackBar(context, baseModel.message ?? "Something went wrong");
         }
@@ -622,7 +640,6 @@ class ChildInfoController extends GetxController {
       isLoading.value = false;
     }
   }
-
 
   /// Delete Extra Bookings API
   Future<void> callDeleteExtraBookingsAPI(
@@ -655,6 +672,7 @@ class ChildInfoController extends GetxController {
       /// 📡 Send Request
       http.StreamedResponse response = await request.send();
       isLoading.value = false;
+
       /// 📥 Read Response Body
       final responseBody = await response.stream.bytesToString();
       final Map<String, dynamic> jsonData = json.decode(responseBody);
@@ -717,7 +735,7 @@ class ChildInfoController extends GetxController {
           } else {
             snackBar(context, documentsResponse.message ?? "");
           }
-        }else if (res.statusCode == 401) {
+        } else if (res.statusCode == 401) {
           logoutFromTheApp();
         }
       });
@@ -903,7 +921,7 @@ class ChildInfoController extends GetxController {
           } else {
             snackBar(context, extraBookingsResponse.message ?? "");
           }
-        }else if (res.statusCode == 401) {
+        } else if (res.statusCode == 401) {
           logoutFromTheApp();
         }
       });
@@ -1017,7 +1035,13 @@ class ChildInfoController extends GetxController {
                       x++
                     ) {
                       if (selectedExtraBooking.value.days?[j].sessions?[z].id ==
-                          priceBandList[i].sessions?[x].id && (selectedExtraBooking.value.days?[j].sessions?[z].selected??false)) {
+                              priceBandList[i].sessions?[x].id &&
+                          (selectedExtraBooking
+                                  .value
+                                  .days?[j]
+                                  .sessions?[z]
+                                  .selected ??
+                              false)) {
                         priceBandList[i].sessions?[x].selected =
                             selectedExtraBooking
                                 .value
@@ -1047,11 +1071,17 @@ class ChildInfoController extends GetxController {
                       x++
                     ) {
                       if (selectedExtraBooking
-                              .value
-                              .days?[j]
-                              .extraCharges?[z]
-                              .id ==
-                          priceBandList[i].extraCharges?[x].id && (selectedExtraBooking.value.days?[j].extraCharges?[z].selected??false)) {
+                                  .value
+                                  .days?[j]
+                                  .extraCharges?[z]
+                                  .id ==
+                              priceBandList[i].extraCharges?[x].id &&
+                          (selectedExtraBooking
+                                  .value
+                                  .days?[j]
+                                  .extraCharges?[z]
+                                  .selected ??
+                              false)) {
                         priceBandList[i].extraCharges?[x].selected =
                             selectedExtraBooking
                                 .value
@@ -1418,9 +1448,6 @@ class ChildInfoController extends GetxController {
 
     dynamic body = {'observation': observationController.value.text};
 
-
-
-
     await apiReq
         .postAPIWithMedia(url, body, token, "", observationImagePath)
         .then((value) async {
@@ -1472,9 +1499,10 @@ class ChildInfoController extends GetxController {
 
     String removedIds = removedMediaIds.join(',');
 
-
-    dynamic body = {'observation': observationController.value.text,
-      "delete_media_ids[]" : removedIds};
+    dynamic body = {
+      'observation': observationController.value.text,
+      "delete_media_ids[]": removedIds,
+    };
     printData("callUpdateObservationAPI body", body.toString());
     await apiReq
         .postAPIWithMedia(url, body, token, "", observationImagePath)
@@ -1866,8 +1894,7 @@ class ChildInfoController extends GetxController {
     callMedicationListAPI(context, childId);
   }
 
-
-  clearFamilyFields(){
+  clearFamilyFields() {
     firstNameController.value.text = "";
     lastNameController.value.text = "";
     mobileController.value.text = "";
@@ -1877,12 +1904,12 @@ class ChildInfoController extends GetxController {
     imagePath.value = "";
   }
 
-  clearObservation(){
+  clearObservation() {
     observationImagePath.clear();
     observationController.value.text = "";
   }
 
-  clearDateField(){
+  clearDateField() {
     startDate.value = null;
     endDate.value = null;
     planStartDate.value = null;
@@ -1900,23 +1927,23 @@ class ChildInfoController extends GetxController {
     // Get.delete<LoginController>();
   }
 
-  getSickLeave(){
-    ActivityForSelect? sickLeave = activityListForSelect
-        .firstWhereOrNull(
-          (activity) => activity.name == "Sick Leave",
+  void getSickLeave() {
+    final sickLeave = activityListForSelect.firstWhereOrNull(
+      (activity) => activity.name == "Sick Leave",
     );
+
+    activityListForSelect.value = sickLeave == null ? [] : [sickLeave];
 
     selectedActivity.value = sickLeave;
-
   }
 
-  getHolidayLeave(){
-    ActivityForSelect? holiday = activityListForSelect
-        .firstWhereOrNull(
-          (activity) => activity.name == "Holiday",
+  void getHolidayLeave() {
+    final holiday = activityListForSelect.firstWhereOrNull(
+      (activity) => activity.name == "Holiday",
     );
+
+    activityListForSelect.value = holiday == null ? [] : [holiday];
+
     selectedActivity.value = holiday;
-
   }
-
 }

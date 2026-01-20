@@ -36,10 +36,7 @@ class CommentListWidget extends StatelessWidget {
       newsFeedController.isLikeList.add(false);
     }
 
-
     newsFeedController.getUserInfo();
-
-
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -70,29 +67,65 @@ class CommentListWidget extends StatelessWidget {
                         ),
                         child: Column(
                           children: [
-
-                            if(comment?.user?.id == newsFeedController.loginResponse.value.data?.user?.id)InkWell(onTap: (){
-
-                              showDeleteWarningDialog(context, onConfirm: (){
-                                newsFeedController.callNewsDeleteCommentAPI(context, newsFeed.id.toString(), (comment?.id??0).toString());
-
-                              });
-
-                            },child: Align(
-                              alignment: Alignment.topRight
-                              ,child: InkWell(onTap: (){
-
-                                showDeleteWarningDialog(context, onConfirm: (){
-                                  newsFeedController.callNewsDeleteCommentAPI(context, newsFeed.id.toString(), (comment?.id??0).toString());
-
-                                });
-
-                              },child: Container(margin: EdgeInsets.only(top: 8, bottom: 4, right: 8),child: Icon(Icons.cancel, color: Colors.red,size: 16,))),
-                            )),
-
+                            if (comment?.user?.id ==
+                                newsFeedController
+                                    .loginResponse
+                                    .value
+                                    .data
+                                    ?.user
+                                    ?.id)
+                              InkWell(
+                                onTap: () {
+                                  showDeleteWarningDialog(
+                                    context,
+                                    onConfirm: () {
+                                      newsFeedController
+                                          .callNewsDeleteCommentAPI(
+                                            context,
+                                            newsFeed.id.toString(),
+                                            (comment?.id ?? 0).toString(),
+                                          );
+                                    },
+                                  );
+                                },
+                                child: Align(
+                                  alignment: Alignment.topRight,
+                                  child: InkWell(
+                                    onTap: () {
+                                      showDeleteWarningDialog(
+                                        context,
+                                        onConfirm: () {
+                                          newsFeedController
+                                              .callNewsDeleteCommentAPI(
+                                                context,
+                                                newsFeed.id.toString(),
+                                                (comment?.id ?? 0).toString(),
+                                              );
+                                        },
+                                      );
+                                    },
+                                    child: Container(
+                                      margin: EdgeInsets.only(
+                                        top: 8,
+                                        bottom: 4,
+                                        right: 8,
+                                      ),
+                                      child: Icon(
+                                        Icons.delete_forever,
+                                        color: Colors.red,
+                                        size: 16,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
 
                             Container(
-                              padding: const EdgeInsets.only(left: 12, right: 12, bottom: 12),
+                              padding: const EdgeInsets.only(
+                                left: 12,
+                                right: 12,
+                                bottom: 12,
+                              ),
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -109,7 +142,8 @@ class CommentListWidget extends StatelessWidget {
                                   /// 💬 Content
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         /// Name + Date
                                         Row(
@@ -148,7 +182,8 @@ class CommentListWidget extends StatelessWidget {
                                                     .callAddLikeInCommentAPI(
                                                       context,
                                                       newsFeed.id.toString(),
-                                                      (comment?.id ?? 0).toString(),
+                                                      (comment?.id ?? 0)
+                                                          .toString(),
                                                       index,
                                                     );
                                               },
@@ -157,7 +192,8 @@ class CommentListWidget extends StatelessWidget {
                                                             .isLikeList[index] ==
                                                         true
                                                     ? Icons.thumb_up
-                                                    : Icons.thumb_up_alt_outlined,
+                                                    : Icons
+                                                          .thumb_up_alt_outlined,
                                                 size: 16,
                                                 color:
                                                     newsFeedController
@@ -171,18 +207,11 @@ class CommentListWidget extends StatelessWidget {
                                             BlackMediumBoldText(
                                               (comment?.likes ?? 0).toString(),
                                             ),
-
-
-
-
-
                                           ],
                                         ),
                                       ],
                                     ),
                                   ),
-
-
                                 ],
                               ),
                             ),
@@ -200,11 +229,10 @@ class CommentListWidget extends StatelessWidget {
     );
   }
 
-
   void showDeleteWarningDialog(
-      BuildContext context, {
-        required VoidCallback onConfirm,
-      }) {
+    BuildContext context, {
+    required VoidCallback onConfirm,
+  }) {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -218,7 +246,6 @@ class CommentListWidget extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-
                 /// ⚠️ Icon
                 const Icon(
                   Icons.warning_amber_rounded,
@@ -282,5 +309,4 @@ class CommentListWidget extends StatelessWidget {
       },
     );
   }
-
 }

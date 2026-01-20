@@ -41,7 +41,6 @@ class ObservationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     childInfoController.getUserInfo();
 
     return Card(
@@ -116,7 +115,13 @@ class ObservationCard extends StatelessWidget {
           ),
           InkWell(
             onTap: () {
-              showUpdateDialog(context, childId, observation.id.toString(), observation, childInfoController);
+              showUpdateDialog(
+                context,
+                childId,
+                observation.id.toString(),
+                observation,
+                childInfoController,
+              );
               printData("update", "val");
               // PopupMenuButton<int>(
               //   icon: const Icon(Icons.more_vert),
@@ -164,9 +169,9 @@ class ObservationCard extends StatelessWidget {
       height: 200,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        itemCount: observation.media!.length,
+        itemCount: (observation.media ?? []).length,
         itemBuilder: (context, index) {
-          final media = observation.media![index];
+          final media = (observation.media ?? [])[index];
 
           if (media.extension != "jpg" &&
               media.extension != "jpeg" &&
@@ -175,7 +180,9 @@ class ObservationCard extends StatelessWidget {
           }
 
           return Container(
-            width: (observation.media??[]).length == 1?double.infinity:280,
+            width: (observation.media ?? []).length == 1
+                ? double.infinity
+                : 280,
             height: 200,
             margin: const EdgeInsets.only(right: 10),
             decoration: BoxDecoration(
@@ -190,11 +197,6 @@ class ObservationCard extends StatelessWidget {
       ),
     );
   }
-
-
-
-
-
 
   Widget _description() {
     return Padding(
@@ -244,10 +246,9 @@ class ObservationCard extends StatelessWidget {
               );
             },
             child: SvgPicture.asset(
-              isLikeOrNot()?icon_like:unlike,
+              isLikeOrNot() ? icon_like : unlike,
               width: 16,
             ),
-
 
             // Icon(
             //   (childInfoController.observationList[index].isLike ?? false)
@@ -277,11 +278,7 @@ class ObservationCard extends StatelessWidget {
             },
             child: Row(
               children: [
-
-                SvgPicture.asset(
-                  icon_comment,
-                  width: 16,
-                ),
+                SvgPicture.asset(icon_comment, width: 16),
 
                 // Icon(Icons.chat, size: 16, color: color_secondary),
                 SizedBox(width: 4),
@@ -317,7 +314,7 @@ class ObservationCard extends StatelessWidget {
               ),
             ),
             IconButton(
-              icon: SvgPicture.asset(send, width: 22,),
+              icon: SvgPicture.asset(send, width: 22),
               onPressed: () async {
                 await childInfoController.callAddCommentAPI(
                   context,
@@ -334,14 +331,13 @@ class ObservationCard extends StatelessWidget {
     );
   }
 
-
   void showUpdateDialog(
-      BuildContext context,
-      String childId,
-      String id,
-      Observation observation,
-      ChildInfoController controller
-      ) {
+    BuildContext context,
+    String childId,
+    String id,
+    Observation observation,
+    ChildInfoController controller,
+  ) {
     showDialog(
       context: context,
       builder: (context) {
@@ -369,7 +365,9 @@ class ObservationCard extends StatelessWidget {
                   onTap: () {
                     controller.selectedObservation.value = observation;
                     Navigator.pop(context);
-                    Get.to(ObservationUpdateScreen(childId: childId))?.then((value) {
+                    Get.to(ObservationUpdateScreen(childId: childId))?.then((
+                      value,
+                    ) {
                       controller.callObservationListAPI(context, childId);
                     });
                   },
@@ -410,10 +408,14 @@ class ObservationCard extends StatelessWidget {
     );
   }
 
-
-  bool isLikeOrNot(){
-    bool isLikedByMe = observation.likes?.any((like) => like.userId == childInfoController.loginResponse.value.data?.user?.id) ?? false;
+  bool isLikeOrNot() {
+    bool isLikedByMe =
+        observation.likes?.any(
+          (like) =>
+              like.userId ==
+              childInfoController.loginResponse.value.data?.user?.id,
+        ) ??
+        false;
     return isLikedByMe;
   }
-
 }

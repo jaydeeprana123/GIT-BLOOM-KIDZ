@@ -23,68 +23,84 @@ class AppDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     LoginController loginController = Get.put(LoginController());
 
+    loginController.getUserInfo();
+
     return Drawer(
-      child:  Obx(
-              () =>Stack(
-        children: [
-          Column(
-            children: [
-              DrawerHeader(
-                decoration: const BoxDecoration(
-                  color: Color(0xff1f78c8),
-                ),
-                child: Row(
-                  children:  [
-                    Icon(Icons.calendar_today, color: Colors.white),
-                    SizedBox(width: 12),
-                    BlackLargeBoldText(
-                      'Menu',
-                      color: Colors.white,
-                      fontSize: 20
+      child: Obx(
+        () => Stack(
+          children: [
+            Column(
+              children: [
+                DrawerHeader(
+                  decoration: const BoxDecoration(color: color_secondary),
+                  child: Container(
+                    width: double.infinity,
+                    child: Column(
+                      children: [
+                        CircleAvatar(
+                          radius: 50,
+                          backgroundImage: NetworkImage(
+                            loginController
+                                    .loginResponse
+                                    .value
+                                    .data
+                                    ?.user
+                                    ?.profile ??
+                                "",
+                          ),
+                        ),
+
+                        SizedBox(height: 6),
+                        BlackLargeBoldText(
+                          loginController
+                                  .loginResponse
+                                  .value
+                                  .data
+                                  ?.user
+                                  ?.name ??
+                              "",
+                          color: Colors.white,
+                          fontSize: 16,
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
 
-              // 🔵 Calendar Events option
-              ListTile(
-                leading: const Icon(Icons.event),
-                title:  BlackLargeBoldText('Calendar Events'),
-                onTap: () {
-                  Navigator.pop(context); // close drawer
+                // 🔵 Calendar Events option
+                ListTile(
+                  leading: const Icon(Icons.event),
+                  title: BlackLargeBoldText('Calendar Events'),
+                  onTap: () {
+                    Navigator.pop(context); // close drawer
 
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const CalendarScreen(),
-                    ),
-                  );
-                },
-              ),
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const CalendarScreen()),
+                    );
+                  },
+                ),
 
-              const Divider(),
+                const Divider(),
 
-              ListTile(
-                leading: const Icon(Icons.logout),
-                title: const Text('Logout'),
-                onTap: () {
-                  Navigator.pop(context);
-                  loginController.callLogoutAPI(context);
-                },
-              ),
-            ],
-          ),
+                ListTile(
+                  leading: const Icon(Icons.logout),
+                  title: BlackLargeBoldText('Logout'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    loginController.callLogoutAPI(context);
+                  },
+                ),
+              ],
+            ),
 
-          if(loginController.isLoading.value)Center(child: CircularProgressIndicator(),)
-        ],
-      )),
+            if (loginController.isLoading.value)
+              Center(child: CircularProgressIndicator()),
+          ],
+        ),
+      ),
     );
   }
 }
-
-
-
-
