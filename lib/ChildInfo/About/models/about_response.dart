@@ -1,16 +1,11 @@
 // To parse this JSON data, do
 //
-//     final bookingsResponse = bookingsResponseFromJson(jsonString);
-
-import 'dart:convert';
-
-// To parse this JSON data, do
-//
 //     final aboutResponse = aboutResponseFromJson(jsonString);
 
 import 'dart:convert';
 
-AboutResponse aboutResponseFromJson(String str) => AboutResponse.fromJson(json.decode(str));
+AboutResponse aboutResponseFromJson(String str) =>
+    AboutResponse.fromJson(json.decode(str));
 
 String aboutResponseToJson(AboutResponse data) => json.encode(data.toJson());
 
@@ -20,12 +15,7 @@ class AboutResponse {
   int? code;
   AboutData? data;
 
-  AboutResponse({
-    this.status,
-    this.message,
-    this.code,
-    this.data,
-  });
+  AboutResponse({this.status, this.message, this.code, this.data});
 
   factory AboutResponse.fromJson(Map<String, dynamic> json) => AboutResponse(
     status: json["status"],
@@ -56,10 +46,18 @@ class AboutData {
   });
 
   factory AboutData.fromJson(Map<String, dynamic> json) => AboutData(
-    basicInfo: json["basicInfo"] == null ? null : BasicInfo.fromJson(json["basicInfo"]),
-    healthInfo: json["healthInfo"] == null ? null : HealthInfo.fromJson(json["healthInfo"]),
-    religionInfo: json["religionInfo"] == null ? null : ReligionInfo.fromJson(json["religionInfo"]),
-    roomMoves: json["room_moves"] == null ? null : RoomMoves.fromJson(json["room_moves"]),
+    basicInfo: json["basicInfo"] == null
+        ? null
+        : BasicInfo.fromJson(json["basicInfo"]),
+    healthInfo: json["healthInfo"] == null
+        ? null
+        : HealthInfo.fromJson(json["healthInfo"]),
+    religionInfo: json["religionInfo"] == null
+        ? null
+        : ReligionInfo.fromJson(json["religionInfo"]),
+    roomMoves: json["room_moves"] == null
+        ? null
+        : RoomMoves.fromJson(json["room_moves"]),
   );
 
   Map<String, dynamic> toJson() => {
@@ -113,8 +111,12 @@ class BasicInfo {
     nationality: json["nationality"],
     room: json["room"],
     profileImage: json["profile_image"],
-    liveWith: json["live_with"] == null ? [] : List<String>.from(json["live_with"]!.map((x) => x)),
-    parentalResponsibility: json["parental_responsibility"] == null ? [] : List<String>.from(json["parental_responsibility"]!.map((x) => x)),
+    liveWith: json["live_with"] == null
+        ? []
+        : List<String>.from(json["live_with"]!.map((x) => x)),
+    parentalResponsibility: json["parental_responsibility"] == null
+        ? []
+        : List<String>.from(json["parental_responsibility"]!.map((x) => x)),
     keyPerson: json["key_person"],
     secondKeyPerson: json["second_key_person"],
     specialNote: json["special_note"],
@@ -124,14 +126,19 @@ class BasicInfo {
     "id": id,
     "first_name": firstName,
     "last_name": lastName,
-    "dob": "${dob!.year.toString().padLeft(4, '0')}-${dob!.month.toString().padLeft(2, '0')}-${dob!.day.toString().padLeft(2, '0')}",
+    "dob":
+        "${dob!.year.toString().padLeft(4, '0')}-${dob!.month.toString().padLeft(2, '0')}-${dob!.day.toString().padLeft(2, '0')}",
     "gender": gender,
     "birth_place": birthPlace,
     "nationality": nationality,
     "room": room,
     "profile_image": profileImage,
-    "live_with": liveWith == null ? [] : List<dynamic>.from(liveWith!.map((x) => x)),
-    "parental_responsibility": parentalResponsibility == null ? [] : List<dynamic>.from(parentalResponsibility!.map((x) => x)),
+    "live_with": liveWith == null
+        ? []
+        : List<dynamic>.from(liveWith!.map((x) => x)),
+    "parental_responsibility": parentalResponsibility == null
+        ? []
+        : List<dynamic>.from(parentalResponsibility!.map((x) => x)),
     "key_person": keyPerson,
     "second_key_person": secondKeyPerson,
     "special_note": specialNote,
@@ -144,6 +151,8 @@ class HealthInfo {
   String? vaccines;
   String? allergy;
   String? specialNote;
+  Dentist? doctor;
+  Dentist? dentist;
 
   HealthInfo({
     this.toleratesPenicillin,
@@ -151,6 +160,8 @@ class HealthInfo {
     this.vaccines,
     this.allergy,
     this.specialNote,
+    this.doctor,
+    this.dentist,
   });
 
   factory HealthInfo.fromJson(Map<String, dynamic> json) => HealthInfo(
@@ -159,6 +170,8 @@ class HealthInfo {
     vaccines: json["vaccines"],
     allergy: json["allergy"],
     specialNote: json["special_note"],
+    doctor: json["doctor"] == null ? null : Dentist.fromJson(json["doctor"]),
+    dentist: json["dentist"] == null ? null : Dentist.fromJson(json["dentist"]),
   );
 
   Map<String, dynamic> toJson() => {
@@ -167,6 +180,44 @@ class HealthInfo {
     "vaccines": vaccines,
     "allergy": allergy,
     "special_note": specialNote,
+    "doctor": doctor?.toJson(),
+    "dentist": dentist?.toJson(),
+  };
+}
+
+class Dentist {
+  String? name;
+  String? mobile;
+  String? street;
+  String? city;
+  String? country;
+  String? postcode;
+
+  Dentist({
+    this.name,
+    this.mobile,
+    this.street,
+    this.city,
+    this.country,
+    this.postcode,
+  });
+
+  factory Dentist.fromJson(Map<String, dynamic> json) => Dentist(
+    name: json["name"],
+    mobile: json["mobile"],
+    street: json["street"],
+    city: json["city"],
+    country: json["country"],
+    postcode: json["postcode"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "name": name,
+    "mobile": mobile,
+    "street": street,
+    "city": city,
+    "country": country,
+    "postcode": postcode,
   };
 }
 
@@ -174,15 +225,10 @@ class ReligionInfo {
   String? religion;
   String? ethnicity;
 
-  ReligionInfo({
-    this.religion,
-    this.ethnicity,
-  });
+  ReligionInfo({this.religion, this.ethnicity});
 
-  factory ReligionInfo.fromJson(Map<String, dynamic> json) => ReligionInfo(
-    religion: json["religion"],
-    ethnicity: json["ethnicity"],
-  );
+  factory ReligionInfo.fromJson(Map<String, dynamic> json) =>
+      ReligionInfo(religion: json["religion"], ethnicity: json["ethnicity"]);
 
   Map<String, dynamic> toJson() => {
     "religion": religion,
@@ -193,13 +239,9 @@ class ReligionInfo {
 class RoomMoves {
   String? rooms;
   String? startDate;
-  String? endDate;
+  dynamic endDate;
 
-  RoomMoves({
-    this.rooms,
-    this.startDate,
-    this.endDate,
-  });
+  RoomMoves({this.rooms, this.startDate, this.endDate});
 
   factory RoomMoves.fromJson(Map<String, dynamic> json) => RoomMoves(
     rooms: json["rooms"],
@@ -213,4 +255,3 @@ class RoomMoves {
     "end_date": endDate,
   };
 }
-
