@@ -32,6 +32,10 @@ import '../FamilyContact/view/family_add_screen.dart';
 import '../FamilyContact/view/family_contact_screen.dart';
 import 'grid_item.dart';
 
+import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:get/get.dart';
+
 class ChildOptionsGrid extends StatelessWidget {
   final String childId;
 
@@ -40,76 +44,75 @@ class ChildOptionsGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final items = [
-      InkWell(
-        onTap: () {
-          Get.to(ChildActivityScreen(childId: childId));
-        },
-        child: GridItem(icon_activity, "Activity"),
+      _gridItem(
+        onTap: () => Get.to(ChildActivityScreen(childId: childId)),
+        icon: icon_activity,
+        title: "Activity",
       ),
-      InkWell(
-        onTap: () {
-          Get.to(AboutScreen(childId: childId));
-        },
-        child: GridItem(icon_about, "About"),
+      _gridItem(
+        onTap: () => Get.to(AboutScreen(childId: childId)),
+        icon: icon_about,
+        title: "About",
       ),
-      InkWell(
-        onTap: () {
-          Get.to(ObservationListScreen(childId: childId));
-        },
-        child: GridItem(icon_Journey, "Journey"),
+      _gridItem(
+        onTap: () => Get.to(ObservationListScreen(childId: childId)),
+        icon: icon_Journey,
+        title: "Journey",
       ),
-      InkWell(
-        onTap: () {
-          Get.to(SafeguardingScreen(childId: childId));
-        },
-        child: GridItem(icon_Safeguarding, "Safeguarding"),
+      _gridItem(
+        onTap: () => Get.to(SafeguardingScreen(childId: childId)),
+        icon: icon_Safeguarding,
+        title: "Safeguarding",
       ),
-      InkWell(
-        onTap: () {
-          Get.to(ChildrenPermissionScreen(childId: childId));
-        },
-        child: GridItem(icon_ChildPermission, "Child Permission"),
+      _gridItem(
+        onTap: () => Get.to(ChildrenPermissionScreen(childId: childId)),
+        icon: icon_ChildPermission,
+        title: "Child Permission",
       ),
-      InkWell(
-        onTap: () {
-          Get.to(BookingScreen(childId: childId));
-        },
-        child: GridItem(icon_booking, "Booking"),
+      _gridItem(
+        onTap: () => Get.to(BookingScreen(childId: childId)),
+        icon: icon_booking,
+        title: "Booking",
       ),
-      InkWell(
-        onTap: () {
-          Get.to(DocumentsScreen(childId: childId));
-        },
-        child: GridItem(icon_documents, "Documents"),
+      _gridItem(
+        onTap: () => Get.to(DocumentsScreen(childId: childId)),
+        icon: icon_documents,
+        title: "Documents",
       ),
-      InkWell(
-        onTap: () {
-          Get.to(FamilyContactsScreen());
-        },
-        child: GridItem(icon_FamilyContacts, "Family & Contacts"),
+      _gridItem(
+        onTap: () => Get.to(FamilyContactsScreen()),
+        icon: icon_FamilyContacts,
+        title: "Family & Contacts",
       ),
-      InkWell(
-        onTap: () {
-          Get.to(ExtraBookingScreen(childId: childId));
-        },
-        child: GridItem(icon_Book_Extra_Sessions, "Book Extra Sessions"),
+      _gridItem(
+        onTap: () => Get.to(ExtraBookingScreen(childId: childId)),
+        icon: icon_Book_Extra_Sessions,
+        title: "Book Extra Sessions",
       ),
-      // GridItem(icon_WeeklyPlan, "Weekly Plan"),
     ];
 
-    return GridView.builder(
+    return MasonryGridView.count(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        mainAxisSpacing: 6,
-        crossAxisSpacing: 6,
-        childAspectRatio: 1.9,
-      ),
+      crossAxisCount: 2,
+      mainAxisSpacing: 8,
+      crossAxisSpacing: 8,
       itemCount: items.length,
       itemBuilder: (context, index) {
         return items[index];
       },
     );
   }
+
+  Widget _gridItem({
+    required VoidCallback onTap,
+    required String icon,
+    required String title,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: GridItem(icon, title),
+    );
+  }
 }
+

@@ -31,7 +31,7 @@ class GridItem extends StatelessWidget {
       shadowColor: color_secondary,
       elevation: 6,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 0),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
