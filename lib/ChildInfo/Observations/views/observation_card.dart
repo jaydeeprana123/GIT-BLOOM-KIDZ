@@ -93,8 +93,8 @@ class ObservationCard extends StatelessWidget {
 
                     BlueSmallRegularText(
                       observation.createdAt != null
-                          ? '${observation.createdAt!.hour.toString().padLeft(2, '0')}:'
-                                '${observation.createdAt!.minute.toString().padLeft(2, '0')}'
+                          ? '${observation.createdAt?.hour.toString().padLeft(2, '0')}:'
+                                '${observation.createdAt?.minute.toString().padLeft(2, '0')}'
                           : '',
                     ),
 
@@ -103,9 +103,9 @@ class ObservationCard extends StatelessWidget {
 
                     BlueSmallRegularText(
                       observation.createdAt != null
-                          ? '${observation.createdAt!.day.toString().padLeft(2, '0')}-'
-                                '${observation.createdAt!.month.toString().padLeft(2, '0')}-'
-                                '${observation.createdAt!.year} • '
+                          ? '${observation.createdAt?.day.toString().padLeft(2, '0')}-'
+                                '${observation.createdAt?.month.toString().padLeft(2, '0')}-'
+                                '${observation.createdAt?.year} • '
                           : '',
                     ),
                   ],
@@ -181,7 +181,7 @@ class ObservationCard extends StatelessWidget {
 
           return Container(
             width: (observation.media ?? []).length == 1
-                ? double.infinity
+                ? MediaQuery.of(context).size.width - 64
                 : 280,
             height: 200,
             margin: const EdgeInsets.only(right: 10),
@@ -199,6 +199,10 @@ class ObservationCard extends StatelessWidget {
   }
 
   Widget _description() {
+    if ((observation.observations ?? "").isEmpty) {
+      return const SizedBox();
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Html(
@@ -273,6 +277,8 @@ class ObservationCard extends StatelessWidget {
                   childInfoController: childInfoController,
                 ),
               )?.then((value) {
+                childInfoController.pageNumberObservation = 1;
+
                 childInfoController.callObservationListAPI(context, childId);
               });
             },
@@ -368,6 +374,7 @@ class ObservationCard extends StatelessWidget {
                     Get.to(ObservationUpdateScreen(childId: childId))?.then((
                       value,
                     ) {
+                      childInfoController.pageNumberObservation = 1;
                       controller.callObservationListAPI(context, childId);
                     });
                   },

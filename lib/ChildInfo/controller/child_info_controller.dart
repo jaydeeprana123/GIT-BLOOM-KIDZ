@@ -39,14 +39,14 @@ class ChildInfoController extends GetxController {
   RxList<int> removedMediaIds = <int>[].obs;
   Rx<Observation> selectedObservation = Observation().obs;
   Rx<ExtraBooking> selectedExtraBooking = ExtraBooking().obs;
-
+  RxBool isDoctorListPaginationLoading = false.obs;
   RxInt medicineRefreshIndex = (-1).obs;
-
+  RxBool isPaginationApiCalling = false.obs;
   RxList<DocumentData> documentList = <DocumentData>[].obs;
-
+  int pageNumberObservation = 1;
   RxList<ChildPermission> childPermissionList = <ChildPermission>[].obs;
   RxList<bool> isLikeList = <bool>[].obs;
-
+  RxBool isNewAddedObservationLoading = false.obs;
   RxList<ActivityData> activityList = <ActivityData>[].obs;
   RxList<ActivityForSelect> activityListForSelect = <ActivityForSelect>[].obs;
 
@@ -1116,14 +1116,22 @@ class ChildInfoController extends GetxController {
 
   /// Observation list API
   callObservationListAPI(BuildContext context, String childId) async {
-    isLoading.value = true;
+    if (pageNumberObservation == 1) {
+      // clearning list before getting response
+      observationList.clear();
+      isLoading.value = true;
+    } else {
+      isNewAddedObservationLoading.value = true;
+    }
 
     String token = await MySharedPref().getStringValue(
       SharePreData.keyAccessToken,
     );
 
-    String url = "$urlBase$urlGetObservationList/$childId";
+    String url =
+        "$urlBase$urlGetObservationList/$childId?page=$pageNumberObservation";
 
+    printData("url", url);
     final apiReq = Request();
 
     await apiReq.getMethodAPI(url, null, token).then((value) async {
@@ -1147,10 +1155,24 @@ class ChildInfoController extends GetxController {
               ObservationListResponse.fromJson(userModel);
 
           if (observationListResponse.status ?? false) {
-            observationList.value =
-                observationListResponse.data?.observations ?? [];
+            observationList.addAll(
+              observationListResponse.data?.observations ?? [],
+            );
 
-            for (int i = 0; i < observationList.length; i++) {
+            // consultDoctorList
+            //     .addAll(await removeLesserTimeFromNow(model.data ?? []));
+
+            // consultDoctorList.addAll(model.data ?? []);
+            isDoctorListPaginationLoading.value = true;
+            pageNumberObservation = pageNumberObservation + 1;
+
+            isNewAddedObservationLoading.value = false;
+
+            for (
+              int i = 0;
+              i < (observationListResponse.data?.observations ?? []).length;
+              i++
+            ) {
               replyController.add(TextEditingController());
             }
           } else {
@@ -1203,6 +1225,7 @@ class ChildInfoController extends GetxController {
           if (baseModel.status ?? false) {
             snackBar(context, baseModel.message ?? "");
 
+            pageNumberObservation = 1;
             callObservationListAPI(context, childId);
           } else {
             snackBar(context, baseModel.message ?? "");
@@ -1234,13 +1257,13 @@ class ChildInfoController extends GetxController {
       http.StreamedResponse res = value;
       printData(
         runtimeType.toString(),
-        "callLeaveRequestAPI response ${res.statusCode}",
+        "callObservationAddLikeAPI response ${res.statusCode}",
       );
 
       await res.stream.bytesToString().then((valueData) async {
         printData(
           runtimeType.toString(),
-          "callLeaveRequestAPI value ${valueData}",
+          "callObservationAddLikeAPI value ${valueData}",
         );
 
         isLoading.value = false;
@@ -1252,6 +1275,7 @@ class ChildInfoController extends GetxController {
           if (baseModel.status ?? false) {
             // observationList[index].isLike = true;
 
+            pageNumberObservation = 1;
             callObservationListAPI(context, childId);
             update();
 
