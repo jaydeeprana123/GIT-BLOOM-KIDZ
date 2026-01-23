@@ -53,7 +53,7 @@ class ObservationCard extends StatelessWidget {
         children: [
           _header(context),
           _titleText(),
-          if ((observation.media ?? []).isNotEmpty) _image(),
+          if ((observation.media ?? []).isNotEmpty) _image(context),
           _description(),
           _actions(context),
           _replyBox(context, observation.id.toString(), index),
@@ -160,14 +160,31 @@ class ObservationCard extends StatelessWidget {
     );
   }
 
-  Widget _image() {
+  Widget _image(BuildContext context) {
     if ((observation.media ?? []).isEmpty) {
       return const SizedBox();
     }
 
     return SizedBox(
       height: 200,
-      child: ListView.builder(
+      child: (observation.media ?? []).length == 1?InkWell(
+        onTap: (){
+          showFullImageDialog(context, observation.media?[0].image??"");
+        },
+        child: Container(
+          width: (observation.media ?? []).length == 1
+              ? double.infinity
+              : 280,
+          height: 200,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            image: DecorationImage(
+              image: NetworkImage(observation.media?[0].image ?? ""),
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+      ):ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: (observation.media ?? []).length,
         itemBuilder: (context, index) {
@@ -179,17 +196,22 @@ class ObservationCard extends StatelessWidget {
             return const SizedBox();
           }
 
-          return Container(
-            width: (observation.media ?? []).length == 1
-                ? MediaQuery.of(context).size.width - 64
-                : 280,
-            height: 200,
-            margin: const EdgeInsets.only(right: 10),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              image: DecorationImage(
-                image: NetworkImage(media.image ?? ""),
-                fit: BoxFit.cover,
+          return InkWell(
+            onTap: (){
+              showFullImageDialog(context, observation.media?[index].image??"");
+            },
+            child: Container(
+              width: (observation.media ?? []).length == 1
+                  ? MediaQuery.of(context).size.width - 64
+                  : 280,
+              height: 200,
+              margin: const EdgeInsets.only(right: 10),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                image: DecorationImage(
+                  image: NetworkImage(media.image ?? ""),
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
           );

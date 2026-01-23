@@ -77,6 +77,7 @@ class _ObservationListScreenState extends State<ObservationListScreen> {
         showAddButton: true,
         onAddButtonTap: () {
           Get.to(ObservationAddScreen(childId: widget.childId))?.then((value) {
+            childInfoController.pageNumberObservation = 1;
             childInfoController.callObservationListAPI(context, widget.childId);
           });
         },

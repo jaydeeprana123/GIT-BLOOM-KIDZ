@@ -103,7 +103,7 @@ class NewsFeedCard extends StatelessWidget {
                       newsFeed.createdAt != null
                           ? '${newsFeed.createdAt!.day.toString().padLeft(2, '0')}-'
                                 '${newsFeed.createdAt!.month.toString().padLeft(2, '0')}-'
-                                '${newsFeed.createdAt!.year} • '
+                                '${newsFeed.createdAt!.year}'
                           : '',
                     ),
                   ],

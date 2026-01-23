@@ -16,6 +16,8 @@ import '../../ChildInfo/View/child_info_screen.dart';
 
 import 'package:flutter/material.dart';
 
+import '../../CommonWidgets/common_widget.dart';
+
 class ChatBubble extends StatelessWidget {
   final String message;
   final bool isSender;
@@ -112,59 +114,7 @@ class ChatBubble extends StatelessWidget {
   }
 
 
-  void showFullImageDialog(BuildContext context, String imageUrl) {
-    showDialog(
-      context: context,
-      barrierColor: Colors.black,
-      builder: (_) {
-        return Dialog(
-          insetPadding: EdgeInsets.zero,
-          backgroundColor: Colors.black,
-          child: Stack(
-            children: [
 
-              /// 🔍 Zoomable Image
-              InteractiveViewer(
-                child: Center(
-                  child: Image.network(
-                    imageUrl,
-                    fit: BoxFit.contain,
-                    loadingBuilder: (context, child, loadingProgress) {
-                      if (loadingProgress == null) return child;
-                      return const Center(
-                        child: CircularProgressIndicator(color: Colors.white),
-                      );
-                    },
-                    errorBuilder: (context, error, stackTrace) {
-                      return const Icon(
-                        Icons.broken_image,
-                        color: Colors.white,
-                        size: 80,
-                      );
-                    },
-                  ),
-                ),
-              ),
-
-              /// ❌ Close Button
-              Positioned(
-                top: 40,
-                right: 20,
-                child: IconButton(
-                  icon: const Icon(
-                    Icons.close,
-                    color: Colors.white,
-                    size: 28,
-                  ),
-                  onPressed: () => Navigator.pop(context),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
 
 }
 

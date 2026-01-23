@@ -64,7 +64,7 @@ class ChildCard extends StatelessWidget {
               Container(
 
                 width: 120, // same as diameter of circle avatar (2 * radius)
-                height: 122,
+                height: 132,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(
                     12,
