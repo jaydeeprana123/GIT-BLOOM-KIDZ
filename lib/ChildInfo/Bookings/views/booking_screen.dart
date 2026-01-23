@@ -78,149 +78,230 @@ class _BookingScreenState extends State<BookingScreen> {
           Positioned.fill(child: SvgPicture.asset(app_bg, fit: BoxFit.fill)),
 
           Obx(() {
-
-            if (childInfoController.isLoading.value){
+            if (childInfoController.isLoading.value) {
               return const Center(child: CircularProgressIndicator());
             }
-
 
             if (childInfoController.bookingList.isEmpty) {
               return const SizedBox();
             }
 
-            return Card(
-              color: Colors.white,
-              shadowColor: color_secondary,
-              elevation: 14,
-              margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-              child: Column(
-                children: [
-                  const SizedBox(height: 16),
+            return SingleChildScrollView(
+              child: Container(
+                margin: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 20,
+                ),
+                padding: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(22),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.08),
+                      blurRadius: 20,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 16),
 
-                  for (
-                    int i = 0;
-                    i < childInfoController.bookingList.length;
-                    i++
-                  )
-                    Column(
-                      children: [
-                        // DATE
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center
-                          ,children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 6,
-                              ),
-                              decoration: BoxDecoration(
-                                color: color_secondary,
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              child: BlackMediumRegularText(
-                                childInfoController.bookingList[i].planStart ?? "",
-
-                                color: Colors.white,
-                              ),
-                            ),
-
+                    for (
+                      int i = 0;
+                      i < childInfoController.bookingList.length;
+                      i++
+                    )
+                      Column(
+                        children: [
+                          /// DATE + STATUS
                           Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 5),
-                              decoration: BoxDecoration(
-                                color: (childInfoController.bookingList[i].status ??
-                                    "1") == "0"
-                                    ? Colors.green.withOpacity(0.15)
-                                    : Colors.red.withOpacity(0.15),
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(
-                                  color: (childInfoController.bookingList[i].status ??
-                                      "1") == "0"
-                                      ? Colors.green
-                                      : Colors.red,
-                                  width: 1,
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                BlackMediumRegularText(
+                                  childInfoController
+                                          .bookingList[i]
+                                          .planStart ??
+                                      "",
                                 ),
-                              ),
-                              child: BlueLargeBoldText(
-                                childInfoController.bookingList[i].statusLabel ?? "",
-                                color: (childInfoController.bookingList[i].status ??
-                                    "1") == "0"
-                                    ? Colors.green
-                                    : Colors.red,
-                              ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 14,
+                                    vertical: 6,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.green.withOpacity(0.15),
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: BlueLargeBoldText(
+                                    childInfoController
+                                            .bookingList[i]
+                                            .statusLabel ??
+                                        "",
+                                    color: Colors.green,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          ],
-                        ),
 
-                        const SizedBox(height: 12),
+                          const SizedBox(height: 20),
 
-
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Column(
-                            children: List.generate(
-                              childInfoController.bookingList[i].days?.length ?? 0,
-                                  (dayIndex) {
-                                final dayObj =
-                                childInfoController.bookingList[i].days![dayIndex];
-
-                                final isSelected = dayIndex == selectedDayIndex;
-
-                                return GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      selectedDayIndex = dayIndex;
-                                    });
-                                  },
-                                  child: Container(
-                                    margin: const EdgeInsets.only(bottom: 12),
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 12,
-                                      vertical: 10,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: isSelected ? color_secondary : Colors.white,
-                                      borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(color: color_secondary),
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          /// DAYS WITH TIMELINE
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                /// TIMELINE DOTS
+                                Column(
+                                  children: List.generate(
+                                    childInfoController
+                                            .bookingList[i]
+                                            .days
+                                            ?.length ??
+                                        0,
+                                    (index) => Column(
                                       children: [
-                                        /// DAY
-                                        BlueMediumBoldText(
-                                          (dayObj.day ?? '').length >= 3
-                                              ? dayObj.day!.substring(0, 3)
-                                              : dayObj.day ?? '',
-                                          color: isSelected ? Colors.white : Colors.blue,
+                                        Container(
+                                          width: 10,
+                                          height: 10,
+                                          decoration: BoxDecoration(
+                                            color: color_secondary,
+                                            shape: BoxShape.circle,
+                                          ),
                                         ),
-
-                                        /// SLOT (Only one)
-                                        BlueMediumBoldText(
-                                          dayObj.mainSessions?.isNotEmpty == true
-                                              ? dayObj.mainSessions![0].label ?? ''
-                                              : '',
-                                          color: isSelected ? Colors.white : Colors.blue,
-                                        ),
+                                        if (index !=
+                                            (childInfoController
+                                                    .bookingList[i]
+                                                    .days!
+                                                    .length -
+                                                1))
+                                          Container(
+                                            width: 2,
+                                            height: 42,
+                                            color: color_secondary.withOpacity(
+                                              0.4,
+                                            ),
+                                          ),
                                       ],
                                     ),
                                   ),
-                                );
-                              },
+                                ),
+
+                                const SizedBox(width: 12),
+
+                                /// DAY LIST
+                                Expanded(
+                                  child: Column(
+                                    children: List.generate(
+                                      childInfoController
+                                              .bookingList[i]
+                                              .days
+                                              ?.length ??
+                                          0,
+                                      (dayIndex) {
+                                        final dayObj = childInfoController
+                                            .bookingList[i]
+                                            .days![dayIndex];
+
+                                        final isSelected =
+                                            dayIndex == selectedDayIndex;
+
+                                        return GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              selectedDayIndex = dayIndex;
+                                            });
+                                          },
+                                          child: Container(
+                                            margin: const EdgeInsets.only(
+                                              bottom: 12,
+                                            ),
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 16,
+                                              vertical: 14,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              gradient: isSelected
+                                                  ? const LinearGradient(
+                                                      colors: [
+                                                        Color(0xFFF9B233),
+                                                        Color(0xFFFFD37A),
+                                                      ],
+                                                    )
+                                                  : null,
+                                              color: isSelected
+                                                  ? null
+                                                  : Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(30),
+                                              border: Border.all(
+                                                color: color_secondary,
+                                              ),
+                                            ),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                /// DAY
+                                                Text(
+                                                  (dayObj.day ?? '').length >= 3
+                                                      ? dayObj.day!.substring(
+                                                          0,
+                                                          3,
+                                                        )
+                                                      : dayObj.day ?? '',
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: isSelected
+                                                        ? Colors.white
+                                                        : Colors.orange,
+                                                  ),
+                                                ),
+
+                                                /// TIME
+                                                Text(
+                                                  dayObj
+                                                              .mainSessions
+                                                              ?.isNotEmpty ==
+                                                          true
+                                                      ? dayObj
+                                                                .mainSessions![0]
+                                                                .label ??
+                                                            ''
+                                                      : '',
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: isSelected
+                                                        ? Colors.black87
+                                                        : Colors.black,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                        ),
 
-                      ],
-                    ),
-                ],
+                          const SizedBox(height: 20),
+                        ],
+                      ),
+                  ],
+                ),
               ),
             );
           }),
-
-
         ],
       ),
     );
