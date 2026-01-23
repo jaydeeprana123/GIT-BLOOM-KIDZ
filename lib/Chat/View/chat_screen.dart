@@ -42,11 +42,11 @@ class _ChatScreenState extends State<ChatScreen> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      chatController.groupChatResponse.value = GroupChatResponse();
       chatController.imagePath.value = "";
       chatController.scrollController = ScrollController();
       chatController.getUserInfo();
       if (widget.groupId.isNotEmpty) {
-        chatController.groupChatResponse.value = GroupChatResponse();
         chatController.callGetGroupChatAPI(context, widget.groupId);
       }
     });
@@ -78,7 +78,10 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
               child: Column(
                 children: [
-                  ChatHeader(sendMessageNotGroupRequest: widget.sendMessageNotGroupRequest,),
+                  ChatHeader(
+                    sendMessageNotGroupRequest:
+                        widget.sendMessageNotGroupRequest,
+                  ),
                   const Divider(height: 1),
                   Expanded(child: _chatList()),
                   _replyBox(),
@@ -222,16 +225,29 @@ class _ChatScreenState extends State<ChatScreen> {
                 IconButton(
                   icon: const Icon(Icons.send, color: Color(0xff1f78c8)),
                   onPressed: () {
-
-                    if(wi)
-
-                    chatController.callSendMessageInGroupAPI(
-                      context,
-                      (chatController.groupChatResponse.value.data?.group?.id ??
-                              0)
-                          .toString(),
-                      chatController.messageController.value.text,
-                    );
+                    if (widget.groupId.isEmpty &&
+                        widget.sendMessageNotGroupRequest != null) {
+                      widget.sendMessageNotGroupRequest?.message =
+                          chatController.messageController.value.text;
+                      chatController.callSendMessageNotGroupAPI(
+                        context,
+                        widget.sendMessageNotGroupRequest!,
+                        isFromChatScreen: true,
+                      );
+                    } else {
+                      chatController.callSendMessageInGroupAPI(
+                        context,
+                        (chatController
+                                    .groupChatResponse
+                                    .value
+                                    .data
+                                    ?.group
+                                    ?.id ??
+                                0)
+                            .toString(),
+                        chatController.messageController.value.text,
+                      );
+                    }
                   },
                 ),
             ],

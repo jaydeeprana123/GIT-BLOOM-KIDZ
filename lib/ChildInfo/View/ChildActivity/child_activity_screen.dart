@@ -93,7 +93,6 @@ class _ChildActivityScreenState extends State<ChildActivityScreen> {
 
     items.add(TimelineItem(title: "Meal", subItems: subItems));
 
-
     /// -------- NAPPY --------
     List<SubItem> subItemsNappy = [];
     for (final nappy in data.nappy ?? []) {
@@ -168,8 +167,8 @@ class _ChildActivityScreenState extends State<ChildActivityScreen> {
               },
 
               child: Container(
-                width: 50,
                 margin: const EdgeInsets.only(right: 10, top: 12),
+                padding: EdgeInsets.symmetric(horizontal: 8),
                 decoration: BoxDecoration(
                   color: isSelected ? color_secondary : Colors.white,
                   borderRadius: BorderRadius.circular(14),
@@ -187,25 +186,29 @@ class _ChildActivityScreenState extends State<ChildActivityScreen> {
                       color: isSelected ? Colors.white : color_secondary,
                     ),
 
-                    const SizedBox(height: 2),
+                    const SizedBox(height: 3),
 
                     /// Month (Jan)
-                    BlueMediumBoldText(
-                      day.displayDate!.split(',')[1].trim().split(' ')[0],
-                      fontSize: 13,
-                      fontFamily: fontInterSemiBold,
-                      color: isSelected ? Colors.white : color_secondary,
-                    ),
+                    Row(
+                      children: [
+                        BlueMediumBoldText(
+                          day.displayDate!.split(',')[1].trim().split(' ')[0],
+                          fontSize: 14,
+                          fontFamily: fontInterMedium,
+                          color: isSelected ? Colors.white : color_secondary,
+                        ),
 
-                    const SizedBox(height: 4),
+                        const SizedBox(width: 2),
 
-                    Text(
-                      day.displayDate!.split(' ').last,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: isSelected ? Colors.white : Colors.black,
-                      ),
+                        Text(
+                          day.displayDate!.split(' ').last,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: fontInterSemiBold,
+                            color: isSelected ? Colors.white : color_secondary,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),

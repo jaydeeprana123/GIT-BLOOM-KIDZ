@@ -184,11 +184,14 @@ class ChatController extends GetxController {
                       ),
                     );
                   }
+                  
+                  
+                  Get.to(ChatScreen(groupId: "",sendMessageNotGroupRequest: sendMessageNotGroupRequest,));
 
-                  callSendMessageNotGroupAPI(
-                    context,
-                    sendMessageNotGroupRequest,
-                  );
+                  // callSendMessageNotGroupAPI(
+                  //   context,
+                  //   sendMessageNotGroupRequest,
+                  // );
                 }
               } else {
                 List<ConversationData> conversationList =
@@ -222,10 +225,12 @@ class ChatController extends GetxController {
                     );
                   }
 
-                  callSendMessageNotGroupAPI(
-                    context,
-                    sendMessageNotGroupRequest,
-                  );
+                  Get.to(ChatScreen(groupId: "",sendMessageNotGroupRequest: sendMessageNotGroupRequest,));
+
+                  // callSendMessageNotGroupAPI(
+                  //   context,
+                  //   sendMessageNotGroupRequest,
+                  // );
                 }
               }
             }
@@ -242,8 +247,9 @@ class ChatController extends GetxController {
   /// Send Message Not Group API
   callSendMessageNotGroupAPI(
     BuildContext context,
-    SendMessageNotGroupRequest sendMessageNotGroupRequest,
-  ) async {
+    SendMessageNotGroupRequest sendMessageNotGroupRequest, {
+    bool? isFromChatScreen,
+  }) async {
     isLoading.value = true;
 
     String token = await MySharedPref().getStringValue(
@@ -273,11 +279,18 @@ class ChatController extends GetxController {
         SendMessageResponse baseModel = SendMessageResponse.fromJson(userModel);
 
         if (baseModel.status ?? false) {
-          Get.to(
-            ChatScreen(groupId: (baseModel.data?.groupId ?? 0).toString()),
-          )?.then((value) {
-            callConversationListAPI(context);
-          });
+          
+          if(isFromChatScreen??false){
+            callGetGroupChatAPI(context, (baseModel.data?.groupId ?? 0).toString());
+          }else{
+            Get.to(
+              ChatScreen(groupId: (baseModel.data?.groupId ?? 0).toString()),
+            )?.then((value) {
+              callConversationListAPI(context);
+            });
+          }
+          
+         
         } else {
           snackBar(context, baseModel.message ?? "");
         }
