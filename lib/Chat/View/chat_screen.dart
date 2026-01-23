@@ -19,13 +19,16 @@ import 'package:flutter/material.dart';
 
 import '../../CommonWidgets/common_appbar.dart';
 import '../../CommonWidgets/common_widget.dart';
+import '../models/send_message_not_group_request.dart';
 import 'chat_bubble.dart';
 import 'chat_header.dart';
 
 class ChatScreen extends StatefulWidget {
   final String groupId;
+  SendMessageNotGroupRequest? sendMessageNotGroupRequest;
 
-  const ChatScreen({Key? key, required this.groupId}) : super(key: key);
+  ChatScreen({Key? key, required this.groupId, this.sendMessageNotGroupRequest})
+    : super(key: key);
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -75,7 +78,7 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
               child: Column(
                 children: [
-                  ChatHeader(),
+                  ChatHeader(sendMessageNotGroupRequest: widget.sendMessageNotGroupRequest,),
                   const Divider(height: 1),
                   Expanded(child: _chatList()),
                   _replyBox(),
@@ -145,11 +148,14 @@ class _ChatScreenState extends State<ChatScreen> {
                   .senderName ??
               "",
           showSenderName: showSenderName,
-          attachments: chatController
-              .groupChatResponse
-              .value
-              .data
-              ?.messages?[index].attachments??[],
+          attachments:
+              chatController
+                  .groupChatResponse
+                  .value
+                  .data
+                  ?.messages?[index]
+                  .attachments ??
+              [],
         );
       },
     );
@@ -158,68 +164,89 @@ class _ChatScreenState extends State<ChatScreen> {
   /// 🔹 Reply Box
   Widget _replyBox() {
     return Obx(
-            () =>Padding(
-      padding: const EdgeInsets.all(12),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(30),
-          border: Border.all(color: const Color(0xff1f78c8)),
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: TextField(
-                controller: chatController.messageController.value,
-                decoration: const InputDecoration(
-                  hintText: "Write a reply...",
-                  border: InputBorder.none,
+      () => Padding(
+        padding: const EdgeInsets.all(12),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(30),
+            border: Border.all(color: const Color(0xff1f78c8)),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: chatController.messageController.value,
+                  decoration: const InputDecoration(
+                    hintText: "Write a reply...",
+                    border: InputBorder.none,
+                  ),
+                  onChanged: (value) {
+                    setState(() {});
+                  },
                 ),
-                onChanged: (value){
-                  setState(() {
-
-                  });
-                },
               ),
-            ),
 
-            if(chatController.messageController.value.text.isEmpty)IconButton(
-              icon: const Icon(Icons.attach_file, color: Color(0xff1f78c8)),
-              onPressed: () async {
+              if (chatController.messageController.value.text.isEmpty)
+                IconButton(
+                  icon: const Icon(Icons.attach_file, color: Color(0xff1f78c8)),
+                  onPressed: () async {
+                    chatController.imagePath.value = await selectPhoto(
+                      context,
+                      true,
+                    );
 
-                chatController.imagePath.value = await selectPhoto(
-                  context,
-                  true,
-                );
+                    printData(
+                      "chatController.imagePath",
+                      chatController.imagePath.value,
+                    );
 
+                    showImageDialog(
+                      context,
+                      chatController.imagePath.value,
+                      chatController.groupChatResponse.value.data?.group?.id ??
+                          0,
+                      chatController
+                              .groupChatResponse
+                              .value
+                              .data
+                              ?.group
+                              ?.name ??
+                          "",
+                    );
+                  },
+                ),
 
-                printData("chatController.imagePath",chatController.imagePath.value);
+              if (chatController.messageController.value.text.isNotEmpty)
+                IconButton(
+                  icon: const Icon(Icons.send, color: Color(0xff1f78c8)),
+                  onPressed: () {
 
-                showImageDialog(context, chatController.imagePath.value,chatController.groupChatResponse.value.data?.group?.id??0,chatController.groupChatResponse.value.data?.group?.name??"");
+                    if(wi)
 
-              },
-            ),
-
-            if(chatController.messageController.value.text.isNotEmpty) IconButton(
-              icon: const Icon(Icons.send, color: Color(0xff1f78c8)),
-              onPressed: () {
-                chatController.callSendMessageInGroupAPI(
-                  context,
-                  (chatController.groupChatResponse.value.data?.group?.id ?? 0)
-                      .toString(),
-                  chatController.messageController.value.text,
-                );
-              },
-            ),
-          ],
+                    chatController.callSendMessageInGroupAPI(
+                      context,
+                      (chatController.groupChatResponse.value.data?.group?.id ??
+                              0)
+                          .toString(),
+                      chatController.messageController.value.text,
+                    );
+                  },
+                ),
+            ],
+          ),
         ),
       ),
-    ));
+    );
   }
 
-
-  void showImageDialog(BuildContext context, String imagePath, int groupId, String groupName) {
+  void showImageDialog(
+    BuildContext context,
+    String imagePath,
+    int groupId,
+    String groupName,
+  ) {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -233,7 +260,6 @@ class _ChatScreenState extends State<ChatScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-
                 /// 🖼 Image
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8),
@@ -248,12 +274,18 @@ class _ChatScreenState extends State<ChatScreen> {
                 const SizedBox(height: 20),
 
                 /// ✅ Submit Button
-                CommonGradientButton(btnTitle: "Submit", onPressed: (){
-
-                  Navigator.pop(context);
-                  chatController.callSendMessageWithMediaInGroupAPI(context, groupId.toString(), groupName, chatController.messageController.value.text);
-                }),
-
+                CommonGradientButton(
+                  btnTitle: "Submit",
+                  onPressed: () {
+                    Navigator.pop(context);
+                    chatController.callSendMessageWithMediaInGroupAPI(
+                      context,
+                      groupId.toString(),
+                      groupName,
+                      chatController.messageController.value.text,
+                    );
+                  },
+                ),
               ],
             ),
           ),
@@ -261,5 +293,4 @@ class _ChatScreenState extends State<ChatScreen> {
       },
     );
   }
-
 }

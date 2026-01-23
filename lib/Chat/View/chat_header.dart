@@ -16,12 +16,12 @@ import 'package:flutter/material.dart';
 
 import '../controller/chat_controller.dart';
 import '../models/conversation_list_response.dart';
+import '../models/send_message_not_group_request.dart';
 
 class ChatHeader extends StatelessWidget {
-
   ChatController chatController = Get.find<ChatController>();
-
-   ChatHeader({super.key});
+  SendMessageNotGroupRequest? sendMessageNotGroupRequest;
+  ChatHeader({super.key, required this.sendMessageNotGroupRequest});
 
   @override
   Widget build(BuildContext context) {
@@ -29,29 +29,41 @@ class ChatHeader extends StatelessWidget {
       padding: EdgeInsets.all(16),
       child: Row(
         children: [
-           CircleAvatar(
+          CircleAvatar(
             radius: 22,
             backgroundColor: color_secondary,
-            child: Text(
-                (chatController.groupChatResponse.value.data?.group?.name??"")
-              .isNotEmpty
-                  ? (chatController.groupChatResponse.value.data?.group?.name??"")[0].toUpperCase()
-                  : '',
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            child: sendMessageNotGroupRequest != null
+                ? Icon(
+                    (sendMessageNotGroupRequest?.receivers ?? []).length == 1
+                        ? Icons.person
+                        : Icons.group,
+                  )
+                : Icon(
+                    (chatController.groupChatResponse.value.data?.members ?? [])
+                                .length ==
+                            1
+                        ? Icons.person
+                        : Icons.group,
+                  ),
           ),
           const SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children:  [
+              children: [
                 BlueLargeBoldText(
-                  getMembersName((chatController.groupChatResponse.value.data?.members??[])),
-      
+                  sendMessageNotGroupRequest != null
+                      ? chatController.getReceiverNames(
+                          sendMessageNotGroupRequest?.receivers ?? [],
+                        )
+                      : getMembersName(
+                          (chatController
+                                  .groupChatResponse
+                                  .value
+                                  .data
+                                  ?.members ??
+                              []),
+                        ),
                 ),
                 // SizedBox(height: 2),
                 // BlackSmallRegularText(
@@ -66,17 +78,19 @@ class ChatHeader extends StatelessWidget {
     );
   }
 
-  String getMembersName(List<Member> members){
-    String membersNameString = members
-        ?.where((m) => m.name != null && m.name!.isNotEmpty && m.id != chatController.loginResponse.value.data?.user?.id)
-        .map((m) => m.name!)
-        .join(', ')
-        ?? '';
+  String getMembersName(List<Member> members) {
+    String membersNameString =
+        members
+            ?.where(
+              (m) =>
+                  m.name != null &&
+                  m.name!.isNotEmpty &&
+                  m.id != chatController.loginResponse.value.data?.user?.id,
+            )
+            .map((m) => m.name!)
+            .join(', ') ??
+        '';
 
     return membersNameString;
-
   }
 }
-
-
-
