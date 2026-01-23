@@ -37,13 +37,15 @@ class ChatHeader extends StatelessWidget {
                     (sendMessageNotGroupRequest?.receivers ?? []).length == 1
                         ? Icons.person
                         : Icons.group,
+              color: Colors.white,
                   )
                 : Icon(
                     (chatController.groupChatResponse.value.data?.members ?? [])
                                 .length ==
-                            1
+                            2
                         ? Icons.person
                         : Icons.group,
+                color: Colors.white
                   ),
           ),
           const SizedBox(width: 10),

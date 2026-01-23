@@ -181,8 +181,8 @@ class _ChildActivityScreenState extends State<ChildActivityScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     BlueMediumRegularText(
-                      day.displayDate!.split(',')[0].substring(0, 3),
-                      fontSize: 12,
+                      day.displayDate!.split(',')[0].substring(0, 3).toUpperCase(),
+                      fontSize: 17,
                       color: isSelected ? Colors.white : color_secondary,
                     ),
 
@@ -191,23 +191,28 @@ class _ChildActivityScreenState extends State<ChildActivityScreen> {
                     /// Month (Jan)
                     Row(
                       children: [
-                        BlueMediumBoldText(
-                          day.displayDate!.split(',')[1].trim().split(' ')[0],
-                          fontSize: 14,
-                          fontFamily: fontInterMedium,
-                          color: isSelected ? Colors.white : color_secondary,
-                        ),
-
-                        const SizedBox(width: 2),
 
                         Text(
                           day.displayDate!.split(' ').last,
                           style: TextStyle(
-                            fontSize: 16,
+                            fontSize: 14,
                             fontFamily: fontInterSemiBold,
                             color: isSelected ? Colors.white : color_secondary,
                           ),
                         ),
+
+                        const SizedBox(width: 2),
+
+                        BlueMediumBoldText(
+                          day.displayDate!.split(',')[1].trim().split(' ')[0].toUpperCase(),
+                          fontSize: 12,
+                          fontFamily: fontInterMedium,
+                          color: isSelected ? Colors.white : color_secondary,
+                        ),
+
+
+
+
                       ],
                     ),
                   ],

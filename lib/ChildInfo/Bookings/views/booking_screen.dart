@@ -1,3 +1,5 @@
+import 'package:bloom_kidz/CommonWidgets/black_large_bold_text.dart';
+import 'package:bloom_kidz/CommonWidgets/black_medium_bold_text.dart';
 import 'package:bloom_kidz/CommonWidgets/black_medium_regular_text.dart';
 import 'package:bloom_kidz/CommonWidgets/blue_large_bold_text.dart';
 import 'package:bloom_kidz/CommonWidgets/blue_medium_bold_text.dart';
@@ -75,7 +77,9 @@ class _BookingScreenState extends State<BookingScreen> {
 
       body: Stack(
         children: [
-          Positioned.fill(child: SvgPicture.asset(app_bg, fit: BoxFit.fill)),
+          Positioned.fill(
+            child: SvgPicture.asset(app_bg, fit: BoxFit.fill),
+          ),
 
           Obx(() {
             if (childInfoController.isLoading.value) {
@@ -88,10 +92,7 @@ class _BookingScreenState extends State<BookingScreen> {
 
             return SingleChildScrollView(
               child: Container(
-                margin: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 20,
-                ),
+                margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                 padding: const EdgeInsets.only(bottom: 16),
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -108,11 +109,9 @@ class _BookingScreenState extends State<BookingScreen> {
                   children: [
                     const SizedBox(height: 16),
 
-                    for (
-                      int i = 0;
-                      i < childInfoController.bookingList.length;
-                      i++
-                    )
+                    for (int i = 0;
+                    i < childInfoController.bookingList.length;
+                    i++)
                       Column(
                         children: [
                           /// DATE + STATUS
@@ -121,11 +120,9 @@ class _BookingScreenState extends State<BookingScreen> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                BlackMediumRegularText(
-                                  childInfoController
-                                          .bookingList[i]
-                                          .planStart ??
-                                      "",
+                                BlackLargeBoldText(
+                                  childInfoController.bookingList[i].planStart ?? "",
+
                                 ),
                                 Container(
                                   padding: const EdgeInsets.symmetric(
@@ -137,9 +134,7 @@ class _BookingScreenState extends State<BookingScreen> {
                                     borderRadius: BorderRadius.circular(20),
                                   ),
                                   child: BlueLargeBoldText(
-                                    childInfoController
-                                            .bookingList[i]
-                                            .statusLabel ??
+                                    childInfoController.bookingList[i].statusLabel ??
                                         "",
                                     color: Colors.green,
                                   ),
@@ -160,11 +155,9 @@ class _BookingScreenState extends State<BookingScreen> {
                                 Column(
                                   children: List.generate(
                                     childInfoController
-                                            .bookingList[i]
-                                            .days
-                                            ?.length ??
+                                        .bookingList[i].days?.length ??
                                         0,
-                                    (index) => Column(
+                                        (index) => Column(
                                       children: [
                                         Container(
                                           width: 10,
@@ -176,16 +169,12 @@ class _BookingScreenState extends State<BookingScreen> {
                                         ),
                                         if (index !=
                                             (childInfoController
-                                                    .bookingList[i]
-                                                    .days!
-                                                    .length -
+                                                .bookingList[i].days!.length -
                                                 1))
                                           Container(
                                             width: 2,
-                                            height: 42,
-                                            color: color_secondary.withOpacity(
-                                              0.4,
-                                            ),
+                                            height: 65,
+                                            color: color_secondary.withOpacity(0.4),
                                           ),
                                       ],
                                     ),
@@ -194,23 +183,14 @@ class _BookingScreenState extends State<BookingScreen> {
 
                                 const SizedBox(width: 12),
 
-                                /// DAY LIST
+                                /// DAY LIST (IMAGE STYLE)
                                 Expanded(
                                   child: Column(
                                     children: List.generate(
                                       childInfoController
-                                              .bookingList[i]
-                                              .days
-                                              ?.length ??
+                                          .bookingList[i].days?.length ??
                                           0,
-                                      (dayIndex) {
-                                        final dayObj = childInfoController
-                                            .bookingList[i]
-                                            .days![dayIndex];
-
-                                        final isSelected =
-                                            dayIndex == selectedDayIndex;
-
+                                          (dayIndex) {
                                         return GestureDetector(
                                           onTap: () {
                                             setState(() {
@@ -218,68 +198,103 @@ class _BookingScreenState extends State<BookingScreen> {
                                             });
                                           },
                                           child: Container(
-                                            margin: const EdgeInsets.only(
-                                              bottom: 12,
-                                            ),
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 16,
-                                              vertical: 14,
-                                            ),
+                                            margin: const EdgeInsets.only(bottom: 20),
                                             decoration: BoxDecoration(
-                                              gradient: isSelected
-                                                  ? const LinearGradient(
-                                                      colors: [
-                                                        Color(0xFFF9B233),
-                                                        Color(0xFFFFD37A),
-                                                      ],
-                                                    )
-                                                  : null,
-                                              color: isSelected
-                                                  ? null
-                                                  : Colors.white,
-                                              borderRadius:
-                                                  BorderRadius.circular(30),
-                                              border: Border.all(
-                                                color: color_secondary,
-                                              ),
+                                              color: Colors.white,
+                                              borderRadius: BorderRadius.circular(30),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.black
+                                                      .withOpacity(0.08),
+                                                  blurRadius: 10,
+                                                  offset: const Offset(0, 4),
+                                                ),
+                                              ],
                                             ),
                                             child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
                                               children: [
-                                                /// DAY
-                                                Text(
-                                                  (dayObj.day ?? '').length >= 3
-                                                      ? dayObj.day!.substring(
-                                                          0,
-                                                          3,
-                                                        )
-                                                      : dayObj.day ?? '',
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    color: isSelected
-                                                        ? Colors.white
-                                                        : Colors.orange,
+                                                /// DAY (ORANGE)
+                                                Container(
+                                                  width: 80
+                                                  ,padding: const EdgeInsets.symmetric(
+
+                                                    vertical: 14,
+                                                  ),
+                                                  alignment: Alignment.center,
+                                                  decoration: const BoxDecoration(
+                                                    color: Color(0xFFF9B233),
+                                                    borderRadius: BorderRadius.only(
+                                                      topLeft: Radius.circular(30),
+                                                      bottomLeft:
+                                                      Radius.circular(30),
+                                                    ),
+                                                  ),
+                                                  child: Text(
+                                                    maxLines: 1,
+                                                    (childInfoController
+                                                        .bookingList[i]
+                                                        .days![dayIndex]
+                                                        .day ??
+                                                        '')
+                                                        .length >=
+                                                        3
+                                                        ? childInfoController
+                                                        .bookingList[i]
+                                                        .days![dayIndex]
+                                                        .day!
+                                                        .substring(0, 3)
+                                                        : childInfoController
+                                                        .bookingList[i]
+                                                        .days![dayIndex]
+                                                        .day ??
+                                                        '',
+                                                    style: const TextStyle(
+                                                      fontFamily: fontInterSemiBold,
+                                                      color: Colors.white,
+                                                    ),
                                                   ),
                                                 ),
 
-                                                /// TIME
-                                                Text(
-                                                  dayObj
-                                                              .mainSessions
-                                                              ?.isNotEmpty ==
+                                                /// TIME (LIGHT)
+                                                Expanded(
+                                                  child: Container(
+                                                    padding:
+                                                    const EdgeInsets.symmetric(
+                                                      horizontal: 16,
+                                                      vertical: 14,
+                                                    ),
+                                                    decoration:
+                                                    const BoxDecoration(
+                                                      color: Color(0xFFFFF3D6),
+                                                      borderRadius:
+                                                      BorderRadius.only(
+                                                        topRight:
+                                                        Radius.circular(30),
+                                                        bottomRight:
+                                                        Radius.circular(30),
+                                                      ),
+                                                    ),
+                                                    child: Text(
+                                                      maxLines: 1,
+                                                      childInfoController
+                                                          .bookingList[i]
+                                                          .days![dayIndex]
+                                                          .mainSessions
+                                                          ?.isNotEmpty ==
                                                           true
-                                                      ? dayObj
-                                                                .mainSessions![0]
-                                                                .label ??
-                                                            ''
-                                                      : '',
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    color: isSelected
-                                                        ? Colors.black87
-                                                        : Colors.black,
+                                                          ? childInfoController
+                                                          .bookingList[i]
+                                                          .days![dayIndex]
+                                                          .mainSessions![0]
+                                                          .label ??
+                                                          ''
+                                                          : '',
+                                                      style: const TextStyle(
+                                                        fontSize: 13,
+                                                        fontFamily: fontInterMedium,
+                                                        color: Colors.black87,
+                                                      ),
+                                                    ),
                                                   ),
                                                 ),
                                               ],
@@ -303,7 +318,8 @@ class _BookingScreenState extends State<BookingScreen> {
             );
           }),
         ],
-      ),
+      )
+      ,
     );
   }
 }

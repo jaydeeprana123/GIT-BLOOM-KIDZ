@@ -281,6 +281,7 @@ class ChatController extends GetxController {
         if (baseModel.status ?? false) {
           
           if(isFromChatScreen??false){
+            messageController.value.text = "";
             callGetGroupChatAPI(context, (baseModel.data?.groupId ?? 0).toString());
           }else{
             Get.to(
