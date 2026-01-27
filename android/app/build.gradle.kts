@@ -3,6 +3,7 @@ plugins {
     id("kotlin-android")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -41,4 +42,20 @@ android {
 
 flutter {
     source = "../.."
+}
+
+
+dependencies {
+    // ✅ Add this line to enable desugaring
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
+
+    // ✅ Optional but often needed
+    implementation("androidx.multidex:multidex:2.0.1")
+
+    // Firebase BOM for version management
+    implementation(platform("com.google.firebase:firebase-bom:32.7.4"))
+
+    // Firebase dependencies (versions managed by BOM)
+    implementation("com.google.firebase:firebase-analytics-ktx")
+
 }

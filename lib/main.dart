@@ -1,17 +1,27 @@
 import 'package:bloom_kidz/Authentication/View/login_screen.dart';
 import 'package:bloom_kidz/splash_screen_view.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'Utils/preference_utils.dart';
 
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage event) async {
+  print("Handling a background message doctor: ${event.messageId}");
+  await Firebase.initializeApp();
+}
+
 void main() async {
   /// 🔴 REQUIRED BEFORE ANY PLUGIN USE
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
 
   /// ✅ Initialize SharedPreferences
   await MySharedPref.getInstance();
-
+  // Register background handler FIRST
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   runApp(const MyApp());
 }
 

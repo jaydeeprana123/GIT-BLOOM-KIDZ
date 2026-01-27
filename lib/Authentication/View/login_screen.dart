@@ -8,6 +8,7 @@ import 'package:bloom_kidz/Styles/my_font.dart';
 import 'package:bloom_kidz/Styles/my_icons.dart';
 import 'package:bloom_kidz/Utils/preference_utils.dart';
 import 'package:bloom_kidz/Utils/share_predata.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter/material.dart';
@@ -27,13 +28,17 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool rememberMe = false;
-
+  late FirebaseMessaging _firebaseMessaging;
   LoginController loginController = Get.put(LoginController());
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // ✅ Initialize ONLY after Firebase.initializeApp()
+      _firebaseMessaging = FirebaseMessaging.instance;
+      loginController.fcmToken = await _firebaseMessaging.getToken();
+      debugPrint("FCM Token: ${loginController.fcmToken}");
       String password = await (MySharedPref().getStringValue(
         SharePreData.keyPassword,
       ));

@@ -19,7 +19,7 @@ import '../../Networks/api_response.dart';
 class LoginController extends GetxController {
   /// Editing controller for text field
   Rx<TextEditingController> emailController = TextEditingController().obs;
-
+  String? fcmToken;
   Rx<TextEditingController> passwordController = TextEditingController().obs;
 
   Rx<LoginResponse> loginResponse = LoginResponse().obs;
@@ -49,6 +49,7 @@ class LoginController extends GetxController {
     dynamic body = {
       'email': emailController.value.text,
       "password": passwordController.value.text,
+      "fcm_token": fcmToken ?? "",
     };
 
     await apiReq.postAPIwithoutBearer(url, body).then((value) async {
