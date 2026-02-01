@@ -10,6 +10,7 @@ import 'package:bloom_kidz/CommonWidgets/common_widget.dart';
 import 'package:bloom_kidz/Styles/my_colors.dart';
 import 'package:bloom_kidz/Styles/my_font.dart';
 import 'package:bloom_kidz/Styles/my_icons.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter/material.dart';
@@ -43,6 +44,22 @@ class _PeopleListScreenState extends State<PeopleListScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+
+      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+        print('Foreground message received');
+
+        if (message.notification != null) {
+
+          if(message.notification?.title == "New Message"){
+            chatController.callPeopleListAPI(context);
+            chatController.callConversationListAPI(context);
+          }
+
+        }
+
+        // Show custom notification / dialog / snackbar
+      });
+
       chatController.callPeopleListAPI(context);
       chatController.callConversationListAPI(context);
     });
@@ -318,21 +335,42 @@ setState(() {
             const SizedBox(width: 12),
 
             /// Name & Designation
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children:  [
-                BlueLargeBoldText(
-                    widget.chatPerson.name??"",
-                  fontFamily: fontInterSemiBold
-                ),
-                SizedBox(height: 3),
-                BlackMediumRegularText(
-                    widget.chatPerson.userType??"",
-                  fontSize: 12,
-                  color: Colors.black
-                ),
-              ],
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children:  [
+                  BlueLargeBoldText(
+                      widget.chatPerson.name??"",
+                    fontFamily: fontInterSemiBold
+                  ),
+                  SizedBox(height: 3),
+                  BlackMediumRegularText(
+                      widget.chatPerson.userType??"",
+                    fontSize: 12,
+                    color: Colors.black
+                  ),
+                ],
+              ),
             ),
+
+            (widget.chatPerson.unreadCount??0) > 0
+                ? Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: Colors.red,
+                shape: BoxShape.circle,
+              ),
+              child: Text(
+                (widget.chatPerson.unreadCount??0) > 99 ? '99+' : widget.chatPerson.unreadCount.toString(),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            )
+                : SizedBox(),
+
           ],
         ),
       ),

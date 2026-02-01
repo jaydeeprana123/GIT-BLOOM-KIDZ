@@ -7,6 +7,7 @@ import 'package:bloom_kidz/CommonWidgets/common_text_field.dart';
 import 'package:bloom_kidz/Styles/my_colors.dart';
 import 'package:bloom_kidz/Styles/my_font.dart';
 import 'package:bloom_kidz/Styles/my_icons.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter/material.dart';
@@ -42,6 +43,28 @@ class _ChatScreenState extends State<ChatScreen> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+
+      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+        print('Foreground message received');
+
+        if (message.notification != null) {
+
+          if(message.notification?.title == "New Message"){
+            if (widget.groupId.isNotEmpty) {
+              chatController.callGetGroupChatAPI(context, widget.groupId);
+            }else if((chatController.groupChatResponse.value.data?.group?.id ??
+                0) != 0){
+              chatController.callGetGroupChatAPI(context, (chatController.groupChatResponse.value.data?.group?.id ??
+                  0).toString());
+            }
+          }
+
+        }
+
+        // Show custom notification / dialog / snackbar
+      });
+
+
       chatController.groupChatResponse.value = GroupChatResponse();
       chatController.imagePath.value = "";
       chatController.scrollController = ScrollController();

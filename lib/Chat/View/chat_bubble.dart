@@ -61,36 +61,40 @@ class ChatBubble extends StatelessWidget {
             ),
           ),
           (attachments??[]).isNotEmpty?
-          Row(
-    mainAxisAlignment: isSender ?MainAxisAlignment.end:MainAxisAlignment.start,children: [
+          SingleChildScrollView(
+    scrollDirection: Axis.horizontal,
+            child: Row(
+                mainAxisAlignment: isSender ?MainAxisAlignment.end:MainAxisAlignment.start,children: [
 
-            for(int i = 0; i< (attachments??[]).length; i++)
-              InkWell(
-                onTap: (){
-                  showFullImageDialog(context, attachments?[i].url??"");
-                },
-                child: Container(
-                  margin: const EdgeInsets.symmetric(vertical: 10),
-                  height: 180,
-                  width: 220,
-                  padding:  EdgeInsets.all(2),
-                  decoration: BoxDecoration(
-                    borderRadius:
-                    BorderRadius.circular(12),
-                    // ⬅ square with small radius
-                    border: Border.all(
-                      color: Colors.blue,
-                      width: 2,
+              for(int i = 0; i< (attachments??[]).length; i++)
+                InkWell(
+                  onTap: (){
+                    showFullImageDialog(context, attachments?[i].url??"");
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.only(top: 10,bottom: 10, right: 12),
+                    height: 180,
+                    width: 220,
+                    padding:  EdgeInsets.all(0),
+
+                    decoration: BoxDecoration(
+                      borderRadius:
+                      BorderRadius.circular(6),
+                      // ⬅ square with small radius
+                      border: Border.all(
+                        color: Colors.blue,
+                        width: 0.5,
+                      ),
+                    ),
+                    child: ClipRRect(
+                      borderRadius:
+                      BorderRadius.circular(6),
+                      child: Image.network(attachments?[i].url??"", fit: BoxFit.cover,),
                     ),
                   ),
-                  child: ClipRRect(
-                    borderRadius:
-                    BorderRadius.circular(6),
-                    child: Image.network(attachments?[i].url??""),
-                  ),
                 ),
-              ),
-          ],)
+            ],),
+          )
            :  Container(
             margin: const EdgeInsets.only(top: 3, bottom: 12),
             padding: const EdgeInsets.all(12),

@@ -4,7 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'Utils/preference_utils.dart';
 
 @pragma('vm:entry-point')
@@ -12,7 +12,8 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage event) async {
   print("Handling a background message doctor: ${event.messageId}");
   await Firebase.initializeApp();
 }
-
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+FlutterLocalNotificationsPlugin();
 void main() async {
   /// 🔴 REQUIRED BEFORE ANY PLUGIN USE
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,6 +23,36 @@ void main() async {
   await MySharedPref.getInstance();
   // Register background handler FIRST
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  const AndroidInitializationSettings androidSettings =
+  AndroidInitializationSettings('@mipmap/ic_launcher');
+
+  const InitializationSettings initSettings =
+  InitializationSettings(android: androidSettings);
+
+  await flutterLocalNotificationsPlugin.initialize(settings: initSettings);
+
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    print('Foreground message received');
+
+    if (message.notification != null) {
+      flutterLocalNotificationsPlugin.show(
+        id: 0,
+        title: message.notification!.title,
+        body: message.notification!.body,
+        notificationDetails: NotificationDetails(
+          android: AndroidNotificationDetails(
+            'high_importance_channel',
+            'High Importance Notifications',
+            importance: Importance.max,
+            priority: Priority.high,
+          ),
+        ),
+      );
+    }
+    // Show custom notification / dialog / snackbar
+  });
+
   runApp(const MyApp());
 }
 

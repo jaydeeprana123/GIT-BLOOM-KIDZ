@@ -9,6 +9,7 @@ import 'package:bloom_kidz/CommonWidgets/common_text_field.dart';
 import 'package:bloom_kidz/Styles/my_colors.dart';
 import 'package:bloom_kidz/Styles/my_font.dart';
 import 'package:bloom_kidz/Styles/my_icons.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter/material.dart';
@@ -41,6 +42,22 @@ class _ConversationListScreenState extends State<ConversationListScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+
+      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+        print('Foreground message received');
+
+        if (message.notification != null) {
+
+          if(message.notification?.title == "New Message"){
+            chatController.callConversationListAPI(context);
+          }
+
+        }
+
+        // Show custom notification / dialog / snackbar
+      });
+
+
       chatController.callConversationListAPI(context);
     });
 
@@ -130,6 +147,25 @@ class ConversationTile extends StatelessWidget {
                   ],
                 ),
               ),
+
+              (conversationData.unreadCount??0) > 0
+                  ? Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: Colors.red,
+                  shape: BoxShape.circle,
+                ),
+                child: Text(
+                  (conversationData.unreadCount??0) > 99 ? '99+' : conversationData.unreadCount.toString(),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              )
+                  : SizedBox(),
+
             ],
           ),
         ),

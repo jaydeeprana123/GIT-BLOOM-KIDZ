@@ -49,6 +49,7 @@ dependencies:
   flutter_staggered_grid_view:
   firebase_core: ^3.13.1
   firebase_messaging: ^15.1.4
+  flutter_local_notifications: ^20.0.0
 
 dev_dependencies:
   flutter_test:
