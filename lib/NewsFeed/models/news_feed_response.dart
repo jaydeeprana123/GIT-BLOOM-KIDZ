@@ -61,12 +61,12 @@ class Newsfeed {
   String? name;
   String? description;
   dynamic descriptionOld;
-  ShowType? showType;
+  String? showType;
   DateTime? startDate;
   String? startTime;
   String? endTime;
   int? nurseryId;
-  Type? type;
+  String? type;
   String? status;
   DateTime? createdAt;
   CreatedId? createdId;
@@ -102,12 +102,12 @@ class Newsfeed {
     name: json["name"],
     description: json["description"],
     descriptionOld: json["description_old"],
-    showType: showTypeValues.map[json["show_type"]]!,
+    showType: json["show_type"],
     startDate: json["start_date"] == null ? null : DateTime.parse(json["start_date"]),
     startTime: json["start_time"],
     endTime: json["end_time"],
     nurseryId: json["nursery_id"],
-    type: typeValues.map[json["type"]]!,
+    type: json["type"],
     status: json["status"],
     createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
     createdId: json["created_id"] == null ? null : CreatedId.fromJson(json["created_id"]),
@@ -123,12 +123,12 @@ class Newsfeed {
     "name": name,
     "description": description,
     "description_old": descriptionOld,
-    "show_type": showTypeValues.reverse[showType],
+    "show_type": showType,
     "start_date": "${startDate!.year.toString().padLeft(4, '0')}-${startDate!.month.toString().padLeft(2, '0')}-${startDate!.day.toString().padLeft(2, '0')}",
     "start_time": startTime,
     "end_time": endTime,
     "nursery_id": nurseryId,
-    "type": typeValues.reverse[type],
+    "type": type,
     "status": status,
     "created_at": createdAt?.toIso8601String(),
     "created_id": createdId?.toJson(),
@@ -278,7 +278,7 @@ class Media {
   int? id;
   int? masterId;
   String? file;
-  Extenstion? extenstion;
+  String? extenstion;
 
   Media({
     this.id,
@@ -291,44 +291,17 @@ class Media {
     id: json["id"],
     masterId: json["master_id"],
     file: json["file"],
-    extenstion: extenstionValues.map[json["extenstion"]]!,
+    extenstion: json["extenstion"],
   );
 
   Map<String, dynamic> toJson() => {
     "id": id,
     "master_id": masterId,
     "file": file,
-    "extenstion": extenstionValues.reverse[extenstion],
+    "extenstion": extenstion,
   };
 }
 
-enum Extenstion {
-  JPEG,
-  JPG
-}
-
-final extenstionValues = EnumValues({
-  "jpeg": Extenstion.JPEG,
-  "jpg": Extenstion.JPG
-});
-
-enum ShowType {
-  EVERYONE
-}
-
-final showTypeValues = EnumValues({
-  "everyone": ShowType.EVERYONE
-});
-
-enum Type {
-  EVENTS,
-  FEED
-}
-
-final typeValues = EnumValues({
-  "events": Type.EVENTS,
-  "feed": Type.FEED
-});
 
 class Pagination {
   int? currentPage;
@@ -358,14 +331,3 @@ class Pagination {
   };
 }
 
-class EnumValues<T> {
-  Map<String, T> map;
-  late Map<T, String> reverseMap;
-
-  EnumValues(this.map);
-
-  Map<T, String> get reverse {
-    reverseMap = map.map((k, v) => MapEntry(v, k));
-    return reverseMap;
-  }
-}

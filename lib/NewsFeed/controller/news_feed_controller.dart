@@ -28,8 +28,11 @@ class NewsFeedController extends GetxController {
   Rx<LoginResponse> loginResponse = LoginResponse().obs;
   RxList<TextEditingController> replyController = <TextEditingController>[].obs;
   RxBool isLoading = false.obs;
-
+  RxBool isDoctorListPaginationLoading = false.obs;
+  RxBool isPaginationApiCalling = false.obs;
+  int pageNumberObservation = 1;
   RxList<bool> isLikeList = <bool>[].obs;
+  RxBool isNewAddedObservationLoading = false.obs;
 
   getUserInfo() async {
     /// Set login model into shared preference
@@ -42,13 +45,24 @@ class NewsFeedController extends GetxController {
 
   /// NewsFeed API
   callNewsFeedAPI(BuildContext context) async {
+
+    if (pageNumberObservation == 1) {
+      // clearning list before getting response
+      newsFeedList.clear();
+      isLoading.value = true;
+    } else {
+      isNewAddedObservationLoading.value = true;
+    }
+
     isLoading.value = true;
 
     String token = await MySharedPref().getStringValue(
       SharePreData.keyAccessToken,
     );
 
-    String url = urlBase + urlNewsFeedList;
+    String url = "$urlBase$urlNewsFeedList?page=$pageNumberObservation";
+
+    printData("url", url);
 
     final apiReq = Request();
 
@@ -71,12 +85,28 @@ class NewsFeedController extends GetxController {
           );
 
           if (newsFeedResponse.status ?? false) {
-            newsFeedData.value = newsFeedResponse.data ?? NewsFeedData();
-            newsFeedList.value = newsFeedData.value.newsfeeds ?? [];
 
-            for (int i = 0; i < newsFeedList.length; i++) {
+            newsFeedList.addAll(
+              newsFeedResponse.data?.newsfeeds ?? [],
+            );
+
+            // consultDoctorList
+            //     .addAll(await removeLesserTimeFromNow(model.data ?? []));
+
+            // consultDoctorList.addAll(model.data ?? []);
+            isDoctorListPaginationLoading.value = true;
+            pageNumberObservation = pageNumberObservation + 1;
+
+            isNewAddedObservationLoading.value = false;
+
+            for (
+            int i = 0;
+            i < (newsFeedResponse.data?.newsfeeds ?? []).length;
+            i++
+            ) {
               replyController.add(TextEditingController());
             }
+
           } else if (newsFeedResponse.code == 401) {
             logoutFromTheApp();
           } else {

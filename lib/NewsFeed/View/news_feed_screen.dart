@@ -24,11 +24,39 @@ class _NewsFeedScreenState extends State<NewsFeedScreen> {
   NewsFeedController newsFeedController = Get.put(NewsFeedController());
   final GlobalKey<ScaffoldState> _scaffoldKey =
   GlobalKey<ScaffoldState>();
+
+  ScrollController observationListScrollController = ScrollController();
+
+
+  void initUpcomingConsultationListScrolling(BuildContext context) {
+    observationListScrollController.addListener(() async {
+      if (!observationListScrollController.hasClients) return;
+
+      final position = observationListScrollController.position;
+
+      if (position.pixels >= position.maxScrollExtent - 50) {
+        if (newsFeedController.isDoctorListPaginationLoading.value &&
+            !newsFeedController.isPaginationApiCalling.value) {
+          newsFeedController.isPaginationApiCalling.value = true;
+
+          newsFeedController.callNewsFeedAPI(context);
+
+          newsFeedController.isPaginationApiCalling.value = false;
+        }
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       newsFeedController.newsFeedList.clear();
+      newsFeedController.pageNumberObservation = 1;
+
+      initUpcomingConsultationListScrolling(context);
+
       newsFeedController.callNewsFeedAPI(context);
     });
 
@@ -46,16 +74,34 @@ class _NewsFeedScreenState extends State<NewsFeedScreen> {
       body: Obx(
         () => Stack(
           children: [
-            ListView.builder(
-              padding: EdgeInsets.symmetric(vertical: 10),
-              itemCount: newsFeedController.newsFeedList.length,
-              itemBuilder: (context, index) {
-                return NewsFeedCard(
-                  newsFeedController: newsFeedController,
-                  newsFeed: newsFeedController.newsFeedList[index],
-                  index: index,
-                );
-              },
+            Column(
+              children: [
+
+
+                Expanded(
+                  child: ListView.builder(
+                    controller: observationListScrollController,
+                    padding: EdgeInsets.symmetric(vertical: 10),
+                    itemCount: newsFeedController.newsFeedList.length,
+                    itemBuilder: (context, index) {
+                      return NewsFeedCard(
+                        newsFeedController: newsFeedController,
+                        newsFeed: newsFeedController.newsFeedList[index],
+                        index: index,
+                      );
+                    },
+                  ),
+                ),
+
+                if (newsFeedController.isNewAddedObservationLoading.value)
+                  Center(
+                    child: Container(
+                      margin: EdgeInsets.all(16),
+                      child: CircularProgressIndicator(color: bg_btn_199a8e),
+                    ),
+                  ),
+
+              ],
             ),
 
             if (newsFeedController.isLoading.value)

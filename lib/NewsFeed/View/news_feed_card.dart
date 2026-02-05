@@ -134,9 +134,9 @@ class NewsFeedCard extends StatelessWidget {
       height: 200,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        itemCount: newsFeed.media!.length,
+        itemCount: (newsFeed.media??[]).length,
         itemBuilder: (context, index) {
-          final media = newsFeed.media![index];
+          final media = newsFeed.media?[index]??Media();
 
           if (media.extenstion != "jpg" &&
               media.extenstion != "jpeg" &&
