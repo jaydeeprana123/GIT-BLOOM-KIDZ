@@ -149,7 +149,8 @@ class _AboutScreenState extends State<AboutScreen> {
               Divider(color: Colors.grey.shade300),
               _twoColumnInfo(
                 "Date Of Birth",
-                _formatDate(basic.dob),
+                basic.dob,
+                // _formatDate(basic.dob),
                 dob,
                 "Nationality",
                 basic.nationality,
@@ -311,12 +312,12 @@ class _AboutScreenState extends State<AboutScreen> {
     );
   }
 
-  String _formatDate(DateTime? date) {
-    if (date == null) return "-";
-    return "${date.day.toString().padLeft(2, '0')}-"
-        "${date.month.toString().padLeft(2, '0')}-"
-        "${date.year}";
-  }
+  // String _formatDate(DateTime? date) {
+  //   if (date == null) return "-";
+  //   return "${date.day.toString().padLeft(2, '0')}-"
+  //       "${date.month.toString().padLeft(2, '0')}-"
+  //       "${date.year}";
+  // }
 
   Widget _healthCard(HealthInfo? health) {
     if (health == null) return const SizedBox();

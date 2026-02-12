@@ -72,7 +72,7 @@ class BasicInfo {
   int? id;
   String? firstName;
   String? lastName;
-  DateTime? dob;
+  String? dob;
   String? gender;
   String? birthPlace;
   String? nationality;
@@ -105,7 +105,7 @@ class BasicInfo {
     id: json["id"],
     firstName: json["first_name"],
     lastName: json["last_name"],
-    dob: json["dob"] == null ? null : DateTime.parse(json["dob"]),
+    dob: json["dob"],
     gender: json["gender"],
     birthPlace: json["birth_place"],
     nationality: json["nationality"],
@@ -126,8 +126,7 @@ class BasicInfo {
     "id": id,
     "first_name": firstName,
     "last_name": lastName,
-    "dob":
-        "${dob!.year.toString().padLeft(4, '0')}-${dob!.month.toString().padLeft(2, '0')}-${dob!.day.toString().padLeft(2, '0')}",
+    "dob": dob,
     "gender": gender,
     "birth_place": birthPlace,
     "nationality": nationality,
