@@ -37,7 +37,6 @@ class NewsFeedCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     newsFeedController.getUserInfo();
 
     return Card(
@@ -64,17 +63,64 @@ class NewsFeedCard extends StatelessWidget {
       padding: EdgeInsets.all(12),
       child: Row(
         children: [
-          Container(
-            width: 70,
-            height: 70,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              image: DecorationImage(
-                image: NetworkImage(newsFeed.createdId?.profile ?? ""),
-                fit: BoxFit.cover,
-              ),
-            ),
+          /// Avatar
+          CircleAvatar(
+            radius: 26,
+            backgroundColor: Colors.blue.shade100,
+            backgroundImage:
+                (widget.chatPerson.profileImage != null &&
+                    widget.chatPerson.profileImage!.isNotEmpty)
+                ? NetworkImage(widget.chatPerson.profileImage!)
+                : null,
+            child:
+                (widget.chatPerson.profileImage == null ||
+                    widget.chatPerson.profileImage!.isEmpty)
+                ? Text(
+                    (widget.chatPerson.name != null &&
+                            widget.chatPerson.name!.isNotEmpty)
+                        ? widget.chatPerson.name![0].toUpperCase()
+                        : "",
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue,
+                    ),
+                  )
+                : null,
           ),
+
+          (newsFeed.createdId?.profile != null &&
+                  (newsFeed.createdId?.profile ?? "").isNotEmpty)
+              ? Container(
+                  width: 70,
+                  height: 70,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    image: DecorationImage(
+                      image: NetworkImage(newsFeed.createdId?.profile ?? ""),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                )
+              : Container(
+                  width: 70,
+                  height: 70,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    (newsFeed.createdId?.name != null &&
+                            (newsFeed.createdId?.name ?? "").isNotEmpty)
+                        ? (newsFeed.createdId?.name ?? "")[0].toUpperCase()
+                        : "",
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue,
+                    ),
+                  ),
+                ),
 
           const SizedBox(width: 10),
           Expanded(
@@ -88,7 +134,7 @@ class NewsFeedCard extends StatelessWidget {
                   children: [
                     // Icon(Icons.timer, color: color_secondary, size: 14),
                     SvgPicture.asset(clockIcon, width: 12),
-                    SizedBox(width: 2,),
+                    SizedBox(width: 2),
                     BlueSmallRegularText(
                       newsFeed.createdAt != null
                           ? '${newsFeed.createdAt!.hour.toString().padLeft(2, '0')}:'
@@ -98,7 +144,7 @@ class NewsFeedCard extends StatelessWidget {
 
                     SizedBox(width: 7),
                     SvgPicture.asset(dobIcon, width: 12),
-                    SizedBox(width: 2,),
+                    SizedBox(width: 2),
                     BlueSmallRegularText(
                       newsFeed.createdAt != null
                           ? '${newsFeed.createdAt!.day.toString().padLeft(2, '0')}-'
@@ -124,7 +170,6 @@ class NewsFeedCard extends StatelessWidget {
     );
   }
 
-
   Widget _image() {
     if ((newsFeed.media ?? []).isEmpty) {
       return const SizedBox();
@@ -134,9 +179,9 @@ class NewsFeedCard extends StatelessWidget {
       height: 200,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        itemCount: (newsFeed.media??[]).length,
+        itemCount: (newsFeed.media ?? []).length,
         itemBuilder: (context, index) {
-          final media = newsFeed.media?[index]??Media();
+          final media = newsFeed.media?[index] ?? Media();
 
           if (media.extenstion != "jpg" &&
               media.extenstion != "jpeg" &&
@@ -145,7 +190,7 @@ class NewsFeedCard extends StatelessWidget {
           }
 
           return Container(
-            width: (newsFeed.media??[]).length == 1?double.infinity:280,
+            width: (newsFeed.media ?? []).length == 1 ? double.infinity : 280,
             height: 200,
             margin: const EdgeInsets.only(right: 10),
             decoration: BoxDecoration(
@@ -160,7 +205,6 @@ class NewsFeedCard extends StatelessWidget {
       ),
     );
   }
-
 
   Widget _description() {
     return Padding(
@@ -210,7 +254,7 @@ class NewsFeedCard extends StatelessWidget {
               controller.callAddLikeInNewsFeedAPI(context, newsId, index);
             },
             child: SvgPicture.asset(
-              isLikeOrNot()?icon_like:unlike,
+              isLikeOrNot() ? icon_like : unlike,
               width: 16,
             ),
           ),
@@ -230,7 +274,6 @@ class NewsFeedCard extends StatelessWidget {
             },
             child: Row(
               children: [
-
                 SvgPicture.asset(
                   icon_comment,
                   // color: (controller.newsFeedList[index].isLike ?? false)
@@ -272,7 +315,7 @@ class NewsFeedCard extends StatelessWidget {
             ),
 
             IconButton(
-              icon: SvgPicture.asset(send, width: 22,),
+              icon: SvgPicture.asset(send, width: 22),
               onPressed: () async {
                 await newsFeedController.callAddCommentAPI(
                   context,
@@ -288,9 +331,14 @@ class NewsFeedCard extends StatelessWidget {
     );
   }
 
-
-  bool isLikeOrNot(){
-    bool isLikedByMe = newsFeed.likes?.any((like) => like.userId == newsFeedController.loginResponse.value.data?.user?.id) ?? false;
+  bool isLikeOrNot() {
+    bool isLikedByMe =
+        newsFeed.likes?.any(
+          (like) =>
+              like.userId ==
+              newsFeedController.loginResponse.value.data?.user?.id,
+        ) ??
+        false;
     return isLikedByMe;
   }
 }

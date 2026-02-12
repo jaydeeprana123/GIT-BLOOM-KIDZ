@@ -40,12 +40,10 @@ class NewsFeedController extends GetxController {
         (await MySharedPref().getLoginModel(SharePreData.keySaveLoginModel)) ??
         LoginResponse();
     update();
-
   }
 
   /// NewsFeed API
   callNewsFeedAPI(BuildContext context) async {
-
     if (pageNumberObservation == 1) {
       // clearning list before getting response
       newsFeedList.clear();
@@ -53,8 +51,6 @@ class NewsFeedController extends GetxController {
     } else {
       isNewAddedObservationLoading.value = true;
     }
-
-    isLoading.value = true;
 
     String token = await MySharedPref().getStringValue(
       SharePreData.keyAccessToken,
@@ -85,10 +81,7 @@ class NewsFeedController extends GetxController {
           );
 
           if (newsFeedResponse.status ?? false) {
-
-            newsFeedList.addAll(
-              newsFeedResponse.data?.newsfeeds ?? [],
-            );
+            newsFeedList.addAll(newsFeedResponse.data?.newsfeeds ?? []);
 
             // consultDoctorList
             //     .addAll(await removeLesserTimeFromNow(model.data ?? []));
@@ -100,13 +93,12 @@ class NewsFeedController extends GetxController {
             isNewAddedObservationLoading.value = false;
 
             for (
-            int i = 0;
-            i < (newsFeedResponse.data?.newsfeeds ?? []).length;
-            i++
+              int i = 0;
+              i < (newsFeedResponse.data?.newsfeeds ?? []).length;
+              i++
             ) {
               replyController.add(TextEditingController());
             }
-
           } else if (newsFeedResponse.code == 401) {
             logoutFromTheApp();
           } else {
@@ -210,7 +202,11 @@ class NewsFeedController extends GetxController {
   }
 
   /// Leave Request API
-  Future<void> callNewsDeleteCommentAPI(BuildContext context, String newsId ,String id) async {
+  Future<void> callNewsDeleteCommentAPI(
+    BuildContext context,
+    String newsId,
+    String id,
+  ) async {
     try {
       isLoading.value = true;
 
@@ -230,10 +226,7 @@ class NewsFeedController extends GetxController {
 
       /// 🔥 Request
       var request = http.Request('DELETE', Uri.parse(url));
-      printData(
-        runtimeType.toString(),
-        "callDeleteCommentAPI response ${url}",
-      );
+      printData(runtimeType.toString(), "callDeleteCommentAPI response ${url}");
       request.headers.addAll(headersWithBearer);
 
       /// 📡 Send Request
@@ -246,8 +239,9 @@ class NewsFeedController extends GetxController {
       /// 📦 Parse Base Model
       BaseModel baseModel = BaseModel.fromJson(jsonData);
       printData(
-          runtimeType.toString(),
-          "callDeleteCommentAPI response ${response.statusCode}");
+        runtimeType.toString(),
+        "callDeleteCommentAPI response ${response.statusCode}",
+      );
       if (response.statusCode == 200) {
         if (baseModel.status == true) {
           snackBar(context, baseModel.message ?? "Deleted successfully");
@@ -264,7 +258,6 @@ class NewsFeedController extends GetxController {
       isLoading.value = false;
     }
   }
-
 
   /// Add Like API
   callAddLikeInNewsFeedAPI(

@@ -22,11 +22,15 @@ class NewsFeedScreen extends StatefulWidget {
 
 class _NewsFeedScreenState extends State<NewsFeedScreen> {
   NewsFeedController newsFeedController = Get.put(NewsFeedController());
-  final GlobalKey<ScaffoldState> _scaffoldKey =
-  GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   ScrollController observationListScrollController = ScrollController();
 
+  Future<void> _onRefresh() async {
+    newsFeedController.newsFeedList.clear();
+    newsFeedController.pageNumberObservation = 1;
+    await newsFeedController.callNewsFeedAPI(context);
+  }
 
   void initUpcomingConsultationListScrolling(BuildContext context) {
     observationListScrollController.addListener(() async {
@@ -59,7 +63,6 @@ class _NewsFeedScreenState extends State<NewsFeedScreen> {
 
       newsFeedController.callNewsFeedAPI(context);
     });
-
   }
 
   @override
@@ -67,29 +70,35 @@ class _NewsFeedScreenState extends State<NewsFeedScreen> {
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: Colors.transparent,
-      appBar: CommonAppBar(title: "News Feed", showMenu: true, onMenuTap: (){
-        _scaffoldKey.currentState?.openDrawer(); // 👈 OPEN DRAWER
-      },),
+      appBar: CommonAppBar(
+        title: "News Feed",
+        showMenu: true,
+        onMenuTap: () {
+          _scaffoldKey.currentState?.openDrawer(); // 👈 OPEN DRAWER
+        },
+      ),
       drawer: const AppDrawer(), // 👈 Navigation Drawer
       body: Obx(
         () => Stack(
           children: [
             Column(
               children: [
-
-
                 Expanded(
-                  child: ListView.builder(
-                    controller: observationListScrollController,
-                    padding: EdgeInsets.symmetric(vertical: 10),
-                    itemCount: newsFeedController.newsFeedList.length,
-                    itemBuilder: (context, index) {
-                      return NewsFeedCard(
-                        newsFeedController: newsFeedController,
-                        newsFeed: newsFeedController.newsFeedList[index],
-                        index: index,
-                      );
-                    },
+                  child: RefreshIndicator(
+                    onRefresh: _onRefresh,
+                    color: color_primary,
+                    child: ListView.builder(
+                      controller: observationListScrollController,
+                      padding: EdgeInsets.symmetric(vertical: 10),
+                      itemCount: newsFeedController.newsFeedList.length,
+                      itemBuilder: (context, index) {
+                        return NewsFeedCard(
+                          newsFeedController: newsFeedController,
+                          newsFeed: newsFeedController.newsFeedList[index],
+                          index: index,
+                        );
+                      },
+                    ),
                   ),
                 ),
 
@@ -100,7 +109,6 @@ class _NewsFeedScreenState extends State<NewsFeedScreen> {
                       child: CircularProgressIndicator(color: bg_btn_199a8e),
                     ),
                   ),
-
               ],
             ),
 
