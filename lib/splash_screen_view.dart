@@ -4,6 +4,7 @@ import 'package:bloom_kidz/Authentication/View/login_screen.dart';
 import 'package:bloom_kidz/Authentication/model/login_response.dart';
 import 'package:bloom_kidz/BottomNavigation/View/bottom_navigation_view.dart';
 import 'package:bloom_kidz/CommonWidgets/common_widget.dart';
+import 'package:bloom_kidz/Splash/splash_controller.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/cupertino.dart';
@@ -24,11 +25,13 @@ class SplashScreenView extends StatefulWidget {
 
 class _SplashScreenViewState extends State<SplashScreenView>
     with TickerProviderStateMixin {
+
+  SplashController splashController = Get.put(SplashController());
   @override
   void initState() {
     super.initState();
 
-    initSharedPreference();
+    splashController.callGetVersionAPI(context);
   }
 
   @override
@@ -59,28 +62,6 @@ class _SplashScreenViewState extends State<SplashScreenView>
     );
   }
 
-  Future<void> redirectOnPendingState() async {
-    /// READ LOGIN MODEL
-    String token = await MySharedPref().getStringValue(
-      SharePreData.keyAccessToken,
-    );
 
-    Future.delayed(const Duration(seconds: 5), () async {
-      /// INITIALIZE SHARED PREF
 
-      printData("token", token);
-
-      if (token.isEmpty) {
-        Get.off(() => LoginScreen());
-      } else {
-        Get.off(() => BottomNavigationView(selectTabPosition: 0));
-      }
-    });
-  }
-
-  initSharedPreference() async {
-    // await MySharedPref.getInstance(); // 🔥 REQUIRED FOR RELEASE
-
-    redirectOnPendingState();
-  }
 }

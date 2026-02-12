@@ -86,6 +86,7 @@ class ObservationCard extends StatelessWidget {
                   height: 70,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
+                    color: color_secondary
                   ),
                   alignment: Alignment.center,
                   child: Text(
@@ -94,9 +95,9 @@ class ObservationCard extends StatelessWidget {
                         ? (observation.createdBy ?? "")[0].toUpperCase()
                         : "",
                     style: const TextStyle(
-                      fontSize: 20,
+                      fontSize: 38,
                       fontWeight: FontWeight.bold,
-                      color: Colors.blue,
+                      color: Colors.white,
                     ),
                   ),
                 ),

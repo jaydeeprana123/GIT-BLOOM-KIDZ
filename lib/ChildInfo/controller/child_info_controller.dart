@@ -707,6 +707,8 @@ class ChildInfoController extends GetxController {
 
     String url = "$urlBase$urlGetDocumentList/$childId";
 
+    printData("url", url);
+
     final apiReq = Request();
 
     await apiReq.getMethodAPI(url, null, token).then((value) async {

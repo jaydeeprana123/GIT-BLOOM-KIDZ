@@ -5,6 +5,8 @@ var urlBase =
 //Authentication APIs
 const urlLogin = '/login';
 const urlLogout = '/logout';
+const urlGetVersion= '/app-version';
+
 
 const urlNewsFeedCalenderList = '/parent/newsfeeds/calendar';
 const urlNewsFeedList = '/parent/newsfeeds';
