@@ -67,19 +67,42 @@ class ObservationCard extends StatelessWidget {
       padding: EdgeInsets.all(12),
       child: Row(
         children: [
-          Container(
-            width: 70,
-            height: 70,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              // image: DecorationImage(
-              //   image: NetworkImage(observation.createdId?.profile ?? ""),
-              //   fit: BoxFit.cover,
-              // ),
-            ),
-          ),
+          /// Avatar
+          (observation.profile != null &&
+                  (observation.profile ?? "").isNotEmpty)
+              ? Container(
+                  width: 70,
+                  height: 70,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    image: DecorationImage(
+                      image: NetworkImage(observation.profile ?? ""),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                )
+              : Container(
+                  width: 70,
+                  height: 70,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    (observation.createdBy != null &&
+                            (observation.createdBy ?? "").isNotEmpty)
+                        ? (observation.createdBy ?? "")[0].toUpperCase()
+                        : "",
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue,
+                    ),
+                  ),
+                ),
 
           const SizedBox(width: 10),
+
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -167,56 +190,61 @@ class ObservationCard extends StatelessWidget {
 
     return SizedBox(
       height: 200,
-      child: (observation.media ?? []).length == 1?InkWell(
-        onTap: (){
-          showFullImageDialog(context, observation.media?[0].image??"");
-        },
-        child: Container(
-          width: (observation.media ?? []).length == 1
-              ? double.infinity
-              : 280,
-          height: 200,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            image: DecorationImage(
-              image: NetworkImage(observation.media?[0].image ?? ""),
-              fit: BoxFit.cover,
-            ),
-          ),
-        ),
-      ):ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: (observation.media ?? []).length,
-        itemBuilder: (context, index) {
-          final media = (observation.media ?? [])[index];
-
-          if (media.extension != "jpg" &&
-              media.extension != "jpeg" &&
-              media.extension != "png") {
-            return const SizedBox();
-          }
-
-          return InkWell(
-            onTap: (){
-              showFullImageDialog(context, observation.media?[index].image??"");
-            },
-            child: Container(
-              width: (observation.media ?? []).length == 1
-                  ? MediaQuery.of(context).size.width - 64
-                  : 280,
-              height: 200,
-              margin: const EdgeInsets.only(right: 10),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                image: DecorationImage(
-                  image: NetworkImage(media.image ?? ""),
-                  fit: BoxFit.cover,
+      child: (observation.media ?? []).length == 1
+          ? InkWell(
+              onTap: () {
+                showFullImageDialog(context, observation.media?[0].image ?? "");
+              },
+              child: Container(
+                width: (observation.media ?? []).length == 1
+                    ? double.infinity
+                    : 280,
+                height: 200,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  image: DecorationImage(
+                    image: NetworkImage(observation.media?[0].image ?? ""),
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
+            )
+          : ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: (observation.media ?? []).length,
+              itemBuilder: (context, index) {
+                final media = (observation.media ?? [])[index];
+
+                if (media.extension != "jpg" &&
+                    media.extension != "jpeg" &&
+                    media.extension != "png") {
+                  return const SizedBox();
+                }
+
+                return InkWell(
+                  onTap: () {
+                    showFullImageDialog(
+                      context,
+                      observation.media?[index].image ?? "",
+                    );
+                  },
+                  child: Container(
+                    width: (observation.media ?? []).length == 1
+                        ? MediaQuery.of(context).size.width - 64
+                        : 280,
+                    height: 200,
+                    margin: const EdgeInsets.only(right: 10),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      image: DecorationImage(
+                        image: NetworkImage(media.image ?? ""),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                );
+              },
             ),
-          );
-        },
-      ),
     );
   }
 

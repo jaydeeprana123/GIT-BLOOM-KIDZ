@@ -67,6 +67,7 @@ class Observation {
   String? childNames;
   DateTime? createdAt;
   String? createdBy;
+  String? profile;
   List<Media>? media;
   bool? isLike;
   List<Like>? likes;
@@ -82,6 +83,7 @@ class Observation {
     this.childNames,
     this.createdAt,
     this.createdBy,
+    this.profile,
     this.media,
     this.likes,
     this.likesCount,
@@ -100,6 +102,7 @@ class Observation {
         ? null
         : DateTime.parse(json["created_at"]),
     createdBy: json["created_by"],
+    profile: json["profile"],
     media: json["media"] == null
         ? []
         : List<Media>.from(json["media"]!.map((x) => Media.fromJson(x))),
@@ -121,6 +124,7 @@ class Observation {
     "child_names": childNames,
     "created_at": createdAt?.toIso8601String(),
     "created_by": createdBy,
+    "profile": profile,
     "media": media == null
         ? []
         : List<dynamic>.from(media!.map((x) => x.toJson())),

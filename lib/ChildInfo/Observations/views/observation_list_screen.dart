@@ -43,6 +43,12 @@ class _ObservationListScreenState extends State<ObservationListScreen> {
     });
   }
 
+  Future<void> _onRefresh() async {
+    childInfoController.observationList.clear();
+    childInfoController.pageNumberObservation = 1;
+    await childInfoController.callObservationListAPI(context);
+  }
+
   void initUpcomingConsultationListScrolling(BuildContext context) {
     observationListScrollController.addListener(() async {
       if (!observationListScrollController.hasClients) return;
@@ -90,18 +96,22 @@ class _ObservationListScreenState extends State<ObservationListScreen> {
             Column(
               children: [
                 Expanded(
-                  child: ListView.builder(
-                    controller: observationListScrollController,
-                    padding: EdgeInsets.symmetric(vertical: 10),
-                    itemCount: childInfoController.observationList.length,
-                    itemBuilder: (context, index) {
-                      return ObservationCard(
-                        childInfoController: childInfoController,
-                        observation: childInfoController.observationList[index],
-                        index: index,
-                        childId: widget.childId,
-                      );
-                    },
+                  child: RefreshIndicator(
+                    onRefresh: _onRefresh,
+                    child: ListView.builder(
+                      controller: observationListScrollController,
+                      padding: EdgeInsets.symmetric(vertical: 10),
+                      itemCount: childInfoController.observationList.length,
+                      itemBuilder: (context, index) {
+                        return ObservationCard(
+                          childInfoController: childInfoController,
+                          observation:
+                              childInfoController.observationList[index],
+                          index: index,
+                          childId: widget.childId,
+                        );
+                      },
+                    ),
                   ),
                 ),
 
