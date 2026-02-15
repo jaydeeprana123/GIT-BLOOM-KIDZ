@@ -68,15 +68,15 @@ class ObservationCard extends StatelessWidget {
       child: Row(
         children: [
           /// Avatar
-          (observation.profile != null &&
-                  (observation.profile ?? "").isNotEmpty)
+          (observation.createdBy?.profile != null &&
+                  (observation.createdBy?.profile ?? "").isNotEmpty)
               ? Container(
                   width: 70,
                   height: 70,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
                     image: DecorationImage(
-                      image: NetworkImage(observation.profile ?? ""),
+                      image: NetworkImage(observation.createdBy?.profile ?? ""),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -91,8 +91,8 @@ class ObservationCard extends StatelessWidget {
                   alignment: Alignment.center,
                   child: Text(
                     (observation.createdBy != null &&
-                            (observation.createdBy ?? "").isNotEmpty)
-                        ? (observation.createdBy ?? "")[0].toUpperCase()
+                            (observation.createdBy?.name ?? "").isNotEmpty)
+                        ? (observation.createdBy?.name ?? "")[0].toUpperCase()
                         : "",
                     style: const TextStyle(
                       fontSize: 38,
@@ -108,7 +108,7 @@ class ObservationCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                BlackLargeBoldText(observation.createdBy ?? ""),
+                BlackLargeBoldText(observation.createdBy?.name ?? ""),
                 SizedBox(height: 2),
 
                 Row(
@@ -137,7 +137,7 @@ class ObservationCard extends StatelessWidget {
               ],
             ),
           ),
-          InkWell(
+         if(observation.createdBy?.id == childInfoController.loginResponse.value.data?.user?.id) InkWell(
             onTap: () {
               showUpdateDialog(
                 context,
@@ -216,11 +216,11 @@ class ObservationCard extends StatelessWidget {
               itemBuilder: (context, index) {
                 final media = (observation.media ?? [])[index];
 
-                if (media.extension != "jpg" &&
-                    media.extension != "jpeg" &&
-                    media.extension != "png") {
-                  return const SizedBox();
-                }
+                // if (media.extension != "jpg" &&
+                //     media.extension != "jpeg" &&
+                //     media.extension != "png") {
+                //   return const SizedBox();
+                // }
 
                 return InkWell(
                   onTap: () {

@@ -159,11 +159,11 @@ class NewsFeedCard extends StatelessWidget {
         itemBuilder: (context, index) {
           final media = newsFeed.media?[index] ?? Media();
 
-          if (media.extenstion != "jpg" &&
-              media.extenstion != "jpeg" &&
-              media.extenstion != "png") {
-            return const SizedBox();
-          }
+          // if ((media.extenstion??"").toLowerCase() != "jpg" &&
+          //     (media.extenstion??"").toLowerCase() != "jpeg" &&
+          //     (media.extenstion??"").toLowerCase() != "png") {
+          //   return const SizedBox();
+          // }
 
           return Container(
             width: (newsFeed.media ?? []).length == 1 ? double.infinity : 280,
