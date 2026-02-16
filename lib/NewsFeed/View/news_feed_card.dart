@@ -21,6 +21,7 @@ import 'package:flutter/material.dart';
 import '../../CommonWidgets/black_medium_bold_text.dart';
 import '../../CommonWidgets/black_medium_regular_text.dart';
 import '../../CommonWidgets/blue_small_regular_text.dart';
+import '../../CommonWidgets/common_widget.dart';
 import 'comment_list.dart';
 
 class NewsFeedCard extends StatelessWidget {
@@ -82,7 +83,7 @@ class NewsFeedCard extends StatelessWidget {
                   height: 70,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
-                    color: color_secondary
+                    color: color_secondary,
                   ),
                   alignment: Alignment.center,
                   child: Text(
@@ -165,15 +166,20 @@ class NewsFeedCard extends StatelessWidget {
           //   return const SizedBox();
           // }
 
-          return Container(
-            width: (newsFeed.media ?? []).length == 1 ? double.infinity : 280,
-            height: 200,
-            margin: const EdgeInsets.only(right: 10),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              image: DecorationImage(
-                image: NetworkImage(media.file ?? ""),
-                fit: BoxFit.cover,
+          return InkWell(
+            onTap: () {
+              showFullImageDialog(context, newsFeed.media?[0].file ?? "");
+            },
+            child: Container(
+              width: (newsFeed.media ?? []).length == 1 ? double.infinity : 280,
+              height: 200,
+              margin: const EdgeInsets.only(right: 10),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                image: DecorationImage(
+                  image: NetworkImage(media.file ?? ""),
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
           );
