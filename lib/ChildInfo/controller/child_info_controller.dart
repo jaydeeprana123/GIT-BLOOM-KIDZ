@@ -999,7 +999,7 @@ class ChildInfoController extends GetxController {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token',
     };
-    var request = http.Request('GET', Uri.parse(url));
+    var request = http.Request('POST', Uri.parse(url));
     request.body = json.encode({"plan_start": planStart, "plan_end": planEnd});
     request.headers.addAll(headers);
 
