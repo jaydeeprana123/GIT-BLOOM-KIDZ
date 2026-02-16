@@ -12,7 +12,7 @@ const child1 = 'assets/images/child1.jpg';
 const icon_mobile = 'assets/images/icon_mobile.svg';
 const no_internet = 'assets/images/no_internet.svg';
 const icon_home_green = 'assets/images/icon_home_green.svg';
-const img_photo_place_holder = 'assets/images/logo.png';
+const placeholder = 'assets/images/placeholder.png';
 const img_splash = 'assets/images/splash_screen.svg';
 const icon_down_arrow = 'assets/images/icon_down_arrow.svg';
 
@@ -140,7 +140,6 @@ const icon_Book_Extra_Sessions = 'assets/images/Book_Extra_Sessions.svg';
 const icon_ChildPermission = 'assets/images/ChildPermission.svg';
 const icon_WeeklyPlan = 'assets/images/WeeklyPlan.svg';
 const icon_FamilyContacts = 'assets/images/FamilyContacts.svg';
-
 
 const icon_upload_image = 'assets/images/upload.svg';
 const icon_view_detail = 'assets/images/view_detail.svg';

@@ -32,10 +32,8 @@ class ChildCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    BottomNavigationController bottomNavController = Get.find<
-      BottomNavigationController>()
-    ;
+    BottomNavigationController bottomNavController =
+        Get.find<BottomNavigationController>();
 
     return InkWell(
       onTap: () {
@@ -60,19 +58,37 @@ class ChildCard extends StatelessWidget {
           height: 132,
           child: Row(
             children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Stack(
+                  children: [
+                    // Placeholder
+                    Image.asset(
+                      placeholder,
+                      width: 120,
+                      height: 132,
+                      fit: BoxFit.cover,
+                    ),
 
-              Container(
+                    // Network image
+                    Image.network(
+                      childInfo.profile ?? "",
+                      width: 120,
+                      height: 132,
+                      fit: BoxFit.cover,
+                      loadingBuilder: (context, child, loadingProgress) {
+                        // Image loaded → show network image
+                        if (loadingProgress == null) return child;
 
-                width: 120, // same as diameter of circle avatar (2 * radius)
-                height: 132,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(
-                    12,
-                  ), // change 12 for more/less rounding
-                  image: DecorationImage(
-                    image: NetworkImage(childInfo.profile ?? ""),
-                    fit: BoxFit.cover,
-                  ),
+                        // While loading → keep placeholder visible
+                        return const SizedBox.shrink();
+                      },
+                      errorBuilder: (context, error, stackTrace) {
+                        // On error → keep placeholder
+                        return const SizedBox.shrink();
+                      },
+                    ),
+                  ],
                 ),
               ),
 
@@ -89,14 +105,14 @@ class ChildCard extends StatelessWidget {
                       const SizedBox(height: 6),
                       Row(
                         children: [
-                          SvgPicture.asset(explorersIcon, width: 14, ),
+                          SvgPicture.asset(explorersIcon, width: 14),
                           // Icon(Icons.school, size: 14, color: Colors.grey),
                           SizedBox(width: 4),
                           BlackSmallRegularText(
                             childInfo.room ?? "",
                             fontSize: 11,
                             color: Colors.black,
-                            fontFamily: fontInterMedium
+                            fontFamily: fontInterMedium,
                           ),
                         ],
                       ),
@@ -134,20 +150,20 @@ class ChildCard extends StatelessWidget {
                       const SizedBox(height: 10),
                       Row(
                         children: [
+                          InkWell(
+                            onTap: () async {
+                              bottomNavController.currentIndex.value = 2;
 
-                          InkWell(onTap: ()async{
+                              childInfoController.isLoading.value = true;
 
-                            bottomNavController.currentIndex.value = 2;
-
-
-                            childInfoController.isLoading.value = true;
-
-                           //  List<ChatPerson> selectedPerson = [];
-                           //  selectedPerson.add(ChatPerson(id: childInfo.id, name: "${childInfo.firstName??""} ${childInfo.lastName??""}"));
-                           //  ChatController chatController = Get.put(ChatController());
-                           // await chatController.callConversationListAPI(context,  selectedPersons: selectedPerson);
-                           //  childInfoController.isLoading.value = true;
-                          },child: _actionButton(commentIcon, "Chat")),
+                              //  List<ChatPerson> selectedPerson = [];
+                              //  selectedPerson.add(ChatPerson(id: childInfo.id, name: "${childInfo.firstName??""} ${childInfo.lastName??""}"));
+                              //  ChatController chatController = Get.put(ChatController());
+                              // await chatController.callConversationListAPI(context,  selectedPersons: selectedPerson);
+                              //  childInfoController.isLoading.value = true;
+                            },
+                            child: _actionButton(commentIcon, "Chat"),
+                          ),
                           const SizedBox(width: 8),
                           InkWell(
                             onTap: () {
@@ -157,10 +173,7 @@ class ChildCard extends StatelessWidget {
                                 childInfo.id.toString(),
                               );
                             },
-                            child: _actionButton(
-                              pin,
-                              "Collection Pin",
-                            ),
+                            child: _actionButton(pin, "Collection Pin"),
                           ),
                         ],
                       ),

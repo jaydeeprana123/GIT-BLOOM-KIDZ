@@ -31,17 +31,37 @@ class ChildProfileCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Container(
-          width: 100, // same as diameter of circle avatar (2 * radius)
-          height: 100,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(
-              12,
-            ), // change 12 for more/less rounding
-            image: DecorationImage(
-              image: NetworkImage(childInfo.profile ?? ""),
-              fit: BoxFit.cover,
-            ),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: Stack(
+            children: [
+              // Placeholder image
+              Image.asset(
+                placeholder,
+                width: 100,
+                height: 100,
+                fit: BoxFit.cover,
+              ),
+
+              // Network image
+              Image.network(
+                childInfo.profile ?? "",
+                width: 100,
+                height: 100,
+                fit: BoxFit.cover,
+                loadingBuilder: (context, child, loadingProgress) {
+                  // When image is fully loaded
+                  if (loadingProgress == null) return child;
+
+                  // While loading, keep placeholder
+                  return const SizedBox.shrink();
+                },
+                errorBuilder: (context, error, stackTrace) {
+                  // On error, keep placeholder
+                  return const SizedBox.shrink();
+                },
+              ),
+            ],
           ),
         ),
 
@@ -58,14 +78,14 @@ class ChildProfileCard extends StatelessWidget {
                 const SizedBox(height: 6),
                 Row(
                   children: [
-                    SvgPicture.asset(explorersIcon, width: 14, ),
+                    SvgPicture.asset(explorersIcon, width: 14),
                     // Icon(Icons.school, size: 14, color: Colors.grey),
                     SizedBox(width: 4),
                     BlackSmallRegularText(
                       childInfo.room ?? "",
                       fontSize: 11,
                       color: Colors.black,
-                        fontFamily: fontInterMedium
+                      fontFamily: fontInterMedium,
                     ),
                   ],
                 ),
@@ -103,26 +123,27 @@ class ChildProfileCard extends StatelessWidget {
                 const SizedBox(height: 10),
                 Row(
                   children: [
-                    InkWell(onTap: ()async{
-
-
-                      Get.offUntil(
-                        GetPageRoute(
-                          page: () => BottomNavigationView(selectTabPosition: 2),
-                        ),
-                            (route) => false,
-                      );
-                      // List<ChatPerson> selectedPerson = [];
-                      // selectedPerson.add(ChatPerson(id: childInfo.id, name: "${childInfo.firstName??""} ${childInfo.lastName??""}"));
-                      // ChatController chatController = Get.put(ChatController());
-                      // await chatController.callConversationListAPI(context,  selectedPersons: selectedPerson);
-
-                    },child: _actionButton(commentIcon, "Chat")),
+                    InkWell(
+                      onTap: () async {
+                        Get.offUntil(
+                          GetPageRoute(
+                            page: () =>
+                                BottomNavigationView(selectTabPosition: 2),
+                          ),
+                          (route) => false,
+                        );
+                        // List<ChatPerson> selectedPerson = [];
+                        // selectedPerson.add(ChatPerson(id: childInfo.id, name: "${childInfo.firstName??""} ${childInfo.lastName??""}"));
+                        // ChatController chatController = Get.put(ChatController());
+                        // await chatController.callConversationListAPI(context,  selectedPersons: selectedPerson);
+                      },
+                      child: _actionButton(commentIcon, "Chat"),
+                    ),
                     const SizedBox(width: 8),
                     InkWell(
                       onTap: () {
-
-                        childInfoController.collectionPinController.value.text = "";
+                        childInfoController.collectionPinController.value.text =
+                            "";
 
                         showCollectionPinDialog(
                           context,
@@ -130,10 +151,7 @@ class ChildProfileCard extends StatelessWidget {
                           childInfo.id.toString(),
                         );
                       },
-                      child: _actionButton(
-                        pin,
-                        "Collection Pin",
-                      ),
+                      child: _actionButton(pin, "Collection Pin"),
                     ),
                   ],
                 ),

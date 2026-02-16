@@ -10,7 +10,7 @@ import 'package:bloom_kidz/CommonWidgets/common_green_button.dart';
 import 'package:bloom_kidz/CommonWidgets/common_text_field.dart';
 import 'package:bloom_kidz/CommonWidgets/common_widget.dart';
 import 'package:bloom_kidz/NewsFeed/controller/news_feed_controller.dart';
-import 'package:bloom_kidz/NewsFeed/models/news_feed_response.dart';
+import 'package:bloom_kidz/NewsFeed/models/news_feed_response.dart' hide Media;
 import 'package:bloom_kidz/Styles/my_colors.dart';
 import 'package:bloom_kidz/Styles/my_font.dart';
 import 'package:bloom_kidz/Styles/my_icons.dart';
@@ -191,61 +191,64 @@ class ObservationCard extends StatelessWidget {
 
     return SizedBox(
       height: 200,
-      child: (observation.media ?? []).length == 1
-          ? InkWell(
-              onTap: () {
-                showFullImageDialog(context, observation.media?[0].image ?? "");
-              },
-              child: Container(
-                width: (observation.media ?? []).length == 1
-                    ? double.infinity
-                    : 280,
-                height: 200,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  image: DecorationImage(
-                    image: NetworkImage(observation.media?[0].image ?? ""),
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: (observation.media ?? []).length,
+        itemBuilder: (context, index) {
+          final media = observation.media?[index] ?? Media();
+
+          // if ((media.extenstion??"").toLowerCase() != "jpg" &&
+          //     (media.extenstion??"").toLowerCase() != "jpeg" &&
+          //     (media.extenstion??"").toLowerCase() != "png") {
+          //   return const SizedBox();
+          // }
+
+          return InkWell(
+            onTap: () {
+              showFullImageDialog(context, media.image ?? "");
+            },
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Stack(
+                children: [
+                  // Placeholder image
+                  Image.asset(
+                    placeholder, // your placeholder
+                    width: (observation.media ?? []).length == 1 ? double.infinity : 280,
+                    height: 200,
                     fit: BoxFit.cover,
                   ),
-                ),
+
+                  // Network image
+                  Image.network(
+                    media.image ?? "",
+                    width: (observation.media ?? []).length == 1 ? double.infinity : 280,
+                    height: 200,
+                    fit: BoxFit.cover,
+                    loadingBuilder: (context, child, loadingProgress) {
+                      // Image loaded → show network image
+                      if (loadingProgress == null) {
+                        return child;
+                      }
+
+                      // While loading → keep placeholder
+                      return const SizedBox.shrink();
+                    },
+                    errorBuilder: (context, error, stackTrace) {
+                      // On error → show placeholder
+                      return Image.asset(
+                        placeholder,
+                        fit: BoxFit.cover,
+                      );
+                    },
+                  ),
+                ],
               ),
             )
-          : ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: (observation.media ?? []).length,
-              itemBuilder: (context, index) {
-                final media = (observation.media ?? [])[index];
-
-                // if (media.extension != "jpg" &&
-                //     media.extension != "jpeg" &&
-                //     media.extension != "png") {
-                //   return const SizedBox();
-                // }
-
-                return InkWell(
-                  onTap: () {
-                    showFullImageDialog(
-                      context,
-                      observation.media?[index].image ?? "",
-                    );
-                  },
-                  child: Container(
-                    width: (observation.media ?? []).length == 1
-                        ? MediaQuery.of(context).size.width - 64
-                        : 280,
-                    height: 200,
-                    margin: const EdgeInsets.only(right: 10),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      image: DecorationImage(
-                        image: NetworkImage(media.image ?? ""),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
+            ,
+          );
+        },
+      ),
     );
   }
 
