@@ -168,18 +168,45 @@ class NewsFeedCard extends StatelessWidget {
 
           return InkWell(
             onTap: () {
-              showFullImageDialog(context, newsFeed.media?[0].file ?? "");
+              showFullImageDialog(context, media.file ?? "");
             },
-            child: Container(
-              width: (newsFeed.media ?? []).length == 1 ? double.infinity : 280,
-              height: 200,
-              margin: const EdgeInsets.only(right: 10),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                image: DecorationImage(
-                  image: NetworkImage(media.file ?? ""),
-                  fit: BoxFit.cover,
-                ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Stack(
+                children: [
+                  // Placeholder image
+                  Image.asset(
+                    placeholder, // your placeholder
+                    width: (newsFeed.media ?? []).length == 1
+                        ? double.infinity
+                        : 280,
+                    height: 200,
+                    fit: BoxFit.cover,
+                  ),
+
+                  // Network image
+                  Image.network(
+                    media.file ?? "",
+                    width: (newsFeed.media ?? []).length == 1
+                        ? double.infinity
+                        : 280,
+                    height: 200,
+                    fit: BoxFit.cover,
+                    loadingBuilder: (context, child, loadingProgress) {
+                      // Image loaded → show network image
+                      if (loadingProgress == null) {
+                        return child;
+                      }
+
+                      // While loading → keep placeholder
+                      return const SizedBox.shrink();
+                    },
+                    errorBuilder: (context, error, stackTrace) {
+                      // On error → show placeholder
+                      return Image.asset(placeholder, fit: BoxFit.cover);
+                    },
+                  ),
+                ],
               ),
             ),
           );
