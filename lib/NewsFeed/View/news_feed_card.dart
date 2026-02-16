@@ -219,7 +219,7 @@ class NewsFeedCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Html(
-        data: newsFeed.description ?? "",
+        data: _sanitizeHtml(newsFeed.description ?? ""),
         style: {
           "*": Style(
             fontSize: FontSize(13),
@@ -234,10 +234,36 @@ class NewsFeedCard extends StatelessWidget {
               final src = context.attributes['src'] ?? '';
 
               if (src.startsWith('data:image')) {
-                final base64Str = src.split(',').last;
-                final bytes = base64Decode(base64Str);
+                try {
+                  final base64Str = src.split(',').last;
+                  final bytes = base64Decode(base64Str);
 
-                return Image.memory(bytes, fit: BoxFit.contain);
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Image.memory(
+                      bytes,
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) {
+                        return const SizedBox();
+                      },
+                    ),
+                  );
+                } catch (e) {
+                  return const SizedBox();
+                }
+              }
+
+              if (src.isNotEmpty && !src.startsWith('data:')) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Image.network(
+                    src,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) {
+                      return const SizedBox();
+                    },
+                  ),
+                );
               }
 
               return const SizedBox();
@@ -246,6 +272,27 @@ class NewsFeedCard extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String _sanitizeHtml(String html) {
+    // Remove problematic inline styles that contain font-feature-settings
+    html = html.replaceAllMapped(
+      RegExp(r'font-feature-settings:[^;}"]*', caseSensitive: false),
+      (match) => '',
+    );
+
+    // Remove font-variant-* properties that might cause issues
+    html = html.replaceAllMapped(
+      RegExp(r'font-variant-[^:]*:[^;}"]*', caseSensitive: false),
+      (match) => '',
+    );
+
+    // Clean up any double semicolons or style attributes that are now empty
+    html = html.replaceAll(';;', ';');
+    html = html.replaceAll('style=""', '');
+    html = html.replaceAll('style=" "', '');
+
+    return html;
   }
 
   Widget _actions(
