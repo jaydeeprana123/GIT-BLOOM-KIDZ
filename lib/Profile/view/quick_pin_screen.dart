@@ -106,6 +106,7 @@ class _QuickAccessPinScreenState extends State<QuickAccessPinScreen> {
                               isPassword: true,
                               keyboardType: TextInputType.number,
                               maxLines: 1,
+                              maxLength: 4,
                             ),
 
                             const SizedBox(height: 24),

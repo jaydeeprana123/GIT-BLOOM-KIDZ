@@ -27,7 +27,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  bool rememberMe = false;
+  bool rememberMe = true;
   late FirebaseMessaging _firebaseMessaging;
   LoginController loginController = Get.put(LoginController());
 
@@ -53,8 +53,6 @@ class _LoginScreenState extends State<LoginScreen> {
           loginController.emailController.value.text = email;
         }
       }
-
-
     });
   }
 
@@ -154,10 +152,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                             .value
                                             .text,
                                       );
-
-
                                     }
-
 
                                     MySharedPref().setString(
                                       SharePreData.keyEmail,
