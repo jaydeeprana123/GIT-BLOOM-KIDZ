@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import '../Profile/view/quick_pin_screen.dart';
 import '../Styles/my_colors.dart';
 import '../Styles/my_font.dart';
 import 'package:image_picker/image_picker.dart';
@@ -36,7 +37,7 @@ logoutFromTheApp() async {
   var preferences = MySharedPref();
   await preferences.clearData(SharePreData.keySaveLoginModel);
   await preferences.clearData(SharePreData.keyAccessToken);
-  Get.offAll(() => LoginScreen());
+  Get.offAll(() => QuickAccessPinScreen());
 }
 
 void showBlockedDialog() {
@@ -334,7 +335,6 @@ void showFullImageDialog(BuildContext context, String imageUrl) {
         backgroundColor: Colors.black,
         child: Stack(
           children: [
-
             /// 🔍 Zoomable Image
             InteractiveViewer(
               child: Center(
@@ -363,11 +363,7 @@ void showFullImageDialog(BuildContext context, String imageUrl) {
               top: 40,
               right: 20,
               child: IconButton(
-                icon: const Icon(
-                  Icons.close,
-                  color: Colors.white,
-                  size: 28,
-                ),
+                icon: const Icon(Icons.close, color: Colors.white, size: 28),
                 onPressed: () => Navigator.pop(context),
               ),
             ),
@@ -492,12 +488,11 @@ void onLoading(BuildContext context, String msg) {
   });
 }
 
-
 Future<void> pickDate(
-    BuildContext context,
-    DateTime? initialDate,
-    Function(DateTime) onSelected,
-    ) async {
+  BuildContext context,
+  DateTime? initialDate,
+  Function(DateTime) onSelected,
+) async {
   final DateTime? picked = await showDatePicker(
     context: context,
     initialDate: initialDate ?? DateTime.now(),

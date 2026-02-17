@@ -159,7 +159,10 @@ class ProfileController extends GetxController {
   }
 
   /// Set Pin API
-  Future<void> callViewPinAPI(BuildContext context) async {
+  Future<void> callViewPinAPI(
+    BuildContext context, {
+    bool? isFromQuickPinScreen,
+  }) async {
     isLoading.value = true;
 
     String token = await MySharedPref().getStringValue(
@@ -188,7 +191,12 @@ class ProfileController extends GetxController {
         if (res.statusCode == 200) {
           Map<String, dynamic> userModel = json.decode(valueData);
           quickPinResponse.value = QuickPinResponse.fromJson(userModel);
-          pinController.value.text = quickPinResponse.value.data?.pinCode ?? "";
+
+          if (isFromQuickPinScreen ?? false) {
+          } else {
+            pinController.value.text =
+                quickPinResponse.value.data?.pinCode ?? "";
+          }
         }
       });
     });
@@ -204,7 +212,7 @@ class ProfileController extends GetxController {
     // Get.delete<LoginController>();
   }
 
-  clearPasswordFields(){
+  clearPasswordFields() {
     passwordController.value.text = "";
     newPasswordController.value.text = "";
     confirmPasswordController.value.text = "";

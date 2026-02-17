@@ -21,7 +21,7 @@ class LoginController extends GetxController {
   Rx<TextEditingController> emailController = TextEditingController().obs;
   String? fcmToken;
   Rx<TextEditingController> passwordController = TextEditingController().obs;
-
+  Rx<TextEditingController> pinController = TextEditingController().obs;
   Rx<LoginResponse> loginResponse = LoginResponse().obs;
 
   RxBool isPolicyAccepted = false.obs;
@@ -112,6 +112,53 @@ class LoginController extends GetxController {
 
           if (baseModel.status ?? false) {
             logoutFromTheApp();
+          } else {
+            snackBar(context, loginResponse.value.message ?? "");
+          }
+        }
+      });
+    });
+  }
+
+  /// login with pin API
+  callLoginWithPinAPI(BuildContext context) async {
+    isLoading.value = true;
+    String url = urlBase + urlLogin;
+
+    final apiReq = Request();
+
+    dynamic body = {
+      'email': emailController.value.text,
+      "pin": pinController.value.text,
+    };
+
+    await apiReq.postAPIwithoutBearer(url, body).then((value) async {
+      http.StreamedResponse res = value;
+      printData(runtimeType.toString(), "Login API response ${res.statusCode}");
+
+      await res.stream.bytesToString().then((valueData) async {
+        printData(runtimeType.toString(), "Login API value ${valueData}");
+
+        isLoading.value = false;
+
+        if (res.statusCode == 200) {
+          Map<String, dynamic> userModel = json.decode(valueData);
+          loginResponse.value = LoginResponse.fromJson(userModel);
+
+          if (loginResponse.value.status ?? false) {
+            /// Set login model into shared preference
+
+            await MySharedPref().setString(
+              SharePreData.keyAccessToken,
+              loginResponse.value.data?.token ?? "",
+            );
+
+            await MySharedPref().setLoginModel(
+              loginResponse.value,
+              SharePreData.keySaveLoginModel,
+            );
+
+            Get.offAll(BottomNavigationView(selectTabPosition: 0));
           } else {
             snackBar(context, loginResponse.value.message ?? "");
           }

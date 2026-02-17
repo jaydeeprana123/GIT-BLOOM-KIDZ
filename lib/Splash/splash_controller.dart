@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:bloom_kidz/Profile/view/quick_pin_screen.dart';
 import 'package:bloom_kidz/version_response.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -25,36 +26,38 @@ class SplashController extends GetxController {
     super.onInit();
   }
 
-
   /// Get Profile API
   callGetVersionAPI(BuildContext context) async {
-
     String url = urlBase + urlGetVersion;
 
     final apiReq = Request();
 
     await apiReq.getMethodAPIWithoutToken(url, null).then((value) async {
       http.StreamedResponse res = value;
-      printData(runtimeType.toString(), "callGetVersionAPI response ${res.statusCode}");
+      printData(
+        runtimeType.toString(),
+        "callGetVersionAPI response ${res.statusCode}",
+      );
 
       await res.stream.bytesToString().then((valueData) async {
-        printData(runtimeType.toString(), "callGetVersionAPI value ${valueData}");
-
+        printData(
+          runtimeType.toString(),
+          "callGetVersionAPI value ${valueData}",
+        );
 
         if (res.statusCode == 200) {
           Map<String, dynamic> userModel = json.decode(valueData);
           VersionResponse versionResponse = VersionResponse.fromJson(userModel);
 
           if (versionResponse.status ?? false) {
-
             String currentVersion = await getCurrentVersion();
 
-            bool forceUpdate = versionResponse.data?.appVersion?.isForceUpdate??false;
+            bool forceUpdate =
+                versionResponse.data?.appVersion?.isForceUpdate ?? false;
 
-            String latestVersion =
-            Platform.isAndroid
-                ? versionResponse.data?.appVersion?.androidVersion??"1"
-                : versionResponse.data?.appVersion?.iosVersion??"1";
+            String latestVersion = Platform.isAndroid
+                ? versionResponse.data?.appVersion?.androidVersion ?? "1"
+                : versionResponse.data?.appVersion?.iosVersion ?? "1";
 
             if (isVersionLower(currentVersion, latestVersion)) {
               if (forceUpdate) {
@@ -62,24 +65,22 @@ class SplashController extends GetxController {
               } else {
                 showOptionalUpdateDialog();
               }
-            }else{
+            } else {
               isVersionCheck.value = true;
 
               redirectOnPendingState();
-
             }
           } else {
             isVersionCheck.value = true;
             redirectOnPendingState();
           }
-        }else{
+        } else {
           isVersionCheck.value = true;
           redirectOnPendingState();
         }
       });
     });
   }
-
 
   Future<String> getCurrentVersion() async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
@@ -107,28 +108,20 @@ class SplashController extends GetxController {
     }
   }
 
-
   void showForceUpdateDialog() {
     Get.defaultDialog(
       title: "Update Required",
       middleText: "Please update the app to continue.",
       barrierDismissible: false,
-      confirm: ElevatedButton(
-        onPressed: openStore,
-        child: Text("Update Now"),
-      ),
+      confirm: ElevatedButton(onPressed: openStore, child: Text("Update Now")),
     );
   }
-
 
   void showOptionalUpdateDialog() {
     Get.defaultDialog(
       title: "Update Available",
       middleText: "A new version is available. Update for better experience.",
-      confirm: ElevatedButton(
-        onPressed: openStore,
-        child: Text("Update"),
-      ),
+      confirm: ElevatedButton(onPressed: openStore, child: Text("Update")),
       cancel: TextButton(
         onPressed: () {
           Get.back();
@@ -141,9 +134,10 @@ class SplashController extends GetxController {
 
   Future<void> redirectOnPendingState() async {
     /// READ LOGIN MODEL
-    String token = await MySharedPref().getStringValue(
-      SharePreData.keyAccessToken,
-    );
+    var sharedPref = MySharedPref();
+    String token = await sharedPref.getStringValue(SharePreData.keyAccessToken);
+
+    String email = await sharedPref.getStringValue(SharePreData.keyEmail);
 
     Future.delayed(const Duration(seconds: 3), () async {
       /// INITIALIZE SHARED PREF
@@ -151,7 +145,11 @@ class SplashController extends GetxController {
       printData("token", token);
 
       if (token.isEmpty) {
-        Get.off(() => LoginScreen());
+        if (email.isNotEmpty) {
+          Get.off(() => QuickAccessPinScreen());
+        } else {
+          Get.off(() => LoginScreen());
+        }
       } else {
         Get.off(() => BottomNavigationView(selectTabPosition: 0));
       }

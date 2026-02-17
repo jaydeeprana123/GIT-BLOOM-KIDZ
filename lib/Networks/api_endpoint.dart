@@ -5,8 +5,8 @@ var urlBase =
 //Authentication APIs
 const urlLogin = '/login';
 const urlLogout = '/logout';
-const urlGetVersion= '/app-version';
-
+const urlGetVersion = '/app-version';
+const urlLoginWithPin = '/login-with-pin';
 
 const urlNewsFeedCalenderList = '/parent/newsfeeds/calendar';
 const urlNewsFeedList = '/parent/newsfeeds';
@@ -73,4 +73,3 @@ const urlGetGroupChat = '/parent/chat/messages';
 const urlDeleteMessage = '/parent/chat/delete-message';
 const urlAddGroupMember = '/parent/chat/add-members';
 const urlConversations = '/parent/chat/conversations';
-

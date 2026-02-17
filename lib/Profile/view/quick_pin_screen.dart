@@ -1,3 +1,4 @@
+import 'package:bloom_kidz/Authentication/View/login_screen.dart';
 import 'package:bloom_kidz/Authentication/controller/login_controller.dart';
 import 'package:bloom_kidz/BottomNavigation/View/bottom_navigation_view.dart';
 import 'package:bloom_kidz/CommonWidgets/black_small_medium_text.dart';
@@ -27,82 +28,89 @@ import '../../CommonWidgets/black_medium_regular_text.dart';
 import '../../CommonWidgets/blue_medium_bold_text.dart';
 import '../../CommonWidgets/common_appbar.dart';
 
-class ChangePinDialog extends StatelessWidget {
-  final ProfileController controller;
+import 'package:flutter/material.dart';
 
-  ChangePinDialog({super.key, required this.controller});
+class QuickAccessPinScreen extends StatefulWidget {
+  const QuickAccessPinScreen({Key? key}) : super(key: key);
+
+  @override
+  State<QuickAccessPinScreen> createState() => _QuickAccessPinScreenState();
+}
+
+class _QuickAccessPinScreenState extends State<QuickAccessPinScreen> {
+  // Dummy controller (replace with your actual controller)
+  final loginController = Get.put(LoginController());
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      insetPadding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Obx(
-          () => Stack(
+    return Scaffold(
+      appBar: AppBar(title: const Text("Quick Access Pin"), centerTitle: true),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  /// ❌ Close Button
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: GestureDetector(
-                      onTap: () => Navigator.pop(context),
-                      child: const Icon(Icons.cancel, color: color_secondary),
-                    ),
-                  ),
-
-                  const SizedBox(height: 4),
-
-                  /// 🔵 Title
-                  BlueMediumBoldText("Set Up Quick Access Pin", fontSize: 16),
-
-                  const SizedBox(height: 20),
-
-                  /// 🔑 Current Password
-                  CommonTextField(
-                    hint: "Enter Pin",
-                    controller: controller.pinController.value,
-                    isPassword: true,
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  /// 💾 Save Button
-                  Center(
-                    child: SizedBox(
-                      height: 38,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: color_secondary,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                        ),
-                        onPressed: () async {
-                          if (controller.pinController.value.text.isEmpty) {
-                            snackBar(context, "Please Enter Pin");
-                            return;
-                          }
-
-                          await controller.callSetPinAPI(context);
-                        },
-                        child: BlueMediumBoldText(
-                          "Set Pin",
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+              const Text(
+                "Authenticate With Quick Access PIN",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
               ),
 
-              if (controller.isLoading.value)
-                Center(child: CircularProgressIndicator()),
+              const SizedBox(height: 20),
+
+              /// 🔑 Current Password
+              CommonTextField(
+                hint: "Enter Pin",
+                controller: loginController.pinController.value,
+                isPassword: true,
+              ),
+
+              const SizedBox(height: 20),
+
+              /// 🔘 Full width button
+              SizedBox(
+                width: double.infinity,
+                height: 45,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: color_secondary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  onPressed: () async {
+                    if (loginController.pinController.value.text.isEmpty) {
+                      snackBarRapid(context, "Enter pin");
+                      return;
+                    }
+
+                    await loginController.callLoginWithPinAPI(context);
+                  },
+                  child: const Text(
+                    "Enter Quick Pin",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ),
+
+              SizedBox(height: 20),
+
+              InkWell(
+                onTap: () {
+                  Get.to(LoginScreen());
+                },
+                child: const Text(
+                  "Go To Login Page",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 15, fontFamily: fontInterSemiBold),
+                ),
+              ),
             ],
           ),
         ),
@@ -110,3 +118,28 @@ class ChangePinDialog extends StatelessWidget {
     );
   }
 }
+
+/// ----------------------------------------------------
+/// Dummy controller + dialog (replace with real ones)
+/// ----------------------------------------------------
+
+void showChangePinDialog(BuildContext context, ProfileController controller) {
+  showDialog(
+    context: context,
+    builder: (_) {
+      return AlertDialog(
+        title: const Text("Set PIN"),
+        content: const Text("Change PIN dialog goes here"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Close"),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+/// Dummy color (replace with your theme color)
+const Color color_secondary = Colors.blue;

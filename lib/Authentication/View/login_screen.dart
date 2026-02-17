@@ -49,11 +49,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (password.isNotEmpty) {
         loginController.passwordController.value.text = password;
+        if (email.isNotEmpty) {
+          loginController.emailController.value.text = email;
+        }
       }
 
-      if (email.isNotEmpty) {
-        loginController.emailController.value.text = email;
-      }
+
     });
   }
 
@@ -154,14 +155,17 @@ class _LoginScreenState extends State<LoginScreen> {
                                             .text,
                                       );
 
-                                      MySharedPref().setString(
-                                        SharePreData.keyEmail,
-                                        loginController
-                                            .emailController
-                                            .value
-                                            .text,
-                                      );
+
                                     }
+
+
+                                    MySharedPref().setString(
+                                      SharePreData.keyEmail,
+                                      loginController
+                                          .emailController
+                                          .value
+                                          .text,
+                                    );
 
                                     setState(() {});
                                   },
