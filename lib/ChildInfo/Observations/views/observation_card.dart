@@ -86,7 +86,7 @@ class ObservationCard extends StatelessWidget {
                   height: 70,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
-                    color: color_secondary
+                    color: color_secondary,
                   ),
                   alignment: Alignment.center,
                   child: Text(
@@ -137,41 +137,43 @@ class ObservationCard extends StatelessWidget {
               ],
             ),
           ),
-         if(observation.createdBy?.id == childInfoController.loginResponse.value.data?.user?.id) InkWell(
-            onTap: () {
-              showUpdateDialog(
-                context,
-                childId,
-                observation.id.toString(),
-                observation,
-                childInfoController,
-              );
-              printData("update", "val");
-              // PopupMenuButton<int>(
-              //   icon: const Icon(Icons.more_vert),
-              //   onSelected: (value) {
-              //     switch (value) {
-              //       case 1:
-              //         childInfoController.selectedObservation.value =
-              //             observation;
-              //
-              //
-              //
-              //         Get.to(ObservationUpdateScreen(childId: childId));
-              //         break;
-              //     }
-              //   },
-              //   itemBuilder: (context) => [
-              //     const PopupMenuItem(value: 1, child: Text("Edit")),
-              //     // const PopupMenuItem(
-              //     //   value: 2,
-              //     //   child: Text("Delete"),
-              //     // ),
-              //   ],
-              // );
-            },
-            child: const Icon(Icons.more_vert),
-          ),
+          if (observation.createdBy?.id ==
+              childInfoController.loginResponse.value.data?.user?.id)
+            InkWell(
+              onTap: () {
+                showUpdateDialog(
+                  context,
+                  childId,
+                  observation.id.toString(),
+                  observation,
+                  childInfoController,
+                );
+                printData("update", "val");
+                // PopupMenuButton<int>(
+                //   icon: const Icon(Icons.more_vert),
+                //   onSelected: (value) {
+                //     switch (value) {
+                //       case 1:
+                //         childInfoController.selectedObservation.value =
+                //             observation;
+                //
+                //
+                //
+                //         Get.to(ObservationUpdateScreen(childId: childId));
+                //         break;
+                //     }
+                //   },
+                //   itemBuilder: (context) => [
+                //     const PopupMenuItem(value: 1, child: Text("Edit")),
+                //     // const PopupMenuItem(
+                //     //   value: 2,
+                //     //   child: Text("Delete"),
+                //     // ),
+                //   ],
+                // );
+              },
+              child: const Icon(Icons.more_vert),
+            ),
         ],
       ),
     );
@@ -214,7 +216,9 @@ class ObservationCard extends StatelessWidget {
                   // Placeholder image
                   Image.asset(
                     placeholder, // your placeholder
-                    width: (observation.media ?? []).length == 1 ? double.infinity : 280,
+                    width: (observation.media ?? []).length == 1
+                        ? double.infinity
+                        : 280,
                     height: 200,
                     fit: BoxFit.cover,
                   ),
@@ -222,7 +226,9 @@ class ObservationCard extends StatelessWidget {
                   // Network image
                   Image.network(
                     media.image ?? "",
-                    width: (observation.media ?? []).length == 1 ? double.infinity : 280,
+                    width: (observation.media ?? []).length == 1
+                        ? double.infinity
+                        : 280,
                     height: 200,
                     fit: BoxFit.cover,
                     loadingBuilder: (context, child, loadingProgress) {
@@ -236,16 +242,12 @@ class ObservationCard extends StatelessWidget {
                     },
                     errorBuilder: (context, error, stackTrace) {
                       // On error → show placeholder
-                      return Image.asset(
-                        placeholder,
-                        fit: BoxFit.cover,
-                      );
+                      return Image.asset(placeholder, fit: BoxFit.cover);
                     },
                   ),
                 ],
               ),
-            )
-            ,
+            ),
           );
         },
       ),
@@ -260,7 +262,7 @@ class ObservationCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Html(
-        data: observation.observations ?? "",
+        data: _sanitizeHtml(observation.observations ?? ""),
         style: {
           "*": Style(
             fontSize: FontSize(13),
@@ -275,10 +277,36 @@ class ObservationCard extends StatelessWidget {
               final src = context.attributes['src'] ?? '';
 
               if (src.startsWith('data:image')) {
-                final base64Str = src.split(',').last;
-                final bytes = base64Decode(base64Str);
+                try {
+                  final base64Str = src.split(',').last;
+                  final bytes = base64Decode(base64Str);
 
-                return Image.memory(bytes, fit: BoxFit.contain);
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Image.memory(
+                      bytes,
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) {
+                        return const SizedBox();
+                      },
+                    ),
+                  );
+                } catch (e) {
+                  return const SizedBox();
+                }
+              }
+
+              if (src.isNotEmpty && !src.startsWith('data:')) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Image.network(
+                    src,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) {
+                      return const SizedBox();
+                    },
+                  ),
+                );
               }
 
               return const SizedBox();
@@ -287,6 +315,27 @@ class ObservationCard extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String _sanitizeHtml(String html) {
+    // Remove problematic inline styles that contain font-feature-settings
+    html = html.replaceAllMapped(
+      RegExp(r'font-feature-settings:[^;}"]*', caseSensitive: false),
+      (match) => '',
+    );
+
+    // Remove font-variant-* properties that might cause issues
+    html = html.replaceAllMapped(
+      RegExp(r'font-variant-[^:]*:[^;}"]*', caseSensitive: false),
+      (match) => '',
+    );
+
+    // Clean up any double semicolons or style attributes that are now empty
+    html = html.replaceAll(';;', ';');
+    html = html.replaceAll('style=""', '');
+    html = html.replaceAll('style=" "', '');
+
+    return html;
   }
 
   Widget _actions(BuildContext context) {

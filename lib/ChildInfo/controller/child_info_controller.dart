@@ -1117,10 +1117,18 @@ class ChildInfoController extends GetxController {
   }
 
   /// Observation list API
-  callObservationListAPI(BuildContext context, String childId) async {
+  callObservationListAPI(
+    BuildContext context,
+    String childId, {
+    bool? isToClearList,
+  }) async {
     if (pageNumberObservation == 1) {
       // clearning list before getting response
-      observationList.clear();
+
+      if (isToClearList ?? true) {
+        observationList.clear();
+      }
+
       isLoading.value = true;
     } else {
       isNewAddedObservationLoading.value = true;
@@ -1157,9 +1165,14 @@ class ChildInfoController extends GetxController {
               ObservationListResponse.fromJson(userModel);
 
           if (observationListResponse.status ?? false) {
-            observationList.addAll(
-              observationListResponse.data?.observations ?? [],
-            );
+            if (pageNumberObservation == 1) {
+              observationList.value =
+                  (observationListResponse.data?.observations ?? []);
+            } else {
+              observationList.addAll(
+                observationListResponse.data?.observations ?? [],
+              );
+            }
 
             // consultDoctorList
             //     .addAll(await removeLesserTimeFromNow(model.data ?? []));
@@ -1278,7 +1291,7 @@ class ChildInfoController extends GetxController {
             // observationList[index].isLike = true;
 
             pageNumberObservation = 1;
-            callObservationListAPI(context, childId);
+            callObservationListAPI(context, childId, isToClearList: false);
             update();
 
             snackBar(context, baseModel.message ?? "");

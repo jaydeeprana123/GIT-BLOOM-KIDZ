@@ -43,10 +43,14 @@ class NewsFeedController extends GetxController {
   }
 
   /// NewsFeed API
-  callNewsFeedAPI(BuildContext context) async {
+  callNewsFeedAPI(BuildContext context, {bool? isToClearList}) async {
     if (pageNumberObservation == 1) {
       // clearning list before getting response
-      newsFeedList.clear();
+
+      if (isToClearList ?? true) {
+        newsFeedList.clear();
+      }
+
       isLoading.value = true;
     } else {
       isNewAddedObservationLoading.value = true;
@@ -81,7 +85,11 @@ class NewsFeedController extends GetxController {
           );
 
           if (newsFeedResponse.status ?? false) {
-            newsFeedList.addAll(newsFeedResponse.data?.newsfeeds ?? []);
+            if (pageNumberObservation == 1) {
+              newsFeedList.value = newsFeedResponse.data?.newsfeeds ?? [];
+            } else {
+              newsFeedList.addAll(newsFeedResponse.data?.newsfeeds ?? []);
+            }
 
             // consultDoctorList
             //     .addAll(await removeLesserTimeFromNow(model.data ?? []));
@@ -192,6 +200,7 @@ class NewsFeedController extends GetxController {
           if (baseModel.status ?? false) {
             snackBar(context, baseModel.message ?? "");
 
+            pageNumberObservation = 1;
             callNewsFeedAPI(context);
           } else {
             snackBar(context, baseModel.message ?? "");
@@ -296,8 +305,10 @@ class NewsFeedController extends GetxController {
 
           if (baseModel.status ?? false) {
             // newsFeedList[index].isLike = true;
+            pageNumberObservation = 1;
 
-            callNewsFeedAPI(context);
+            /// Here list should not clear
+            callNewsFeedAPI(context, isToClearList: false);
 
             update();
 
