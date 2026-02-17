@@ -18,7 +18,7 @@ import 'package:flutter/material.dart';
 
 import '../../CommonWidgets/common_widget.dart';
 
-class ChatBubble extends StatelessWidget {
+class ChatBubble extends StatefulWidget {
   final String message;
   final bool isSender;
   final String nameOfUser;
@@ -26,6 +26,7 @@ class ChatBubble extends StatelessWidget {
   final bool isGroup;
   final bool showSenderName;
   final List<Attachment>? attachments;
+  final VoidCallback? onDelete;
 
   const ChatBubble({
     super.key,
@@ -36,91 +37,138 @@ class ChatBubble extends StatelessWidget {
     required this.isGroup,
     required this.showSenderName,
     this.attachments,
+    this.onDelete,
   });
+
+  @override
+  State<ChatBubble> createState() => _ChatBubbleState();
+}
+
+class _ChatBubbleState extends State<ChatBubble> {
+  bool _showDelete = false;
 
   @override
   Widget build(BuildContext context) {
     return Align(
-      alignment: isSender ? Alignment.centerRight : Alignment.centerLeft,
+      alignment: widget.isSender ? Alignment.centerRight : Alignment.centerLeft,
       child: Column(
-        crossAxisAlignment:
-        isSender ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        crossAxisAlignment: widget.isSender
+            ? CrossAxisAlignment.end
+            : CrossAxisAlignment.start,
         children: [
-
-          if (isGroup && showSenderName) BlueMediumBoldText(
-              nameOfUser,
+          if (widget.isGroup && widget.showSenderName)
+            BlueMediumBoldText(
+              widget.nameOfUser,
               color: color_secondary,
-              fontSize: 12
-          ),
+              fontSize: 12,
+            ),
           Padding(
             padding: const EdgeInsets.only(right: 6),
-            child: BlackSmallRegularText(
-                time,
-                color: Colors.black
-
-            ),
+            child: BlackSmallRegularText(widget.time, color: Colors.black),
           ),
-          (attachments??[]).isNotEmpty?
-          SingleChildScrollView(
-    scrollDirection: Axis.horizontal,
-            child: Row(
-                mainAxisAlignment: isSender ?MainAxisAlignment.end:MainAxisAlignment.start,children: [
 
-              for(int i = 0; i< (attachments??[]).length; i++)
-                InkWell(
-                  onTap: (){
-                    showFullImageDialog(context, attachments?[i].url??"");
-                  },
-                  child: Container(
-                    margin: const EdgeInsets.only(top: 10,bottom: 10, right: 12),
-                    height: 180,
-                    width: 220,
-                    padding:  EdgeInsets.all(0),
-
-                    decoration: BoxDecoration(
-                      borderRadius:
-                      BorderRadius.circular(6),
-                      // ⬅ square with small radius
-                      border: Border.all(
-                        color: Colors.blue,
-                        width: 0.5,
-                      ),
+          // Delete button
+          if (_showDelete && widget.isSender)
+            GestureDetector(
+              onTap: () {
+                setState(() => _showDelete = false);
+                widget.onDelete?.call();
+              },
+              child: Container(
+                margin: const EdgeInsets.only(bottom: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.red,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.delete, color: Colors.white, size: 14),
+                    SizedBox(width: 4),
+                    Text(
+                      "Delete",
+                      style: TextStyle(color: Colors.white, fontSize: 12),
                     ),
-                    child: ClipRRect(
-                      borderRadius:
-                      BorderRadius.circular(6),
-                      child: Image.network(attachments?[i].url??"", fit: BoxFit.cover,),
+                  ],
+                ),
+              ),
+            ),
+
+          // Message / Attachments
+          GestureDetector(
+            onLongPress: () {
+              if (widget.isSender) {
+                setState(() => _showDelete = !_showDelete);
+              }
+            },
+            child: (widget.attachments ?? []).isNotEmpty
+                ? SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      mainAxisAlignment: widget.isSender
+                          ? MainAxisAlignment.end
+                          : MainAxisAlignment.start,
+                      children: [
+                        for (
+                          int i = 0;
+                          i < (widget.attachments ?? []).length;
+                          i++
+                        )
+                          InkWell(
+                            onTap: () {
+                              showFullImageDialog(
+                                context,
+                                widget.attachments?[i].url ?? "",
+                              );
+                            },
+                            child: Container(
+                              margin: const EdgeInsets.only(
+                                top: 10,
+                                bottom: 10,
+                                right: 12,
+                              ),
+                              height: 180,
+                              width: 220,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(6),
+                                border: Border.all(
+                                  color: Colors.blue,
+                                  width: 0.5,
+                                ),
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(6),
+                                child: Image.network(
+                                  widget.attachments?[i].url ?? "",
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  )
+                : Container(
+                    margin: const EdgeInsets.only(top: 3, bottom: 12),
+                    padding: const EdgeInsets.all(12),
+                    constraints: const BoxConstraints(maxWidth: 280),
+                    decoration: BoxDecoration(
+                      color: widget.isSender ? color_primary : color_secondary,
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: BlackMediumRegularText(
+                      widget.message,
+                      color: Colors.white,
+                      fontSize: 12,
                     ),
                   ),
-                ),
-            ],),
-          )
-           :  Container(
-            margin: const EdgeInsets.only(top: 3, bottom: 12),
-            padding: const EdgeInsets.all(12),
-            constraints: const BoxConstraints(maxWidth: 280),
-            decoration: BoxDecoration(
-              color: isSender
-                  ? color_primary
-                  : color_secondary,
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: BlackMediumRegularText(
-              message,
-             color: Colors.white,
-              fontSize: 12
-            ),
           ),
-
         ],
       ),
     );
   }
-
-
-
-
 }
-
-
-

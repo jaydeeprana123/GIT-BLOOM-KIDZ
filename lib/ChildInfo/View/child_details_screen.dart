@@ -26,15 +26,20 @@ import 'package:flutter/material.dart';
 class ChildDetailsScreen extends StatelessWidget {
   final ChildInfo childInfo;
   final ChildInfoController childInfoController;
-  const ChildDetailsScreen({super.key, required this.childInfo, required this.childInfoController});
+  const ChildDetailsScreen({
+    super.key,
+    required this.childInfo,
+    required this.childInfoController,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar:  CommonAppBar(
-        title: "${childInfo.firstName??""} ${childInfo.lastName??""} Profile",
-        showMenu: true,
+      appBar: CommonAppBar(
+        title:
+            "${childInfo.firstName ?? ""} ${childInfo.lastName ?? ""} Profile",
+        showMenu: false,
         showBack: true,
       ),
       body: Stack(
@@ -45,7 +50,10 @@ class ChildDetailsScreen extends StatelessWidget {
             padding: const EdgeInsets.all(14),
             child: Column(
               children: [
-                ChildProfileCard(childInfo: childInfo,childInfoController: childInfoController,),
+                ChildProfileCard(
+                  childInfo: childInfo,
+                  childInfoController: childInfoController,
+                ),
                 SizedBox(height: 16),
                 ChildOptionsGrid(childId: childInfo.id.toString()),
               ],

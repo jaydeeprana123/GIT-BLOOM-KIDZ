@@ -184,9 +184,13 @@ class ChatController extends GetxController {
                       ),
                     );
                   }
-                  
-                  
-                  Get.to(ChatScreen(groupId: "",sendMessageNotGroupRequest: sendMessageNotGroupRequest,));
+
+                  Get.to(
+                    ChatScreen(
+                      groupId: "",
+                      sendMessageNotGroupRequest: sendMessageNotGroupRequest,
+                    ),
+                  );
 
                   // callSendMessageNotGroupAPI(
                   //   context,
@@ -225,7 +229,12 @@ class ChatController extends GetxController {
                     );
                   }
 
-                  Get.to(ChatScreen(groupId: "",sendMessageNotGroupRequest: sendMessageNotGroupRequest,));
+                  Get.to(
+                    ChatScreen(
+                      groupId: "",
+                      sendMessageNotGroupRequest: sendMessageNotGroupRequest,
+                    ),
+                  );
 
                   // callSendMessageNotGroupAPI(
                   //   context,
@@ -279,19 +288,19 @@ class ChatController extends GetxController {
         SendMessageResponse baseModel = SendMessageResponse.fromJson(userModel);
 
         if (baseModel.status ?? false) {
-          
-          if(isFromChatScreen??false){
+          if (isFromChatScreen ?? false) {
             messageController.value.text = "";
-            callGetGroupChatAPI(context, (baseModel.data?.groupId ?? 0).toString());
-          }else{
+            callGetGroupChatAPI(
+              context,
+              (baseModel.data?.groupId ?? 0).toString(),
+            );
+          } else {
             Get.to(
               ChatScreen(groupId: (baseModel.data?.groupId ?? 0).toString()),
             )?.then((value) {
               callConversationListAPI(context);
             });
           }
-          
-         
         } else {
           snackBar(context, baseModel.message ?? "");
         }
@@ -471,7 +480,7 @@ class ChatController extends GetxController {
   }
 
   /// Delete Message API
-  callDeleteMessageAPI(BuildContext context, String id) async {
+  callDeleteMessageAPI(BuildContext context, String groupId, String id) async {
     isLoading.value = true;
 
     String token = await MySharedPref().getStringValue(
@@ -488,13 +497,13 @@ class ChatController extends GetxController {
       http.StreamedResponse res = value;
       printData(
         runtimeType.toString(),
-        "callLeaveRequestAPI response ${res.statusCode}",
+        "callDeleteMessageAPI response ${res.statusCode}",
       );
 
       await res.stream.bytesToString().then((valueData) async {
         printData(
           runtimeType.toString(),
-          "callLeaveRequestAPI value ${valueData}",
+          "callDeleteMessageAPI value ${valueData}",
         );
 
         isLoading.value = false;
@@ -505,6 +514,8 @@ class ChatController extends GetxController {
 
           if (baseModel.status ?? false) {
             snackBar(context, baseModel.message ?? "");
+
+            callGetGroupChatAPI(context, groupId);
           } else {
             snackBar(context, baseModel.message ?? "");
           }

@@ -123,14 +123,15 @@ class LoginController extends GetxController {
   /// login with pin API
   callLoginWithPinAPI(BuildContext context) async {
     isLoading.value = true;
-    String url = urlBase + urlLogin;
+    String url = urlBase + urlLoginWithPin;
+
+    var sharedPref = MySharedPref();
+
+    String email = await sharedPref.getStringValue(SharePreData.keyEmail);
 
     final apiReq = Request();
 
-    dynamic body = {
-      'email': emailController.value.text,
-      "pin": pinController.value.text,
-    };
+    dynamic body = {'email': email, "pin_code": pinController.value.text};
 
     await apiReq.postAPIwithoutBearer(url, body).then((value) async {
       http.StreamedResponse res = value;

@@ -44,75 +44,133 @@ class _QuickAccessPinScreenState extends State<QuickAccessPinScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Quick Access Pin"), centerTitle: true),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text(
-                "Authenticate With Quick Access PIN",
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-              ),
+      backgroundColor: Colors.transparent,
+      body: Obx(
+        () => Stack(
+          children: [
+            /// Background SVG
+            Positioned.fill(
+              child: SvgPicture.asset(img_splash, fit: BoxFit.cover),
+            ),
 
-              const SizedBox(height: 20),
+            /// Overlay
+            Positioned.fill(child: Container(color: color_primary_transparent)),
 
-              /// 🔑 Current Password
-              CommonTextField(
-                hint: "Enter Pin",
-                controller: loginController.pinController.value,
-                isPassword: true,
-              ),
+            /// Content
+            SafeArea(
+              child: Column(
+                children: [
+                  const SizedBox(height: 40),
 
-              const SizedBox(height: 20),
+                  /// Logo
+                  Image.asset(icon_logo, height: 120),
 
-              /// 🔘 Full width button
-              SizedBox(
-                width: double.infinity,
-                height: 45,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: color_secondary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                  const SizedBox(height: 30),
+
+                  /// White Card (takes remaining space)
+                  Expanded(
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 30,
+                      ),
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(30),
+                          topRight: Radius.circular(30),
+                        ),
+                      ),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const SizedBox(height: 20),
+
+                            const Text(
+                              "Quick Access PIN",
+                              style: TextStyle(
+                                fontSize: 26,
+                                fontFamily: fontInterSemiBold,
+                                color: color_secondary,
+                              ),
+                            ),
+
+                            const SizedBox(height: 30),
+
+                            /// Email
+                            CommonTextField(
+                              hint: "Enter Pin",
+                              controller: loginController.pinController.value,
+                              isPassword: true,
+                              keyboardType: TextInputType.number,
+                              maxLines: 1,
+                            ),
+
+                            const SizedBox(height: 24),
+
+                            /// Sign In Button
+                            SizedBox(
+                              width: 160,
+                              height: 45,
+                              child: CommonGradientButton(
+                                btnTitle: "SUBMIT",
+                                onPressed: () {
+                                  if (loginController
+                                      .pinController
+                                      .value
+                                      .text
+                                      .isEmpty) {
+                                    snackBarRapid(context, "Enter pin");
+                                    return;
+                                  }
+
+                                  loginController.callLoginWithPinAPI(context);
+                                },
+                              ),
+                            ),
+
+                            const SizedBox(height: 24),
+
+                            InkWell(
+                              onTap: () {
+                                Get.to(LoginScreen());
+                              },
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "Don’t remember your PIN?",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+
+                                  Text(
+                                    " Sign in.",
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      color: color_secondary,
+                                      fontFamily: fontInterSemiBold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
-                  onPressed: () async {
-                    if (loginController.pinController.value.text.isEmpty) {
-                      snackBarRapid(context, "Enter pin");
-                      return;
-                    }
-
-                    await loginController.callLoginWithPinAPI(context);
-                  },
-                  child: const Text(
-                    "Enter Quick Pin",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
+                ],
               ),
+            ),
 
-              SizedBox(height: 20),
-
-              InkWell(
-                onTap: () {
-                  Get.to(LoginScreen());
-                },
-                child: const Text(
-                  "Go To Login Page",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 15, fontFamily: fontInterSemiBold),
-                ),
-              ),
-            ],
-          ),
+            if (loginController.isLoading.value)
+              Center(child: CircularProgressIndicator()),
+          ],
         ),
       ),
     );

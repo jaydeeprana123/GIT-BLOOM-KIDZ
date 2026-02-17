@@ -43,27 +43,32 @@ class _ChatScreenState extends State<ChatScreen> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-
       FirebaseMessaging.onMessage.listen((RemoteMessage message) {
         print('Foreground message received');
 
         if (message.notification != null) {
-
-          if(message.notification?.title == "New Message"){
+          if (message.notification?.title == "New Message") {
             if (widget.groupId.isNotEmpty) {
               chatController.callGetGroupChatAPI(context, widget.groupId);
-            }else if((chatController.groupChatResponse.value.data?.group?.id ??
-                0) != 0){
-              chatController.callGetGroupChatAPI(context, (chatController.groupChatResponse.value.data?.group?.id ??
-                  0).toString());
+            } else if ((chatController
+                        .groupChatResponse
+                        .value
+                        .data
+                        ?.group
+                        ?.id ??
+                    0) !=
+                0) {
+              chatController.callGetGroupChatAPI(
+                context,
+                (chatController.groupChatResponse.value.data?.group?.id ?? 0)
+                    .toString(),
+              );
             }
           }
-
         }
 
         // Show custom notification / dialog / snackbar
       });
-
 
       chatController.groupChatResponse.value = GroupChatResponse();
       chatController.imagePath.value = "";
@@ -182,6 +187,23 @@ class _ChatScreenState extends State<ChatScreen> {
                   ?.messages?[index]
                   .attachments ??
               [],
+
+          onDelete: () {
+            final messageId = chatController
+                .groupChatResponse
+                .value
+                .data
+                ?.messages?[index]
+                .id;
+
+            if (messageId != null) {
+              chatController.callDeleteMessageAPI(
+                context,
+                widget.groupId,
+                messageId.toString(),
+              ); // your API call
+            }
+          },
         );
       },
     );

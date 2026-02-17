@@ -14,7 +14,7 @@ class CommonTextField extends StatefulWidget {
   final bool isPassword;
   final TextInputType keyboardType;
   final int? maxLines;
-
+  final int? maxLength;
   const CommonTextField({
     super.key,
     required this.hint,
@@ -22,6 +22,7 @@ class CommonTextField extends StatefulWidget {
     this.isPassword = false,
     this.keyboardType = TextInputType.text,
     this.maxLines = 1,
+    this.maxLength,
   });
 
   @override
@@ -44,6 +45,7 @@ class _CommonTextFieldState extends State<CommonTextField> {
       obscureText: widget.isPassword ? _obscureText : false,
       keyboardType: widget.keyboardType,
       maxLines: widget.isPassword ? 1 : widget.maxLines,
+      maxLength: widget.maxLength ?? 100,
       style: TextStyle(
         fontSize: 14,
         fontFamily: fontInterSemiBold,

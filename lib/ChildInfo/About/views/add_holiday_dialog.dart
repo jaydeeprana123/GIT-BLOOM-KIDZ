@@ -41,7 +41,6 @@ class AddHolidayDialog extends StatelessWidget {
       controller.selectedActivity.value = ActivityForSelect();
       controller.selectedActivity.value = null;
       controller.callActivityListForSelectAPI(context, isHoliday);
-
     });
 
     return Dialog(
@@ -168,7 +167,7 @@ class AddHolidayDialog extends StatelessWidget {
                           );
                         },
                         child: BlueMediumBoldText(
-                          "Set Pin",
+                          "Submit",
                           color: Colors.white,
                         ),
                       ),
@@ -185,7 +184,4 @@ class AddHolidayDialog extends StatelessWidget {
       ),
     );
   }
-
-
-
 }
