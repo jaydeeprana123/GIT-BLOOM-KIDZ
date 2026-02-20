@@ -45,6 +45,7 @@ class _ObservationListScreenState extends State<ObservationListScreen> {
 
   Future<void> _onRefresh() async {
     childInfoController.observationList.clear();
+    childInfoController.replyController.clear();
     childInfoController.pageNumberObservation = 1;
     await childInfoController.callObservationListAPI(context, widget.childId);
   }

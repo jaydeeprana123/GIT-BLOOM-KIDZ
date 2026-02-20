@@ -28,6 +28,7 @@ class _NewsFeedScreenState extends State<NewsFeedScreen> {
 
   Future<void> _onRefresh() async {
     newsFeedController.newsFeedList.clear();
+    newsFeedController.replyController.clear();
     newsFeedController.pageNumberObservation = 1;
     await newsFeedController.callNewsFeedAPI(context);
   }

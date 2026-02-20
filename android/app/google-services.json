@@ -9,7 +9,26 @@
       "client_info": {
         "mobilesdk_app_id": "1:1080638290634:android:5c189fd9c8b26018bdd233",
         "android_client_info": {
-          "package_name": "com.bloom.bloom_kidz"
+          "package_name": "com.bloom.bloomkidz"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDVPw_M521md-wJm972Frq0DEtjjtEyPGc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1080638290634:android:9328cf589b3d0c09bdd233",
+        "android_client_info": {
+          "package_name": "com.bloom.bloomkidz"
         }
       },
       "oauth_client": [],

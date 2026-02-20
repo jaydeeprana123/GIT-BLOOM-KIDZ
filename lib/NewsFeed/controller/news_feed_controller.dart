@@ -49,6 +49,7 @@ class NewsFeedController extends GetxController {
 
       if (isToClearList ?? true) {
         newsFeedList.clear();
+        replyController.clear();
       }
 
       isLoading.value = true;
@@ -86,6 +87,7 @@ class NewsFeedController extends GetxController {
 
           if (newsFeedResponse.status ?? false) {
             if (pageNumberObservation == 1) {
+              replyController.clear();
               newsFeedList.value = newsFeedResponse.data?.newsfeeds ?? [];
             } else {
               newsFeedList.addAll(newsFeedResponse.data?.newsfeeds ?? []);

@@ -1,4 +1,4 @@
-package com.bloom.bloom_kidz
+package com.bloom.bloomkidz
 
 import io.flutter.embedding.android.FlutterActivity
 

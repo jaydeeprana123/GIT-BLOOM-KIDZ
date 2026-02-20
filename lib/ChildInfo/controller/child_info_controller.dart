@@ -1126,6 +1126,7 @@ class ChildInfoController extends GetxController {
       // clearning list before getting response
 
       if (isToClearList ?? true) {
+        replyController.clear();
         observationList.clear();
       }
 
@@ -1166,6 +1167,7 @@ class ChildInfoController extends GetxController {
 
           if (observationListResponse.status ?? false) {
             if (pageNumberObservation == 1) {
+              replyController.clear();
               observationList.value =
                   (observationListResponse.data?.observations ?? []);
             } else {
