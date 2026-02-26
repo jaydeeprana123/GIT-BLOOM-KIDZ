@@ -96,12 +96,12 @@ class _ChildActivityScreenState extends State<ChildActivityScreen> {
     /// -------- NAPPY --------
     List<SubItem> subItemsNappy = [];
     for (final nappy in data.nappy ?? []) {
-      if (nappy.time == null || nappy.time!.isEmpty) continue;
+      // if (nappy.time == null || nappy.time!.isEmpty) continue;
 
       subItemsNappy.add(
         SubItem(
           subTitle: nappy.type ?? "Nappy",
-          time: nappy.time!,
+          time: nappy.time ?? "",
           details: [],
           statusForNappy: nappy.status ?? "",
         ),
@@ -113,12 +113,12 @@ class _ChildActivityScreenState extends State<ChildActivityScreen> {
     /// -------- ACTIVITIES --------
     List<SubItem> subItemsActivity = [];
     for (final act in data.activities ?? []) {
-      if (act.time == null || act.time!.isEmpty) continue;
+      // if (act.time == null || act.time!.isEmpty) continue;
 
       subItemsActivity.add(
         SubItem(
           subTitle: act.activityName ?? "",
-          time: act.time!,
+          time: act.time ?? "",
           details: [],
           icon: act.icon ?? "",
         ),
@@ -181,7 +181,10 @@ class _ChildActivityScreenState extends State<ChildActivityScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     BlueMediumRegularText(
-                      day.displayDate!.split(',')[0].substring(0, 3).toUpperCase(),
+                      day.displayDate!
+                          .split(',')[0]
+                          .substring(0, 3)
+                          .toUpperCase(),
                       fontSize: 17,
                       color: isSelected ? Colors.white : color_secondary,
                     ),
@@ -191,7 +194,6 @@ class _ChildActivityScreenState extends State<ChildActivityScreen> {
                     /// Month (Jan)
                     Row(
                       children: [
-
                         Text(
                           day.displayDate!.split(' ').last,
                           style: TextStyle(
@@ -204,15 +206,15 @@ class _ChildActivityScreenState extends State<ChildActivityScreen> {
                         const SizedBox(width: 2),
 
                         BlueMediumBoldText(
-                          day.displayDate!.split(',')[1].trim().split(' ')[0].toUpperCase(),
+                          day.displayDate!
+                              .split(',')[1]
+                              .trim()
+                              .split(' ')[0]
+                              .toUpperCase(),
                           fontSize: 12,
                           fontFamily: fontInterMedium,
                           color: isSelected ? Colors.white : color_secondary,
                         ),
-
-
-
-
                       ],
                     ),
                   ],
