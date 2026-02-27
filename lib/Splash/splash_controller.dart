@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:bloom_kidz/Profile/model/quick_pin_response.dart';
 import 'package:bloom_kidz/Profile/view/quick_pin_screen.dart';
 import 'package:bloom_kidz/version_response.dart';
 import 'package:flutter/cupertino.dart';
@@ -20,6 +21,7 @@ import '../Utils/share_predata.dart';
 
 class SplashController extends GetxController {
   RxBool isVersionCheck = false.obs;
+  RxBool isLoading = false.obs;
 
   @override
   void onInit() {
@@ -63,20 +65,20 @@ class SplashController extends GetxController {
               if (forceUpdate) {
                 showForceUpdateDialog();
               } else {
-                showOptionalUpdateDialog();
+                showOptionalUpdateDialog(context);
               }
             } else {
               isVersionCheck.value = true;
 
-              redirectOnPendingState();
+              redirectOnPendingState(context);
             }
           } else {
             isVersionCheck.value = true;
-            redirectOnPendingState();
+            redirectOnPendingState(context);
           }
         } else {
           isVersionCheck.value = true;
-          redirectOnPendingState();
+          redirectOnPendingState(context);
         }
       });
     });
@@ -117,7 +119,7 @@ class SplashController extends GetxController {
     );
   }
 
-  void showOptionalUpdateDialog() {
+  void showOptionalUpdateDialog(BuildContext context) {
     Get.defaultDialog(
       title: "Update Available",
       middleText: "A new version is available. Update for better experience.",
@@ -125,14 +127,14 @@ class SplashController extends GetxController {
       cancel: TextButton(
         onPressed: () {
           Get.back();
-          redirectOnPendingState();
+          redirectOnPendingState(context);
         },
         child: Text("Later"),
       ),
     );
   }
 
-  Future<void> redirectOnPendingState() async {
+  Future<void> redirectOnPendingState(BuildContext context) async {
     /// READ LOGIN MODEL
     var sharedPref = MySharedPref();
     String token = await sharedPref.getStringValue(SharePreData.keyAccessToken);
@@ -146,13 +148,54 @@ class SplashController extends GetxController {
 
       if (token.isEmpty) {
         if (email.isNotEmpty) {
-          Get.off(() => QuickAccessPinScreen());
+          callViewPinAPI(context);
         } else {
           Get.off(() => LoginScreen());
         }
       } else {
         Get.off(() => BottomNavigationView(selectTabPosition: 0));
       }
+    });
+  }
+
+  /// Set Pin API
+  Future<void> callViewPinAPI(BuildContext context) async {
+    isLoading.value = true;
+
+    String token = await MySharedPref().getStringValue(
+      SharePreData.keyAccessToken,
+    );
+
+    String url = urlBase + urlViewPin;
+
+    final apiReq = Request();
+
+    await apiReq.getMethodAPI(url, null, token).then((value) async {
+      http.StreamedResponse res = value;
+      printData(
+        runtimeType.toString(),
+        "callViewPinAPI API response ${res.statusCode}",
+      );
+
+      await res.stream.bytesToString().then((valueData) async {
+        printData(
+          runtimeType.toString(),
+          "callViewPinAPI API value ${valueData}",
+        );
+
+        isLoading.value = false;
+
+        if (res.statusCode == 200) {
+          Map<String, dynamic> userModel = json.decode(valueData);
+          QuickPinResponse quickPinResponse = QuickPinResponse.fromJson(
+            userModel,
+          );
+
+          if ((quickPinResponse.data?.pinCode ?? "").isNotEmpty) {
+            Get.off(() => QuickAccessPinScreen());
+          }
+        }
+      });
     });
   }
 }

@@ -35,20 +35,22 @@ import 'package:flutter/material.dart';
 
 import '../../controller/child_info_controller.dart';
 
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class ChildrenPermissionScreen extends StatefulWidget {
   final String childId;
 
-  const ChildrenPermissionScreen({Key? key, required this.childId}) : super(key: key);
+  const ChildrenPermissionScreen({Key? key, required this.childId})
+    : super(key: key);
 
   @override
-  State<ChildrenPermissionScreen> createState() => _ChildrenPermissionScreenState();
+  State<ChildrenPermissionScreen> createState() =>
+      _ChildrenPermissionScreenState();
 }
 
-class _ChildrenPermissionScreenState extends State<ChildrenPermissionScreen> with TickerProviderStateMixin{
+class _ChildrenPermissionScreenState extends State<ChildrenPermissionScreen>
+    with TickerProviderStateMixin {
   ChildInfoController childInfoController = Get.find<ChildInfoController>();
   int expandedIndex = 0; // first index open initially
 
@@ -59,44 +61,45 @@ class _ChildrenPermissionScreenState extends State<ChildrenPermissionScreen> wit
       childInfoController.childPermissionList.clear();
       childInfoController.callGetChildPermissionsAPI(context, widget.childId);
     });
-
-
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: const CommonAppBar(title: "Child Permissions", showMenu: true, showBack: true,),
+      appBar: const CommonAppBar(
+        title: "Child Permissions",
+        showMenu: true,
+        showBack: true,
+      ),
       body: SafeArea(
         child: Stack(
           children: [
             /// 🔹 Background SVG
-            Positioned.fill(
-              child: SvgPicture.asset(
-                app_bg,
-                fit: BoxFit.cover,
-              ),
-            ),
+            Positioned.fill(child: SvgPicture.asset(app_bg, fit: BoxFit.cover)),
 
             Obx(
-                    () =>Stack(
-              children: [
-                ListView.builder(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: childInfoController.childPermissionList.length,
-                  itemBuilder: (context, index) {
-                    return _permissionCard(childInfoController.childPermissionList[index], index);
-                  },
-                ),
+              () => Stack(
+                children: [
+                  ListView.builder(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: childInfoController.childPermissionList.length,
+                    itemBuilder: (context, index) {
+                      return _permissionCard(
+                        childInfoController.childPermissionList[index],
+                        index,
+                      );
+                    },
+                  ),
 
-                if(childInfoController.isLoading.value)Center(child: CircularProgressIndicator(),)
-              ],
-            )),
+                  if (childInfoController.isLoading.value)
+                    Center(child: CircularProgressIndicator()),
+                ],
+              ),
+            ),
           ],
         ),
       ),
-
     );
   }
 
@@ -113,15 +116,12 @@ class _ChildrenPermissionScreenState extends State<ChildrenPermissionScreen> wit
       child: Card(
         elevation: 6,
         margin: const EdgeInsets.only(bottom: 16),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
               /// Header
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -137,14 +137,14 @@ class _ChildrenPermissionScreenState extends State<ChildrenPermissionScreen> wit
                     children: [
                       _yesNoButton(
                         "YES",
-                        (childPermission.selectedStatus ?? "0") == "1",
+                        childPermission.selectedStatus == "1",
                         childPermission.permissionId.toString(),
                         true,
                       ),
                       const SizedBox(width: 6),
                       _yesNoButton(
                         "NO",
-                        (childPermission.selectedStatus ?? "0") == "0",
+                        (childPermission.selectedStatus) == "0",
                         childPermission.permissionId.toString(),
                         false,
                       ),
@@ -159,18 +159,18 @@ class _ChildrenPermissionScreenState extends State<ChildrenPermissionScreen> wit
                 curve: Curves.easeInOut,
                 child: isExpanded
                     ? Padding(
-                  padding: const EdgeInsets.only(top: 10),
-                  child: Html(
-                    data: childPermission.description ?? "",
-                    style: {
-                      "*": Style(
-                        fontSize: FontSize(13),
-                        color: text_color,
-                        lineHeight: LineHeight(1.4),
-                      ),
-                    },
-                  ),
-                )
+                        padding: const EdgeInsets.only(top: 10),
+                        child: Html(
+                          data: childPermission.description ?? "",
+                          style: {
+                            "*": Style(
+                              fontSize: FontSize(13),
+                              color: text_color,
+                              lineHeight: LineHeight(1.4),
+                            ),
+                          },
+                        ),
+                      )
                     : const SizedBox(),
               ),
             ],
@@ -180,26 +180,35 @@ class _ChildrenPermissionScreenState extends State<ChildrenPermissionScreen> wit
     );
   }
 
-
-
   /// YES / NO Button
-  Widget _yesNoButton(String text, bool selected, String permissionId, bool isYesButton) {
+  Widget _yesNoButton(
+    String text,
+    bool selected,
+    String permissionId,
+    bool isYesButton,
+  ) {
     return InkWell(
-      onTap: (){
+      onTap: () {
         showWarningDialog(
           context: context,
           title: "Confirmation",
-          message: isYesButton?"Are you sure you want to approve this?":"Are you sure you want to reject this?",
+          message: isYesButton
+              ? "Are you sure you want to approve this?"
+              : "Are you sure you want to reject this?",
           onYes: () {
-            childInfoController.callConfirmPermissionAPI(context, widget.childId, permissionId, isYesButton);
+            childInfoController.callConfirmPermissionAPI(
+              context,
+              widget.childId,
+              permissionId,
+              isYesButton,
+            );
           },
         );
-
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
         decoration: BoxDecoration(
-          color: selected ?color_secondary : Colors.white,
+          color: selected ? color_secondary : Colors.white,
           borderRadius: BorderRadius.circular(6),
           border: Border.all(color: color_secondary),
         ),
@@ -214,7 +223,6 @@ class _ChildrenPermissionScreenState extends State<ChildrenPermissionScreen> wit
       ),
     );
   }
-
 
   void showWarningDialog({
     required BuildContext context,
@@ -231,10 +239,7 @@ class _ChildrenPermissionScreenState extends State<ChildrenPermissionScreen> wit
             borderRadius: BorderRadius.circular(12),
           ),
           title: BlueLargeBoldText(title),
-          content: BlackMediumRegularText(
-            message,
-            color: Colors.black,
-          ),
+          content: BlackMediumRegularText(message, color: Colors.black),
           actions: [
             TextButton(
               onPressed: () {
@@ -243,20 +248,16 @@ class _ChildrenPermissionScreenState extends State<ChildrenPermissionScreen> wit
               child: const Text("NO"),
             ),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: color_secondary,
-              ),
+              style: ElevatedButton.styleFrom(backgroundColor: color_secondary),
               onPressed: () {
                 Navigator.pop(context);
                 onYes();
               },
-              child: const Text("YES", style: TextStyle(color: Colors.white),),
+              child: const Text("YES", style: TextStyle(color: Colors.white)),
             ),
           ],
         );
       },
     );
   }
-
 }
-
