@@ -11,6 +11,7 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool? showAddButton;
   final VoidCallback? onMenuTap;
   final VoidCallback? onAddButtonTap;
+  final bool? showEditButton;
 
   const CommonAppBar({
     super.key,
@@ -19,7 +20,8 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.showBack = false,
     this.onMenuTap,
     this.showAddButton,
-    this.onAddButtonTap
+    this.onAddButtonTap,
+    this.showEditButton
   });
 
   @override
@@ -78,6 +80,24 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
               ),
             ),
           ),
+
+        if (showEditButton??false)
+          InkWell(
+            onTap: onAddButtonTap, // 👈 callback call
+            child: Padding(
+              padding: const EdgeInsets.only(right: 12),
+              child: CircleAvatar(
+                radius: 16,
+                backgroundColor: color_primary,
+                child: const Icon(
+                  Icons.edit_calendar,
+                  color: Colors.white,
+                  size: 20,
+                ),
+              ),
+            ),
+          ),
+
 
       ],
       shape: const RoundedRectangleBorder(

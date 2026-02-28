@@ -1,0 +1,254 @@
+import 'package:bloom_kidz/ChildInfo/Permissions/models/permissions_response.dart';
+import 'package:bloom_kidz/CommonWidgets/common_background.dart';
+import 'package:bloom_kidz/CommonWidgets/common_green_button.dart';
+import 'package:bloom_kidz/CommonWidgets/common_text_field.dart';
+import 'package:bloom_kidz/Styles/my_colors.dart';
+import 'package:bloom_kidz/Styles/my_font.dart';
+import 'package:bloom_kidz/Styles/my_icons.dart';
+import 'package:flutter/material.dart';
+
+import 'package:flutter/material.dart';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
+
+import '../../../CommonWidgets/black_medium_regular_text.dart';
+import '../../../CommonWidgets/black_small_regular_text.dart';
+import '../../../CommonWidgets/blue_large_bold_text.dart';
+import '../../../CommonWidgets/blue_medium_bold_text.dart';
+import '../../../CommonWidgets/blue_medium_regular_text.dart';
+import '../../../CommonWidgets/common_appbar.dart';
+import '../../View/about_card.dart';
+import '../../View/about_tab.dart';
+import '../../View/child_.card.dart';
+
+import 'package:flutter/material.dart';
+
+import '../../View/child_options_grid.dart';
+import '../../View/child_profile_card.dart';
+
+import 'package:flutter/material.dart';
+
+import 'package:flutter/material.dart';
+
+import 'package:flutter/material.dart';
+
+import '../../controller/child_info_controller.dart';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
+import '../model/all_about_me_response.dart';
+
+class EditAllAboutMeScreen extends StatefulWidget {
+  final String childId;
+
+  const EditAllAboutMeScreen({Key? key, required this.childId})
+      : super(key: key);
+
+  @override
+  State<EditAllAboutMeScreen> createState() =>
+      _EditAllAboutMeScreenState();
+}
+
+class _EditAllAboutMeScreenState
+    extends State<EditAllAboutMeScreen> {
+  ChildInfoController controller = Get.find<ChildInfoController>();
+
+  @override
+  void initState() {
+    super.initState();
+
+    final data = controller.allAboutMe.value;
+
+    /// Prefill data
+    controller.preferredNameController.value.text =
+        data.preferredName ?? "";
+
+    controller.homeLanguageController.value.text =
+        data.homeLanguage ?? "";
+
+    controller.spokenLanguageController.value.text =
+        data.spokenLanguages ?? "";
+
+    controller.celebrationsController.value.text =
+        data.celebrations ?? "";
+
+    controller.happyThingsController.value.text =
+        data.happyThings ?? "";
+
+    controller.favouriteController.value.text =
+        data.favouriteBooksSongs ?? "";
+
+    controller.dislikesController.value.text =
+        data.dislikes ?? "";
+
+    controller.eatingController.value.text =
+        data.eatingDrinking ?? "";
+
+    controller.foodDislikesController.value.text =
+        data.foodDislikes?.toString() ?? "";
+
+    controller.healthController.value.text =
+        data.healthConditions?.toString() ?? "";
+
+    controller.allergiesController.value.text =
+        data.allergies?.toString() ?? "";
+
+    controller.allergyTreatmentController.value.text =
+        data.allergyTreatment?.toString() ?? "";
+
+    controller.daySleepController.value.text =
+        data.daySleep ?? "";
+
+    controller.sleepRoutineController.value.text =
+        data.sleepRoutine ?? "";
+
+    controller.comfortMethodController.value.text =
+        data.comfortMethod ?? "";
+
+    controller.supportBeforeStartController.value.text =
+        data.supportBeforeStart?.toString() ?? "";
+
+    controller.primaryCollectorController.value.text =
+        data.primaryCollector ?? "";
+
+    controller.alternateCollectorController.value.text =
+        data.alternateCollector ?? "";
+
+    controller.additionalNotesController.value.text =
+        data.additionalNotes?.toString() ?? "";
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: const CommonAppBar(
+        title: "Edit All About Me",
+        showBack: true,
+        showMenu: false,
+      ),
+      body: Stack(
+        children: [
+
+          Positioned.fill(child: SvgPicture.asset(app_bg, fit: BoxFit.cover)),
+
+          Card(
+            color: Colors.white,
+            shadowColor: color_secondary,
+            elevation: 6,
+            margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(
+                22,
+              ), // change 16 to any radius you like
+            ),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+
+                  _buildField("Preferred Name",
+                      controller.preferredNameController.value),
+
+                  _buildField("Home Language",
+                      controller.homeLanguageController.value),
+
+                  _buildField("Spoken Languages",
+                      controller.spokenLanguageController.value),
+
+                  _buildField("Celebrations",
+                      controller.celebrationsController.value),
+
+                  _buildField("Happy Things",
+                      controller.happyThingsController.value),
+
+                  _buildField("Favourite Books/Songs",
+                      controller.favouriteController.value),
+
+                  _buildField("Dislikes",
+                      controller.dislikesController.value),
+
+                  _buildField("Eating & Drinking",
+                      controller.eatingController.value),
+
+                  _buildField("Food Dislikes",
+                      controller.foodDislikesController.value),
+
+                  _buildField("Health Conditions",
+                      controller.healthController.value),
+
+                  _buildField("Allergies",
+                      controller.allergiesController.value),
+
+                  _buildField("Allergy Treatment",
+                      controller.allergyTreatmentController.value),
+
+                  _buildField("Day Sleep",
+                      controller.daySleepController.value),
+
+                  _buildField("Sleep Routine",
+                      controller.sleepRoutineController.value),
+
+                  _buildField("Comfort Method",
+                      controller.comfortMethodController.value),
+
+                  _buildField("Support Before Start",
+                      controller.supportBeforeStartController.value),
+
+                  _buildField("Primary Collector",
+                      controller.primaryCollectorController.value),
+
+                  _buildField("Alternate Collector",
+                      controller.alternateCollectorController.value),
+
+                  _buildField("Additional Notes",
+                      controller.additionalNotesController.value),
+                  const SizedBox(height: 12),
+
+                  SizedBox(
+                    width: double.infinity,
+                    height: 48,
+                    child: CommonGradientButton(
+                      btnTitle: "UPDATE",
+                      onPressed: (){
+                        controller.callUpdateAllAboutMeAPI(context, widget.childId);
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          if(controller.isLoading.value)Center(child: CircularProgressIndicator(),)
+        ],
+      ),
+    );
+  }
+
+
+
+  Widget _buildField(
+      String label, TextEditingController controller) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+
+          BlueMediumBoldText(label, fontSize: 12),
+          const SizedBox(height: 4),
+
+          CommonTextField(
+            hint: label,
+            controller: controller,
+          ),
+        ],
+      ),
+    );
+  }
+
+}

@@ -18,10 +18,16 @@ const urlAddLikeInNewsFeedComment = '/parent/newsfeeds';
 const urlChildInfoList = '/parent/children';
 const urlChildActivityList = '/parent/children/activity';
 
+const urlWeeklyMenu = '/parent/children/weekly-menus';
+
+const urlAllAboutMe = '/parent/children/all-about-me';
 const urlGetFamilyContacts = '/parent/contacts';
 const urlAddFamily = "/parent/contacts";
 const urlUpdateFamily = "/parent/contacts/update";
 const urlDeleteContact = '/parent/contacts/delete';
+
+const urlUpdateAllAboutMe = "/parent/children/all-about-me";
+
 
 const urlLeaveRequest = '/parent/children/leave';
 
@@ -40,6 +46,9 @@ const urlGetBookingList = '/parent/children/extra-bookings';
 
 const urlGetAbout = '/parent/children/about';
 
+
+
+const urlGetFinancialYearList = '/parent/financial-years?term-time';
 const urlGetExtraBookingList = '/parent/children/extra-bookings';
 const urlAddExtraBooking = '/parent/children/extra-bookings';
 const urlDeleteExtraBooking = '/parent/children/extra-bookings';

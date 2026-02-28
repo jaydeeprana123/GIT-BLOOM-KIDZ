@@ -45,7 +45,7 @@ class _CommonTextFieldState extends State<CommonTextField> {
       obscureText: widget.isPassword ? _obscureText : false,
       keyboardType: widget.keyboardType,
       maxLines: widget.isPassword ? 1 : widget.maxLines,
-      maxLength: widget.maxLength ?? 100,
+      maxLength: widget.maxLength,
       style: TextStyle(
         fontSize: 14,
         fontFamily: fontInterSemiBold,

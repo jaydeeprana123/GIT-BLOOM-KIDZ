@@ -500,12 +500,13 @@ Future<void> pickDate(
   BuildContext context,
   DateTime? initialDate,
   Function(DateTime) onSelected,
+{DateTime? lastDate}
 ) async {
   final DateTime? picked = await showDatePicker(
     context: context,
     initialDate: initialDate ?? DateTime.now(),
     firstDate: DateTime.now(),
-    lastDate: DateTime(DateTime.now().year + 2),
+    lastDate:lastDate??DateTime(DateTime.now().year + 2),
   );
 
   if (picked != null) {

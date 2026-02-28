@@ -37,7 +37,7 @@ class YearListResponse {
 }
 
 class Data {
-  List<Year>? years;
+  List<FinancialYear>? years;
   Pagination? pagination;
 
   Data({
@@ -46,7 +46,7 @@ class Data {
   });
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
-    years: json["years"] == null ? [] : List<Year>.from(json["years"]!.map((x) => Year.fromJson(x))),
+    years: json["years"] == null ? [] : List<FinancialYear>.from(json["years"]!.map((x) => FinancialYear.fromJson(x))),
     pagination: json["pagination"] == null ? null : Pagination.fromJson(json["pagination"]),
   );
 
@@ -84,7 +84,7 @@ class Pagination {
   };
 }
 
-class Year {
+class FinancialYear {
   int? id;
   String? name;
   DateTime? startDate;
@@ -93,7 +93,7 @@ class Year {
   String? status;
   int? nurseryId;
 
-  Year({
+  FinancialYear({
     this.id,
     this.name,
     this.startDate,
@@ -103,7 +103,7 @@ class Year {
     this.nurseryId,
   });
 
-  factory Year.fromJson(Map<String, dynamic> json) => Year(
+  factory FinancialYear.fromJson(Map<String, dynamic> json) => FinancialYear(
     id: json["id"],
     name: json["name"],
     startDate: json["start_date"] == null ? null : DateTime.parse(json["start_date"]),

@@ -1,8 +1,10 @@
+import 'package:bloom_kidz/ChildInfo/AllAboutMe/view/all_about_me_screen.dart';
 import 'package:bloom_kidz/ChildInfo/GroupObservation/view/group_observation_list_screen.dart';
 import 'package:bloom_kidz/ChildInfo/Permissions/View/child_permissions_screen.dart';
 import 'package:bloom_kidz/ChildInfo/SafeGuarding/views/accident_list_screen.dart';
 import 'package:bloom_kidz/ChildInfo/View/ChildActivity/child_activity_screen.dart';
 import 'package:bloom_kidz/ChildInfo/Documents/views/document_screen.dart';
+import 'package:bloom_kidz/ChildInfo/WeeklyMenu/view/weekly_menu_screen.dart';
 import 'package:bloom_kidz/CommonWidgets/common_green_button.dart';
 import 'package:bloom_kidz/CommonWidgets/common_text_field.dart';
 import 'package:bloom_kidz/Styles/my_colors.dart';
@@ -97,6 +99,21 @@ class ChildOptionsGrid extends StatelessWidget {
         icon: icon_Journey,
         title: "Group Observation",
       ),
+
+      _gridItem(
+        onTap: () => Get.to(AllAboutMeScreen(childId: childId)),
+        icon: icon_about,
+        title: "All About Me",
+      ),
+
+      _gridItem(
+        onTap: () => Get.to(WeeklyMenuScreen(childId: childId)),
+        icon: icon_WeeklyPlan,
+        title: "Weekly Menu",
+      ),
+
+
+
     ];
 
     return MasonryGridView.count(

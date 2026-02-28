@@ -14,11 +14,13 @@ class GroupObservationListResponse {
   int? code;
   Data? data;
 
+
   GroupObservationListResponse({
     this.status,
     this.message,
     this.code,
     this.data,
+
   });
 
   factory GroupObservationListResponse.fromJson(Map<String, dynamic> json) => GroupObservationListResponse(
@@ -64,6 +66,7 @@ class GroupObservation {
   DateTime? createdAt;
   CreatedBy? createdBy;
   List<GroupMedia>? media;
+  bool? isExpanded = false;
 
   GroupObservation({
     this.id,

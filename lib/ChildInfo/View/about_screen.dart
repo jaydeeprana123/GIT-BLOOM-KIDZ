@@ -335,7 +335,7 @@ class _AboutScreenState extends State<AboutScreen> {
               _healthRow(
                 ToleratesPenicilln,
                 "Tolerates Penicillin",
-                health.toleratesPenicillin == 1 ? "Yes" : "No",
+                health.toleratesPenicillin == 0 ? "Yes" :  health.toleratesPenicillin == 1 ?"No":"Unknown",
               ),
               _healthRow(
                 SpecialDietaryConsiderations,

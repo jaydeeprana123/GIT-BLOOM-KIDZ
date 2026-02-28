@@ -46,6 +46,9 @@ import '../models/extra_bookings_request.dart';
 class AddExtraBookingScreen extends StatefulWidget {
   final String childId;
 
+
+
+
   const AddExtraBookingScreen({Key? key, required this.childId})
     : super(key: key);
 
@@ -55,7 +58,7 @@ class AddExtraBookingScreen extends StatefulWidget {
 
 class _AddExtraBookingScreenState extends State<AddExtraBookingScreen> {
   ChildInfoController controller = Get.find<ChildInfoController>();
-
+   DateTime? lastDate;
   @override
   void initState() {
     super.initState();
@@ -63,6 +66,10 @@ class _AddExtraBookingScreenState extends State<AddExtraBookingScreen> {
     controller.priceBandList.clear();
     controller.selectedSessions.value = <String, List<int>>{};
     controller.selectedExtraCharges.value = <String, List<int>>{};
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.callFinancialYearListAPI(context);
+    });
+
   }
 
   @override
@@ -88,11 +95,22 @@ class _AddExtraBookingScreenState extends State<AddExtraBookingScreen> {
                           () => DateField(
                             label: "Plan Start",
                             value: controller.planStartDate.value,
-                            onTap: () => pickDate(
-                              context,
-                              controller.planStartDate.value,
-                              controller.setPlanStart,
-                            ),
+                            onTap: () async{
+
+                             await pickDate(
+                                context,
+                                controller.planStartDate.value,
+                                controller.setPlanStart,
+
+                              );
+
+                             controller.planEndDate.value = null;
+
+                             var financialYear =  controller.getFinancialYearByDate(controller.planStartDate.value??DateTime(2026));
+                             if(financialYear != null){
+                               lastDate = financialYear.endDate;
+                             }
+                            },
                           ),
                         ),
                       ),
@@ -107,6 +125,7 @@ class _AddExtraBookingScreenState extends State<AddExtraBookingScreen> {
                                 context,
                                 controller.planEndDate.value,
                                 controller.setPlanEnd,
+                                lastDate: lastDate
                               );
 
                               controller.callGetPriceBandAPI(

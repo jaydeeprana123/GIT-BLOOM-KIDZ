@@ -3,10 +3,13 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:bloom_kidz/Authentication/model/login_response.dart';
 import 'package:bloom_kidz/ChildInfo/About/models/about_response.dart';
+import 'package:bloom_kidz/ChildInfo/AllAboutMe/model/all_about_me_response.dart';
 import 'package:bloom_kidz/ChildInfo/Documents/models/documents_response.dart';
+import 'package:bloom_kidz/ChildInfo/ExtraBookings/models/year_list_response.dart';
 import 'package:bloom_kidz/ChildInfo/GroupObservation/model/group_observation_list_response.dart';
 import 'package:bloom_kidz/ChildInfo/Observations/models/observation_list_response.dart';
 import 'package:bloom_kidz/ChildInfo/Permissions/models/permissions_response.dart';
+import 'package:bloom_kidz/ChildInfo/WeeklyMenu/model/weekly_menu_response.dart';
 import 'package:bloom_kidz/ChildInfo/models/child_activity_response.dart';
 import 'package:bloom_kidz/ChildInfo/models/child_info_list_response.dart';
 import 'package:bloom_kidz/NewsFeed/models/news_feed_response.dart';
@@ -36,10 +39,16 @@ import '../models/family_contact_list_response.dart';
 /// Controller
 class ChildInfoController extends GetxController {
   RxList<ChildInfo> childInfoList = <ChildInfo>[].obs;
-  RxList<Observation> observationList = <Observation>[].obs;
 
+  RxList<FinancialYear> financialYearList = <FinancialYear>[].obs;
+
+
+  RxList<Observation> observationList = <Observation>[].obs;
+  RxBool isExpanded = false.obs;
   RxList<GroupObservation> groupObservationList = <GroupObservation>[].obs;
 
+
+  Rx<AllAboutMe> allAboutMe = AllAboutMe().obs;
 
   RxList<int> removedMediaIds = <int>[].obs;
   Rx<Observation> selectedObservation = Observation().obs;
@@ -101,6 +110,8 @@ class ChildInfoController extends GetxController {
   Rx<DateTime?> startDate = Rx<DateTime?>(null);
   Rx<DateTime?> endDate = Rx<DateTime?>(null);
 
+  Rx<WeeklyMenuData> weeklyMenuData = WeeklyMenuData().obs;
+
   Rx<AboutData> aboutChildren = AboutData().obs;
 
   RxInt selectedTab = 0.obs; // 0 = Basic, 1 = Health, 2 = Sensitive
@@ -109,6 +120,28 @@ class ChildInfoController extends GetxController {
   RxList<Accident> accidentList = <Accident>[].obs;
 
   Rx<ActivityForSelect?> selectedActivity = Rx<ActivityForSelect?>(null);
+
+  /// Controllers
+  Rx<TextEditingController> preferredNameController = TextEditingController().obs;
+  Rx<TextEditingController> homeLanguageController = TextEditingController().obs;
+  Rx<TextEditingController> spokenLanguageController = TextEditingController().obs;
+  Rx<TextEditingController> celebrationsController = TextEditingController().obs;
+  Rx<TextEditingController> happyThingsController = TextEditingController().obs;
+  Rx<TextEditingController> favouriteController = TextEditingController().obs;
+  Rx<TextEditingController> dislikesController = TextEditingController().obs;
+  Rx<TextEditingController> eatingController = TextEditingController().obs;
+  Rx<TextEditingController> foodDislikesController = TextEditingController().obs;
+  Rx<TextEditingController> healthController = TextEditingController().obs;
+  Rx<TextEditingController> allergiesController = TextEditingController().obs;
+  Rx<TextEditingController> allergyTreatmentController = TextEditingController().obs;
+  Rx<TextEditingController> daySleepController = TextEditingController().obs;
+  Rx<TextEditingController> sleepRoutineController = TextEditingController().obs;
+  Rx<TextEditingController> comfortMethodController = TextEditingController().obs;
+  Rx<TextEditingController> supportBeforeStartController = TextEditingController().obs;
+  Rx<TextEditingController> primaryCollectorController = TextEditingController().obs;
+  Rx<TextEditingController> alternateCollectorController = TextEditingController().obs;
+  Rx<TextEditingController> additionalNotesController = TextEditingController().obs;
+
 
   /// Load from API response
   void setActivities(ActivityResponseForSelect response) {
@@ -270,6 +303,95 @@ class ChildInfoController extends GetxController {
       });
     });
   }
+
+  /// Child Info API
+  callWeeklyMenu(BuildContext context, String childId) async {
+    isLoading.value = true;
+
+    String token = await MySharedPref().getStringValue(
+      SharePreData.keyAccessToken,
+    );
+
+    String url = "$urlBase$urlWeeklyMenu/$childId";
+
+    final apiReq = Request();
+
+    await apiReq.getMethodAPI(url, null, token).then((value) async {
+      http.StreamedResponse res = value;
+      printData(
+        runtimeType.toString(),
+        "callChildInfoAPI response ${res.statusCode}",
+      );
+
+      await res.stream.bytesToString().then((valueData) async {
+        printData(
+          runtimeType.toString(),
+          "callChildInfoAPI value ${valueData}",
+        );
+
+        isLoading.value = false;
+
+        if (res.statusCode == 200) {
+          Map<String, dynamic> userModel = json.decode(valueData);
+          WeeklymenuResponse weeklymenuResponse =
+          WeeklymenuResponse.fromJson(userModel);
+
+          if (weeklymenuResponse.status ?? false) {
+            weeklyMenuData.value = weeklymenuResponse.data ?? WeeklyMenuData();
+          } else {
+            snackBar(context, weeklymenuResponse.message ?? "");
+          }
+        } else if (res.statusCode == 401) {
+          logoutFromTheApp();
+        }
+      });
+    });
+  }
+
+  /// Child Info API
+  callAllAboutMe(BuildContext context, String childId) async {
+    isLoading.value = true;
+
+    String token = await MySharedPref().getStringValue(
+      SharePreData.keyAccessToken,
+    );
+
+    String url = "$urlBase$urlAllAboutMe/$childId/view";
+
+    final apiReq = Request();
+
+    await apiReq.getMethodAPI(url, null, token).then((value) async {
+      http.StreamedResponse res = value;
+      printData(
+        runtimeType.toString(),
+        "callChildInfoAPI response ${res.statusCode}",
+      );
+
+      await res.stream.bytesToString().then((valueData) async {
+        printData(
+          runtimeType.toString(),
+          "callChildInfoAPI value ${valueData}",
+        );
+
+        isLoading.value = false;
+
+        if (res.statusCode == 200) {
+          Map<String, dynamic> userModel = json.decode(valueData);
+          AllAboutMeResponse allAboutMeResponse =
+          AllAboutMeResponse.fromJson(userModel);
+
+          if (allAboutMeResponse.status ?? false) {
+            allAboutMe.value = allAboutMeResponse.data?.allAboutMe ?? AllAboutMe();
+          } else {
+            snackBar(context, allAboutMeResponse.message ?? "");
+          }
+        } else if (res.statusCode == 401) {
+          logoutFromTheApp();
+        }
+      });
+    });
+  }
+
 
   /// Add Family API
   callAddFamilyAPI(BuildContext context) async {
@@ -2061,6 +2183,123 @@ class ChildInfoController extends GetxController {
     callMedicationListAPI(context, childId);
   }
 
+
+  /// Financial year list API
+  callFinancialYearListAPI(BuildContext context) async {
+    isLoading.value = true;
+
+    String token = await MySharedPref().getStringValue(
+      SharePreData.keyAccessToken,
+    );
+
+    String url = urlBase + urlGetFinancialYearList;
+
+    final apiReq = Request();
+
+    await apiReq.getMethodAPI(url, null, token).then((value) async {
+      http.StreamedResponse res = value;
+      printData(
+        runtimeType.toString(),
+        "callFinancialYearListAPI response ${res.statusCode}",
+      );
+
+      await res.stream.bytesToString().then((valueData) async {
+        printData(
+          runtimeType.toString(),
+          "callFinancialYearListAPI value ${valueData}",
+        );
+
+        isLoading.value = false;
+
+        if (res.statusCode == 200) {
+          Map<String, dynamic> userModel = json.decode(valueData);
+          YearListResponse yearListResponse =
+          YearListResponse.fromJson(userModel);
+
+          if (yearListResponse.status ?? false) {
+            financialYearList.value = yearListResponse.data?.years ?? [];
+          } else {
+            snackBar(context, yearListResponse.message ?? "");
+          }
+        } else if (res.statusCode == 401) {
+          logoutFromTheApp();
+        }
+      });
+    });
+  }
+
+
+  /// All About Me Edit API
+  callUpdateAllAboutMeAPI(BuildContext context, String childId) async {
+    isLoading.value = true;
+
+    String token = await MySharedPref().getStringValue(
+      SharePreData.keyAccessToken,
+    );
+
+    String url = "$urlBase$urlUpdateAllAboutMe/$childId/update";
+
+    final apiReq = Request();
+
+    dynamic  body = {
+    "preferred_name": preferredNameController.value.text.trim(),
+    "home_language": homeLanguageController.value.text.trim(),
+    "spoken_languages": spokenLanguageController.value.text.trim(),
+    "celebrations": celebrationsController.value.text.trim(),
+    "happy_things": happyThingsController.value.text.trim(),
+    "favourite_books_songs": favouriteController.value.text.trim(),
+    "dislikes": dislikesController.value.text.trim(),
+    "eating_drinking": eatingController.value.text.trim(),
+    "food_dislikes": foodDislikesController.value.text.trim(),
+    "health_conditions": healthController.value.text.trim(),
+    "allergies": allergiesController.value.text.trim(),
+    "allergy_treatment": allergyTreatmentController.value.text.trim(),
+    "day_sleep": daySleepController.value.text.trim(),
+    "sleep_routine": sleepRoutineController.value.text.trim(),
+    "comfort_method": comfortMethodController.value.text.trim(),
+    "support_before_start": supportBeforeStartController.value.text.trim(),
+    "primary_collector": primaryCollectorController.value.text.trim(),
+    "alternate_collector": alternateCollectorController.value.text.trim(),
+    "additional_notes": additionalNotesController.value.text.trim(),
+    };
+
+    printData("callUpdateAllAboutMeAPI body", body.toString());
+
+    await apiReq.postAPIWithMedia(url, body, token, imagePath.value, []).then((
+        value,
+        ) async {
+      http.StreamedResponse res = value;
+      printData(
+        runtimeType.toString(),
+        "callUpdateAllAboutMeAPI API response ${res.statusCode}",
+      );
+
+      await res.stream.bytesToString().then((valueData) async {
+        printData(
+          runtimeType.toString(),
+          "callUpdateAllAboutMeAPI API value ${valueData}",
+        );
+
+        isLoading.value = false;
+
+        if (res.statusCode == 200) {
+          Map<String, dynamic> userModel = json.decode(valueData);
+          BaseModel baseModel = BaseModel.fromJson(userModel);
+
+          if (baseModel.status ?? false) {
+            snackBar(context, baseModel.message ?? "");
+
+            Navigator.pop(context);
+          } else {
+            snackBar(context, baseModel.message ?? "");
+          }
+        } else if (res.statusCode == 401) {
+          logoutFromTheApp();
+        }
+      });
+    });
+  }
+
   void acknowledgeAccident(
     int accidentId,
     BuildContext context,
@@ -2129,5 +2368,23 @@ class ChildInfoController extends GetxController {
     activityListForSelect.value = holiday == null ? [] : [holiday];
 
     selectedActivity.value = holiday;
+  }
+
+
+  FinancialYear? getFinancialYearByDate(DateTime selectedDate) {
+    for (var year in financialYearList) {
+
+      if(year.flag == "term-time"){
+        if (year.startDate != null && year.endDate != null) {
+          if (!selectedDate.isBefore(year.startDate!) &&
+              !selectedDate.isAfter(year.endDate!)) {
+            return year;
+          }
+        }
+      }
+
+
+    }
+    return null;
   }
 }

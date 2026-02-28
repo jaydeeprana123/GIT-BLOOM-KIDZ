@@ -242,9 +242,8 @@ class GroupObservationCard extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => FullGalleryView(
+                            builder: (_) => AllImagesScreen(
                               mediaList: mediaList,
-                              initialIndex: 0,
                             ),
                           ),
                         );
@@ -283,6 +282,9 @@ class GroupObservationCard extends StatelessWidget {
       ),
     );
   }
+
+
+
 
   Widget _gridImage(BuildContext context, GroupMedia media) {
     return ClipRRect(
@@ -386,63 +388,48 @@ class GroupObservationCard extends StatelessWidget {
 }
 
 
-class FullGalleryView extends StatefulWidget {
+class AllImagesScreen extends StatelessWidget {
   final List<GroupMedia> mediaList;
-  final int initialIndex;
 
-  const FullGalleryView({
+  const AllImagesScreen({
     super.key,
     required this.mediaList,
-    required this.initialIndex,
   });
-
-  @override
-  State<FullGalleryView> createState() => _FullGalleryViewState();
-}
-
-class _FullGalleryViewState extends State<FullGalleryView> {
-  late PageController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = PageController(initialPage: widget.initialIndex);
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: Stack(
-        children: [
-          PageView.builder(
-            controller: _controller,
-            itemCount: widget.mediaList.length,
-            itemBuilder: (context, index) {
-              return PhotoView(
-                imageProvider: NetworkImage(
-                  widget.mediaList[index].image ?? "",
-                ),
-                backgroundDecoration:
-                const BoxDecoration(color: Colors.black),
-              );
-            },
-          ),
+      appBar: AppBar(
+        title: const Text("Images"),
+      ),
+      body: GridView.builder(
+        padding: const EdgeInsets.all(12),
+        itemCount: mediaList.length,
+        gridDelegate:
+        const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+          crossAxisSpacing: 8,
+          mainAxisSpacing: 8,
+        ),
+        itemBuilder: (context, index) {
+          final media = mediaList[index];
 
-          /// Close Button
-          Positioned(
-            top: 50,
-            left: 16,
-            child: GestureDetector(
-              onTap: () => Navigator.pop(context),
-              child: const Icon(
-                Icons.close,
-                color: Colors.white,
-                size: 30,
+          return GestureDetector(
+            onTap: () {
+
+              showFullImageDialog(context, mediaList[index].image ?? "");
+
+            },
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: FadeInImage.assetNetwork(
+                placeholder: placeholder,
+                image: media.image ?? "",
+                fit: BoxFit.cover,
               ),
             ),
-          ),
-        ],
+          );
+        },
       ),
     );
   }
