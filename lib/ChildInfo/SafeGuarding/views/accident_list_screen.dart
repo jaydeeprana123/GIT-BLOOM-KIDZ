@@ -82,13 +82,13 @@ class _AccidentListScreenState extends State<AccidentListScreen> {
         return Obx(
                 () =>Stack(
           children: [
-            ListView.builder(
+            !childInfoController.isLoading.value?childInfoController.accidentList.isNotEmpty?  ListView.builder(
               padding: const EdgeInsets.all(16),
               itemCount: childInfoController.accidentList.length,
               itemBuilder: (context, index) {
                 return _AccidentCard(accident: childInfoController.accidentList[index], childInfoController: childInfoController,childId: widget.childId,index: index);
               },
-            ),
+            ):Expanded(child: Center(child: BlueLargeBoldText("No Data Found", ),)):SizedBox(),
 
             if (childInfoController.isLoading.value)const Center(child: CircularProgressIndicator())
           ],
@@ -150,12 +150,12 @@ class _AccidentCard extends StatelessWidget {
             _item("Child", accident.child?.name),
             _item("Location", accident.location),
             _item("Nature", accident.nature),
-            _item("First Aid", accident.firstAid),
-            _item("Parents Notified", accident.parentsNotified),
+            _item("First aid administered", accident.firstAid),
+            _item("When and how were parents notified", accident.parentsNotified),
             _item("Witness", accident.witness?.name),
-            _item("Approved By", accident.approvedBy?.name),
+            _item("Approved and sent by", "${accident.approvedBy?.name??""} | ${accident.dateTime??""}"),
 
-            const SizedBox(height: 12),
+            // const SizedBox(height: 12),
 
             /// ACKNOWLEDGEMENT
             _acknowledgementSection(context, childId, childInfoController, index),
@@ -171,15 +171,55 @@ class _AccidentCard extends StatelessWidget {
                     fontFamily: fontInterSemiBold,
                     fontSize: 13
                 ),
-                const SizedBox(height: 12),
+
 
                 if (accident.bodyMap?.front != null && accident.bodyMap!.front!.isNotEmpty)
-                  BodyMapView(
-                    imagePath: body_front,
-                    frontPoints: accident.bodyMap?.front,
-                    backPoints: accident.bodyMap?.back,
-                    headPoints: accident.bodyMap?.head,
-                    sidePoints: accident.bodyMap?.sideface,
+                  Container(
+                    margin: EdgeInsets.only(top: 16),
+                    child: BodyMapView(
+                      imagePath: body_front,
+                      frontPoints: accident.bodyMap?.front,
+                      backPoints: accident.bodyMap?.back,
+                      headPoints: accident.bodyMap?.head,
+                      sidePoints: accident.bodyMap?.sideface,
+                    ),
+                  ),
+
+                if (accident.bodyMap?.head != null && accident.bodyMap!.head!.isNotEmpty)
+                  Container(
+                    margin: EdgeInsets.only(top: 16),
+                    child: BodyMapView(
+                      imagePath: body_head,
+                      frontPoints: accident.bodyMap?.front,
+                      backPoints: accident.bodyMap?.back,
+                      headPoints: accident.bodyMap?.head,
+                      sidePoints: accident.bodyMap?.sideface,
+                    ),
+                  ),
+
+                if (accident.bodyMap?.back != null && accident.bodyMap!.back!.isNotEmpty)
+                  Container(
+                    margin: EdgeInsets.only(top: 16),
+                    child: BodyMapView(
+                      imagePath: body_back,
+                      frontPoints: accident.bodyMap?.front,
+                      backPoints: accident.bodyMap?.back,
+                      headPoints: accident.bodyMap?.head,
+                      sidePoints: accident.bodyMap?.sideface,
+                    ),
+                  ),
+
+
+                if (accident.bodyMap?.sideface != null && accident.bodyMap!.sideface!.isNotEmpty)
+                  Container(
+                    margin: EdgeInsets.only(top: 16),
+                    child: BodyMapView(
+                      imagePath: body_side_face,
+                      frontPoints: accident.bodyMap?.front,
+                      backPoints: accident.bodyMap?.back,
+                      headPoints: accident.bodyMap?.head,
+                      sidePoints: accident.bodyMap?.sideface,
+                    ),
                   ),
 
 

@@ -162,7 +162,11 @@ const icon_time = 'assets/images/time.svg';
 const icon_employee = 'assets/images/employee.svg';
 const icon_branch = 'assets/images/branch.svg';
 const icon_membership = 'assets/images/membership.svg';
-const body_front = "assets/images/front.jpg";
+const body_front = "assets/images/front.jpeg";
+const body_head = "assets/images/head.jpeg";
+const body_back = "assets/images/back.jpeg";
+const body_side_face= "assets/images/head-sides.jpeg";
+
 const pdf = "assets/images/pdf.svg";
 const unlike = "assets/images/unlike.svg";
 const MealIcon = "assets/images/Meal.svg";

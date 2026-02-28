@@ -4,6 +4,8 @@ import 'package:bloom_kidz/ChildInfo/Observations/models/observation_list_respon
 import 'package:bloom_kidz/ChildInfo/Observations/views/observation_update_screen.dart';
 import 'package:bloom_kidz/ChildInfo/controller/child_info_controller.dart';
 import 'package:bloom_kidz/CommonWidgets/black_large_bold_text.dart';
+import 'package:bloom_kidz/CommonWidgets/black_medium_bold_text.dart';
+import 'package:bloom_kidz/CommonWidgets/black_medium_regular_text.dart';
 import 'package:bloom_kidz/CommonWidgets/blue_medium_bold_text.dart';
 import 'package:bloom_kidz/CommonWidgets/blue_medium_regular_text.dart';
 import 'package:bloom_kidz/CommonWidgets/common_green_button.dart';
@@ -111,6 +113,9 @@ class ObservationCard extends StatelessWidget {
                 BlackLargeBoldText(observation.createdBy?.name ?? ""),
                 SizedBox(height: 2),
 
+              BlackMediumRegularText("made an Observation for ${observation.childNames?? ""}",fontSize: 12),
+                SizedBox(height: 2),
+
                 Row(
                   children: [
                     Icon(Icons.timer, color: color_secondary, size: 14),
@@ -209,43 +214,46 @@ class ObservationCard extends StatelessWidget {
             onTap: () {
               showFullImageDialog(context, media.image ?? "");
             },
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Stack(
-                children: [
-                  // Placeholder image
-                  Image.asset(
-                    placeholder, // your placeholder
-                    width: (observation.media ?? []).length == 1
-                        ? double.infinity
-                        : 280,
-                    height: 200,
-                    fit: BoxFit.cover,
-                  ),
+            child: Container(
+              margin: EdgeInsets.only(right: (observation.media ?? []).length == 1?16:12, left: (observation.media ?? []).length == 1?12:index == 0?16:0),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Stack(
+                  children: [
+                    // Placeholder image
+                    Image.asset(
+                      placeholder, // your placeholder
+                      width: (observation.media ?? []).length == 1
+                          ?  MediaQuery.of(context).size.width
+                          : 280,
+                      height: 200,
+                      fit: BoxFit.cover,
+                    ),
 
-                  // Network image
-                  Image.network(
-                    media.image ?? "",
-                    width: (observation.media ?? []).length == 1
-                        ? double.infinity
-                        : 280,
-                    height: 200,
-                    fit: BoxFit.cover,
-                    loadingBuilder: (context, child, loadingProgress) {
-                      // Image loaded → show network image
-                      if (loadingProgress == null) {
-                        return child;
-                      }
+                    // Network image
+                    Image.network(
+                      media.image ?? "",
+                      width: (observation.media ?? []).length == 1
+                          ?  MediaQuery.of(context).size.width
+                          : 280,
+                      height: 200,
+                      fit: BoxFit.cover,
+                      loadingBuilder: (context, child, loadingProgress) {
+                        // Image loaded → show network image
+                        if (loadingProgress == null) {
+                          return child;
+                        }
 
-                      // While loading → keep placeholder
-                      return const SizedBox.shrink();
-                    },
-                    errorBuilder: (context, error, stackTrace) {
-                      // On error → show placeholder
-                      return Image.asset(placeholder, fit: BoxFit.cover);
-                    },
-                  ),
-                ],
+                        // While loading → keep placeholder
+                        return const SizedBox.shrink();
+                      },
+                      errorBuilder: (context, error, stackTrace) {
+                        // On error → show placeholder
+                        return Image.asset(placeholder, fit: BoxFit.cover);
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
           );

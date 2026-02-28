@@ -1,6 +1,6 @@
 class SharePreData {
   static String keySaveLoginModel = "loginModel";
-
+  static String keyPinSet = "PinSet";
   // static String keySaveViewerLoginModel = "viewerLoginModel";
   static String keyUserType = "userType";
   static String keySaveCart = "cartItems";

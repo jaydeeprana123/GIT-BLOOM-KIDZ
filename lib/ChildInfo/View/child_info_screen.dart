@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../CommonWidgets/blue_large_bold_text.dart';
 import '../../CommonWidgets/common_appbar.dart';
 import '../../Drawer/app_drawer.dart';
 import 'child_.card.dart';
@@ -38,7 +39,8 @@ class _ChildInfoScreenState extends State<ChildInfoScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Obx(
+            () =>Scaffold(
       key: _scaffoldKey,
       backgroundColor: Colors.transparent,
       appBar: CommonAppBar(
@@ -51,8 +53,7 @@ class _ChildInfoScreenState extends State<ChildInfoScreen> {
         },
       ),
       drawer: const AppDrawer(), // 👈 Navigation Drawer
-      body: Obx(
-        () => Stack(
+      body: Stack(
           children: [
             !childInfoController.isLoading.value
                 ? childInfoController.childInfoList.length > 1
@@ -84,14 +85,14 @@ class _ChildInfoScreenState extends State<ChildInfoScreen> {
                             ],
                           ),
                         )
-                      : Center(child: Text("No Data Found"))
+                      : Center(child: BlueLargeBoldText("No Data Found", ))
                 : SizedBox(),
 
             if (childInfoController.isLoading.value)
               Center(child: CircularProgressIndicator()),
           ],
         ),
-      ),
-    );
+
+    ));
   }
 }

@@ -2,6 +2,7 @@ import 'package:bloom_kidz/Chat/View/chat_screen.dart';
 import 'package:bloom_kidz/Chat/controller/chat_controller.dart';
 import 'package:bloom_kidz/Chat/models/conversation_list_response.dart';
 import 'package:bloom_kidz/Chat/models/people_list_response.dart';
+import 'package:bloom_kidz/CommonWidgets/black_large_bold_text.dart';
 import 'package:bloom_kidz/CommonWidgets/black_medium_regular_text.dart';
 import 'package:bloom_kidz/CommonWidgets/blue_large_bold_text.dart';
 import 'package:bloom_kidz/CommonWidgets/common_green_button.dart';
@@ -80,7 +81,7 @@ class _ConversationListScreenState extends State<ConversationListScreen> {
               const SizedBox(height: 16),
 
               /// 👥 Employee List
-              Expanded(
+              !chatController.isLoading.value?chatController.conversationList.isNotEmpty? Expanded(
                 child: ListView.separated(
                   itemCount: chatController.conversationList.length,
                   separatorBuilder: (_, __) => const Divider(height: 1),
@@ -88,7 +89,7 @@ class _ConversationListScreenState extends State<ConversationListScreen> {
                     return  ConversationTile(conversationData: chatController.conversationList[index],chatController: chatController,);
                   },
                 ),
-              ),
+              ):Expanded(child: Center(child: BlueLargeBoldText("No Data Found", ),)):SizedBox(),
             ],
           ),
 

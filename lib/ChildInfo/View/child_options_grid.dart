@@ -1,3 +1,4 @@
+import 'package:bloom_kidz/ChildInfo/GroupObservation/view/group_observation_list_screen.dart';
 import 'package:bloom_kidz/ChildInfo/Permissions/View/child_permissions_screen.dart';
 import 'package:bloom_kidz/ChildInfo/SafeGuarding/views/accident_list_screen.dart';
 import 'package:bloom_kidz/ChildInfo/View/ChildActivity/child_activity_screen.dart';
@@ -88,6 +89,13 @@ class ChildOptionsGrid extends StatelessWidget {
         onTap: () => Get.to(ExtraBookingScreen(childId: childId)),
         icon: icon_Book_Extra_Sessions,
         title: "Book Extra Sessions",
+      ),
+
+
+      _gridItem(
+        onTap: () => Get.to(GroupObservationListScreen(childId: childId)),
+        icon: icon_Journey,
+        title: "Group Observation",
       ),
     ];
 

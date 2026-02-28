@@ -135,7 +135,7 @@ class _PeopleListScreenState extends State<PeopleListScreen> {
                       const SizedBox(height: 8),
 
                       /// 👥 Employee List
-                      Expanded(
+                      !chatController.isLoading.value?chatController.peopleList.isNotEmpty?  Expanded(
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 12),
                           child: ListView.separated(
@@ -148,7 +148,7 @@ class _PeopleListScreenState extends State<PeopleListScreen> {
                             },
                           ),
                         ),
-                      ),
+                      ):Expanded(child: Center(child: BlueLargeBoldText("No Data Found", ),)):SizedBox(),
                     ],
                   ),
 

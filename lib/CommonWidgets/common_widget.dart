@@ -38,7 +38,10 @@ logoutFromTheApp() async {
   await preferences.clearData(SharePreData.keySaveLoginModel);
   await preferences.clearData(SharePreData.keyAccessToken);
   String email = await preferences.getStringValue(SharePreData.keyEmail);
-  if (email.isNotEmpty) {
+  bool isPinSet = await preferences.getBoolValue(SharePreData.keyPinSet);
+
+
+  if (isPinSet) {
     Get.offAll(() => QuickAccessPinScreen());
   } else {
     Get.offAll(() => LoginScreen());

@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:bloom_kidz/Authentication/model/login_response.dart';
 import 'package:bloom_kidz/ChildInfo/About/models/about_response.dart';
 import 'package:bloom_kidz/ChildInfo/Documents/models/documents_response.dart';
+import 'package:bloom_kidz/ChildInfo/GroupObservation/model/group_observation_list_response.dart';
 import 'package:bloom_kidz/ChildInfo/Observations/models/observation_list_response.dart';
 import 'package:bloom_kidz/ChildInfo/Permissions/models/permissions_response.dart';
 import 'package:bloom_kidz/ChildInfo/models/child_activity_response.dart';
@@ -36,6 +37,10 @@ import '../models/family_contact_list_response.dart';
 class ChildInfoController extends GetxController {
   RxList<ChildInfo> childInfoList = <ChildInfo>[].obs;
   RxList<Observation> observationList = <Observation>[].obs;
+
+  RxList<GroupObservation> groupObservationList = <GroupObservation>[].obs;
+
+
   RxList<int> removedMediaIds = <int>[].obs;
   Rx<Observation> selectedObservation = Observation().obs;
   Rx<ExtraBooking> selectedExtraBooking = ExtraBooking().obs;
@@ -308,6 +313,8 @@ class ChildInfoController extends GetxController {
           } else {
             snackBar(context, baseModel.message ?? "");
           }
+        } else if (res.statusCode == 401) {
+          logoutFromTheApp();
         }
       });
     });
@@ -363,6 +370,8 @@ class ChildInfoController extends GetxController {
           } else {
             snackBar(context, baseModel.message ?? "");
           }
+        } else if (res.statusCode == 401) {
+          logoutFromTheApp();
         }
       });
     });
@@ -371,7 +380,7 @@ class ChildInfoController extends GetxController {
   /// ActivityList API
   callChildActivityListAPI(BuildContext context, String childId) async {
     isLoading.value = true;
-
+    activityList.clear();
     String token = await MySharedPref().getStringValue(
       SharePreData.keyAccessToken,
     );
@@ -430,6 +439,8 @@ class ChildInfoController extends GetxController {
           } else {
             snackBar(context, activityResponse.message ?? "");
           }
+        } else if (res.statusCode == 401) {
+          logoutFromTheApp();
         }
       });
     });
@@ -479,6 +490,8 @@ class ChildInfoController extends GetxController {
           } else {
             snackBar(context, activityResponseForSelect.message ?? "");
           }
+        } else if (res.statusCode == 401) {
+          logoutFromTheApp();
         }
       });
     });
@@ -522,6 +535,8 @@ class ChildInfoController extends GetxController {
           } else {
             snackBar(context, familyContactListResponse.message ?? "");
           }
+        } else if (res.statusCode == 401) {
+          logoutFromTheApp();
         }
       });
     });
@@ -569,6 +584,8 @@ class ChildInfoController extends GetxController {
         } else {
           snackBar(context, baseModel.message ?? "Something went wrong");
         }
+      } else if (response.statusCode == 401) {
+        logoutFromTheApp();
       } else {
         snackBar(context, "Server error (${response.statusCode})");
       }
@@ -630,6 +647,8 @@ class ChildInfoController extends GetxController {
         } else {
           snackBar(context, baseModel.message ?? "Something went wrong");
         }
+      } else if (response.statusCode == 401) {
+        logoutFromTheApp();
       } else {
         snackBar(context, "Server error (${response.statusCode})");
       }
@@ -687,6 +706,8 @@ class ChildInfoController extends GetxController {
         } else {
           snackBar(context, baseModel.message ?? "Something went wrong");
         }
+      } else if (response.statusCode == 401) {
+        logoutFromTheApp();
       } else {
         snackBar(context, "Server error (${response.statusCode})");
       }
@@ -782,6 +803,8 @@ class ChildInfoController extends GetxController {
           } else {
             snackBar(context, permissionsResponse.message ?? "");
           }
+        } else if (res.statusCode == 401) {
+          logoutFromTheApp();
         }
       });
     });
@@ -837,6 +860,8 @@ class ChildInfoController extends GetxController {
           } else {
             snackBar(context, baseModel.message ?? "");
           }
+        } else if (res.statusCode == 401) {
+          logoutFromTheApp();
         }
       });
     });
@@ -880,6 +905,8 @@ class ChildInfoController extends GetxController {
           } else {
             snackBar(context, bookingsResponse.message ?? "");
           }
+        } else if (res.statusCode == 401) {
+          logoutFromTheApp();
         }
       });
     });
@@ -966,6 +993,8 @@ class ChildInfoController extends GetxController {
           } else {
             snackBar(context, aboutResponse.message ?? "");
           }
+        } else if (res.statusCode == 401) {
+          logoutFromTheApp();
         }
       });
     });
@@ -1111,6 +1140,8 @@ class ChildInfoController extends GetxController {
           snackBar(context, priceBandResponse.message ?? "");
         }
       });
+    } else if (response.statusCode == 401) {
+      logoutFromTheApp();
     } else {
       print(response.reasonPhrase);
     }
@@ -1195,10 +1226,96 @@ class ChildInfoController extends GetxController {
           } else {
             snackBar(context, observationListResponse.message ?? "");
           }
+        } else if (res.statusCode == 401) {
+          logoutFromTheApp();
         }
       });
     });
   }
+
+
+  /// Observation list API
+  callGroupObservationListAPI(
+      BuildContext context,
+      String childId) async {
+    if (pageNumberObservation == 1) {
+      // clearning list before getting response
+
+      groupObservationList.clear();
+
+      isLoading.value = true;
+    } else {
+      isNewAddedObservationLoading.value = true;
+    }
+
+    String token = await MySharedPref().getStringValue(
+      SharePreData.keyAccessToken,
+    );
+
+    String url =
+        "$urlBase$urlGetGroupObservationList/$childId?page=$pageNumberObservation";
+
+    printData("url", url);
+    final apiReq = Request();
+
+    await apiReq.getMethodAPI(url, null, token).then((value) async {
+      http.StreamedResponse res = value;
+      printData(
+        runtimeType.toString(),
+        "callObservationListAPI response ${res.statusCode}",
+      );
+
+      await res.stream.bytesToString().then((valueData) async {
+        printData(
+          runtimeType.toString(),
+          "callObservationListAPI value ${valueData}",
+        );
+
+        isLoading.value = false;
+
+        if (res.statusCode == 200) {
+          Map<String, dynamic> userModel = json.decode(valueData);
+          GroupObservationListResponse groupObservationListResponse =
+          GroupObservationListResponse.fromJson(userModel);
+
+          if (groupObservationListResponse.status ?? false) {
+            if (pageNumberObservation == 1) {
+              replyController.clear();
+              groupObservationList.value =
+              (groupObservationListResponse.data?.observations ?? []);
+            } else {
+              groupObservationList.addAll(
+                groupObservationListResponse.data?.observations ?? [],
+              );
+            }
+
+            // consultDoctorList
+            //     .addAll(await removeLesserTimeFromNow(model.data ?? []));
+
+            // consultDoctorList.addAll(model.data ?? []);
+            isDoctorListPaginationLoading.value = true;
+            pageNumberObservation = pageNumberObservation + 1;
+
+            isNewAddedObservationLoading.value = false;
+
+            for (
+            int i = 0;
+            i < (groupObservationListResponse.data?.observations ?? []).length;
+            i++
+            ) {
+              replyController.add(TextEditingController());
+            }
+          } else {
+            snackBar(context, groupObservationListResponse.message ?? "");
+          }
+        } else if (res.statusCode == 401) {
+          logoutFromTheApp();
+        }
+      });
+    });
+  }
+
+
 
   /// Add Comment API
   callAddCommentAPI(
@@ -1247,6 +1364,8 @@ class ChildInfoController extends GetxController {
           } else {
             snackBar(context, baseModel.message ?? "");
           }
+        } else if (res.statusCode == 401) {
+          logoutFromTheApp();
         }
       });
     });
@@ -1300,6 +1419,8 @@ class ChildInfoController extends GetxController {
           } else {
             snackBar(context, baseModel.message ?? "");
           }
+        } else if (res.statusCode == 401) {
+          logoutFromTheApp();
         }
       });
     });
@@ -1351,6 +1472,8 @@ class ChildInfoController extends GetxController {
           } else {
             snackBar(context, baseModel.message ?? "");
           }
+        } else if (res.statusCode == 401) {
+          logoutFromTheApp();
         }
       });
     });
@@ -1397,6 +1520,8 @@ class ChildInfoController extends GetxController {
           snackBar(context, baseModel.message ?? "");
         }
       });
+    } else if (response.statusCode == 401) {
+      logoutFromTheApp();
     } else {
       print(response.reasonPhrase);
     }
@@ -1470,6 +1595,8 @@ class ChildInfoController extends GetxController {
           snackBar(context, baseModel.message ?? "");
         }
       });
+    } else if (response.statusCode == 401) {
+      logoutFromTheApp();
     } else {
       print(response.reasonPhrase);
     }
@@ -1517,6 +1644,8 @@ class ChildInfoController extends GetxController {
               } else {
                 snackBar(context, baseModel.message ?? "");
               }
+            } else if (res.statusCode == 401) {
+              logoutFromTheApp();
             }
           });
         });
@@ -1573,6 +1702,8 @@ class ChildInfoController extends GetxController {
               } else {
                 snackBar(context, baseModel.message ?? "");
               }
+            } else if (res.statusCode == 401) {
+              logoutFromTheApp();
             }
           });
         });
@@ -1633,6 +1764,8 @@ class ChildInfoController extends GetxController {
           snackBar(context, baseModel.message ?? "");
         }
       });
+    } else if (response.statusCode == 401) {
+      logoutFromTheApp();
     } else {
       print(response.reasonPhrase);
     }
@@ -1706,6 +1839,8 @@ class ChildInfoController extends GetxController {
           } else {
             snackBar(context, baseModel.message ?? "");
           }
+        } else if (res.statusCode == 401) {
+          logoutFromTheApp();
         }
       });
     });
@@ -1752,6 +1887,8 @@ class ChildInfoController extends GetxController {
           } else {
             snackBar(context, medicationListResponse.message ?? "");
           }
+        } else if (res.statusCode == 401) {
+          logoutFromTheApp();
         }
       });
     });
@@ -1798,6 +1935,8 @@ class ChildInfoController extends GetxController {
           } else {
             snackBar(context, accidentListResponse.message ?? "");
           }
+        } else if (res.statusCode == 401) {
+          logoutFromTheApp();
         }
       });
     });
@@ -1847,6 +1986,8 @@ class ChildInfoController extends GetxController {
           } else {
             snackBar(context, baseModel.message ?? "");
           }
+        } else if (res.statusCode == 401) {
+          logoutFromTheApp();
         }
       });
     });
@@ -1896,6 +2037,8 @@ class ChildInfoController extends GetxController {
           } else {
             snackBar(context, baseModel.message ?? "");
           }
+        } else if (res.statusCode == 401) {
+          logoutFromTheApp();
         }
       });
     });

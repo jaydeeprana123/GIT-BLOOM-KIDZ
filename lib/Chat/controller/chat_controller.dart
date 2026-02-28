@@ -305,6 +305,8 @@ class ChatController extends GetxController {
           snackBar(context, baseModel.message ?? "");
         }
       });
+    } else if (response.statusCode == 401) {
+      logoutFromTheApp();
     } else {
       print(response.reasonPhrase);
     }
@@ -381,6 +383,8 @@ class ChatController extends GetxController {
           } else {
             snackBar(context, baseModel.message ?? "");
           }
+        } else if (res.statusCode == 401) {
+          logoutFromTheApp();
         }
       });
     });
@@ -433,6 +437,8 @@ class ChatController extends GetxController {
               } else {
                 snackBar(context, baseModel.message ?? "");
               }
+            } else if (res.statusCode == 401) {
+              logoutFromTheApp();
             }
           });
         });
@@ -474,6 +480,8 @@ class ChatController extends GetxController {
           } else {
             snackBar(context, groupChatResponse.value.message ?? "");
           }
+        } else if (res.statusCode == 401) {
+          logoutFromTheApp();
         }
       });
     });
@@ -519,6 +527,8 @@ class ChatController extends GetxController {
           } else {
             snackBar(context, baseModel.message ?? "");
           }
+        } else if (res.statusCode == 401) {
+          logoutFromTheApp();
         }
       });
     });
@@ -564,6 +574,8 @@ class ChatController extends GetxController {
           snackBar(context, baseModel.message ?? "");
         }
       });
+    } else if (response.statusCode == 401) {
+      logoutFromTheApp();
     } else {
       print(response.reasonPhrase);
     }

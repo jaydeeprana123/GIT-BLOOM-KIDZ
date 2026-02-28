@@ -148,7 +148,16 @@ class SplashController extends GetxController {
 
       if (token.isEmpty) {
         if (email.isNotEmpty) {
-          callViewPinAPI(context);
+          bool quickPinSet = await sharedPref.getBoolValue(SharePreData.keyPinSet);
+
+          printData("quickPinset ", quickPinSet.toString());
+
+          if(quickPinSet){
+            Get.off(() => QuickAccessPinScreen());
+          }else{
+            Get.off(() => LoginScreen());
+          }
+
         } else {
           Get.off(() => LoginScreen());
         }
@@ -158,7 +167,7 @@ class SplashController extends GetxController {
     });
   }
 
-  /// Set Pin API
+  /// View Pin API
   Future<void> callViewPinAPI(BuildContext context) async {
     isLoading.value = true;
 
@@ -191,9 +200,21 @@ class SplashController extends GetxController {
             userModel,
           );
 
-          if ((quickPinResponse.data?.pinCode ?? "").isNotEmpty) {
+          if ((quickPinResponse.data?.isPinSet ??false)) {
+
+            var preferences = MySharedPref();
+            await preferences.setBool(SharePreData.keyPinSet, true);
+
             Get.off(() => QuickAccessPinScreen());
+          }else{
+            var preferences = MySharedPref();
+            await preferences.setBool(SharePreData.keyPinSet, false);
+            Get.off(() => LoginScreen());
           }
+        }else{
+          var preferences = MySharedPref();
+          await preferences.setBool(SharePreData.keyPinSet, false);
+          Get.off(() => LoginScreen());
         }
       });
     });

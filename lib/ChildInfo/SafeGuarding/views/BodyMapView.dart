@@ -45,12 +45,17 @@ import '../models/medication_list_response.dart';
 
 
 
+import 'package:flutter/material.dart';
+
 class BodyMapView extends StatelessWidget {
   final String imagePath;
-  final List<Front>? frontPoints; // front / head etc
+  final List<Front>? frontPoints;
   final List<Front>? backPoints;
   final List<Front>? sidePoints;
   final List<Front>? headPoints;
+
+  // front__1_.jpg is 1063x1063 — square
+  static const double imageAspectRatio = 1063 / 1063; // = 1.0
 
   const BodyMapView({
     super.key,
@@ -61,100 +66,60 @@ class BodyMapView extends StatelessWidget {
     required this.headPoints,
   });
 
+  List<Widget> _buildDots(
+      List<Front>? points,
+      double imgLeft,
+      double imgTop,
+      double imgWidth,
+      double imgHeight,
+      ) {
+    if (points == null) return [];
+    return points.map((p) {
+      final left = imgLeft + (p.x ?? 0) / 100 * imgWidth;
+      final top = imgTop + (p.y ?? 0) / 100 * imgHeight;
+      return Positioned(
+        left: left - 7.5,
+        top: top - 7.5,
+        child: Container(
+          width: 10,
+          height: 10,
+          decoration: const BoxDecoration(
+            color: Colors.red,
+            shape: BoxShape.circle,
+          ),
+        ),
+      );
+    }).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return AspectRatio(
-      aspectRatio: 3 / 6, // body image ratio
+      aspectRatio: 1,
       child: LayoutBuilder(
         builder: (context, constraints) {
-          final width = constraints.maxWidth;
-          final height = constraints.maxHeight;
+          final widgetWidth = constraints.maxWidth;
+          final widgetHeight = constraints.maxHeight;
+
+          // Square image inside a tall widget — contain will
+          // make width fill, with top/bottom padding
+          final imgWidth = widgetWidth;
+          final imgHeight = widgetWidth * imageAspectRatio; // = widgetWidth
+          final imgLeft = 0.0;
+          final imgTop = (widgetHeight - imgHeight) / 2;
 
           return Stack(
             children: [
-              // Body image
               Image.asset(
                 imagePath,
-                width: width,
-                height: height,
-                fit: BoxFit.fitHeight,
+                width: widgetWidth,
+                height: widgetHeight,
+                fit: BoxFit.contain, // ← changed from fitHeight
               ),
-
-              // Red dots
-             if(frontPoints != null) ...frontPoints!.map((p) {
-                final left = (p.x ?? 0) / 100 * width;
-                final top = (p.y ?? 0) / 100 * height;
-
-                return Positioned(
-                  left: left - 5,
-                  top: top - 5,
-                  child: Container(
-                    width: 15,
-                    height: 15,
-                    decoration: const BoxDecoration(
-                      color: Colors.red,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                );
-              }).toList(),
-
-
-              if(backPoints != null) ...backPoints!.map((p) {
-                final left = (p.x ?? 0) / 100 * width;
-                final top = (p.y ?? 0) / 100 * height;
-
-                return Positioned(
-                  left: left - 5,
-                  top: top - 5,
-                  child: Container(
-                    width: 15,
-                    height: 15,
-                    decoration: const BoxDecoration(
-                      color: Colors.red,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                );
-              }).toList(),
-
-
-              if(sidePoints != null) ...sidePoints!.map((p) {
-                final left = (p.x ?? 0) / 100 * width;
-                final top = (p.y ?? 0) / 100 * height;
-
-                return Positioned(
-                  left: left - 5,
-                  top: top - 5,
-                  child: Container(
-                    width: 15,
-                    height: 15,
-                    decoration: const BoxDecoration(
-                      color: Colors.red,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                );
-              }).toList(),
-
-
-              if(headPoints != null) ...headPoints!.map((p) {
-                final left = (p.x ?? 0) / 100 * width;
-                final top = (p.y ?? 0) / 100 * height;
-
-                return Positioned(
-                  left: left - 5,
-                  top: top - 5,
-                  child: Container(
-                    width: 15,
-                    height: 15,
-                    decoration: const BoxDecoration(
-                      color: Colors.red,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                );
-              }).toList(),
+              ..._buildDots(frontPoints, imgLeft, imgTop, imgWidth, imgHeight),
+              ..._buildDots(backPoints, imgLeft, imgTop, imgWidth, imgHeight),
+              ..._buildDots(sidePoints, imgLeft, imgTop, imgWidth, imgHeight),
+              ..._buildDots(headPoints, imgLeft, imgTop, imgWidth, imgHeight),
             ],
           );
         },

@@ -81,7 +81,7 @@ class _AboutScreenState extends State<AboutScreen> {
                 _topTabs(),
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.all(22.0),
+                    padding: const EdgeInsets.all(16.0),
                     child: (childInfoController.selectedTab.value == 0)
                         ? _mainCard(
                             childInfoController.aboutChildren.value.basicInfo ??

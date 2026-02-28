@@ -47,12 +47,13 @@ class _ChildActivityScreenState extends State<ChildActivityScreen> {
       body: Obx(
         () => Stack(
           children: [
-            Column(
+            !childInfoController.isLoading.value
+                ? childInfoController.activityList.isNotEmpty? Column(
               children: [
                 _dateSelector(),
                 Expanded(child: _timeline()),
               ],
-            ),
+            ):Center(child: BlueLargeBoldText("No Data Found", )):SizedBox(),
 
             if (childInfoController.isLoading.value)
               const Center(child: CircularProgressIndicator()),

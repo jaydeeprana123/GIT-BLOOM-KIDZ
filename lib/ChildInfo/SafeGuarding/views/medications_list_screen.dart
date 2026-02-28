@@ -70,11 +70,6 @@ class _MedicationListScreenState extends State<MedicationListScreen> {
       // appBar: const CommonAppBar(
       //   title: "Safeguarding", showMenu: true, showBack: true,),
       body: Obx(() {
-        if (childInfoController.medicationList.isEmpty && !childInfoController.isLoading.value) {
-          return const Center(child: Text("No medications found"));
-        }
-
-
 
 
         return Stack(
@@ -82,7 +77,9 @@ class _MedicationListScreenState extends State<MedicationListScreen> {
 
             Positioned.fill(child: SvgPicture.asset(app_bg, fit: BoxFit.cover)),
 
-            Column(
+        if (childInfoController.medicationList.isEmpty && !childInfoController.isLoading.value)Center(child: BlueLargeBoldText("No Data Found", )),
+
+        Column(
               children: [
                 Expanded(
                   child: ListView.builder(
@@ -97,7 +94,7 @@ class _MedicationListScreenState extends State<MedicationListScreen> {
               ],
             ),
 
-        if (childInfoController.isLoading.value)const Center(child: CircularProgressIndicator())
+           if (childInfoController.isLoading.value)const Center(child: CircularProgressIndicator())
 
           ],
         );

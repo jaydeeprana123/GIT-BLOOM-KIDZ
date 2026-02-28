@@ -170,43 +170,46 @@ class NewsFeedCard extends StatelessWidget {
             onTap: () {
               showFullImageDialog(context, media.file ?? "");
             },
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Stack(
-                children: [
-                  // Placeholder image
-                  Image.asset(
-                    placeholder, // your placeholder
-                    width: (newsFeed.media ?? []).length == 1
-                        ? double.infinity
-                        : 280,
-                    height: 200,
-                    fit: BoxFit.cover,
-                  ),
+            child: Container(
+              margin: EdgeInsets.only(right: (newsFeed.media ?? []).length == 1?16:12, left: (newsFeed.media ?? []).length == 1?12:index == 0?16:0),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Stack(
+                  children: [
+                    // Placeholder image
+                    Image.asset(
+                      placeholder, // your placeholder
+                      width: (newsFeed.media ?? []).length == 1
+                          ?  MediaQuery.of(context).size.width
+                          : 280,
+                      height: 200,
+                      fit: BoxFit.cover,
+                    ),
 
-                  // Network image
-                  Image.network(
-                    media.file ?? "",
-                    width: (newsFeed.media ?? []).length == 1
-                        ? double.infinity
-                        : 280,
-                    height: 200,
-                    fit: BoxFit.cover,
-                    loadingBuilder: (context, child, loadingProgress) {
-                      // Image loaded → show network image
-                      if (loadingProgress == null) {
-                        return child;
-                      }
+                    // Network image
+                    Image.network(
+                      media.file ?? "",
+                      width: (newsFeed.media ?? []).length == 1
+                          ?  MediaQuery.of(context).size.width
+                          : 280,
+                      height: 200,
+                      fit: BoxFit.cover,
+                      loadingBuilder: (context, child, loadingProgress) {
+                        // Image loaded → show network image
+                        if (loadingProgress == null) {
+                          return child;
+                        }
 
-                      // While loading → keep placeholder
-                      return const SizedBox.shrink();
-                    },
-                    errorBuilder: (context, error, stackTrace) {
-                      // On error → show placeholder
-                      return Image.asset(placeholder, fit: BoxFit.cover);
-                    },
-                  ),
-                ],
+                        // While loading → keep placeholder
+                        return const SizedBox.shrink();
+                      },
+                      errorBuilder: (context, error, stackTrace) {
+                        // On error → show placeholder
+                        return Image.asset(placeholder, fit: BoxFit.cover);
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
           );

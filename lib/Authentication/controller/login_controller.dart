@@ -14,6 +14,7 @@ import '../../../../Utils/preference_utils.dart';
 import '../../../../Utils/share_predata.dart';
 import '../../../BottomNavigation/view/bottom_navigation_view.dart';
 import '../../Networks/api_response.dart';
+import '../../Profile/model/quick_pin_response.dart';
 
 /// Controller
 class LoginController extends GetxController {
@@ -78,7 +79,9 @@ class LoginController extends GetxController {
               SharePreData.keySaveLoginModel,
             );
 
-            Get.offAll(BottomNavigationView(selectTabPosition: 0));
+            callViewPinAPI(context);
+
+
           } else {
             snackBar(context, loginResponse.value.message ?? "");
           }
@@ -159,7 +162,10 @@ class LoginController extends GetxController {
               SharePreData.keySaveLoginModel,
             );
 
-            Get.offAll(BottomNavigationView(selectTabPosition: 0));
+            var sharedPref = MySharedPref();
+            sharedPref.setBool(SharePreData.keyPinSet, true);
+
+
           } else {
             snackBar(context, loginResponse.value.message ?? "");
           }
@@ -167,6 +173,51 @@ class LoginController extends GetxController {
       });
     });
   }
+
+
+  /// View Pin API
+  Future<void> callViewPinAPI(BuildContext context) async {
+    isLoading.value = true;
+
+    String token = await MySharedPref().getStringValue(
+      SharePreData.keyAccessToken,
+    );
+
+    String url = urlBase + urlViewPin;
+
+    final apiReq = Request();
+
+    await apiReq.getMethodAPI(url, null, token).then((value) async {
+      http.StreamedResponse res = value;
+      printData(
+        runtimeType.toString(),
+        "callViewPinAPI API response ${res.statusCode}",
+      );
+
+      await res.stream.bytesToString().then((valueData) async {
+        printData(
+          runtimeType.toString(),
+          "callViewPinAPI API value ${valueData}",
+        );
+
+        isLoading.value = false;
+
+        if (res.statusCode == 200) {
+          Map<String, dynamic> userModel = json.decode(valueData);
+          QuickPinResponse quickPinResponse = QuickPinResponse.fromJson(
+            userModel,
+          );
+
+          var sharedPref = MySharedPref();
+          sharedPref.setBool(SharePreData.keyPinSet, quickPinResponse.data?.isPinSet ??false);
+          Get.offAll(BottomNavigationView(selectTabPosition: 0));
+        }else{
+          Get.offAll(BottomNavigationView(selectTabPosition: 0));
+        }
+      });
+    });
+  }
+
 
   @override
   void onClose() {

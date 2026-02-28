@@ -115,7 +115,7 @@ class Day {
 class MainSession {
   String? startTime;
   String? endTime;
-  int? widthPercent;
+  String? widthPercent;
   String? label;
 
   MainSession({
@@ -128,7 +128,7 @@ class MainSession {
   factory MainSession.fromJson(Map<String, dynamic> json) => MainSession(
     startTime: json["start_time"],
     endTime: json["end_time"],
-    widthPercent: json["width_percent"],
+    widthPercent: json["width_percent"].toString(),
     label: json["label"],
   );
 

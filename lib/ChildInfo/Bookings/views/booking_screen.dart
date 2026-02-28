@@ -159,37 +159,40 @@ class _BookingScreenState extends State<BookingScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 /// TIMELINE DOTS
-                                Column(
-                                  children: List.generate(
-                                    childInfoController
-                                            .bookingList[i]
-                                            .days
-                                            ?.length ??
-                                        0,
-                                    (index) => Column(
-                                      children: [
-                                        Container(
-                                          width: 10,
-                                          height: 10,
-                                          decoration: BoxDecoration(
-                                            color: color_secondary,
-                                            shape: BoxShape.circle,
-                                          ),
-                                        ),
-                                        if (index !=
-                                            (childInfoController
-                                                    .bookingList[i]
-                                                    .days!
-                                                    .length -
-                                                1))
+                                Container(
+                                  margin: EdgeInsets.only(top: 15)
+                                  ,child: Column(
+                                    children: List.generate(
+                                      childInfoController
+                                              .bookingList[i]
+                                              .days
+                                              ?.length ??
+                                          0,
+                                      (index) => Column(
+                                        children: [
                                           Container(
-                                            width: 2,
-                                            height: 65,
-                                            color: color_secondary.withOpacity(
-                                              0.4,
+                                            width: 10,
+                                            height: 10,
+                                            decoration: BoxDecoration(
+                                              color: color_secondary,
+                                              shape: BoxShape.circle,
                                             ),
                                           ),
-                                      ],
+                                          if (index !=
+                                              (childInfoController
+                                                      .bookingList[i]
+                                                      .days!
+                                                      .length -
+                                                  1))
+                                            Container(
+                                              width: 2,
+                                              height: 57,
+                                              color: color_secondary.withOpacity(
+                                                0.4,
+                                              ),
+                                            ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -253,7 +256,7 @@ class _BookingScreenState extends State<BookingScreen> {
                                                               ),
                                                         ),
                                                   ),
-                                                  child: Text(
+                                                  child: BlackMediumBoldText(
                                                     maxLines: 1,
                                                     (childInfoController
                                                                         .bookingList[i]
@@ -272,12 +275,7 @@ class _BookingScreenState extends State<BookingScreen> {
                                                                   .days![dayIndex]
                                                                   .day ??
                                                               '',
-                                                    style: const TextStyle(
-                                                      fontFamily:
-                                                          fontInterSemiBold,
-                                                      color: Colors.white,
-                                                      fontSize: 13,
-                                                    ),
+                                                    color: Colors.white,
                                                   ),
                                                 ),
 
@@ -303,7 +301,7 @@ class _BookingScreenState extends State<BookingScreen> {
                                                                 ),
                                                           ),
                                                     ),
-                                                    child: Text(
+                                                    child: BlackMediumBoldText(
                                                       maxLines: 1,
                                                       childInfoController
                                                                   .bookingList[i]
@@ -318,12 +316,7 @@ class _BookingScreenState extends State<BookingScreen> {
                                                                     .label ??
                                                                 ''
                                                           : '',
-                                                      style: const TextStyle(
-                                                        fontSize: 13,
-                                                        fontFamily:
-                                                            fontInterMedium,
-                                                        color: Colors.black87,
-                                                      ),
+
                                                     ),
                                                   ),
                                                 ),

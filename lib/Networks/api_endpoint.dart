@@ -44,6 +44,9 @@ const urlGetExtraBookingList = '/parent/children/extra-bookings';
 const urlAddExtraBooking = '/parent/children/extra-bookings';
 const urlDeleteExtraBooking = '/parent/children/extra-bookings';
 
+
+const urlGetGroupObservationList = '/parent/children/single-group-observations';
+
 const urlGetObservationList = '/parent/children/observations';
 const urlLikeUnlikeObservation = '/parent/children/observations';
 const urlAddCommentInObservation = '/parent/children/observations';

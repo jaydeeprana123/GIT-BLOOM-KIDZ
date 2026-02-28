@@ -72,6 +72,8 @@ class ProfileController extends GetxController {
           } else {
             snackBar(context, loginResponse.value.message ?? "");
           }
+        } else if (res.statusCode == 401) {
+          logoutFromTheApp();
         }
       });
     });
@@ -115,6 +117,8 @@ class ProfileController extends GetxController {
           } else {
             snackBar(context, baseModel.message ?? "");
           }
+        } else if (res.statusCode == 401) {
+          logoutFromTheApp();
         }
       });
     });
@@ -150,9 +154,15 @@ class ProfileController extends GetxController {
           if (baseModel.status ?? false) {
             Navigator.pop(context);
             snackBar(context, baseModel.message ?? "");
+
+            var preferences = MySharedPref();
+            await preferences.setBool(SharePreData.keyPinSet, true);
+
           } else {
             snackBar(context, baseModel.message ?? "");
           }
+        } else if (res.statusCode == 401) {
+          logoutFromTheApp();
         }
       });
     });
@@ -197,6 +207,8 @@ class ProfileController extends GetxController {
             pinController.value.text =
                 quickPinResponse.value.data?.pinCode ?? "";
           }
+        } else if (res.statusCode == 401) {
+          logoutFromTheApp();
         }
       });
     });
