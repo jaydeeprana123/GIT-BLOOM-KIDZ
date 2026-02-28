@@ -130,7 +130,8 @@ class _EditAllAboutMeScreenState
         showBack: true,
         showMenu: false,
       ),
-      body: Stack(
+      body: Obx(
+              () =>Stack(
         children: [
 
           Positioned.fill(child: SvgPicture.asset(app_bg, fit: BoxFit.cover)),
@@ -225,7 +226,7 @@ class _EditAllAboutMeScreenState
 
           if(controller.isLoading.value)Center(child: CircularProgressIndicator(),)
         ],
-      ),
+      )),
     );
   }
 
