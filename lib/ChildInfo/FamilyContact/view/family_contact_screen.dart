@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
+import '../../../CommonWidgets/blue_large_bold_text.dart';
 import '../../../CommonWidgets/common_appbar.dart';
 import '../../controller/child_info_controller.dart';
 import '../../View/child_.card.dart';
@@ -61,7 +62,7 @@ class _FamilyContactsScreenState extends State<FamilyContactsScreen> {
             Column(
               children: [
                 _addContactButton(),
-                Expanded(
+                !childInfoController.isLoading.value && childInfoController.familyContactList.isEmpty?Expanded(child: Center(child: BlueLargeBoldText("No Data Found"),)): Expanded(
                   child: ListView.builder(
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     itemCount: childInfoController.familyContactList.length,

@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 
 import 'package:flutter/material.dart';
 
+import '../../CommonWidgets/blue_large_bold_text.dart';
 import '../../CommonWidgets/common_appbar.dart';
 import '../../Drawer/app_drawer.dart';
 import 'news_feed_card.dart';
@@ -84,7 +85,7 @@ class _NewsFeedScreenState extends State<NewsFeedScreen> {
           children: [
             Column(
               children: [
-                Expanded(
+                !newsFeedController.isLoading.value && newsFeedController.newsFeedList.isEmpty?Expanded(child: Center(child: BlueLargeBoldText("No Data Found"),)): Expanded(
                   child: RefreshIndicator(
                     onRefresh: _onRefresh,
                     color: color_primary,

@@ -74,7 +74,7 @@ class TimelineCard extends StatelessWidget {
 
                   Container(
                     padding: EdgeInsets.all(8),
-                    child: item.title == "Nappy"?Align(alignment: Alignment.bottomRight, child: SvgPicture.asset(NappyIcon,width: 70,)):item.title == "Activity"?Align(alignment: Alignment.bottomRight,child: SvgPicture.asset(SignOutIcon,width: 70,)):Align(alignment: Alignment.bottomRight,child: SvgPicture.asset(MealIcon,width: 70,)),
+                    child: item.title == "Nappy/Toilet"?Align(alignment: Alignment.bottomRight, child: SvgPicture.asset(NappyIcon,width: 70,)):item.title == "Activity"?Align(alignment: Alignment.bottomRight,child: SvgPicture.asset(SignOutIcon,width: 70,)):Align(alignment: Alignment.bottomRight,child: SvgPicture.asset(MealIcon,width: 70,)),
                       
                   ),
 
@@ -107,14 +107,14 @@ class TimelineCard extends StatelessWidget {
                                             children: [
                                               BlackMediumBoldText(
                                                 e.subTitle,
-                                                fontSize: (item.title == "Nappy" || item.title == "Activity")?12:13,
+                                                fontSize: (item.title == "Nappy/Toilet" || item.title == "Activity")?12:13,
                                                 color: Colors.black,
                                               ),
 
                                               if ((e.statusForNappy ?? "").isNotEmpty)
                                                 BlackMediumBoldText(
                                                   " (${e.statusForNappy})",
-                                                  fontSize: (item.title == "Nappy" || item.title == "Activity")?12:13,
+                                                  fontSize: (item.title == "Nappy/Toilet" || item.title == "Activity")?12:13,
                                                   color: Colors.black,
                                                 ),
                                             ],

@@ -91,11 +91,8 @@ class _ExtraBookingScreenState extends State<ExtraBookingScreen> {
             }
 
             if (controller.extraBookingList.isEmpty) {
-              return const Center(
-                child: Text(
-                  'No Extra Bookings Found',
-                  style: TextStyle(color: color_secondary),
-                ),
+              return  Center(
+                child: BlueLargeBoldText("No Data Found"),
               );
             }
 

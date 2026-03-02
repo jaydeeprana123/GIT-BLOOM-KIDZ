@@ -85,7 +85,7 @@ class _BookingScreenState extends State<BookingScreen> {
             }
 
             if (childInfoController.bookingList.isEmpty) {
-              return const SizedBox();
+              return BlueLargeBoldText("No Data Found");
             }
 
             return SingleChildScrollView(

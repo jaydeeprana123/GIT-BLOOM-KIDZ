@@ -126,7 +126,27 @@ class ConversationTile extends StatelessWidget {
           child: Row(
             children: [
 
-              Icon(Icons.groups, color: color_secondary,),
+              (conversationData.members??[]).length == 2?       /// Avatar
+              CircleAvatar(
+                radius: 26,
+                backgroundColor: Colors.blue.shade100,
+                backgroundImage: (getUsersProfile(conversationData).profile??"").isNotEmpty
+                    ? NetworkImage((getUsersProfile(conversationData).profile??""))
+                    : null,
+                child: (getUsersProfile(conversationData).profile??"").isEmpty
+                    ? Text(
+                  (getUsersProfile(conversationData).name != null &&
+                      getUsersProfile(conversationData).name!.isNotEmpty)
+                      ? getUsersProfile(conversationData).name![0].toUpperCase()
+                      : "",
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blue,
+                  ),
+                )
+                    : null,
+              ): Icon(Icons.groups, color: color_secondary,size: 26,),
 
               const SizedBox(width: 12),
 
@@ -184,7 +204,20 @@ class ConversationTile extends StatelessWidget {
     return membersNameString;
 
   }
+
+  Member getUsersProfile(ConversationData conversationData) {
+    final currentUserId = chatController.loginResponse.value.data?.user?.id;
+
+    return conversationData.members
+        ?.firstWhere(
+          (member) => member.id != currentUserId,
+      orElse: () => Member(),
+    ) ??
+        Member();
+  }
 }
+
+
 
 
 

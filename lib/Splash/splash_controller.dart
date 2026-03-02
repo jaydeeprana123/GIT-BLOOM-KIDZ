@@ -102,7 +102,7 @@ class SplashController extends GetxController {
 
   void openStore() async {
     final url = Platform.isAndroid
-        ? "https://play.google.com/store/apps/details?id=com.yourapp.package"
+        ? "https://play.google.com/store/apps/details?id=com.bloom.bloomkidz&pli=1"
         : "https://apps.apple.com/in/app/bloomkidz/id6758726041";
 
     if (await canLaunchUrl(Uri.parse(url))) {

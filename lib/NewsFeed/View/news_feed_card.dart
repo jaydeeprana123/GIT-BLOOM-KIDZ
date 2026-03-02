@@ -54,64 +54,67 @@ class NewsFeedCard extends StatelessWidget {
           _description(),
 
           if (newsFeed.type == "events")
-            Row(
-              children: [
-                Expanded(
-                  child: InkWell(
-                    onTap: () {
-                      newsFeedController.callAInterestedNotInterestedAPI(
-                        context,
-                        newsFeed.id.toString(),
-                        "1",
-                      );
-                    },
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 4,
-                      ),
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: Colors.green,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: BlackMediumRegularText(
-                        "Interested",
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-
-                const SizedBox(width: 16),
-
-                Expanded(
-                  child: InkWell(
-                    onTap: () {
-                      newsFeedController.callAInterestedNotInterestedAPI(
-                        context,
-                        newsFeed.id.toString(),
-                        "2",
-                      );
-                    },
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 4,
-                      ),
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: BlackMediumRegularText(
-                        "Not Interested",
-                        color: Colors.white,
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 12),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: InkWell(
+                      onTap: () {
+                        newsFeedController.callAInterestedNotInterestedAPI(
+                          context,
+                          newsFeed.id.toString(),
+                          "1",
+                        );
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 4,
+                        ),
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: Colors.green,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: BlackMediumRegularText(
+                          "Interested",
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+
+                  const SizedBox(width: 16),
+
+                  Expanded(
+                    child: InkWell(
+                      onTap: () {
+                        newsFeedController.callAInterestedNotInterestedAPI(
+                          context,
+                          newsFeed.id.toString(),
+                          "2",
+                        );
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 4,
+                        ),
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: BlackMediumRegularText(
+                          "Not Interested",
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
 
           _actions(context, newsFeedController, index, newsFeed.id.toString()),
@@ -137,6 +140,7 @@ class NewsFeedCard extends StatelessWidget {
                     image: DecorationImage(
                       image: NetworkImage(newsFeed.createdId?.profile ?? ""),
                       fit: BoxFit.cover,
+
                     ),
                   ),
                 )
@@ -239,6 +243,8 @@ class NewsFeedCard extends StatelessWidget {
             placeholder: placeholder,
             image: media.file ?? "",
             fit: BoxFit.cover,
+            height: 200,
+            width: double.infinity,
           ),
         ),
       ),
@@ -261,6 +267,8 @@ class NewsFeedCard extends StatelessWidget {
                     placeholder: placeholder,
                     image: media.file ?? "",
                     fit: BoxFit.cover,
+                    height: 200,
+                    width: double.infinity,
                   ),
                 ),
               ),
@@ -343,6 +351,7 @@ class NewsFeedCard extends StatelessWidget {
           placeholder: placeholder,
           image: media.file ?? "",
           fit: BoxFit.cover,
+          width: double.infinity,
         ),
       ),
     );

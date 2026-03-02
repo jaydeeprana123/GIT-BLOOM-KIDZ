@@ -101,7 +101,7 @@ class _ChildActivityScreenState extends State<ChildActivityScreen> {
 
       subItemsNappy.add(
         SubItem(
-          subTitle: nappy.type ?? "Nappy",
+          subTitle: nappy.type ?? "Nappy/Toilet",
           time: nappy.time ?? "",
           details: [],
           statusForNappy: nappy.status ?? "",
@@ -109,7 +109,7 @@ class _ChildActivityScreenState extends State<ChildActivityScreen> {
       );
     }
 
-    items.add(TimelineItem(title: "Nappy", subItems: subItemsNappy));
+    items.add(TimelineItem(title: "Nappy/Toilet", subItems: subItemsNappy));
 
     /// -------- ACTIVITIES --------
     List<SubItem> subItemsActivity = [];

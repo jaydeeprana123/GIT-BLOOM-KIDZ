@@ -303,7 +303,7 @@ class _AboutScreenState extends State<AboutScreen> {
         ),
         const SizedBox(height: 8),
         BlueLargeBoldText(
-          "${basic.firstName ?? ""} ${basic.lastName ?? ""} ${basic.gender ?? ""}",
+          "${basic.firstName ?? ""} ${basic.lastName ?? ""} (${basic.gender ?? ""})",
           color: Colors.black,
           fontSize: 18,
         ),
@@ -414,11 +414,13 @@ class _AboutScreenState extends State<AboutScreen> {
         const SizedBox(height: 10),
         _infoLine(keyPersonIcon, "Name", health.doctor?.name ?? "-"),
         _infoLine(icon_call_video, "Mobile", health.doctor?.mobile ?? "-"),
+
         _infoLine(
           icon_home,
           "Address",
-          "${health.doctor?.city ?? ""}, ${health.doctor?.country ?? ""} - ${health.doctor?.postcode ?? ""}",
+          buildAddress(health.doctor),
         ),
+
       ],
     );
   }
@@ -435,7 +437,7 @@ class _AboutScreenState extends State<AboutScreen> {
         _infoLine(
           icon_home,
           "Address",
-          "${health.dentist?.city ?? ""}, ${health.dentist?.country ?? ""} - ${health.dentist?.postcode ?? ""}",
+          buildAddress(health.dentist),
         ),
       ],
     );
@@ -454,6 +456,24 @@ class _AboutScreenState extends State<AboutScreen> {
         ],
       ),
     );
+  }
+
+  String buildAddress(Dentist? doctor) {
+    final parts = [
+      doctor?.city,
+      doctor?.country,
+    ].where((e) => e != null && e.toString().trim().isNotEmpty).toList();
+
+    final address = parts.join(", ");
+
+    if (doctor?.postcode != null &&
+        doctor!.postcode.toString().trim().isNotEmpty) {
+      return address.isNotEmpty
+          ? "$address - ${doctor.postcode}"
+          : doctor.postcode.toString();
+    }
+
+    return address;
   }
 
   Widget _sensitiveInfoCard(ReligionInfo? sensitive) {
