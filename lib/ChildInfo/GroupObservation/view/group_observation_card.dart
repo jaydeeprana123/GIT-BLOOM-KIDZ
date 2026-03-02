@@ -111,7 +111,10 @@ class GroupObservationCard extends StatelessWidget {
                 BlackLargeBoldText(observation.createdBy?.name ?? ""),
                 SizedBox(height: 2),
 
-              BlackMediumRegularText("made an Observation for ${observation.childNames?? ""}",fontSize: 12),
+                BlackMediumRegularText(
+                  "made an Observation for ${observation.childNames ?? ""}",
+                  fontSize: 12,
+                ),
                 SizedBox(height: 2),
 
                 Row(
@@ -140,12 +143,10 @@ class GroupObservationCard extends StatelessWidget {
               ],
             ),
           ),
-
         ],
       ),
     );
   }
-
 
   Widget _image(BuildContext context) {
     final mediaList = observation.media ?? [];
@@ -183,7 +184,6 @@ class GroupObservationCard extends StatelessWidget {
     );
   }
 
-
   Widget _twoImages(BuildContext context, List<GroupMedia> mediaList) {
     return SizedBox(
       height: 200,
@@ -195,8 +195,7 @@ class GroupObservationCard extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: GestureDetector(
-                  onTap: () =>
-                      showFullImageDialog(context, media.image ?? ""),
+                  onTap: () => showFullImageDialog(context, media.image ?? ""),
                   child: FadeInImage.assetNetwork(
                     placeholder: placeholder,
                     image: media.image ?? "",
@@ -211,17 +210,13 @@ class GroupObservationCard extends StatelessWidget {
     );
   }
 
-
   Widget _multiImages(BuildContext context, List<GroupMedia> mediaList) {
     return SizedBox(
       height: 200,
       child: Row(
         children: [
           /// Left Big Image
-          Expanded(
-            flex: 2,
-            child: _gridImage(context, mediaList[0]),
-          ),
+          Expanded(flex: 2, child: _gridImage(context, mediaList[0])),
 
           const SizedBox(width: 8),
 
@@ -230,26 +225,20 @@ class GroupObservationCard extends StatelessWidget {
             flex: 1,
             child: Column(
               children: [
-                Expanded(
-                  child: _gridImage(context, mediaList[1]),
-                ),
+                Expanded(child: _gridImage(context, mediaList[1])),
                 const SizedBox(height: 8),
                 Expanded(
                   child: InkWell(
-                    onTap: (){
-
-                      if (mediaList.length > 3){
+                    onTap: () {
+                      if (mediaList.length > 3) {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => AllImagesScreen(
-                              mediaList: mediaList,
-                            ),
+                            builder: (_) =>
+                                AllImagesScreen(mediaList: mediaList),
                           ),
                         );
                       }
-
-
                     },
                     child: Stack(
                       children: [
@@ -282,9 +271,6 @@ class GroupObservationCard extends StatelessWidget {
       ),
     );
   }
-
-
-
 
   Widget _gridImage(BuildContext context, GroupMedia media) {
     return ClipRRect(
@@ -383,30 +369,21 @@ class GroupObservationCard extends StatelessWidget {
 
     return html;
   }
-
-
 }
-
 
 class AllImagesScreen extends StatelessWidget {
   final List<GroupMedia> mediaList;
 
-  const AllImagesScreen({
-    super.key,
-    required this.mediaList,
-  });
+  const AllImagesScreen({super.key, required this.mediaList});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Images"),
-      ),
+      appBar: AppBar(title: const Text("Images")),
       body: GridView.builder(
         padding: const EdgeInsets.all(12),
         itemCount: mediaList.length,
-        gridDelegate:
-        const SliverGridDelegateWithFixedCrossAxisCount(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 3,
           crossAxisSpacing: 8,
           mainAxisSpacing: 8,
@@ -416,9 +393,7 @@ class AllImagesScreen extends StatelessWidget {
 
           return GestureDetector(
             onTap: () {
-
               showFullImageDialog(context, mediaList[index].image ?? "");
-
             },
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10),

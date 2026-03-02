@@ -50,7 +50,7 @@ class NewsFeedCard extends StatelessWidget {
         children: [
           _header(),
           _titleText(),
-          if ((newsFeed.media ?? []).isNotEmpty) _image(),
+          if ((newsFeed.media ?? []).isNotEmpty) _image(context),
           _description(),
 
           if (newsFeed.type == "events")
@@ -209,80 +209,141 @@ class NewsFeedCard extends StatelessWidget {
     );
   }
 
-  Widget _image() {
-    if ((newsFeed.media ?? []).isEmpty) {
+  Widget _image(BuildContext context) {
+    final mediaList = newsFeed.media ?? [];
+
+    if (mediaList.isEmpty) {
       return const SizedBox();
     }
 
+    if (mediaList.length == 1) {
+      return _singleImage(context, mediaList[0]);
+    }
+
+    if (mediaList.length == 2) {
+      return _twoImages(context, mediaList);
+    }
+
+    return _multiImages(context, mediaList);
+  }
+
+  Widget _singleImage(BuildContext context, Media media) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: GestureDetector(
+        onTap: () => showFullImageDialog(context, media.file ?? ""),
+        child: SizedBox(
+          height: 200,
+          width: double.infinity,
+          child: FadeInImage.assetNetwork(
+            placeholder: placeholder,
+            image: media.file ?? "",
+            fit: BoxFit.cover,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _twoImages(BuildContext context, List<Media> mediaList) {
     return SizedBox(
       height: 200,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: (newsFeed.media ?? []).length,
-        itemBuilder: (context, index) {
-          final media = newsFeed.media?[index] ?? Media();
-
-          // if ((media.extenstion??"").toLowerCase() != "jpg" &&
-          //     (media.extenstion??"").toLowerCase() != "jpeg" &&
-          //     (media.extenstion??"").toLowerCase() != "png") {
-          //   return const SizedBox();
-          // }
-
-          return InkWell(
-            onTap: () {
-              showFullImageDialog(context, media.file ?? "");
-            },
-            child: Container(
-              margin: EdgeInsets.only(
-                right: (newsFeed.media ?? []).length == 1 ? 16 : 12,
-                left: (newsFeed.media ?? []).length == 1
-                    ? 12
-                    : index == 0
-                    ? 16
-                    : 0,
-              ),
+      child: Row(
+        children: mediaList.map((media) {
+          return Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(right: 8),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                child: Stack(
-                  children: [
-                    // Placeholder image
-                    Image.asset(
-                      placeholder, // your placeholder
-                      width: (newsFeed.media ?? []).length == 1
-                          ? MediaQuery.of(context).size.width
-                          : 280,
-                      height: 200,
-                      fit: BoxFit.cover,
-                    ),
-
-                    // Network image
-                    Image.network(
-                      media.file ?? "",
-                      width: (newsFeed.media ?? []).length == 1
-                          ? MediaQuery.of(context).size.width
-                          : 280,
-                      height: 200,
-                      fit: BoxFit.cover,
-                      loadingBuilder: (context, child, loadingProgress) {
-                        // Image loaded → show network image
-                        if (loadingProgress == null) {
-                          return child;
-                        }
-
-                        // While loading → keep placeholder
-                        return const SizedBox.shrink();
-                      },
-                      errorBuilder: (context, error, stackTrace) {
-                        // On error → show placeholder
-                        return Image.asset(placeholder, fit: BoxFit.cover);
-                      },
-                    ),
-                  ],
+                child: GestureDetector(
+                  onTap: () => showFullImageDialog(context, media.file ?? ""),
+                  child: FadeInImage.assetNetwork(
+                    placeholder: placeholder,
+                    image: media.file ?? "",
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
             ),
           );
-        },
+        }).toList(),
+      ),
+    );
+  }
+
+  Widget _multiImages(BuildContext context, List<Media> mediaList) {
+    return SizedBox(
+      height: 200,
+      child: Row(
+        children: [
+          /// Left Big Image
+          Expanded(flex: 2, child: _gridImage(context, mediaList[0])),
+
+          const SizedBox(width: 8),
+
+          /// Right Column
+          Expanded(
+            flex: 1,
+            child: Column(
+              children: [
+                Expanded(child: _gridImage(context, mediaList[1])),
+                const SizedBox(height: 8),
+                Expanded(
+                  child: InkWell(
+                    onTap: () {
+                      if (mediaList.length > 3) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => AllImagesScreenForNewsFeed(
+                              mediaList: mediaList,
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                    child: Stack(
+                      children: [
+                        _gridImage(context, mediaList[2]),
+
+                        if (mediaList.length > 3)
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.5),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            alignment: Alignment.center,
+                            child: Text(
+                              "+${mediaList.length - 3}",
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _gridImage(BuildContext context, Media media) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: GestureDetector(
+        onTap: () => showFullImageDialog(context, media.file ?? ""),
+        child: FadeInImage.assetNetwork(
+          placeholder: placeholder,
+          image: media.file ?? "",
+          fit: BoxFit.cover,
+        ),
       ),
     );
   }
@@ -468,5 +529,44 @@ class NewsFeedCard extends StatelessWidget {
         ) ??
         false;
     return isLikedByMe;
+  }
+}
+
+class AllImagesScreenForNewsFeed extends StatelessWidget {
+  final List<Media> mediaList;
+
+  const AllImagesScreenForNewsFeed({super.key, required this.mediaList});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Images")),
+      body: GridView.builder(
+        padding: const EdgeInsets.all(12),
+        itemCount: mediaList.length,
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+          crossAxisSpacing: 8,
+          mainAxisSpacing: 8,
+        ),
+        itemBuilder: (context, index) {
+          final media = mediaList[index];
+
+          return GestureDetector(
+            onTap: () {
+              showFullImageDialog(context, mediaList[index].file ?? "");
+            },
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: FadeInImage.assetNetwork(
+                placeholder: placeholder,
+                image: media.file ?? "",
+                fit: BoxFit.cover,
+              ),
+            ),
+          );
+        },
+      ),
+    );
   }
 }

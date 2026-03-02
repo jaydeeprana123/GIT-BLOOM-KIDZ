@@ -81,12 +81,49 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: Column(
                       children: [
                         /// 👤 Profile Image
-                        CircleAvatar(
-                          radius: 50,
-                          backgroundImage: NetworkImage(
-                            profileController.profileUser.value.imageUrl ?? "",
-                          ),
-                        ),
+                        (profileController.profileUser.value.imageUrl ?? "")
+                                .isNotEmpty
+                            ? CircleAvatar(
+                                radius: 50,
+                                backgroundImage: NetworkImage(
+                                  profileController
+                                          .profileUser
+                                          .value
+                                          .imageUrl ??
+                                      "",
+                                ),
+                              )
+                            : Container(
+                                width: 100,
+                                height: 100,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  color: color_secondary,
+                                ),
+                                alignment: Alignment.center,
+                                child: Text(
+                                  (profileController.profileUser.value.name !=
+                                              null &&
+                                          (profileController
+                                                      .profileUser
+                                                      .value
+                                                      .name ??
+                                                  "")
+                                              .isNotEmpty)
+                                      ? (profileController
+                                                    .profileUser
+                                                    .value
+                                                    .name ??
+                                                "")[0]
+                                            .toUpperCase()
+                                      : "",
+                                  style: const TextStyle(
+                                    fontSize: 44,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
 
                         const SizedBox(height: 20),
 

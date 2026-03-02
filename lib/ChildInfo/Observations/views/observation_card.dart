@@ -25,6 +25,7 @@ import 'package:flutter/material.dart';
 
 import '../../../CommonWidgets/blue_small_regular_text.dart';
 import '../../../NewsFeed/View/comment_list.dart';
+import '../../GroupObservation/view/group_observation_card.dart';
 import 'observation_comment_list.dart';
 
 class ObservationCard extends StatelessWidget {
@@ -218,79 +219,140 @@ class ObservationCard extends StatelessWidget {
   }
 
   Widget _image(BuildContext context) {
-    if ((observation.media ?? []).isEmpty) {
+    final mediaList = observation.media ?? [];
+
+    if (mediaList.isEmpty) {
       return const SizedBox();
     }
 
+    if (mediaList.length == 1) {
+      return _singleImage(context, mediaList[0]);
+    }
+
+    if (mediaList.length == 2) {
+      return _twoImages(context, mediaList);
+    }
+
+    return _multiImages(context, mediaList);
+  }
+
+  Widget _singleImage(BuildContext context, Media media) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: GestureDetector(
+        onTap: () => showFullImageDialog(context, media.image ?? ""),
+        child: SizedBox(
+          height: 200,
+          width: double.infinity,
+          child: FadeInImage.assetNetwork(
+            placeholder: placeholder,
+            image: media.image ?? "",
+            fit: BoxFit.cover,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _twoImages(BuildContext context, List<Media> mediaList) {
     return SizedBox(
       height: 200,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: (observation.media ?? []).length,
-        itemBuilder: (context, index) {
-          final media = observation.media?[index] ?? Media();
-
-          // if ((media.extenstion??"").toLowerCase() != "jpg" &&
-          //     (media.extenstion??"").toLowerCase() != "jpeg" &&
-          //     (media.extenstion??"").toLowerCase() != "png") {
-          //   return const SizedBox();
-          // }
-
-          return InkWell(
-            onTap: () {
-              showFullImageDialog(context, media.image ?? "");
-            },
-            child: Container(
-              margin: EdgeInsets.only(
-                right: (observation.media ?? []).length == 1 ? 16 : 12,
-                left: (observation.media ?? []).length == 1
-                    ? 12
-                    : index == 0
-                    ? 16
-                    : 0,
-              ),
+      child: Row(
+        children: mediaList.map((media) {
+          return Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(right: 8),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                child: Stack(
-                  children: [
-                    // Placeholder image
-                    Image.asset(
-                      placeholder, // your placeholder
-                      width: (observation.media ?? []).length == 1
-                          ? MediaQuery.of(context).size.width
-                          : 280,
-                      height: 200,
-                      fit: BoxFit.cover,
-                    ),
-
-                    // Network image
-                    Image.network(
-                      media.image ?? "",
-                      width: (observation.media ?? []).length == 1
-                          ? MediaQuery.of(context).size.width
-                          : 280,
-                      height: 200,
-                      fit: BoxFit.cover,
-                      loadingBuilder: (context, child, loadingProgress) {
-                        // Image loaded → show network image
-                        if (loadingProgress == null) {
-                          return child;
-                        }
-
-                        // While loading → keep placeholder
-                        return const SizedBox.shrink();
-                      },
-                      errorBuilder: (context, error, stackTrace) {
-                        // On error → show placeholder
-                        return Image.asset(placeholder, fit: BoxFit.cover);
-                      },
-                    ),
-                  ],
+                child: GestureDetector(
+                  onTap: () => showFullImageDialog(context, media.image ?? ""),
+                  child: FadeInImage.assetNetwork(
+                    placeholder: placeholder,
+                    image: media.image ?? "",
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
             ),
           );
-        },
+        }).toList(),
+      ),
+    );
+  }
+
+  Widget _multiImages(BuildContext context, List<Media> mediaList) {
+    return SizedBox(
+      height: 200,
+      child: Row(
+        children: [
+          /// Left Big Image
+          Expanded(flex: 2, child: _gridImage(context, mediaList[0])),
+
+          const SizedBox(width: 8),
+
+          /// Right Column
+          Expanded(
+            flex: 1,
+            child: Column(
+              children: [
+                Expanded(child: _gridImage(context, mediaList[1])),
+                const SizedBox(height: 8),
+                Expanded(
+                  child: InkWell(
+                    onTap: () {
+                      if (mediaList.length > 3) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => AllImagesScreenForObservation(
+                              mediaList: mediaList,
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                    child: Stack(
+                      children: [
+                        _gridImage(context, mediaList[2]),
+
+                        if (mediaList.length > 3)
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.5),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            alignment: Alignment.center,
+                            child: Text(
+                              "+${mediaList.length - 3}",
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _gridImage(BuildContext context, Media media) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: GestureDetector(
+        onTap: () => showFullImageDialog(context, media.image ?? ""),
+        child: FadeInImage.assetNetwork(
+          placeholder: placeholder,
+          image: media.image ?? "",
+          fit: BoxFit.cover,
+        ),
       ),
     );
   }
@@ -568,5 +630,44 @@ class ObservationCard extends StatelessWidget {
         ) ??
         false;
     return isLikedByMe;
+  }
+}
+
+class AllImagesScreenForObservation extends StatelessWidget {
+  final List<Media> mediaList;
+
+  const AllImagesScreenForObservation({super.key, required this.mediaList});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Images")),
+      body: GridView.builder(
+        padding: const EdgeInsets.all(12),
+        itemCount: mediaList.length,
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+          crossAxisSpacing: 8,
+          mainAxisSpacing: 8,
+        ),
+        itemBuilder: (context, index) {
+          final media = mediaList[index];
+
+          return GestureDetector(
+            onTap: () {
+              showFullImageDialog(context, mediaList[index].image ?? "");
+            },
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: FadeInImage.assetNetwork(
+                placeholder: placeholder,
+                image: media.image ?? "",
+                fit: BoxFit.cover,
+              ),
+            ),
+          );
+        },
+      ),
+    );
   }
 }
