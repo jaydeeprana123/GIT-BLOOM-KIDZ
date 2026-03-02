@@ -303,11 +303,11 @@ class _AboutScreenState extends State<AboutScreen> {
         ),
         const SizedBox(height: 8),
         BlueLargeBoldText(
-          basic.firstName ?? "",
+          "${basic.firstName ?? ""} ${basic.lastName ?? ""} ${basic.gender ?? ""}",
           color: Colors.black,
           fontSize: 18,
         ),
-        BlackMediumBoldText(basic.lastName ?? "", color: Colors.black),
+        // BlackMediumBoldText(basic.lastName ?? "", color: Colors.black),
       ],
     );
   }
@@ -335,7 +335,11 @@ class _AboutScreenState extends State<AboutScreen> {
               _healthRow(
                 ToleratesPenicilln,
                 "Tolerates Penicillin",
-                health.toleratesPenicillin == 0 ? "Yes" :  health.toleratesPenicillin == 1 ?"No":"Unknown",
+                health.toleratesPenicillin == 0
+                    ? "Yes"
+                    : health.toleratesPenicillin == 1
+                    ? "No"
+                    : "Unknown",
               ),
               _healthRow(
                 SpecialDietaryConsiderations,

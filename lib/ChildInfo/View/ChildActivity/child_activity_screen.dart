@@ -92,7 +92,7 @@ class _ChildActivityScreenState extends State<ChildActivityScreen> {
       );
     }
 
-    items.add(TimelineItem(title: "Meal", subItems: subItems));
+    items.add(TimelineItem(title: "Meals", subItems: subItems));
 
     /// -------- NAPPY --------
     List<SubItem> subItemsNappy = [];
