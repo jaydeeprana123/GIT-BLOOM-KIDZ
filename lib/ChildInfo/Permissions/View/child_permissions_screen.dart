@@ -137,14 +137,14 @@ class _ChildrenPermissionScreenState extends State<ChildrenPermissionScreen>
                     children: [
                       _yesNoButton(
                         "YES",
-                        childPermission.selectedStatus == "1",
+                        childPermission.selectedStatus == "0",
                         childPermission.permissionId.toString(),
                         true,
                       ),
                       const SizedBox(width: 6),
                       _yesNoButton(
                         "NO",
-                        (childPermission.selectedStatus) == "0",
+                        (childPermission.selectedStatus) == "1",
                         childPermission.permissionId.toString(),
                         false,
                       ),

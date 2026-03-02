@@ -212,6 +212,56 @@ class NewsFeedController extends GetxController {
     });
   }
 
+  /// Add Comment API
+  callAInterestedNotInterestedAPI(
+    BuildContext context,
+    String id,
+    String status,
+  ) async {
+    isLoading.value = true;
+
+    String token = await MySharedPref().getStringValue(
+      SharePreData.keyAccessToken,
+    );
+
+    String url = urlBase + urlAddCommentInNewsFeed + "/${id}/response";
+
+    final apiReq = Request();
+
+    dynamic body = {"status": status};
+
+    await apiReq.postAPI(url, body, token).then((value) async {
+      http.StreamedResponse res = value;
+      printData(
+        runtimeType.toString(),
+        "callLeaveRequestAPI response ${res.statusCode}",
+      );
+
+      await res.stream.bytesToString().then((valueData) async {
+        printData(
+          runtimeType.toString(),
+          "callLeaveRequestAPI value ${valueData}",
+        );
+
+        isLoading.value = false;
+
+        if (res.statusCode == 200) {
+          Map<String, dynamic> userModel = json.decode(valueData);
+          BaseModel baseModel = BaseModel.fromJson(userModel);
+
+          if (baseModel.status ?? false) {
+            snackBar(context, baseModel.message ?? "");
+
+            pageNumberObservation = 1;
+            callNewsFeedAPI(context);
+          } else {
+            snackBar(context, baseModel.message ?? "");
+          }
+        }
+      });
+    });
+  }
+
   /// Leave Request API
   Future<void> callNewsDeleteCommentAPI(
     BuildContext context,

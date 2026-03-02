@@ -85,7 +85,7 @@ class _ChildActivityScreenState extends State<ChildActivityScreen> {
 
       subItems.add(
         SubItem(
-          subTitle: data.meals?[i].mealType ?? "Meal",
+          subTitle: data.meals?[i].mealType ?? "Meals",
           time: data.meals?[i].mealTime ?? "",
           details: details.isNotEmpty ? details : ["No food recorded"],
         ),

@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
+import '../../../CommonWidgets/blue_large_bold_text.dart';
 import '../../../CommonWidgets/common_appbar.dart';
 import '../../View/about_card.dart';
 import '../../View/about_tab.dart';
@@ -30,7 +31,6 @@ import 'package:flutter/material.dart';
 
 import '../../controller/child_info_controller.dart';
 import 'document_card.dart';
-
 
 class DocumentsScreen extends StatefulWidget {
   final String childId;
@@ -51,33 +51,49 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
       childInfoController.documentList.clear();
       childInfoController.callGetDocumentsAPI(context, widget.childId);
     });
-
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: const CommonAppBar(title: "Documents", showMenu: false, showBack: true,),
+      appBar: const CommonAppBar(
+        title: "Documents",
+        showMenu: false,
+        showBack: true,
+      ),
       body: Stack(
         children: [
           Positioned.fill(child: SvgPicture.asset(app_bg, fit: BoxFit.cover)),
 
           Obx(
-                  () =>Stack(
-            children: [
-              ListView.builder(
-                padding:  EdgeInsets.symmetric(vertical: 10),
-                itemCount: childInfoController.documentList.length,
-                itemBuilder: (context, index) {
-                  return  DocumentCard(documentData: childInfoController.documentList[index], childId: widget.childId,controller: childInfoController,);
-                },
-              ),
+            () => Stack(
+              children: [
+                !childInfoController.isLoading.value &&
+                        childInfoController.documentList.isEmpty
+                    ? Expanded(
+                        child: Center(
+                          child: BlueLargeBoldText("No Data Found"),
+                        ),
+                      )
+                    : ListView.builder(
+                        padding: EdgeInsets.symmetric(vertical: 10),
+                        itemCount: childInfoController.documentList.length,
+                        itemBuilder: (context, index) {
+                          return DocumentCard(
+                            documentData:
+                                childInfoController.documentList[index],
+                            childId: widget.childId,
+                            controller: childInfoController,
+                          );
+                        },
+                      ),
 
-              if(childInfoController.isLoading.value)Center(child: CircularProgressIndicator(),)
-
-            ],
-          )),
+                if (childInfoController.isLoading.value)
+                  Center(child: CircularProgressIndicator()),
+              ],
+            ),
+          ),
         ],
       ),
     );

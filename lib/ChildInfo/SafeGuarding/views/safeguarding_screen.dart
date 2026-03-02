@@ -38,19 +38,15 @@ import 'package:flutter/material.dart';
 
 import '../../controller/child_info_controller.dart';
 
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../models/accident_list_response.dart';
 import '../models/medication_list_response.dart';
 
-
-
 class SafeguardingScreen extends StatelessWidget {
-  
   final String childId;
-  
+
   const SafeguardingScreen({super.key, required this.childId});
 
   @override
@@ -58,8 +54,7 @@ class SafeguardingScreen extends StatelessWidget {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-
-        appBar : AppBar(
+        appBar: AppBar(
           automaticallyImplyLeading: true,
           backgroundColor: const Color(0xff1f78c8),
           elevation: 0,
@@ -89,28 +84,25 @@ class SafeguardingScreen extends StatelessWidget {
             indicatorColor: Colors.white,
             labelStyle: const TextStyle(
               fontSize: 15,
-              fontFamily: fontInterSemiBold
+              fontFamily: fontInterSemiBold,
             ),
             unselectedLabelStyle: const TextStyle(
               fontSize: 14,
-                fontFamily: fontInterSemiBold
+              fontFamily: fontInterSemiBold,
             ),
             tabs: [
+              Tab(text: "Accident/Incident"),
               Tab(text: "Medications"),
-              Tab(text: "Accidents"),
             ],
           ),
         ),
-        body:  TabBarView(
+        body: TabBarView(
           children: [
-            MedicationListScreen(childId: childId),
             AccidentListScreen(childId: childId),
+            MedicationListScreen(childId: childId),
           ],
         ),
       ),
     );
   }
 }
-
-
-

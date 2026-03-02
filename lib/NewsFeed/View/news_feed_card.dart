@@ -52,6 +52,68 @@ class NewsFeedCard extends StatelessWidget {
           _titleText(),
           if ((newsFeed.media ?? []).isNotEmpty) _image(),
           _description(),
+
+          if (newsFeed.type == "events")
+            Row(
+              children: [
+                Expanded(
+                  child: InkWell(
+                    onTap: () {
+                      newsFeedController.callAInterestedNotInterestedAPI(
+                        context,
+                        newsFeed.id.toString(),
+                        "1",
+                      );
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 4,
+                      ),
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: Colors.green,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: BlackMediumRegularText(
+                        "Interested",
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(width: 16),
+
+                Expanded(
+                  child: InkWell(
+                    onTap: () {
+                      newsFeedController.callAInterestedNotInterestedAPI(
+                        context,
+                        newsFeed.id.toString(),
+                        "2",
+                      );
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 4,
+                      ),
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: BlackMediumRegularText(
+                        "Not Interested",
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
           _actions(context, newsFeedController, index, newsFeed.id.toString()),
           _replyBox(context, newsFeed.id.toString(), index),
         ],
@@ -171,7 +233,14 @@ class NewsFeedCard extends StatelessWidget {
               showFullImageDialog(context, media.file ?? "");
             },
             child: Container(
-              margin: EdgeInsets.only(right: (newsFeed.media ?? []).length == 1?16:12, left: (newsFeed.media ?? []).length == 1?12:index == 0?16:0),
+              margin: EdgeInsets.only(
+                right: (newsFeed.media ?? []).length == 1 ? 16 : 12,
+                left: (newsFeed.media ?? []).length == 1
+                    ? 12
+                    : index == 0
+                    ? 16
+                    : 0,
+              ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: Stack(
@@ -180,7 +249,7 @@ class NewsFeedCard extends StatelessWidget {
                     Image.asset(
                       placeholder, // your placeholder
                       width: (newsFeed.media ?? []).length == 1
-                          ?  MediaQuery.of(context).size.width
+                          ? MediaQuery.of(context).size.width
                           : 280,
                       height: 200,
                       fit: BoxFit.cover,
@@ -190,7 +259,7 @@ class NewsFeedCard extends StatelessWidget {
                     Image.network(
                       media.file ?? "",
                       width: (newsFeed.media ?? []).length == 1
-                          ?  MediaQuery.of(context).size.width
+                          ? MediaQuery.of(context).size.width
                           : 280,
                       height: 200,
                       fit: BoxFit.cover,

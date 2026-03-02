@@ -5,6 +5,7 @@ import 'package:bloom_kidz/ChildInfo/SafeGuarding/views/accident_list_screen.dar
 import 'package:bloom_kidz/ChildInfo/View/ChildActivity/child_activity_screen.dart';
 import 'package:bloom_kidz/ChildInfo/Documents/views/document_screen.dart';
 import 'package:bloom_kidz/ChildInfo/WeeklyMenu/view/weekly_menu_screen.dart';
+import 'package:bloom_kidz/ChildInfo/WeeklyPlan/view/weekly_plan_screen.dart';
 import 'package:bloom_kidz/CommonWidgets/common_green_button.dart';
 import 'package:bloom_kidz/CommonWidgets/common_text_field.dart';
 import 'package:bloom_kidz/Styles/my_colors.dart';
@@ -93,11 +94,10 @@ class ChildOptionsGrid extends StatelessWidget {
         title: "Book Extra Sessions",
       ),
 
-
       _gridItem(
-        onTap: () => Get.to(GroupObservationListScreen(childId: childId)),
-        icon: icon_Journey,
-        title: "Group Observation",
+        onTap: () => Get.to(WeeklyPlanScreen(childId: childId)),
+        icon: icon_WeeklyPlan,
+        title: "Weekly Plan",
       ),
 
       _gridItem(
@@ -111,9 +111,6 @@ class ChildOptionsGrid extends StatelessWidget {
         icon: icon_WeeklyPlan,
         title: "Weekly Menu",
       ),
-
-
-
     ];
 
     return MasonryGridView.count(
@@ -134,10 +131,6 @@ class ChildOptionsGrid extends StatelessWidget {
     required String icon,
     required String title,
   }) {
-    return InkWell(
-      onTap: onTap,
-      child: GridItem(icon, title),
-    );
+    return InkWell(onTap: onTap, child: GridItem(icon, title));
   }
 }
-

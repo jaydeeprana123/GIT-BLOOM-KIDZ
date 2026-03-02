@@ -54,6 +54,29 @@ class ObservationCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _header(context),
+
+          if (observation.is_group_obs == "Y")
+            Container(
+              margin: EdgeInsets.symmetric(vertical: 4),
+              color: color_secondary,
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+              child: BlackMediumBoldText(
+                observation.is_group_label ?? "",
+                color: Colors.white,
+              ),
+            ),
+
+          if (observation.is_group_obs == "N")
+            Container(
+              margin: EdgeInsets.symmetric(vertical: 4),
+              color: color_secondary,
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+              child: BlackMediumBoldText(
+                observation.is_group_label ?? "",
+                color: Colors.white,
+              ),
+            ),
+
           _titleText(),
           if ((observation.media ?? []).isNotEmpty) _image(context),
           _description(),
@@ -113,7 +136,10 @@ class ObservationCard extends StatelessWidget {
                 BlackLargeBoldText(observation.createdBy?.name ?? ""),
                 SizedBox(height: 2),
 
-              BlackMediumRegularText("made an Observation for ${observation.childNames?? ""}",fontSize: 12),
+                BlackMediumRegularText(
+                  "made an Observation for ${observation.childNames ?? ""}",
+                  fontSize: 12,
+                ),
                 SizedBox(height: 2),
 
                 Row(
@@ -215,7 +241,14 @@ class ObservationCard extends StatelessWidget {
               showFullImageDialog(context, media.image ?? "");
             },
             child: Container(
-              margin: EdgeInsets.only(right: (observation.media ?? []).length == 1?16:12, left: (observation.media ?? []).length == 1?12:index == 0?16:0),
+              margin: EdgeInsets.only(
+                right: (observation.media ?? []).length == 1 ? 16 : 12,
+                left: (observation.media ?? []).length == 1
+                    ? 12
+                    : index == 0
+                    ? 16
+                    : 0,
+              ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: Stack(
@@ -224,7 +257,7 @@ class ObservationCard extends StatelessWidget {
                     Image.asset(
                       placeholder, // your placeholder
                       width: (observation.media ?? []).length == 1
-                          ?  MediaQuery.of(context).size.width
+                          ? MediaQuery.of(context).size.width
                           : 280,
                       height: 200,
                       fit: BoxFit.cover,
@@ -234,7 +267,7 @@ class ObservationCard extends StatelessWidget {
                     Image.network(
                       media.image ?? "",
                       width: (observation.media ?? []).length == 1
-                          ?  MediaQuery.of(context).size.width
+                          ? MediaQuery.of(context).size.width
                           : 280,
                       height: 200,
                       fit: BoxFit.cover,

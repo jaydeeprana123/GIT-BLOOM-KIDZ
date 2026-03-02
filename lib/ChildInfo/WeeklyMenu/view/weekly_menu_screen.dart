@@ -45,8 +45,7 @@ import '../model/weekly_menu_response.dart';
 class WeeklyMenuScreen extends StatefulWidget {
   final String childId;
 
-  const WeeklyMenuScreen({Key? key, required this.childId})
-      : super(key: key);
+  const WeeklyMenuScreen({Key? key, required this.childId}) : super(key: key);
 
   @override
   State<WeeklyMenuScreen> createState() => _WeeklyMenuScreenState();
@@ -84,7 +83,6 @@ class _WeeklyMenuScreenState extends State<WeeklyMenuScreen> {
 
         return Stack(
           children: [
-
             Positioned.fill(child: SvgPicture.asset(app_bg, fit: BoxFit.cover)),
 
             Column(
@@ -144,20 +142,16 @@ class _WeeklyMenuScreenState extends State<WeeklyMenuScreen> {
         shadowColor: color_secondary,
         elevation: 6,
         child: Container(
-
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              BlueLargeBoldText(
-                day.day ?? "",
-                fontSize: 16,
-              ),
+              BlueLargeBoldText(day.day ?? "", fontSize: 16),
               const SizedBox(height: 10),
 
               ...List.generate(
                 day.meals?.length ?? 0,
-                    (index) => _mealItem(day.meals![index]),
+                (index) => _mealItem(day.meals![index]),
               ),
             ],
           ),
@@ -179,48 +173,38 @@ class _WeeklyMenuScreenState extends State<WeeklyMenuScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          BlueLargeBoldText(
-            meal.mealName ?? "",
-          ),
+          BlueLargeBoldText(meal.mealName ?? ""),
           const SizedBox(height: 6),
 
           if (meal.items == null || meal.items!.isEmpty)
-             BlueMediumRegularText("No items available"),
+            BlueMediumRegularText("No items available"),
 
-          ...List.generate(
-            meal.items?.length ?? 0,
-                (index) {
-              final item = meal.items![index];
+          ...List.generate(meal.items?.length ?? 0, (index) {
+            final item = meal.items![index];
 
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 4),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text("• "),
-                    Expanded(
-                      child: BlackMediumRegularText(
-                        item.name ?? "",
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 4),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text("• "),
+                  Expanded(child: BlackMediumRegularText(item.name ?? "")),
+                  if (item.diets != null && item.diets!.isNotEmpty)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
                       ),
+                      decoration: BoxDecoration(
+                        color: color_secondary.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: BlackSmallRegularText(item.diets!.join(", ")),
                     ),
-                    if (item.diets != null && item.diets!.isNotEmpty)
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: color_secondary.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: BlackSmallRegularText(
-                          item.diets!.join(", "),
-
-                        ),
-                      )
-                  ],
-                ),
-              );
-            },
-          ),
+                ],
+              ),
+            );
+          }),
         ],
       ),
     );
