@@ -71,11 +71,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
               children: [
                 !childInfoController.isLoading.value &&
                         childInfoController.documentList.isEmpty
-                    ? Expanded(
-                        child: Center(
-                          child: BlueLargeBoldText("No Data Found"),
-                        ),
-                      )
+                    ? Center(child: BlueLargeBoldText("No Data Found"))
                     : ListView.builder(
                         padding: EdgeInsets.symmetric(vertical: 10),
                         itemCount: childInfoController.documentList.length,
