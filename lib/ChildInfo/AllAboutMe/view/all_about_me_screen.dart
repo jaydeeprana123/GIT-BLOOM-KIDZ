@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:bloom_kidz/ChildInfo/AllAboutMe/view/edit_all_about_me_screen.dart';
 import 'package:bloom_kidz/ChildInfo/Permissions/models/permissions_response.dart';
 import 'package:bloom_kidz/CommonWidgets/common_background.dart';
@@ -46,8 +48,7 @@ import '../model/all_about_me_response.dart';
 class AllAboutMeScreen extends StatefulWidget {
   final String childId;
 
-  const AllAboutMeScreen({Key? key, required this.childId})
-      : super(key: key);
+  const AllAboutMeScreen({Key? key, required this.childId}) : super(key: key);
 
   @override
   State<AllAboutMeScreen> createState() => _AllAboutMeScreenState();
@@ -67,16 +68,17 @@ class _AllAboutMeScreenState extends State<AllAboutMeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:  CommonAppBar(
+      appBar: CommonAppBar(
         title: "All About Me",
         showMenu: false,
         showBack: true,
         showEditButton: true,
-        onAddButtonTap: (){
+        onAddButtonTap: () {
           Get.to(EditAllAboutMeScreen(childId: widget.childId))?.then((value) {
             childInfoController.callAllAboutMe(context, widget.childId);
           });
-        }),
+        },
+      ),
 
       body: Obx(() {
         if (childInfoController.isLoading.value) {
@@ -91,7 +93,6 @@ class _AllAboutMeScreenState extends State<AllAboutMeScreen> {
 
         return Stack(
           children: [
-
             Positioned.fill(child: SvgPicture.asset(app_bg, fit: BoxFit.cover)),
 
             ListView(
@@ -111,33 +112,75 @@ class _AllAboutMeScreenState extends State<AllAboutMeScreen> {
 
                 _sectionCard("Personal Preferences", [
                   _infoTile("My Family and I celebrate", data.celebrations),
-                  _infoTile("These are the things that make me happy", data.happyThings),
-                  _infoTile("My favourite book, story and songs are", data.favouriteBooksSongs),
-                  _infoTile("Things I do not like or make me sad ", data.dislikes),
+                  _infoTile(
+                    "These are the things that make me happy",
+                    data.happyThings,
+                  ),
+                  _infoTile(
+                    "My favourite book, story and songs are",
+                    data.favouriteBooksSongs,
+                  ),
+                  _infoTile(
+                    "Things I do not like or make me sad ",
+                    data.dislikes,
+                  ),
                 ]),
 
                 _sectionCard("Food & Health", [
                   _infoTile("Eating & Drinking", data.eatingDrinking),
-                  _infoTile("Things I do not like to eat or drink", data.foodDislikes??""),
-                  _infoTile("These are my relevant health conditions", data.healthConditions??""),
-                  _infoTile("These are the things I am allergic to", data.allergies??""),
-                  _infoTile("If I have an allergic reaction the treatment is:", data.allergyTreatment??""),
+                  _infoTile(
+                    "Things I do not like to eat or drink",
+                    data.foodDislikes ?? "",
+                  ),
+                  _infoTile(
+                    "These are my relevant health conditions",
+                    data.healthConditions ?? "",
+                  ),
+                  _infoTile(
+                    "These are the things I am allergic to",
+                    data.allergies ?? "",
+                  ),
+                  _infoTile(
+                    "If I have an allergic reaction the treatment is:",
+                    data.allergyTreatment ?? "",
+                  ),
                 ]),
 
                 _sectionCard("Sleep Routine", [
-                  _infoTile("I do or do not have a sleep during the day", data.daySleep),
-                  _infoTile("This is my usual sleeping routine", data.sleepRoutine),
-                  _infoTile("This is how you can comfort and calm me down, if I become upset", data.comfortMethod),
+                  _infoTile(
+                    "I do or do not have a sleep during the day",
+                    data.daySleep,
+                  ),
+                  _infoTile(
+                    "This is my usual sleeping routine",
+                    data.sleepRoutine,
+                  ),
+                  _infoTile(
+                    "This is how you can comfort and calm me down, if I become upset",
+                    data.comfortMethod,
+                  ),
                 ]),
 
                 _sectionCard("Collection Information", [
-                  _infoTile("Who will collect me from nursery?", data.primaryCollector),
-                  _infoTile("If the above-named person cannot collect me, who will collect me from nursery?", data.alternateCollector),
+                  _infoTile(
+                    "Who will collect me from nursery?",
+                    data.primaryCollector,
+                  ),
+                  _infoTile(
+                    "If the above-named person cannot collect me, who will collect me from nursery?",
+                    data.alternateCollector,
+                  ),
                 ]),
 
                 _sectionCard("Additional Notes", [
-                  _infoTile("Support Before Start", data.supportBeforeStart??""),
-                  _infoTile("Parents, is there anything else?", data.additionalNotes??"NA"),
+                  _infoTile(
+                    "Support Before Start",
+                    data.supportBeforeStart ?? "",
+                  ),
+                  _infoTileAdditionalNotes(
+                    "Parents, is there anything else?",
+                    data.additionalNotes ?? "NA",
+                  ),
                 ]),
               ],
             ),
@@ -147,24 +190,100 @@ class _AllAboutMeScreenState extends State<AllAboutMeScreen> {
     );
   }
 
+  Widget _additionalNote(String notes) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      child: Html(
+        data: _sanitizeHtml(notes),
+        style: {
+          "*": Style(
+            fontSize: FontSize(13),
+            color: text_color,
+            lineHeight: LineHeight(1.4),
+          ),
+        },
+        extensions: [
+          TagExtension(
+            tagsToExtend: {"img"},
+            builder: (context) {
+              final src = context.attributes['src'] ?? '';
+
+              if (src.startsWith('data:image')) {
+                try {
+                  final base64Str = src.split(',').last;
+                  final bytes = base64Decode(base64Str);
+
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Image.memory(
+                      bytes,
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) {
+                        return const SizedBox();
+                      },
+                    ),
+                  );
+                } catch (e) {
+                  return const SizedBox();
+                }
+              }
+
+              if (src.isNotEmpty && !src.startsWith('data:')) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Image.network(
+                    src,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) {
+                      return const SizedBox();
+                    },
+                  ),
+                );
+              }
+
+              return const SizedBox();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _sanitizeHtml(String html) {
+    // Remove problematic inline styles that contain font-feature-settings
+    html = html.replaceAllMapped(
+      RegExp(r'font-feature-settings:[^;}"]*', caseSensitive: false),
+      (match) => '',
+    );
+
+    // Remove font-variant-* properties that might cause issues
+    html = html.replaceAllMapped(
+      RegExp(r'font-variant-[^:]*:[^;}"]*', caseSensitive: false),
+      (match) => '',
+    );
+
+    // Clean up any double semicolons or style attributes that are now empty
+    html = html.replaceAll(';;', ';');
+    html = html.replaceAll('style=""', '');
+    html = html.replaceAll('style=" "', '');
+
+    return html;
+  }
+
   /// ---------------- SECTION CARD ----------------
   Widget _sectionCard(String title, List<Widget> children) {
     return Container(
-        margin: const EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: 16),
       child: Card(
         color: Colors.white,
         shadowColor: color_secondary,
         elevation: 6,
         child: Container(
-
           padding: const EdgeInsets.all(14),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              BlueMediumBoldText(
-                title,
-                fontSize: 16,
-              ),
+              BlueMediumBoldText(title, fontSize: 16),
               const SizedBox(height: 12),
               ...children,
             ],
@@ -185,14 +304,27 @@ class _AllAboutMeScreenState extends State<AllAboutMeScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          BlueMediumBoldText(
-            label,
-          ),
+          BlueMediumBoldText(label),
           const SizedBox(height: 2),
-          BlackMediumRegularText(
-            value,
+          BlackMediumRegularText(value),
+        ],
+      ),
+    );
+  }
 
-          ),
+  Widget _infoTileAdditionalNotes(String label, String? value) {
+    if (value == null || value.trim().isEmpty || value == "null") {
+      return const SizedBox.shrink();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          BlueMediumBoldText(label),
+          const SizedBox(height: 2),
+          _additionalNote(value),
         ],
       ),
     );

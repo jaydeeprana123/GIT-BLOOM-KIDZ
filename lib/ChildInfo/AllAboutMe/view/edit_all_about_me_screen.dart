@@ -6,7 +6,7 @@ import 'package:bloom_kidz/Styles/my_colors.dart';
 import 'package:bloom_kidz/Styles/my_font.dart';
 import 'package:bloom_kidz/Styles/my_icons.dart';
 import 'package:flutter/material.dart';
-
+import 'package:html/parser.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter/material.dart';
@@ -105,8 +105,9 @@ class _EditAllAboutMeScreenState extends State<EditAllAboutMeScreen> {
     controller.alternateCollectorController.value.text =
         data.alternateCollector ?? "";
 
-    controller.additionalNotesController.value.text =
-        data.additionalNotes?.toString() ?? "";
+    controller.additionalNotesController.value.text = parseHtmlString(
+      data.additionalNotes?.toString() ?? "",
+    );
   }
 
   @override
@@ -274,4 +275,10 @@ class _EditAllAboutMeScreenState extends State<EditAllAboutMeScreen> {
       ),
     );
   }
+}
+
+String parseHtmlString(String htmlString) {
+  final document = parse(htmlString);
+  final String parsedString = document.body?.text ?? '';
+  return parsedString;
 }

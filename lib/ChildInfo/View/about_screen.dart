@@ -178,11 +178,6 @@ class _AboutScreenState extends State<AboutScreen> {
                   keyPersonIcon,
                 ),
               Divider(color: Colors.grey.shade300),
-              _singleInfo(
-                "Second Key Person",
-                basic.secondKeyPerson,
-                keyPersonIcon,
-              ),
               _specialNote(basic.specialNote),
             ],
           ),
@@ -415,12 +410,7 @@ class _AboutScreenState extends State<AboutScreen> {
         _infoLine(keyPersonIcon, "Name", health.doctor?.name ?? "-"),
         _infoLine(icon_call_video, "Mobile", health.doctor?.mobile ?? "-"),
 
-        _infoLine(
-          icon_home,
-          "Address",
-          buildAddress(health.doctor),
-        ),
-
+        _infoLine(icon_home, "Address", buildAddress(health.doctor)),
       ],
     );
   }
@@ -434,11 +424,7 @@ class _AboutScreenState extends State<AboutScreen> {
 
         _infoLine(keyPersonIcon, "Name", health.dentist?.name ?? "-"),
         _infoLine(icon_call_video, "Mobile", health.dentist?.mobile ?? "-"),
-        _infoLine(
-          icon_home,
-          "Address",
-          buildAddress(health.dentist),
-        ),
+        _infoLine(icon_home, "Address", buildAddress(health.dentist)),
       ],
     );
   }
