@@ -36,15 +36,12 @@ import 'package:flutter/material.dart';
 
 import '../../controller/child_info_controller.dart';
 
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../models/accident_list_response.dart';
 import '../models/medication_list_response.dart';
 import 'BodyMapView.dart';
-
-
 
 class AccidentListScreen extends StatefulWidget {
   final String childId;
@@ -68,43 +65,59 @@ class _AccidentListScreenState extends State<AccidentListScreen> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       // appBar: const CommonAppBar(
       //   title: "Accident / Incident", showMenu: true, showBack: true,),
       body: Obx(() {
-        if (childInfoController.accidentList.isEmpty && !childInfoController.isLoading.value) {
+        if (childInfoController.accidentList.isEmpty &&
+            !childInfoController.isLoading.value) {
           return const Center(child: Text("No records found"));
         }
 
         return Obx(
-                () =>Stack(
-          children: [
-            !childInfoController.isLoading.value?childInfoController.accidentList.isNotEmpty?  ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: childInfoController.accidentList.length,
-              itemBuilder: (context, index) {
-                return _AccidentCard(accident: childInfoController.accidentList[index], childInfoController: childInfoController,childId: widget.childId,index: index);
-              },
-            ):Expanded(child: Center(child: BlueLargeBoldText("No Data Found", ),)):SizedBox(),
+          () => Stack(
+            children: [
+              !childInfoController.isLoading.value
+                  ? childInfoController.accidentList.isNotEmpty
+                        ? ListView.builder(
+                            padding: const EdgeInsets.all(16),
+                            itemCount: childInfoController.accidentList.length,
+                            itemBuilder: (context, index) {
+                              return _AccidentCard(
+                                accident:
+                                    childInfoController.accidentList[index],
+                                childInfoController: childInfoController,
+                                childId: widget.childId,
+                                index: index,
+                              );
+                            },
+                          )
+                        : Center(child: BlueLargeBoldText("No Data Found"))
+                  : SizedBox(),
 
-            if (childInfoController.isLoading.value)const Center(child: CircularProgressIndicator())
-          ],
-        ));
+              if (childInfoController.isLoading.value)
+                const Center(child: CircularProgressIndicator()),
+            ],
+          ),
+        );
       }),
     );
   }
 }
-
 
 class _AccidentCard extends StatelessWidget {
   final Accident accident;
   final String childId;
   final int index;
   final ChildInfoController childInfoController;
-  const _AccidentCard({required this.accident, required this.childInfoController, required this.childId, required this.index});
+  const _AccidentCard({
+    required this.accident,
+    required this.childInfoController,
+    required this.childId,
+    required this.index,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -118,30 +131,23 @@ class _AccidentCard extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 6,
-            )
+            BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 6),
           ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
             /// HEADER
             Row(
               children: [
-                const Icon(Icons.report, size: 18, color: color_secondary,),
+                const Icon(Icons.report, size: 18, color: color_secondary),
                 const SizedBox(width: 8),
                 BlueLargeBoldText(
                   accident.kind?.toUpperCase() ?? "ACCIDENT",
-                fontFamily: fontInterBold
+                  fontFamily: fontInterBold,
                 ),
                 const Spacer(),
-                BlackSmallRegularText(
-                  accident.dateTime ?? "",
-                  fontSize: 11
-                ),
+                BlackSmallRegularText(accident.dateTime ?? "", fontSize: 11),
               ],
             ),
 
@@ -151,29 +157,39 @@ class _AccidentCard extends StatelessWidget {
             _item("Location", accident.location),
             _item("Nature", accident.nature),
             _item("First aid administered", accident.firstAid),
-            _item("When and how were parents notified", accident.parentsNotified),
+            _item(
+              "When and how were parents notified",
+              accident.parentsNotified,
+            ),
             _item("Witness", accident.witness?.name),
-            _item("Approved and sent by", "${accident.approvedBy?.name??""} | ${accident.dateTime??""}"),
+            _item(
+              "Approved and sent by",
+              "${accident.approvedBy?.name ?? ""} | ${accident.dateTime ?? ""}",
+            ),
 
             // const SizedBox(height: 12),
 
             /// ACKNOWLEDGEMENT
-            _acknowledgementSection(context, childId, childInfoController, index),
+            _acknowledgementSection(
+              context,
+              childId,
+              childInfoController,
+              index,
+            ),
 
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
                 const SizedBox(height: 12),
 
                 BlueMediumBoldText(
                   "Body map",
-                    fontFamily: fontInterSemiBold,
-                    fontSize: 13
+                  fontFamily: fontInterSemiBold,
+                  fontSize: 13,
                 ),
 
-
-                if (accident.bodyMap?.front != null && accident.bodyMap!.front!.isNotEmpty)
+                if (accident.bodyMap?.front != null &&
+                    accident.bodyMap!.front!.isNotEmpty)
                   Container(
                     margin: EdgeInsets.only(top: 16),
                     child: BodyMapView(
@@ -185,7 +201,8 @@ class _AccidentCard extends StatelessWidget {
                     ),
                   ),
 
-                if (accident.bodyMap?.head != null && accident.bodyMap!.head!.isNotEmpty)
+                if (accident.bodyMap?.head != null &&
+                    accident.bodyMap!.head!.isNotEmpty)
                   Container(
                     margin: EdgeInsets.only(top: 16),
                     child: BodyMapView(
@@ -197,7 +214,8 @@ class _AccidentCard extends StatelessWidget {
                     ),
                   ),
 
-                if (accident.bodyMap?.back != null && accident.bodyMap!.back!.isNotEmpty)
+                if (accident.bodyMap?.back != null &&
+                    accident.bodyMap!.back!.isNotEmpty)
                   Container(
                     margin: EdgeInsets.only(top: 16),
                     child: BodyMapView(
@@ -209,8 +227,8 @@ class _AccidentCard extends StatelessWidget {
                     ),
                   ),
 
-
-                if (accident.bodyMap?.sideface != null && accident.bodyMap!.sideface!.isNotEmpty)
+                if (accident.bodyMap?.sideface != null &&
+                    accident.bodyMap!.sideface!.isNotEmpty)
                   Container(
                     margin: EdgeInsets.only(top: 16),
                     child: BodyMapView(
@@ -221,13 +239,9 @@ class _AccidentCard extends StatelessWidget {
                       sidePoints: accident.bodyMap?.sideface,
                     ),
                   ),
-
-
               ],
-            )
-
-
-      ],
+            ),
+          ],
         ),
       ),
     );
@@ -244,57 +258,78 @@ class _AccidentCard extends StatelessWidget {
           BlueMediumBoldText(
             title,
             fontFamily: fontInterSemiBold,
-              fontSize: 13
+            fontSize: 13,
           ),
           const SizedBox(height: 2),
           BlackMediumRegularText(
             value?.isNotEmpty == true ? value! : "-",
             color: Colors.black,
-            fontSize: 12
+            fontSize: 12,
           ),
         ],
       ),
     );
   }
 
-  Widget _acknowledgementSection(BuildContext context, String childId, ChildInfoController controller, int index) {
+  Widget _acknowledgementSection(
+    BuildContext context,
+    String childId,
+    ChildInfoController controller,
+    int index,
+  ) {
     final ack = accident.acknowledgement;
 
     if (ack?.status == true) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-           BlueMediumBoldText(
+          BlueMediumBoldText(
             "Parent Acknowledgement",
-             fontFamily: fontInterSemiBold,
-             fontSize: 13
+            fontFamily: fontInterSemiBold,
+            fontSize: 13,
           ),
           const SizedBox(height: 2),
           BlackMediumRegularText(
             "Acknowledged on ${_formatDate(ack?.date)}",
-           color: Colors.black,
-            fontSize: 12
+            color: Colors.black,
+            fontSize: 12,
           ),
         ],
       );
     }
 
-    return _acknowledgeButton(context, controller,accident.id??0, childId, index);
+    return _acknowledgeButton(
+      context,
+      controller,
+      accident.id ?? 0,
+      childId,
+      index,
+    );
   }
 
-  Widget _acknowledgeButton(BuildContext context,ChildInfoController controller, int medicationId, String childId, int index) {
+  Widget _acknowledgeButton(
+    BuildContext context,
+    ChildInfoController controller,
+    int medicationId,
+    String childId,
+    int index,
+  ) {
     return Container(
       margin: EdgeInsets.only(top: 4),
-      child: CommonGradientButton(btnTitle: "Acknowledge", onPressed: (){
-
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          controller.callAddMedicationAcknowledgeAPI(context, medicationId, childId);
-        });
-
-
-      }, isRefresh: childInfoController.medicineRefreshIndex.value == index,),
+      child: CommonGradientButton(
+        btnTitle: "Acknowledge",
+        onPressed: () {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            controller.callAddMedicationAcknowledgeAPI(
+              context,
+              medicationId,
+              childId,
+            );
+          });
+        },
+        isRefresh: childInfoController.medicineRefreshIndex.value == index,
+      ),
     );
-
 
     Padding(
       padding: const EdgeInsets.only(top: 8),
@@ -310,7 +345,6 @@ class _AccidentCard extends StatelessWidget {
     );
   }
 
-
   String _formatDate(DateTime? date) {
     if (date == null) return "-";
     return "${date.day.toString().padLeft(2, '0')}-"
@@ -318,5 +352,3 @@ class _AccidentCard extends StatelessWidget {
         "${date.year}";
   }
 }
-
-

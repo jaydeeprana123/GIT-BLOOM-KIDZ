@@ -81,16 +81,20 @@ class _ChildrenPermissionScreenState extends State<ChildrenPermissionScreen>
             Obx(
               () => Stack(
                 children: [
-                  !childInfoController.isLoading.value && childInfoController.childPermissionList.isEmpty?Expanded(child: Center(child: BlueLargeBoldText("No Data Found"),)): ListView.builder(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: childInfoController.childPermissionList.length,
-                    itemBuilder: (context, index) {
-                      return _permissionCard(
-                        childInfoController.childPermissionList[index],
-                        index,
-                      );
-                    },
-                  ),
+                  !childInfoController.isLoading.value &&
+                          childInfoController.childPermissionList.isEmpty
+                      ? Center(child: BlueLargeBoldText("No Data Found"))
+                      : ListView.builder(
+                          padding: const EdgeInsets.all(16),
+                          itemCount:
+                              childInfoController.childPermissionList.length,
+                          itemBuilder: (context, index) {
+                            return _permissionCard(
+                              childInfoController.childPermissionList[index],
+                              index,
+                            );
+                          },
+                        ),
 
                   if (childInfoController.isLoading.value)
                     Center(child: CircularProgressIndicator()),
