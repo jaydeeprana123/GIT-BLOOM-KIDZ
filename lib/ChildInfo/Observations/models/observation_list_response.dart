@@ -188,8 +188,8 @@ class Observation {
     "description": description,
     "observations": observations,
     "child_names": childNames,
-    "is_group_obs": isGroupObsValues.reverse[isGroupObs],
-    "is_group_label": isGroupLabelValues.reverse[isGroupLabel],
+    "is_group_obs": isGroupObs,
+    "is_group_label": isGroupLabel,
     "whats_next": whatsNext,
     "context": context,
     "domain": domain == null
@@ -249,7 +249,7 @@ class CreatedBy {
 class Domain {
   int? id;
   String? name;
-  Color? color;
+  String? color;
   String? status;
   int? createdId;
   DateTime? createdAt;
@@ -257,7 +257,7 @@ class Domain {
   DateTime? updatedAt;
   dynamic deletedBy;
   dynamic deletedAt;
-  IsGroupObs? deletedStatus;
+  String? deletedStatus;
 
   Domain({
     this.id,
@@ -276,7 +276,7 @@ class Domain {
   factory Domain.fromJson(Map<String, dynamic> json) => Domain(
     id: json["id"],
     name: json["name"],
-    color: colorValues.map[json["color"]]!,
+    color: json["color"],
     status: json["status"],
     createdId: json["created_id"],
     createdAt: json["created_at"] == null
@@ -288,13 +288,13 @@ class Domain {
         : DateTime.parse(json["updated_at"]),
     deletedBy: json["deleted_by"],
     deletedAt: json["deleted_at"],
-    deletedStatus: isGroupObsValues.map[json["deleted_status"]]!,
+    deletedStatus: json["deleted_status"],
   );
 
   Map<String, dynamic> toJson() => {
     "id": id,
-    "name": domainNameValues.reverse[name],
-    "color": colorValues.reverse[color],
+    "name": name,
+    "color": color,
     "status": status,
     "created_id": createdId,
     "created_at": createdAt?.toIso8601String(),
@@ -302,30 +302,9 @@ class Domain {
     "updated_at": updatedAt?.toIso8601String(),
     "deleted_by": deletedBy,
     "deleted_at": deletedAt,
-    "deleted_status": isGroupObsValues.reverse[deletedStatus],
+    "deleted_status": deletedStatus,
   };
 }
-
-enum Color { FA0000 }
-
-final colorValues = EnumValues({"#fa0000": Color.FA0000});
-
-enum IsGroupObs { N, Y }
-
-final isGroupObsValues = EnumValues({"N": IsGroupObs.N, "Y": IsGroupObs.Y});
-
-enum DomainName { BIRTH_TO_5_MATTERS }
-
-final domainNameValues = EnumValues({
-  "Birth to 5 Matters": DomainName.BIRTH_TO_5_MATTERS,
-});
-
-enum IsGroupLabel { GROUP_OBSERVATION, SINGLE_OBSERVATION }
-
-final isGroupLabelValues = EnumValues({
-  "Group Observation": IsGroupLabel.GROUP_OBSERVATION,
-  "Single Observation": IsGroupLabel.SINGLE_OBSERVATION,
-});
 
 class Like {
   int? id;

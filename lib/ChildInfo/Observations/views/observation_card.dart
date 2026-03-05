@@ -82,6 +82,8 @@ class ObservationCard extends StatelessWidget {
           if ((observation.media ?? []).isNotEmpty) _image(context),
           _description(),
 
+          _whatsNext(),
+
           if ((observation.domain ?? []).isNotEmpty)
             Wrap(
               spacing: 6,
@@ -104,6 +106,7 @@ class ObservationCard extends StatelessWidget {
                 );
               }).toList(),
             ),
+
           _actions(context),
           _replyBox(context, observation.id.toString(), index),
         ],
@@ -448,6 +451,69 @@ class ObservationCard extends StatelessWidget {
     );
   }
 
+  Widget _whatsNext() {
+    if ((observation.whatsNext ?? "").isEmpty) {
+      return const SizedBox();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      child: Html(
+        data: _sanitizeHtml(observation.whatsNext ?? ""),
+        style: {
+          "*": Style(
+            fontSize: FontSize(13),
+            color: text_color,
+            lineHeight: LineHeight(1.4),
+          ),
+        },
+        extensions: [
+          TagExtension(
+            tagsToExtend: {"img"},
+            builder: (context) {
+              final src = context.attributes['src'] ?? '';
+
+              if (src.startsWith('data:image')) {
+                try {
+                  final base64Str = src.split(',').last;
+                  final bytes = base64Decode(base64Str);
+
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Image.memory(
+                      bytes,
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) {
+                        return const SizedBox();
+                      },
+                    ),
+                  );
+                } catch (e) {
+                  return const SizedBox();
+                }
+              }
+
+              if (src.isNotEmpty && !src.startsWith('data:')) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Image.network(
+                    src,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) {
+                      return const SizedBox();
+                    },
+                  ),
+                );
+              }
+
+              return const SizedBox();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
   String _sanitizeHtml(String html) {
     // Remove problematic inline styles that contain font-feature-settings
     html = html.replaceAllMapped(
@@ -698,4 +764,8 @@ class AllImagesScreenForObservation extends StatelessWidget {
       ),
     );
   }
+}
+
+Color hexToColor(String hex) {
+  return Color(int.parse(hex.replaceFirst('#', '0xff')));
 }
