@@ -1007,7 +1007,7 @@ class ChildInfoController extends GetxController {
 
     dynamic body = {
       "permission_id": id,
-      "status": approve ? "1" : "0",
+      "status": approve ? "0" : "1",
       "child_id": childId,
     };
 

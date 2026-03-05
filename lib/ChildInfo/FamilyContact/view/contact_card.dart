@@ -16,7 +16,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-
 import '../../../CommonWidgets/blue_medium_bold_text.dart';
 import '../../View/child_.card.dart';
 
@@ -28,9 +27,9 @@ class ContactCard extends StatelessWidget {
   final FamilyContact familyContact;
   ChildInfoController childInfoController;
 
-   ContactCard({
+  ContactCard({
     super.key,
-     required this.familyContact,
+    required this.familyContact,
     required this.childInfoController,
   });
 
@@ -50,9 +49,38 @@ class ContactCard extends StatelessWidget {
         padding: const EdgeInsets.all(12),
         child: Row(
           children: [
+            /// 👤 Profile Image
+            (familyContact.imageUrl ?? "" ?? "").isNotEmpty
+                ? CircleAvatar(
+                    radius: 22,
+                    backgroundImage: NetworkImage(
+                      familyContact.imageUrl ?? "" ?? "",
+                    ),
+                  )
+                : Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      color: color_secondary,
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      (familyContact.firstName != null &&
+                              (familyContact.firstName ?? "").isNotEmpty)
+                          ? (familyContact.firstName ?? "")[0].toUpperCase()
+                          : "",
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+
             CircleAvatar(
               radius: 22,
-              backgroundImage: NetworkImage(familyContact.imageUrl??""),
+              backgroundImage: NetworkImage(familyContact.imageUrl ?? ""),
             ),
             const SizedBox(width: 10),
             Expanded(
@@ -60,25 +88,27 @@ class ContactCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   BlueLargeBoldText(
-                    "${familyContact.firstName ??""} ${familyContact.lastName ??""}",
+                    "${familyContact.firstName ?? ""} ${familyContact.lastName ?? ""}",
                   ),
                   const SizedBox(height: 2),
                   BlackMediumRegularText(
-                      familyContact.relation ??"",
-                    fontSize: 12
+                    familyContact.relation ?? "",
+                    fontSize: 12,
                   ),
                 ],
               ),
             ),
-             InkWell(onTap: (){
-               showUpdateDeleteDialog(context, familyContact.id.toString());
-             },child: Icon(Icons.more_vert, color: color_secondary)),
+            InkWell(
+              onTap: () {
+                showUpdateDeleteDialog(context, familyContact.id.toString());
+              },
+              child: Icon(Icons.more_vert, color: color_secondary),
+            ),
           ],
         ),
       ),
     );
   }
-
 
   void showUpdateDeleteDialog(BuildContext context, String id) {
     showDialog(
@@ -93,7 +123,6 @@ class ContactCard extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-
                 BlueMediumBoldText(
                   "Action",
                   fontSize: 16,
@@ -109,11 +138,11 @@ class ContactCard extends StatelessWidget {
                   onTap: () {
                     Navigator.pop(context);
 
-                    childInfoController.selectedFamilyContact.value = familyContact;
+                    childInfoController.selectedFamilyContact.value =
+                        familyContact;
                     Get.to(FamilyUpdateScreen())?.then((value) {
-                    childInfoController.callGetFamilyContactsAPI(context);
+                      childInfoController.callGetFamilyContactsAPI(context);
                     });
-
                   },
                 ),
 
@@ -132,10 +161,12 @@ class ContactCard extends StatelessWidget {
                   onTap: () {
                     Navigator.pop(context);
 
-                    showDeleteWarningDialog(context, onConfirm: (){
-
-                      childInfoController.callDeleteContactAPI(context,id);
-                    });
+                    showDeleteWarningDialog(
+                      context,
+                      onConfirm: () {
+                        childInfoController.callDeleteContactAPI(context, id);
+                      },
+                    );
                   },
                 ),
               ],
@@ -146,11 +177,10 @@ class ContactCard extends StatelessWidget {
     );
   }
 
-
   void showDeleteWarningDialog(
-      BuildContext context, {
-        required VoidCallback onConfirm,
-      }) {
+    BuildContext context, {
+    required VoidCallback onConfirm,
+  }) {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -164,7 +194,6 @@ class ContactCard extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-
                 /// ⚠️ Icon
                 const Icon(
                   Icons.warning_amber_rounded,
@@ -228,11 +257,4 @@ class ContactCard extends StatelessWidget {
       },
     );
   }
-
-
 }
-
-
-
-
-

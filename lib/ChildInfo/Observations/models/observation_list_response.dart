@@ -65,14 +65,33 @@ class Observation {
   dynamic description;
   String? observations;
   String? childNames;
+  String? isGroupObs;
+  String? isGroupLabel;
+  String? whatsNext;
+  String? context;
+  List<Domain>? domain;
+  List<SpecificArea>? specificAreas;
+  String? clAssessmentType;
+  String? pwAssessmentType;
+  String? pdAssessmentType;
+  String? literacyAssessmentType;
+  String? mathematicsAssessmentType;
+  String? uwAssessmentType;
+  String? eadAssessmentType;
+  String? clAssessmentAgeBand;
+  String? pwAssessmentAgeBand;
+  String? pdAssessmentTypeAgeBand;
+  String? literacyAssessmentAgeBand;
+  String? mathematicsAssessmentAgeBand;
+  String? uwAssessmentAgeBand;
+  String? eadAssessmentAgeBand;
+  AddedBy? addedBy;
   DateTime? createdAt;
   CreatedBy? createdBy;
   List<Media>? media;
-  String? is_group_obs;
-  String? is_group_label;
   List<Like>? likes;
   int? likesCount;
-  List<Comment>? comments;
+  List<dynamic>? comments;
   int? commentsCount;
 
   Observation({
@@ -81,11 +100,30 @@ class Observation {
     this.description,
     this.observations,
     this.childNames,
+    this.isGroupObs,
+    this.isGroupLabel,
+    this.whatsNext,
+    this.context,
+    this.domain,
+    this.specificAreas,
+    this.clAssessmentType,
+    this.pwAssessmentType,
+    this.pdAssessmentType,
+    this.literacyAssessmentType,
+    this.mathematicsAssessmentType,
+    this.uwAssessmentType,
+    this.eadAssessmentType,
+    this.clAssessmentAgeBand,
+    this.pwAssessmentAgeBand,
+    this.pdAssessmentTypeAgeBand,
+    this.literacyAssessmentAgeBand,
+    this.mathematicsAssessmentAgeBand,
+    this.uwAssessmentAgeBand,
+    this.eadAssessmentAgeBand,
+    this.addedBy,
     this.createdAt,
     this.createdBy,
     this.media,
-    this.is_group_obs,
-    this.is_group_label,
     this.likes,
     this.likesCount,
     this.comments,
@@ -98,6 +136,33 @@ class Observation {
     description: json["description"],
     observations: json["observations"],
     childNames: json["child_names"],
+    isGroupObs: json["is_group_obs"],
+    isGroupLabel: json["is_group_label"],
+    whatsNext: json["whats_next"],
+    context: json["context"],
+    domain: json["domain"] == null
+        ? []
+        : List<Domain>.from(json["domain"]!.map((x) => Domain.fromJson(x))),
+    specificAreas: json["specific_areas"] == null
+        ? []
+        : List<SpecificArea>.from(
+            json["specific_areas"]!.map((x) => SpecificArea.fromJson(x)),
+          ),
+    clAssessmentType: json["cl_assessment_type"],
+    pwAssessmentType: json["pw_assessment_type"],
+    pdAssessmentType: json["pd_assessment_type"],
+    literacyAssessmentType: json["literacy_assessment_type"],
+    mathematicsAssessmentType: json["mathematics_assessment_type"],
+    uwAssessmentType: json["uw_assessment_type"],
+    eadAssessmentType: json["ead_assessment_type"],
+    clAssessmentAgeBand: json["cl_assessment_age_band"],
+    pwAssessmentAgeBand: json["pw_assessment_age_band"],
+    pdAssessmentTypeAgeBand: json["pd_assessment_type_age_band"],
+    literacyAssessmentAgeBand: json["literacy_assessment_age_band"],
+    mathematicsAssessmentAgeBand: json["mathematics_assessment_age_band"],
+    uwAssessmentAgeBand: json["uw_assessment_age_band"],
+    eadAssessmentAgeBand: json["ead_assessment_age_band"],
+    addedBy: addedByValues.map[json["added_by"]]!,
     createdAt: json["created_at"] == null
         ? null
         : DateTime.parse(json["created_at"]),
@@ -113,10 +178,8 @@ class Observation {
     likesCount: json["likes_count"],
     comments: json["comments"] == null
         ? []
-        : List<Comment>.from(json["comments"]!.map((x) => Comment.fromJson(x))),
+        : List<dynamic>.from(json["comments"]!.map((x) => x)),
     commentsCount: json["comments_count"],
-    is_group_obs: json["is_group_obs"],
-    is_group_label: json["is_group_label"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -125,6 +188,31 @@ class Observation {
     "description": description,
     "observations": observations,
     "child_names": childNames,
+    "is_group_obs": isGroupObsValues.reverse[isGroupObs],
+    "is_group_label": isGroupLabelValues.reverse[isGroupLabel],
+    "whats_next": whatsNext,
+    "context": context,
+    "domain": domain == null
+        ? []
+        : List<dynamic>.from(domain!.map((x) => x.toJson())),
+    "specific_areas": specificAreas == null
+        ? []
+        : List<dynamic>.from(specificAreas!.map((x) => x.toJson())),
+    "cl_assessment_type": clAssessmentType,
+    "pw_assessment_type": pwAssessmentType,
+    "pd_assessment_type": pdAssessmentType,
+    "literacy_assessment_type": literacyAssessmentType,
+    "mathematics_assessment_type": mathematicsAssessmentType,
+    "uw_assessment_type": uwAssessmentType,
+    "ead_assessment_type": eadAssessmentType,
+    "cl_assessment_age_band": clAssessmentAgeBand,
+    "pw_assessment_age_band": pwAssessmentAgeBand,
+    "pd_assessment_type_age_band": pdAssessmentTypeAgeBand,
+    "literacy_assessment_age_band": literacyAssessmentAgeBand,
+    "mathematics_assessment_age_band": mathematicsAssessmentAgeBand,
+    "uw_assessment_age_band": uwAssessmentAgeBand,
+    "ead_assessment_age_band": eadAssessmentAgeBand,
+    "added_by": addedByValues.reverse[addedBy],
     "created_at": createdAt?.toIso8601String(),
     "created_by": createdBy?.toJson(),
     "media": media == null
@@ -136,61 +224,108 @@ class Observation {
     "likes_count": likesCount,
     "comments": comments == null
         ? []
-        : List<dynamic>.from(comments!.map((x) => x.toJson())),
+        : List<dynamic>.from(comments!.map((x) => x)),
     "comments_count": commentsCount,
-    "is_group_obs": is_group_obs,
-    "is_group_label": is_group_label,
   };
 }
 
-class Comment {
-  int? id;
-  String? content;
-  DateTime? date;
-  int? likes;
-  CreatedBy? user;
+enum AddedBy { ADMIN }
 
-  Comment({this.id, this.content, this.date, this.likes, this.user});
-
-  factory Comment.fromJson(Map<String, dynamic> json) => Comment(
-    id: json["id"],
-    content: json["content"],
-    date: json["date"] == null ? null : DateTime.parse(json["date"]),
-    likes: json["likes"],
-    user: json["user"] == null ? null : CreatedBy.fromJson(json["user"]),
-  );
-
-  Map<String, dynamic> toJson() => {
-    "id": id,
-    "content": content,
-    "date": date?.toIso8601String(),
-    "likes": likes,
-    "user": user?.toJson(),
-  };
-}
+final addedByValues = EnumValues({"admin": AddedBy.ADMIN});
 
 class CreatedBy {
   int? id;
   String? name;
-  String? profile;
-  String? userType;
+  dynamic profile;
 
-  CreatedBy({this.id, this.name, this.profile, this.userType});
+  CreatedBy({this.id, this.name, this.profile});
 
-  factory CreatedBy.fromJson(Map<String, dynamic> json) => CreatedBy(
+  factory CreatedBy.fromJson(Map<String, dynamic> json) =>
+      CreatedBy(id: json["id"], name: json["name"], profile: json["profile"]);
+
+  Map<String, dynamic> toJson() => {"id": id, "name": name, "profile": profile};
+}
+
+class Domain {
+  int? id;
+  DomainName? name;
+  Color? color;
+  String? status;
+  int? createdId;
+  DateTime? createdAt;
+  int? updatedId;
+  DateTime? updatedAt;
+  dynamic deletedBy;
+  dynamic deletedAt;
+  IsGroupObs? deletedStatus;
+
+  Domain({
+    this.id,
+    this.name,
+    this.color,
+    this.status,
+    this.createdId,
+    this.createdAt,
+    this.updatedId,
+    this.updatedAt,
+    this.deletedBy,
+    this.deletedAt,
+    this.deletedStatus,
+  });
+
+  factory Domain.fromJson(Map<String, dynamic> json) => Domain(
     id: json["id"],
-    name: json["name"],
-    profile: json["profile"],
-    userType: json["user_type"],
+    name: domainNameValues.map[json["name"]]!,
+    color: colorValues.map[json["color"]]!,
+    status: json["status"],
+    createdId: json["created_id"],
+    createdAt: json["created_at"] == null
+        ? null
+        : DateTime.parse(json["created_at"]),
+    updatedId: json["updated_id"],
+    updatedAt: json["updated_at"] == null
+        ? null
+        : DateTime.parse(json["updated_at"]),
+    deletedBy: json["deleted_by"],
+    deletedAt: json["deleted_at"],
+    deletedStatus: isGroupObsValues.map[json["deleted_status"]]!,
   );
 
   Map<String, dynamic> toJson() => {
     "id": id,
-    "name": name,
-    "profile": profile,
-    "user_type": userType,
+    "name": domainNameValues.reverse[name],
+    "color": colorValues.reverse[color],
+    "status": status,
+    "created_id": createdId,
+    "created_at": createdAt?.toIso8601String(),
+    "updated_id": updatedId,
+    "updated_at": updatedAt?.toIso8601String(),
+    "deleted_by": deletedBy,
+    "deleted_at": deletedAt,
+    "deleted_status": isGroupObsValues.reverse[deletedStatus],
   };
 }
+
+enum Color { FA0000 }
+
+final colorValues = EnumValues({"#fa0000": Color.FA0000});
+
+enum IsGroupObs { N, Y }
+
+final isGroupObsValues = EnumValues({"N": IsGroupObs.N, "Y": IsGroupObs.Y});
+
+enum DomainName { BIRTH_TO_5_MATTERS }
+
+final domainNameValues = EnumValues({
+  "Birth to 5 Matters": DomainName.BIRTH_TO_5_MATTERS,
+});
+
+enum IsGroupLabel { GROUP_OBSERVATION, SINGLE_OBSERVATION }
+
+final isGroupLabelValues = EnumValues({
+  "Group Observation": IsGroupLabel.GROUP_OBSERVATION,
+  "Single Observation": IsGroupLabel.SINGLE_OBSERVATION,
+});
 
 class Like {
   int? id;
@@ -219,7 +354,7 @@ class Media {
   int? id;
   int? masterId;
   String? image;
-  String? extension;
+  Extension? extension;
   String? size;
 
   Media({this.id, this.masterId, this.image, this.extension, this.size});
@@ -228,7 +363,7 @@ class Media {
     id: json["id"],
     masterId: json["master_id"],
     image: json["image"],
-    extension: json["extension"],
+    extension: extensionValues.map[json["extension"]]!,
     size: json["size"],
   );
 
@@ -236,9 +371,25 @@ class Media {
     "id": id,
     "master_id": masterId,
     "image": image,
-    "extension": extension,
+    "extension": extensionValues.reverse[extension],
     "size": size,
   };
+}
+
+enum Extension { JPEG }
+
+final extensionValues = EnumValues({"jpeg": Extension.JPEG});
+
+class SpecificArea {
+  int? id;
+  String? name;
+
+  SpecificArea({this.id, this.name});
+
+  factory SpecificArea.fromJson(Map<String, dynamic> json) =>
+      SpecificArea(id: json["id"], name: json["name"]);
+
+  Map<String, dynamic> toJson() => {"id": id, "name": name};
 }
 
 class Pagination {
@@ -271,4 +422,16 @@ class Pagination {
     "total": total,
     "has_more": hasMore,
   };
+}
+
+class EnumValues<T> {
+  Map<String, T> map;
+  late Map<T, String> reverseMap;
+
+  EnumValues(this.map);
+
+  Map<T, String> get reverse {
+    reverseMap = map.map((k, v) => MapEntry(v, k));
+    return reverseMap;
+  }
 }

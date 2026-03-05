@@ -56,24 +56,24 @@ class ObservationCard extends StatelessWidget {
         children: [
           _header(context),
 
-          if (observation.is_group_obs == "Y")
+          if (observation.isGroupObs == "Y")
             Container(
               margin: EdgeInsets.symmetric(vertical: 4),
               color: color_secondary,
               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
               child: BlackMediumBoldText(
-                observation.is_group_label ?? "",
+                observation.isGroupLabel ?? "",
                 color: Colors.white,
               ),
             ),
 
-          if (observation.is_group_obs == "N")
+          if (observation.isGroupObs == "N")
             Container(
               margin: EdgeInsets.symmetric(vertical: 4),
               color: color_secondary,
               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
               child: BlackMediumBoldText(
-                observation.is_group_label ?? "",
+                observation.isGroupLabel ?? "",
                 color: Colors.white,
               ),
             ),
@@ -81,6 +81,7 @@ class ObservationCard extends StatelessWidget {
           _titleText(),
           if ((observation.media ?? []).isNotEmpty) _image(context),
           _description(),
+
           _actions(context),
           _replyBox(context, observation.id.toString(), index),
         ],
