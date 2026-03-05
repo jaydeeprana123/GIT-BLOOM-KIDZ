@@ -270,7 +270,7 @@ class _EditAllAboutMeScreenState extends State<EditAllAboutMeScreen> {
           BlueMediumBoldText(label, fontSize: 12),
           const SizedBox(height: 4),
 
-          CommonTextField(hint: label, controller: controller),
+          CommonTextField(hint: "", controller: controller),
         ],
       ),
     );

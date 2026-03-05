@@ -91,6 +91,7 @@ class ObservationCard extends StatelessWidget {
                 final color = hexToColor(d.color ?? "#000000");
 
                 return Container(
+                  margin: EdgeInsets.only(left: 16),
                   padding: const EdgeInsets.symmetric(
                     horizontal: 8,
                     vertical: 4,

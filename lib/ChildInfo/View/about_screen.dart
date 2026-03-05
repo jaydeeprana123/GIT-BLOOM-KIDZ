@@ -292,10 +292,39 @@ class _AboutScreenState extends State<AboutScreen> {
   Widget _profileSection(BasicInfo basic) {
     return Column(
       children: [
-        CircleAvatar(
-          radius: 65,
-          backgroundImage: NetworkImage(basic.profileImage ?? ""),
+
+        (basic.profileImage != null &&
+            (basic.profileImage ?? "").isNotEmpty)
+            ? CircleAvatar(
+              radius: 65,
+              backgroundImage: NetworkImage(basic.profileImage ?? ""),
+            )
+            : Container(
+          width: 130,
+          height: 130,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            color: color_secondary,
+          ),
+          alignment: Alignment.center,
+          child: Text(
+            (basic.firstName != null &&
+                (basic.firstName ?? "").isNotEmpty)
+                ? (basic.firstName ?? "")[0].toUpperCase()
+                : "",
+            style: const TextStyle(
+              fontSize: 70,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
         ),
+
+
+        // CircleAvatar(
+        //   radius: 65,
+        //   backgroundImage: NetworkImage(basic.profileImage ?? ""),
+        // ),
         const SizedBox(height: 8),
         BlueLargeBoldText(
           "${basic.firstName ?? ""} ${basic.lastName ?? ""} (${basic.gender ?? ""})",

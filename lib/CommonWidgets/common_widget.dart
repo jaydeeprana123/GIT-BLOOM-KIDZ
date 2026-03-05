@@ -2,6 +2,7 @@ import 'dart:ffi';
 import 'dart:io';
 import 'package:bloom_kidz/Authentication/View/login_screen.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -39,7 +40,6 @@ logoutFromTheApp() async {
   await preferences.clearData(SharePreData.keyAccessToken);
   String email = await preferences.getStringValue(SharePreData.keyEmail);
   bool isPinSet = await preferences.getBoolValue(SharePreData.keyPinSet);
-
 
   if (isPinSet) {
     Get.offAll(() => QuickAccessPinScreen());
@@ -193,7 +193,9 @@ goToWelcomeScreen() async {
 }
 
 void printData(String str, String val) {
-  print("$str :::::::::::::  $val");
+  if (kDebugMode) {
+    print("$str :::::::::::::  $val");
+  }
 }
 
 createdDateConverted(String originalDate) {
@@ -499,14 +501,14 @@ void onLoading(BuildContext context, String msg) {
 Future<void> pickDate(
   BuildContext context,
   DateTime? initialDate,
-  Function(DateTime) onSelected,
-{DateTime? lastDate}
-) async {
+  Function(DateTime) onSelected, {
+  DateTime? lastDate,
+}) async {
   final DateTime? picked = await showDatePicker(
     context: context,
     initialDate: initialDate ?? DateTime.now(),
     firstDate: DateTime.now(),
-    lastDate:lastDate??DateTime(DateTime.now().year + 2),
+    lastDate: lastDate ?? DateTime(DateTime.now().year + 2),
   );
 
   if (picked != null) {
