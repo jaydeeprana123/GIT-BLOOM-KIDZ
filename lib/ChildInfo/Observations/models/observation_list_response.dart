@@ -248,7 +248,7 @@ class CreatedBy {
 
 class Domain {
   int? id;
-  DomainName? name;
+  String? name;
   Color? color;
   String? status;
   int? createdId;
@@ -275,7 +275,7 @@ class Domain {
 
   factory Domain.fromJson(Map<String, dynamic> json) => Domain(
     id: json["id"],
-    name: domainNameValues.map[json["name"]]!,
+    name: json["name"],
     color: colorValues.map[json["color"]]!,
     status: json["status"],
     createdId: json["created_id"],

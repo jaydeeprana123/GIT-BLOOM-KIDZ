@@ -82,6 +82,28 @@ class ObservationCard extends StatelessWidget {
           if ((observation.media ?? []).isNotEmpty) _image(context),
           _description(),
 
+          if ((observation.domain ?? []).isNotEmpty)
+            Wrap(
+              spacing: 6,
+              children: observation.domain!.map((d) {
+                final color = hexToColor(d.color ?? "#000000");
+
+                return Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    d.name ?? "",
+                    style: TextStyle(color: color, fontWeight: FontWeight.w600),
+                  ),
+                );
+              }).toList(),
+            ),
           _actions(context),
           _replyBox(context, observation.id.toString(), index),
         ],
