@@ -39,18 +39,66 @@ class AppDrawer extends StatelessWidget {
                     width: double.infinity,
                     child: Column(
                       children: [
-                        CircleAvatar(
-                          radius: 50,
-                          backgroundImage: NetworkImage(
-                            loginController
-                                    .loginResponse
-                                    .value
-                                    .data
-                                    ?.user
-                                    ?.profile ??
-                                "",
-                          ),
-                        ),
+                        (loginController
+                                        .loginResponse
+                                        .value
+                                        .data
+                                        ?.user
+                                        ?.profile ??
+                                    "")
+                                .isNotEmpty
+                            ? CircleAvatar(
+                                radius: 50,
+                                backgroundImage: NetworkImage(
+                                  loginController
+                                          .loginResponse
+                                          .value
+                                          .data
+                                          ?.user
+                                          ?.profile ??
+                                      "",
+                                ),
+                              )
+                            : Container(
+                                width: 100,
+                                height: 100,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  color: color_secondary,
+                                ),
+                                alignment: Alignment.center,
+                                child: Text(
+                                  (loginController
+                                                  .loginResponse
+                                                  .value
+                                                  .data
+                                                  ?.user
+                                                  ?.name !=
+                                              null &&
+                                          (loginController
+                                                      .loginResponse
+                                                      .value
+                                                      .data
+                                                      ?.user
+                                                      ?.name ??
+                                                  "")
+                                              .isNotEmpty)
+                                      ? (loginController
+                                                    .loginResponse
+                                                    .value
+                                                    .data
+                                                    ?.user
+                                                    ?.name ??
+                                                "")[0]
+                                            .toUpperCase()
+                                      : "",
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
 
                         SizedBox(height: 6),
                         BlackLargeBoldText(

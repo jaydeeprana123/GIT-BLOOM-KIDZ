@@ -78,10 +78,6 @@ class ContactCard extends StatelessWidget {
                     ),
                   ),
 
-            CircleAvatar(
-              radius: 22,
-              backgroundImage: NetworkImage(familyContact.imageUrl ?? ""),
-            ),
             const SizedBox(width: 10),
             Expanded(
               child: Column(
