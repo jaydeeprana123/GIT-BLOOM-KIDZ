@@ -4,9 +4,11 @@
 
 import 'dart:convert';
 
-PermissionsResponse permissionsResponseFromJson(String str) => PermissionsResponse.fromJson(json.decode(str));
+PermissionsResponse permissionsResponseFromJson(String str) =>
+    PermissionsResponse.fromJson(json.decode(str));
 
-String permissionsResponseToJson(PermissionsResponse data) => json.encode(data.toJson());
+String permissionsResponseToJson(PermissionsResponse data) =>
+    json.encode(data.toJson());
 
 class PermissionsResponse {
   bool? status;
@@ -14,19 +16,15 @@ class PermissionsResponse {
   int? code;
   Data? data;
 
-  PermissionsResponse({
-    this.status,
-    this.message,
-    this.code,
-    this.data,
-  });
+  PermissionsResponse({this.status, this.message, this.code, this.data});
 
-  factory PermissionsResponse.fromJson(Map<String, dynamic> json) => PermissionsResponse(
-    status: json["status"],
-    message: json["message"],
-    code: json["code"],
-    data: json["data"] == null ? null : Data.fromJson(json["data"]),
-  );
+  factory PermissionsResponse.fromJson(Map<String, dynamic> json) =>
+      PermissionsResponse(
+        status: json["status"],
+        message: json["message"],
+        code: json["code"],
+        data: json["data"] == null ? null : Data.fromJson(json["data"]),
+      );
 
   Map<String, dynamic> toJson() => {
     "status": status,
@@ -39,16 +37,20 @@ class PermissionsResponse {
 class Data {
   List<ChildPermission>? permissions;
 
-  Data({
-    this.permissions,
-  });
+  Data({this.permissions});
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
-    permissions: json["permissions"] == null ? [] : List<ChildPermission>.from(json["permissions"]!.map((x) => ChildPermission.fromJson(x))),
+    permissions: json["permissions"] == null
+        ? []
+        : List<ChildPermission>.from(
+            json["permissions"]!.map((x) => ChildPermission.fromJson(x)),
+          ),
   );
 
   Map<String, dynamic> toJson() => {
-    "permissions": permissions == null ? [] : List<dynamic>.from(permissions!.map((x) => x.toJson())),
+    "permissions": permissions == null
+        ? []
+        : List<dynamic>.from(permissions!.map((x) => x.toJson())),
   };
 }
 
@@ -57,7 +59,7 @@ class ChildPermission {
   String? name;
   String? description;
   String? selectedStatus;
-  SelectedLabel? selectedLabel;
+  String? selectedLabel;
 
   ChildPermission({
     this.permissionId,
@@ -67,41 +69,20 @@ class ChildPermission {
     this.selectedLabel,
   });
 
-  factory ChildPermission.fromJson(Map<String, dynamic> json) => ChildPermission(
-    permissionId: json["permission_id"],
-    name: json["name"],
-    description: json["description"],
-    selectedStatus: json["selected_status"],
-    selectedLabel: selectedLabelValues.map[json["selected_label"]]!,
-  );
+  factory ChildPermission.fromJson(Map<String, dynamic> json) =>
+      ChildPermission(
+        permissionId: json["permission_id"],
+        name: json["name"],
+        description: json["description"],
+        selectedStatus: json["selected_status"],
+        selectedLabel: json["selected_label"],
+      );
 
   Map<String, dynamic> toJson() => {
     "permission_id": permissionId,
     "name": name,
     "description": description,
     "selected_status": selectedStatus,
-    "selected_label": selectedLabelValues.reverse[selectedLabel],
+    "selected_label": selectedLabel,
   };
-}
-
-enum SelectedLabel {
-  NO,
-  YES
-}
-
-final selectedLabelValues = EnumValues({
-  "NO": SelectedLabel.NO,
-  "YES": SelectedLabel.YES
-});
-
-class EnumValues<T> {
-  Map<String, T> map;
-  late Map<T, String> reverseMap;
-
-  EnumValues(this.map);
-
-  Map<T, String> get reverse {
-    reverseMap = map.map((k, v) => MapEntry(v, k));
-    return reverseMap;
-  }
 }
