@@ -85,7 +85,7 @@ class Observation {
   String? mathematicsAssessmentAgeBand;
   String? uwAssessmentAgeBand;
   String? eadAssessmentAgeBand;
-  AddedBy? addedBy;
+  String? addedBy;
   DateTime? createdAt;
   CreatedBy? createdBy;
   List<Media>? media;
@@ -162,7 +162,7 @@ class Observation {
     mathematicsAssessmentAgeBand: json["mathematics_assessment_age_band"],
     uwAssessmentAgeBand: json["uw_assessment_age_band"],
     eadAssessmentAgeBand: json["ead_assessment_age_band"],
-    addedBy: addedByValues.map[json["added_by"]]!,
+    addedBy: json["added_by"],
     createdAt: json["created_at"] == null
         ? null
         : DateTime.parse(json["created_at"]),
@@ -212,7 +212,7 @@ class Observation {
     "mathematics_assessment_age_band": mathematicsAssessmentAgeBand,
     "uw_assessment_age_band": uwAssessmentAgeBand,
     "ead_assessment_age_band": eadAssessmentAgeBand,
-    "added_by": addedByValues.reverse[addedBy],
+    "added_by": addedBy,
     "created_at": createdAt?.toIso8601String(),
     "created_by": createdBy?.toJson(),
     "media": media == null
@@ -228,10 +228,6 @@ class Observation {
     "comments_count": commentsCount,
   };
 }
-
-enum AddedBy { ADMIN }
-
-final addedByValues = EnumValues({"admin": AddedBy.ADMIN});
 
 class CreatedBy {
   int? id;
@@ -333,7 +329,7 @@ class Media {
   int? id;
   int? masterId;
   String? image;
-  Extension? extension;
+  String? extension;
   String? size;
 
   Media({this.id, this.masterId, this.image, this.extension, this.size});
@@ -342,7 +338,7 @@ class Media {
     id: json["id"],
     masterId: json["master_id"],
     image: json["image"],
-    extension: extensionValues.map[json["extension"]]!,
+    extension: json["extension"],
     size: json["size"],
   );
 
@@ -350,14 +346,10 @@ class Media {
     "id": id,
     "master_id": masterId,
     "image": image,
-    "extension": extensionValues.reverse[extension],
+    "extension": extension,
     "size": size,
   };
 }
-
-enum Extension { JPEG }
-
-final extensionValues = EnumValues({"jpeg": Extension.JPEG});
 
 class SpecificArea {
   int? id;
@@ -401,16 +393,4 @@ class Pagination {
     "total": total,
     "has_more": hasMore,
   };
-}
-
-class EnumValues<T> {
-  Map<String, T> map;
-  late Map<T, String> reverseMap;
-
-  EnumValues(this.map);
-
-  Map<T, String> get reverse {
-    reverseMap = map.map((k, v) => MapEntry(v, k));
-    return reverseMap;
-  }
 }
