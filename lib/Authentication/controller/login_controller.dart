@@ -165,6 +165,7 @@ class LoginController extends GetxController {
             var sharedPref = MySharedPref();
             sharedPref.setBool(SharePreData.keyPinSet, true);
 
+            Get.offAll(BottomNavigationView(selectTabPosition: 0));
 
           } else {
             snackBar(context, loginResponse.value.message ?? "");
