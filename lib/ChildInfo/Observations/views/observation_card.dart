@@ -22,6 +22,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../CommonWidgets/blue_small_regular_text.dart';
 import '../../../NewsFeed/View/comment_list.dart';
@@ -247,20 +248,166 @@ class ObservationCard extends StatelessWidget {
 
   Widget _image(BuildContext context) {
     final mediaList = observation.media ?? [];
+    if (mediaList.isEmpty) return const SizedBox();
 
-    if (mediaList.isEmpty) {
-      return const SizedBox();
+    return Stack(
+      alignment: Alignment.bottomCenter,
+      children: [
+        SizedBox(
+          height: 300,
+          child: PageView.builder(
+            itemCount: mediaList.length,
+            onPageChanged: (page) {
+              childInfoController.updateImagePage(index, page);
+            },
+            itemBuilder: (context, i) {
+              final url = mediaList[i].image ?? "";
+              return _isImageUrl(url)
+                  ? _imageItem(context, url)
+                  : _attachmentItem(context, url);
+            },
+          ),
+        ),
+
+        if (mediaList.length > 1)
+          Obx(() {
+            final currentPage = childInfoController.imagePageMap[index] ?? 0;
+            return Container(
+              color: half_transparent,
+              padding: const EdgeInsets.only(bottom: 8, top: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(mediaList.length, (dotIndex) {
+                  final isActive = dotIndex == currentPage;
+                  return AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    margin: const EdgeInsets.symmetric(horizontal: 3),
+                    width: isActive ? 16 : 6,
+                    height: 6,
+                    decoration: BoxDecoration(
+                      color: isActive
+                          ? color_primary
+                          : Colors.white.withOpacity(0.7),
+                      borderRadius: BorderRadius.circular(3),
+                    ),
+                  );
+                }),
+              ),
+            );
+          }),
+      ],
+    );
+  }
+
+  // ── helpers ──────────────────────────────────────────────────────────────────
+
+  bool _isImageUrl(String url) {
+    final lower = url.toLowerCase().split('?').first; // strip query params
+    return lower.endsWith('.jpg') ||
+        lower.endsWith('.jpeg') ||
+        lower.endsWith('.png') ||
+        lower.endsWith('.gif') ||
+        lower.endsWith('.webp') ||
+        lower.endsWith('.bmp');
+  }
+
+  String _fileName(String url) {
+    try {
+      return Uri.parse(url).pathSegments.last;
+    } catch (_) {
+      return "Attachment";
     }
+  }
 
-    if (mediaList.length == 1) {
-      return _singleImage(context, mediaList[0]);
+  Widget _imageItem(BuildContext context, String url) {
+    return GestureDetector(
+      onTap: () => showFullImageDialog(context, url),
+      child: Image.network(
+        url,
+        fit: BoxFit.cover,
+        width: double.infinity,
+        cacheWidth: 1080,
+        errorBuilder: (_, __, ___) => Container(
+          color: Colors.grey[200],
+          child: const Icon(
+            Icons.broken_image_outlined,
+            color: Colors.grey,
+            size: 40,
+          ),
+        ),
+        loadingBuilder: (_, child, progress) {
+          if (progress == null) return child;
+          return Image.asset(placeholder);
+        },
+      ),
+    );
+  }
+
+  Widget _attachmentItem(BuildContext context, String url) {
+    final name = _fileName(url);
+    final isPdf = url.toLowerCase().split('?').first.endsWith('.pdf');
+
+    return GestureDetector(
+      onTap: () => _openAttachment(context, url),
+      child: Container(
+        width: double.infinity,
+        color: Colors.grey[100],
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              isPdf ? Icons.picture_as_pdf_rounded : Icons.attach_file_rounded,
+              size: 64,
+              color: isPdf ? Colors.red[400] : color_secondary,
+            ),
+            const SizedBox(height: 12),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Text(
+                name,
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.grey[800],
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+              decoration: BoxDecoration(
+                color: color_primary,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: const Text(
+                "Open",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _openAttachment(BuildContext context, String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Could not open attachment")),
+        );
+      }
     }
-
-    if (mediaList.length == 2) {
-      return _twoImages(context, mediaList);
-    }
-
-    return _multiImages(context, mediaList);
   }
 
   Widget _singleImage(BuildContext context, Media media) {
