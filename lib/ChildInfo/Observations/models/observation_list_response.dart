@@ -4,9 +4,11 @@
 
 import 'dart:convert';
 
-ObservationListResponse observationListResponseFromJson(String str) => ObservationListResponse.fromJson(json.decode(str));
+ObservationListResponse observationListResponseFromJson(String str) =>
+    ObservationListResponse.fromJson(json.decode(str));
 
-String observationListResponseToJson(ObservationListResponse data) => json.encode(data.toJson());
+String observationListResponseToJson(ObservationListResponse data) =>
+    json.encode(data.toJson());
 
 class ObservationListResponse {
   bool? status;
@@ -14,19 +16,15 @@ class ObservationListResponse {
   int? code;
   Data? data;
 
-  ObservationListResponse({
-    this.status,
-    this.message,
-    this.code,
-    this.data,
-  });
+  ObservationListResponse({this.status, this.message, this.code, this.data});
 
-  factory ObservationListResponse.fromJson(Map<String, dynamic> json) => ObservationListResponse(
-    status: json["status"],
-    message: json["message"],
-    code: json["code"],
-    data: json["data"] == null ? null : Data.fromJson(json["data"]),
-  );
+  factory ObservationListResponse.fromJson(Map<String, dynamic> json) =>
+      ObservationListResponse(
+        status: json["status"],
+        message: json["message"],
+        code: json["code"],
+        data: json["data"] == null ? null : Data.fromJson(json["data"]),
+      );
 
   Map<String, dynamic> toJson() => {
     "status": status,
@@ -40,18 +38,22 @@ class Data {
   List<Observation>? observations;
   Pagination? pagination;
 
-  Data({
-    this.observations,
-    this.pagination,
-  });
+  Data({this.observations, this.pagination});
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
-    observations: json["observations"] == null ? [] : List<Observation>.from(json["observations"]!.map((x) => Observation.fromJson(x))),
-    pagination: json["pagination"] == null ? null : Pagination.fromJson(json["pagination"]),
+    observations: json["observations"] == null
+        ? []
+        : List<Observation>.from(
+        json["observations"]!.map((x) => Observation.fromJson(x))),
+    pagination: json["pagination"] == null
+        ? null
+        : Pagination.fromJson(json["pagination"]),
   );
 
   Map<String, dynamic> toJson() => {
-    "observations": observations == null ? [] : List<dynamic>.from(observations!.map((x) => x.toJson())),
+    "observations": observations == null
+        ? []
+        : List<dynamic>.from(observations!.map((x) => x.toJson())),
     "pagination": pagination?.toJson(),
   };
 }
@@ -115,24 +117,47 @@ class Observation {
     title: json["title"],
     description: json["description"],
     observations: json["observations"],
-    childrenIds: json["children_ids"] == null ? [] : List<int>.from(json["children_ids"]!.map((x) => x)),
+    childrenIds: json["children_ids"] == null
+        ? []
+        : List<int>.from(json["children_ids"]!.map((x) => x)),
     childNames: json["child_names"],
     isGroupObs: json["is_group_obs"],
     isGroupLabel: json["is_group_label"],
-    domainIds: json["domain_ids"] == null ? [] : List<int>.from(json["domain_ids"]!.map((x) => x)),
-    domain: json["domain"] == null ? [] : List<Domain>.from(json["domain"]!.map((x) => Domain.fromJson(x))),
-    specificAreaIds: json["specific_area_ids"] == null ? [] : List<int>.from(json["specific_area_ids"]!.map((x) => x)),
-    specificAreas: json["specific_areas"] == null ? [] : List<SpecificArea>.from(json["specific_areas"]!.map((x) => SpecificArea.fromJson(x))),
+    domainIds: json["domain_ids"] == null
+        ? []
+        : List<int>.from(json["domain_ids"]!.map((x) => x)),
+    domain: json["domain"] == null
+        ? []
+        : List<Domain>.from(json["domain"]!.map((x) => Domain.fromJson(x))),
+    specificAreaIds: json["specific_area_ids"] == null
+        ? []
+        : List<int>.from(json["specific_area_ids"]!.map((x) => x)),
+    specificAreas: json["specific_areas"] == null
+        ? []
+        : List<SpecificArea>.from(
+        json["specific_areas"]!.map((x) => SpecificArea.fromJson(x))),
     obsType: json["obs_type"],
     obsTypeLabel: json["obs_type_label"],
-    typeData: json["type_data"] == null ? null : TypeData.fromJson(json["type_data"]),
+    typeData: json["type_data"] == null
+        ? null
+        : TypeData.fromJson(json["type_data"]),
     addedBy: json["added_by"],
-    createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
-    createdBy: json["created_by"] == null ? null : CreatedBy.fromJson(json["created_by"]),
-    media: json["media"] == null ? [] : List<Media>.from(json["media"]!.map((x) => Media.fromJson(x))),
-    likes: json["likes"] == null ? [] : List<Like>.from(json["likes"]!.map((x) => Like.fromJson(x))),
+    createdAt: json["created_at"] == null
+        ? null
+        : DateTime.parse(json["created_at"]),
+    createdBy: json["created_by"] == null
+        ? null
+        : CreatedBy.fromJson(json["created_by"]),
+    media: json["media"] == null
+        ? []
+        : List<Media>.from(json["media"]!.map((x) => Media.fromJson(x))),
+    likes: json["likes"] == null
+        ? []
+        : List<Like>.from(json["likes"]!.map((x) => Like.fromJson(x))),
     likesCount: json["likes_count"],
-    comments: json["comments"] == null ? [] : List<dynamic>.from(json["comments"]!.map((x) => x)),
+    comments: json["comments"] == null
+        ? []
+        : List<dynamic>.from(json["comments"]!.map((x) => x)),
     commentsCount: json["comments_count"],
   );
 
@@ -142,40 +167,50 @@ class Observation {
     "title": title,
     "description": description,
     "observations": observations,
-    "children_ids": childrenIds == null ? [] : List<dynamic>.from(childrenIds!.map((x) => x)),
+    "children_ids": childrenIds == null
+        ? []
+        : List<dynamic>.from(childrenIds!.map((x) => x)),
     "child_names": childNames,
     "is_group_obs": isGroupObs,
     "is_group_label": isGroupLabel,
-    "domain_ids": domainIds == null ? [] : List<dynamic>.from(domainIds!.map((x) => x)),
-    "domain": domain == null ? [] : List<dynamic>.from(domain!.map((x) => x.toJson())),
-    "specific_area_ids": specificAreaIds == null ? [] : List<dynamic>.from(specificAreaIds!.map((x) => x)),
-    "specific_areas": specificAreas == null ? [] : List<dynamic>.from(specificAreas!.map((x) => x.toJson())),
+    "domain_ids": domainIds == null
+        ? []
+        : List<dynamic>.from(domainIds!.map((x) => x)),
+    "domain": domain == null
+        ? []
+        : List<dynamic>.from(domain!.map((x) => x.toJson())),
+    "specific_area_ids": specificAreaIds == null
+        ? []
+        : List<dynamic>.from(specificAreaIds!.map((x) => x)),
+    "specific_areas": specificAreas == null
+        ? []
+        : List<dynamic>.from(specificAreas!.map((x) => x.toJson())),
     "obs_type": obsType,
     "obs_type_label": obsTypeLabel,
     "type_data": typeData?.toJson(),
     "added_by": addedBy,
     "created_at": createdAt?.toIso8601String(),
     "created_by": createdBy?.toJson(),
-    "media": media == null ? [] : List<dynamic>.from(media!.map((x) => x.toJson())),
-    "likes": likes == null ? [] : List<dynamic>.from(likes!.map((x) => x.toJson())),
+    "media": media == null
+        ? []
+        : List<dynamic>.from(media!.map((x) => x.toJson())),
+    "likes": likes == null
+        ? []
+        : List<dynamic>.from(likes!.map((x) => x.toJson())),
     "likes_count": likesCount,
-    "comments": comments == null ? [] : List<dynamic>.from(comments!.map((x) => x)),
+    "comments": comments == null
+        ? []
+        : List<dynamic>.from(comments!.map((x) => x)),
     "comments_count": commentsCount,
   };
 }
-
-
 
 class CreatedBy {
   int? id;
   String? name;
   dynamic profile;
 
-  CreatedBy({
-    this.id,
-    this.name,
-    this.profile,
-  });
+  CreatedBy({this.id, this.name, this.profile});
 
   factory CreatedBy.fromJson(Map<String, dynamic> json) => CreatedBy(
     id: json["id"],
@@ -189,7 +224,6 @@ class CreatedBy {
     "profile": profile,
   };
 }
-
 
 class Domain {
   int? id;
@@ -224,9 +258,13 @@ class Domain {
     color: json["color"],
     status: json["status"],
     createdId: json["created_id"],
-    createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
+    createdAt: json["created_at"] == null
+        ? null
+        : DateTime.parse(json["created_at"]),
     updatedId: json["updated_id"],
-    updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),
+    updatedAt: json["updated_at"] == null
+        ? null
+        : DateTime.parse(json["updated_at"]),
     deletedBy: json["deleted_by"],
     deletedAt: json["deleted_at"],
     deletedStatus: json["deleted_status"],
@@ -247,19 +285,13 @@ class Domain {
   };
 }
 
-
 class Like {
   int? id;
   int? masterId;
   int? userId;
   dynamic date;
 
-  Like({
-    this.id,
-    this.masterId,
-    this.userId,
-    this.date,
-  });
+  Like({this.id, this.masterId, this.userId, this.date});
 
   factory Like.fromJson(Map<String, dynamic> json) => Like(
     id: json["id"],
@@ -283,13 +315,7 @@ class Media {
   String? extension;
   String? size;
 
-  Media({
-    this.id,
-    this.masterId,
-    this.image,
-    this.extension,
-    this.size,
-  });
+  Media({this.id, this.masterId, this.image, this.extension, this.size});
 
   factory Media.fromJson(Map<String, dynamic> json) => Media(
     id: json["id"],
@@ -308,26 +334,21 @@ class Media {
   };
 }
 
-
 class SpecificArea {
   int? id;
   String? name;
 
-  SpecificArea({
-    this.id,
-    this.name,
-  });
+  SpecificArea({this.id, this.name});
 
-  factory SpecificArea.fromJson(Map<String, dynamic> json) => SpecificArea(
-    id: json["id"],
-    name: json["name"],
-  );
+  factory SpecificArea.fromJson(Map<String, dynamic> json) =>
+      SpecificArea(id: json["id"], name: json["name"]);
 
-  Map<String, dynamic> toJson() => {
-    "id": id,
-    "name": name,
-  };
+  Map<String, dynamic> toJson() => {"id": id, "name": name};
 }
+
+// ── TypeData ──────────────────────────────────────────────────────────────────
+// The `tabs` field is a dynamic map in JSON (keys vary by obs_type).
+// We store it as Map<String, String?> for easy lookup by key.
 
 class TypeData {
   String? observations;
@@ -336,21 +357,39 @@ class TypeData {
   dynamic assessmentTypeLabel;
   Areas? areas;
 
+  /// Holds tab values keyed by their JSON field name, e.g.:
+  ///   "playing_exploring", "active_learning", "creating_thinking",
+  ///   "context", "strengths", "activities_development",
+  ///   "agencies_info", "parent_comments"
+  Map<String, String?>? tabs;
+
   TypeData({
     this.observations,
     this.whatsNext,
     this.assessmentType,
     this.assessmentTypeLabel,
     this.areas,
+    this.tabs,
   });
 
-  factory TypeData.fromJson(Map<String, dynamic> json) => TypeData(
-    observations: json["observations"],
-    whatsNext: json["whats_next"],
-    assessmentType: json["assessment_type"],
-    assessmentTypeLabel: json["assessment_type_label"],
-    areas: json["areas"] == null ? null : Areas.fromJson(json["areas"]),
-  );
+  factory TypeData.fromJson(Map<String, dynamic> json) {
+    // Parse tabs map if present
+    Map<String, String?>? tabsMap;
+    if (json["tabs"] != null && json["tabs"] is Map) {
+      tabsMap = (json["tabs"] as Map<String, dynamic>).map(
+            (k, v) => MapEntry(k, v?.toString()),
+      );
+    }
+
+    return TypeData(
+      observations: json["observations"],
+      whatsNext: json["whats_next"],
+      assessmentType: json["assessment_type"],
+      assessmentTypeLabel: json["assessment_type_label"],
+      areas: json["areas"] == null ? null : Areas.fromJson(json["areas"]),
+      tabs: tabsMap,
+    );
+  }
 
   Map<String, dynamic> toJson() => {
     "observations": observations,
@@ -358,6 +397,7 @@ class TypeData {
     "assessment_type": assessmentType,
     "assessment_type_label": assessmentTypeLabel,
     "areas": areas?.toJson(),
+    "tabs": tabs,
   };
 }
 
@@ -381,13 +421,27 @@ class Areas {
   });
 
   factory Areas.fromJson(Map<String, dynamic> json) => Areas(
-    communicationLanguage: json["communication_language"] == null ? null : CommunicationLanguage.fromJson(json["communication_language"]),
-    psed: json["psed"] == null ? null : CommunicationLanguage.fromJson(json["psed"]),
-    physicalDevelopment: json["physical_development"] == null ? null : CommunicationLanguage.fromJson(json["physical_development"]),
-    literacy: json["literacy"] == null ? null : CommunicationLanguage.fromJson(json["literacy"]),
-    mathematics: json["mathematics"] == null ? null : CommunicationLanguage.fromJson(json["mathematics"]),
-    understandingWorld: json["understanding_world"] == null ? null : CommunicationLanguage.fromJson(json["understanding_world"]),
-    ead: json["ead"] == null ? null : CommunicationLanguage.fromJson(json["ead"]),
+    communicationLanguage: json["communication_language"] == null
+        ? null
+        : CommunicationLanguage.fromJson(json["communication_language"]),
+    psed: json["psed"] == null
+        ? null
+        : CommunicationLanguage.fromJson(json["psed"]),
+    physicalDevelopment: json["physical_development"] == null
+        ? null
+        : CommunicationLanguage.fromJson(json["physical_development"]),
+    literacy: json["literacy"] == null
+        ? null
+        : CommunicationLanguage.fromJson(json["literacy"]),
+    mathematics: json["mathematics"] == null
+        ? null
+        : CommunicationLanguage.fromJson(json["mathematics"]),
+    understandingWorld: json["understanding_world"] == null
+        ? null
+        : CommunicationLanguage.fromJson(json["understanding_world"]),
+    ead: json["ead"] == null
+        ? null
+        : CommunicationLanguage.fromJson(json["ead"]),
   );
 
   Map<String, dynamic> toJson() => {
@@ -407,19 +461,16 @@ class CommunicationLanguage {
   String? ageBand;
   String? ageBandLabel;
 
-  CommunicationLanguage({
-    this.text,
-    this.assessmentType,
-    this.ageBand,
-    this.ageBandLabel,
-  });
+  CommunicationLanguage(
+      {this.text, this.assessmentType, this.ageBand, this.ageBandLabel});
 
-  factory CommunicationLanguage.fromJson(Map<String, dynamic> json) => CommunicationLanguage(
-    text: json["text"],
-    assessmentType: json["assessment_type"],
-    ageBand: json["age_band"],
-    ageBandLabel: json["age_band_label"],
-  );
+  factory CommunicationLanguage.fromJson(Map<String, dynamic> json) =>
+      CommunicationLanguage(
+        text: json["text"],
+        assessmentType: json["assessment_type"],
+        ageBand: json["age_band"],
+        ageBandLabel: json["age_band_label"],
+      );
 
   Map<String, dynamic> toJson() => {
     "text": text,
@@ -436,13 +487,12 @@ class Pagination {
   int? total;
   bool? hasMore;
 
-  Pagination({
-    this.currentPage,
-    this.lastPage,
-    this.perPage,
-    this.total,
-    this.hasMore,
-  });
+  Pagination(
+      {this.currentPage,
+        this.lastPage,
+        this.perPage,
+        this.total,
+        this.hasMore});
 
   factory Pagination.fromJson(Map<String, dynamic> json) => Pagination(
     currentPage: json["current_page"],
@@ -460,5 +510,3 @@ class Pagination {
     "has_more": hasMore,
   };
 }
-
-

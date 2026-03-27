@@ -80,9 +80,24 @@ class ObservationCard extends StatelessWidget {
               ),
             ),
 
+
+
+          Container(
+            margin: EdgeInsets.symmetric(vertical: 4),
+            color: color_secondary,
+            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+            child: BlackMediumBoldText(
+              observation.obsTypeLabel ?? "",
+              color: Colors.white,
+            ),
+          ),
+
           _titleText(),
           if ((observation.media ?? []).isNotEmpty) _image(context),
           _description(),
+
+          // ── Type-specific fields ──────────────────────────────────────────
+          _typeSpecificFields(),
 
           _whatsNext(),
 
@@ -93,7 +108,7 @@ class ObservationCard extends StatelessWidget {
                 final color = hexToColor(d.color ?? "#000000");
 
                 return Container(
-                  margin: EdgeInsets.only(left: 16),
+                  margin: EdgeInsets.only(left: 16, bottom: 6),
                   padding: const EdgeInsets.symmetric(
                     horizontal: 8,
                     vertical: 4,
@@ -117,6 +132,241 @@ class ObservationCard extends StatelessWidget {
     );
   }
 
+  // ── Type-specific field builder ───────────────────────────────────────────
+
+  Widget _typeSpecificFields() {
+    final obsType = observation.obsType ?? "";
+    final typeData = observation.typeData;
+    if (typeData == null) return const SizedBox();
+
+    switch (obsType) {
+      case "O": // Observation – nothing extra beyond description + whatsNext
+        return const SizedBox();
+
+      case "A": // Assessment
+        return _assessmentFields(typeData);
+
+      case "TYPC": // Two years progress check
+        return _twoYearCheckFields(typeData);
+
+      case "SI": // Settling in
+        return _settlingInFields(typeData);
+
+      case "BA": // Baseline Assessment
+        return _baselineAssessmentFields(typeData);
+
+      default:
+        return const SizedBox();
+    }
+  }
+
+  // ── Assessment (A) ────────────────────────────────────────────────────────
+
+  Widget _assessmentFields(TypeData typeData) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _areaSection("Communication and Language", typeData.areas?.communicationLanguage),
+        _areaSection("Personal, Social and Emotional Development", typeData.areas?.psed),
+        _areaSection("Physical Development", typeData.areas?.physicalDevelopment),
+        _areaSection("Literacy", typeData.areas?.literacy),
+        _areaSection("Mathematics", typeData.areas?.mathematics),
+        _areaSection("Understanding the World", typeData.areas?.understandingWorld),
+        _areaSection("Expressive Arts and Design", typeData.areas?.ead),
+      ],
+    );
+  }
+
+  // ── Two Years Progress Check (TYPC) ───────────────────────────────────────
+
+  Widget _twoYearCheckFields(TypeData typeData) {
+    final tabs = typeData.tabs;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _areaSection("Communication and Language", typeData.areas?.communicationLanguage),
+        _areaSection("Personal, Social and Emotional Development", typeData.areas?.psed),
+        _areaSection("Physical Development", typeData.areas?.physicalDevelopment),
+        _areaSection("Literacy", typeData.areas?.literacy),
+        _areaSection("Mathematics", typeData.areas?.mathematics),
+        _areaSection("Understanding the World", typeData.areas?.understandingWorld),
+        _areaSection("Expressive Arts and Design", typeData.areas?.ead),
+        if (tabs != null) ...[
+          _tabField("Playing & Exploring", tabs["playing_exploring"]),
+          _tabField("Active Learning", tabs["active_learning"]),
+          _tabField("Creating & Thinking Critically", tabs["creating_thinking"]),
+          _tabField("Child's Strengths & Interests", tabs["strengths"]),
+          _tabField("Activities & Strategies", tabs["activities_development"]),
+          _tabField("Info from Other Agencies", tabs["agencies_info"]),
+          _tabField("Parent/Carer Comments", tabs["parent_comments"]),
+        ],
+      ],
+    );
+  }
+
+  // ── Settling In (SI) ──────────────────────────────────────────────────────
+
+  Widget _settlingInFields(TypeData typeData) {
+    final tabs = typeData.tabs;
+    if (tabs == null) return const SizedBox();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _tabField("Playing & Exploring", tabs["playing_exploring"]),
+        _tabField("Active Learning", tabs["active_learning"]),
+        _tabField("Creating & Thinking Critically", tabs["creating_thinking"]),
+        _tabField("Context", tabs["context"]),
+      ],
+    );
+  }
+
+  // ── Baseline Assessment (BA) ──────────────────────────────────────────────
+
+  Widget _baselineAssessmentFields(TypeData typeData) {
+    final tabs = typeData.tabs;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _areaSection("Communication and Language", typeData.areas?.communicationLanguage),
+        _areaSection("Personal, Social and Emotional Development", typeData.areas?.psed),
+        _areaSection("Physical Development", typeData.areas?.physicalDevelopment),
+        _areaSection("Literacy", typeData.areas?.literacy),
+        _areaSection("Mathematics", typeData.areas?.mathematics),
+        _areaSection("Understanding the World", typeData.areas?.understandingWorld),
+        _areaSection("Expressive Arts and Design", typeData.areas?.ead),
+        if (tabs != null) ...[
+          _tabField("Playing & Exploring", tabs["playing_exploring"]),
+          _tabField("Active Learning", tabs["active_learning"]),
+          _tabField("Creating & Thinking Critically", tabs["creating_thinking"]),
+        ],
+      ],
+    );
+  }
+
+  // ── Shared helpers ────────────────────────────────────────────────────────
+
+  /// Renders a development area block (assessment_type + age_band + text).
+  Widget _areaSection(String title, CommunicationLanguage? area) {
+    if (area == null) return const SizedBox();
+    final hasText = (area.text ?? "").trim().isNotEmpty;
+    final hasAssessment = (area.assessmentType ?? "").trim().isNotEmpty;
+    final hasAgeBand = (area.ageBandLabel ?? "").trim().isNotEmpty;
+    if (!hasText && !hasAssessment && !hasAgeBand) return const SizedBox();
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade50,
+        border: Border.all(color: Colors.grey.shade200),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Section title
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              color: color_secondary,
+            ),
+          ),
+          const SizedBox(height: 6),
+
+          // Assessment type row
+          if (hasAssessment) ...[
+            _labelValue("Assessment", area.assessmentType ?? ""),
+            const SizedBox(height: 4),
+          ],
+
+          // Age band row
+          if (hasAgeBand) ...[
+            _labelValue("Age Band", area.ageBandLabel ?? ""),
+            const SizedBox(height: 4),
+          ],
+
+          // Reflections / text
+          if (hasText) ...[
+            Text(
+              "Reflections",
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: Colors.grey.shade600,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              area.text ?? "",
+              style: const TextStyle(fontSize: 13, color: text_color),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  /// Renders a tab field (e.g. Playing & Exploring).
+  Widget _tabField(String label, dynamic value) {
+    final text = (value ?? "").toString().trim();
+    if (text.isEmpty) return const SizedBox();
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade50,
+        border: Border.all(color: Colors.grey.shade200),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              color: color_secondary,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            text,
+            style: const TextStyle(fontSize: 13, color: text_color),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Inline label + value row.
+  Widget _labelValue(String label, String value) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "$label: ",
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: Colors.grey.shade600,
+          ),
+        ),
+        Expanded(
+          child: Text(
+            value,
+            style: const TextStyle(fontSize: 12, color: text_color),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // ── Existing widget methods (unchanged) ───────────────────────────────────
+
   Widget _header(BuildContext context) {
     return Padding(
       padding: EdgeInsets.all(12),
@@ -124,38 +374,38 @@ class ObservationCard extends StatelessWidget {
         children: [
           /// Avatar
           (observation.createdBy?.profile != null &&
-                  (observation.createdBy?.profile ?? "").isNotEmpty)
+              (observation.createdBy?.profile ?? "").isNotEmpty)
               ? Container(
-                  width: 70,
-                  height: 70,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    image: DecorationImage(
-                      image: NetworkImage(observation.createdBy?.profile ?? ""),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                )
+            width: 70,
+            height: 70,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              image: DecorationImage(
+                image: NetworkImage(observation.createdBy?.profile ?? ""),
+                fit: BoxFit.cover,
+              ),
+            ),
+          )
               : Container(
-                  width: 70,
-                  height: 70,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    color: color_secondary,
-                  ),
-                  alignment: Alignment.center,
-                  child: Text(
-                    (observation.createdBy != null &&
-                            (observation.createdBy?.name ?? "").isNotEmpty)
-                        ? (observation.createdBy?.name ?? "")[0].toUpperCase()
-                        : "",
-                    style: const TextStyle(
-                      fontSize: 38,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
+            width: 70,
+            height: 70,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              color: color_secondary,
+            ),
+            alignment: Alignment.center,
+            child: Text(
+              (observation.createdBy != null &&
+                  (observation.createdBy?.name ?? "").isNotEmpty)
+                  ? (observation.createdBy?.name ?? "")[0].toUpperCase()
+                  : "",
+              style: const TextStyle(
+                fontSize: 38,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ),
 
           const SizedBox(width: 10),
 
@@ -179,7 +429,7 @@ class ObservationCard extends StatelessWidget {
                     BlueSmallRegularText(
                       observation.createdAt != null
                           ? '${observation.createdAt?.hour.toString().padLeft(2, '0')}:'
-                                '${observation.createdAt?.minute.toString().padLeft(2, '0')}'
+                          '${observation.createdAt?.minute.toString().padLeft(2, '0')}'
                           : '',
                     ),
 
@@ -189,8 +439,8 @@ class ObservationCard extends StatelessWidget {
                     BlueSmallRegularText(
                       observation.createdAt != null
                           ? '${observation.createdAt?.day.toString().padLeft(2, '0')}-'
-                                '${observation.createdAt?.month.toString().padLeft(2, '0')}-'
-                                '${observation.createdAt?.year} • '
+                          '${observation.createdAt?.month.toString().padLeft(2, '0')}-'
+                          '${observation.createdAt?.year} • '
                           : '',
                     ),
                   ],
@@ -210,28 +460,6 @@ class ObservationCard extends StatelessWidget {
                   childInfoController,
                 );
                 printData("update", "val");
-                // PopupMenuButton<int>(
-                //   icon: const Icon(Icons.more_vert),
-                //   onSelected: (value) {
-                //     switch (value) {
-                //       case 1:
-                //         childInfoController.selectedObservation.value =
-                //             observation;
-                //
-                //
-                //
-                //         Get.to(ObservationUpdateScreen(childId: childId));
-                //         break;
-                //     }
-                //   },
-                //   itemBuilder: (context) => [
-                //     const PopupMenuItem(value: 1, child: Text("Edit")),
-                //     // const PopupMenuItem(
-                //     //   value: 2,
-                //     //   child: Text("Delete"),
-                //     // ),
-                //   ],
-                // );
               },
               child: const Icon(Icons.more_vert),
             ),
@@ -300,10 +528,8 @@ class ObservationCard extends StatelessWidget {
     );
   }
 
-  // ── helpers ──────────────────────────────────────────────────────────────────
-
   bool _isImageUrl(String url) {
-    final lower = url.toLowerCase().split('?').first; // strip query params
+    final lower = url.toLowerCase().split('?').first;
     return lower.endsWith('.jpg') ||
         lower.endsWith('.jpeg') ||
         lower.endsWith('.png') ||
@@ -450,7 +676,8 @@ class ObservationCard extends StatelessWidget {
                     height: 200,
                     width: double.infinity,
                     placeholder: (context, url) => Image.asset(placeholder),
-                    errorWidget: (context, url, error) => Image.asset(placeholder),
+                    errorWidget: (context, url, error) =>
+                        Image.asset(placeholder),
                   ),
                 ),
               ),
@@ -466,12 +693,8 @@ class ObservationCard extends StatelessWidget {
       height: 200,
       child: Row(
         children: [
-          /// Left Big Image
           Expanded(flex: 2, child: _gridImage(context, mediaList[0])),
-
           const SizedBox(width: 8),
-
-          /// Right Column
           Expanded(
             flex: 1,
             child: Column(
@@ -495,7 +718,6 @@ class ObservationCard extends StatelessWidget {
                     child: Stack(
                       children: [
                         _gridImage(context, mediaList[2]),
-
                         if (mediaList.length > 3)
                           Container(
                             decoration: BoxDecoration(
@@ -561,40 +783,34 @@ class ObservationCard extends StatelessWidget {
             tagsToExtend: {"img"},
             builder: (context) {
               final src = context.attributes['src'] ?? '';
-
               if (src.startsWith('data:image')) {
                 try {
                   final base64Str = src.split(',').last;
                   final bytes = base64Decode(base64Str);
-
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: Image.memory(
                       bytes,
                       fit: BoxFit.contain,
-                      errorBuilder: (context, error, stackTrace) {
-                        return const SizedBox();
-                      },
+                      errorBuilder: (context, error, stackTrace) =>
+                      const SizedBox(),
                     ),
                   );
                 } catch (e) {
                   return const SizedBox();
                 }
               }
-
               if (src.isNotEmpty && !src.startsWith('data:')) {
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: Image.network(
                     src,
                     fit: BoxFit.contain,
-                    errorBuilder: (context, error, stackTrace) {
-                      return const SizedBox();
-                    },
+                    errorBuilder: (context, error, stackTrace) =>
+                    const SizedBox(),
                   ),
                 );
               }
-
               return const SizedBox();
             },
           ),
@@ -610,56 +826,65 @@ class ObservationCard extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12),
-      child: Html(
-        data: _sanitizeHtml(observation.typeData?.whatsNext ?? ""),
-        style: {
-          "*": Style(
-            fontSize: FontSize(13),
-            color: text_color,
-            lineHeight: LineHeight(1.4),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 6),
+          Text(
+            "What's Next?",
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              color: color_secondary,
+            ),
           ),
-        },
-        extensions: [
-          TagExtension(
-            tagsToExtend: {"img"},
-            builder: (context) {
-              final src = context.attributes['src'] ?? '';
-
-              if (src.startsWith('data:image')) {
-                try {
-                  final base64Str = src.split(',').last;
-                  final bytes = base64Decode(base64Str);
-
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Image.memory(
-                      bytes,
-                      fit: BoxFit.contain,
-                      errorBuilder: (context, error, stackTrace) {
-                        return const SizedBox();
-                      },
-                    ),
-                  );
-                } catch (e) {
-                  return const SizedBox();
-                }
-              }
-
-              if (src.isNotEmpty && !src.startsWith('data:')) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Image.network(
-                    src,
-                    fit: BoxFit.contain,
-                    errorBuilder: (context, error, stackTrace) {
-                      return const SizedBox();
-                    },
-                  ),
-                );
-              }
-
-              return const SizedBox();
+          const SizedBox(height: 2),
+          Html(
+            data: _sanitizeHtml(observation.typeData?.whatsNext ?? ""),
+            style: {
+              "*": Style(
+                fontSize: FontSize(13),
+                color: text_color,
+                lineHeight: LineHeight(1.4),
+              ),
             },
+            extensions: [
+              TagExtension(
+                tagsToExtend: {"img"},
+                builder: (context) {
+                  final src = context.attributes['src'] ?? '';
+                  if (src.startsWith('data:image')) {
+                    try {
+                      final base64Str = src.split(',').last;
+                      final bytes = base64Decode(base64Str);
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Image.memory(
+                          bytes,
+                          fit: BoxFit.contain,
+                          errorBuilder: (context, error, stackTrace) =>
+                          const SizedBox(),
+                        ),
+                      );
+                    } catch (e) {
+                      return const SizedBox();
+                    }
+                  }
+                  if (src.isNotEmpty && !src.startsWith('data:')) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: Image.network(
+                        src,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) =>
+                        const SizedBox(),
+                      ),
+                    );
+                  }
+                  return const SizedBox();
+                },
+              ),
+            ],
           ),
         ],
       ),
@@ -667,23 +892,17 @@ class ObservationCard extends StatelessWidget {
   }
 
   String _sanitizeHtml(String html) {
-    // Remove problematic inline styles that contain font-feature-settings
     html = html.replaceAllMapped(
       RegExp(r'font-feature-settings:[^;}"]*', caseSensitive: false),
-      (match) => '',
+          (match) => '',
     );
-
-    // Remove font-variant-* properties that might cause issues
     html = html.replaceAllMapped(
       RegExp(r'font-variant-[^:]*:[^;}"]*', caseSensitive: false),
-      (match) => '',
+          (match) => '',
     );
-
-    // Clean up any double semicolons or style attributes that are now empty
     html = html.replaceAll(';;', ';');
     html = html.replaceAll('style=""', '');
     html = html.replaceAll('style=" "', '');
-
     return html;
   }
 
@@ -705,17 +924,6 @@ class ObservationCard extends StatelessWidget {
               isLikeOrNot() ? icon_like : unlike,
               width: 16,
             ),
-
-            // Icon(
-            //   (childInfoController.observationList[index].isLike ?? false)
-            //       ? Icons.favorite
-            //       : Icons.favorite_border,
-            //   color:
-            //       (childInfoController.observationList[index].isLike ?? false)
-            //       ? Colors.red
-            //       : color_secondary,
-            //   size: 16,
-            // ),
           ),
           SizedBox(width: 4),
           BlueMediumRegularText((observation.likesCount ?? 0).toString()),
@@ -730,15 +938,12 @@ class ObservationCard extends StatelessWidget {
                 ),
               )?.then((value) {
                 childInfoController.pageNumberObservation = 1;
-
                 childInfoController.callObservationListAPI(context, childId);
               });
             },
             child: Row(
               children: [
                 SvgPicture.asset(icon_comment, width: 16),
-
-                // Icon(Icons.chat, size: 16, color: color_secondary),
                 SizedBox(width: 4),
                 BlueMediumRegularText(
                   (observation.commentsCount ?? 0).toString(),
@@ -790,12 +995,12 @@ class ObservationCard extends StatelessWidget {
   }
 
   void showUpdateDialog(
-    BuildContext context,
-    String childId,
-    String id,
-    Observation observation,
-    ChildInfoController controller,
-  ) {
+      BuildContext context,
+      String childId,
+      String id,
+      Observation observation,
+      ChildInfoController controller,
+      ) {
     showDialog(
       context: context,
       builder: (context) {
@@ -813,10 +1018,7 @@ class ObservationCard extends StatelessWidget {
                   fontSize: 16,
                   color: color_secondary,
                 ),
-
                 const SizedBox(height: 16),
-
-                /// ✏️ Update
                 ListTile(
                   leading: const Icon(Icons.edit_note, color: color_secondary),
                   title: BlueMediumBoldText("Update"),
@@ -824,41 +1026,13 @@ class ObservationCard extends StatelessWidget {
                     controller.selectedObservation.value = observation;
                     Navigator.pop(context);
                     Get.to(ObservationUpdateScreen(childId: childId))?.then((
-                      value,
-                    ) {
+                        value,
+                        ) {
                       childInfoController.pageNumberObservation = 1;
                       controller.callObservationListAPI(context, childId);
                     });
                   },
                 ),
-
-                // const Divider(),
-                //
-                // /// 🗑 Delete
-                // ListTile(
-                //   leading: const Icon(Icons.delete_forever, color: Colors.red),
-                //   title: const Text(
-                //     "Delete",
-                //     style: TextStyle(
-                //       color: Colors.red,
-                //       fontWeight: FontWeight.w600,
-                //     ),
-                //   ),
-                //   onTap: () {
-                //     Navigator.pop(context);
-                //
-                //     showDeleteWarningDialog(
-                //       context,
-                //       onConfirm: () {
-                //         controller.callDeleteExtraBookingsAPI(
-                //           context,
-                //           childId,
-                //           id,
-                //         );
-                //       },
-                //     );
-                //   },
-                // ),
               ],
             ),
           ),
@@ -870,11 +1044,11 @@ class ObservationCard extends StatelessWidget {
   bool isLikeOrNot() {
     bool isLikedByMe =
         observation.likes?.any(
-          (like) =>
-              like.userId ==
+              (like) =>
+          like.userId ==
               childInfoController.loginResponse.value.data?.user?.id,
         ) ??
-        false;
+            false;
     return isLikedByMe;
   }
 }
@@ -898,7 +1072,6 @@ class AllImagesScreenForObservation extends StatelessWidget {
         ),
         itemBuilder: (context, index) {
           final media = mediaList[index];
-
           return GestureDetector(
             onTap: () {
               showFullImageDialog(context, mediaList[index].image ?? "");
