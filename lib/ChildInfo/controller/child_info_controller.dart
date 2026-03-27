@@ -155,6 +155,13 @@ class ChildInfoController extends GetxController {
   Rx<TextEditingController> additionalNotesController =
       TextEditingController().obs;
 
+  // Tracks current page index per news card
+  final RxMap<int, int> imagePageMap = <int, int>{}.obs;
+
+  void updateImagePage(int cardIndex, int page) {
+    imagePageMap[cardIndex] = page;
+  }
+
   /// Load from API response
   void setActivities(ActivityResponseForSelect response) {
     activityListForSelect.value = response.data?.activities ?? [];

@@ -34,6 +34,13 @@ class NewsFeedController extends GetxController {
   RxList<bool> isLikeList = <bool>[].obs;
   RxBool isNewAddedObservationLoading = false.obs;
 
+  // Tracks current page index per news card
+  final RxMap<int, int> imagePageMap = <int, int>{}.obs;
+
+  void updateImagePage(int cardIndex, int page) {
+    imagePageMap[cardIndex] = page;
+  }
+
   getUserInfo() async {
     /// Set login model into shared preference
     loginResponse.value =

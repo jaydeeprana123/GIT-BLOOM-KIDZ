@@ -18,6 +18,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../CommonWidgets/black_medium_bold_text.dart';
 import '../../CommonWidgets/black_medium_regular_text.dart';
@@ -215,20 +216,221 @@ class NewsFeedCard extends StatelessWidget {
 
   Widget _image(BuildContext context) {
     final mediaList = newsFeed.media ?? [];
+    if (mediaList.isEmpty) return const SizedBox();
 
-    if (mediaList.isEmpty) {
-      return const SizedBox();
+    return Stack(
+      alignment: Alignment.bottomCenter,
+      children: [
+        SizedBox(
+          height: 300,
+          child: PageView.builder(
+            itemCount: mediaList.length,
+            onPageChanged: (page) {
+              newsFeedController.updateImagePage(index, page);
+            },
+            itemBuilder: (context, i) {
+              final url = mediaList[i].file ?? "";
+              return _isImageUrl(url)
+                  ? _imageItem(context, url)
+                  : _attachmentItem(context, url);
+            },
+          ),
+        ),
+
+        if (mediaList.length > 1)
+          Obx(() {
+            final currentPage = newsFeedController.imagePageMap[index] ?? 0;
+            return Container(
+              color: half_transparent,
+              padding: const EdgeInsets.only(bottom: 8, top: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(mediaList.length, (dotIndex) {
+                  final isActive = dotIndex == currentPage;
+                  return AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    margin: const EdgeInsets.symmetric(horizontal: 3),
+                    width: isActive ? 16 : 6,
+                    height: 6,
+                    decoration: BoxDecoration(
+                      color: isActive
+                          ? color_primary
+                          : Colors.white.withOpacity(0.7),
+                      borderRadius: BorderRadius.circular(3),
+                    ),
+                  );
+                }),
+              ),
+            );
+          }),
+      ],
+    );
+  }
+
+  // ── helpers ──────────────────────────────────────────────────────────────────
+
+  bool _isImageUrl(String url) {
+    final lower = url.toLowerCase().split('?').first; // strip query params
+    return lower.endsWith('.jpg') ||
+        lower.endsWith('.jpeg') ||
+        lower.endsWith('.png') ||
+        lower.endsWith('.gif') ||
+        lower.endsWith('.webp') ||
+        lower.endsWith('.bmp');
+  }
+
+  String _fileName(String url) {
+    try {
+      return Uri.parse(url).pathSegments.last;
+    } catch (_) {
+      return "Attachment";
     }
+  }
 
-    if (mediaList.length == 1) {
-      return _singleImage(context, mediaList[0]);
+  Widget _imageItem(BuildContext context, String url) {
+    return GestureDetector(
+      onTap: () => showFullImageDialog(context, url),
+      child: Image.network(
+        url,
+        fit: BoxFit.cover,
+        width: double.infinity,
+        cacheWidth: 1080,
+        errorBuilder: (_, __, ___) => Container(
+          color: Colors.grey[200],
+          child: const Icon(
+            Icons.broken_image_outlined,
+            color: Colors.grey,
+            size: 40,
+          ),
+        ),
+        loadingBuilder: (_, child, progress) {
+          if (progress == null) return child;
+          return Image.asset(placeholder);
+        },
+      ),
+    );
+  }
+
+  Widget _attachmentItem(BuildContext context, String url) {
+    final name = _fileName(url);
+    final isPdf = url.toLowerCase().split('?').first.endsWith('.pdf');
+
+    return GestureDetector(
+      onTap: () => _openAttachment(context, url),
+      child: Container(
+        width: double.infinity,
+        color: Colors.grey[100],
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              isPdf ? Icons.picture_as_pdf_rounded : Icons.attach_file_rounded,
+              size: 64,
+              color: isPdf ? Colors.red[400] : color_secondary,
+            ),
+            const SizedBox(height: 12),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Text(
+                name,
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.grey[800],
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+              decoration: BoxDecoration(
+                color: color_primary,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: const Text(
+                "Open",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _openAttachment(BuildContext context, String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Could not open attachment")),
+        );
+      }
     }
+  }
 
-    if (mediaList.length == 2) {
-      return _twoImages(context, mediaList);
-    }
+  Widget _multiImages(BuildContext context, List<Media> mediaList) {
+    // Show first row: left big + right column of 2
+    // Then all remaining images below in a grid
 
-    return _multiImages(context, mediaList);
+    return Column(
+      children: [
+        // --- Row 1: first 3 images in the original layout ---
+        SizedBox(
+          height: 200,
+          child: Row(
+            children: [
+              Expanded(flex: 2, child: _gridImage(context, mediaList[0])),
+              const SizedBox(width: 8),
+              Expanded(
+                flex: 1,
+                child: Column(
+                  children: [
+                    Expanded(child: _gridImage(context, mediaList[1])),
+                    const SizedBox(height: 8),
+                    Expanded(child: _gridImage(context, mediaList[2])),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        // --- Remaining images (index 3 onwards) in a grid ---
+        if (mediaList.length > 3) ...[
+          const SizedBox(height: 8),
+          _remainingImagesGrid(context, mediaList.sublist(3)),
+        ],
+      ],
+    );
+  }
+
+  Widget _remainingImagesGrid(BuildContext context, List<Media> remaining) {
+    return GridView.builder(
+      shrinkWrap: true,
+      // IMPORTANT: disable GridView's own scrolling so it doesn't
+      // conflict with the parent SingleChildScrollView / ListView
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: remaining.length,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        crossAxisSpacing: 8,
+        mainAxisSpacing: 8,
+        childAspectRatio: 1,
+      ),
+      itemBuilder: (context, index) {
+        return _gridImage(context, remaining[index]);
+      },
+    );
   }
 
   Widget _singleImage(BuildContext context, Media media) {
@@ -287,69 +489,6 @@ class NewsFeedCard extends StatelessWidget {
             ),
           );
         }).toList(),
-      ),
-    );
-  }
-
-  Widget _multiImages(BuildContext context, List<Media> mediaList) {
-    return SizedBox(
-      height: 200,
-      child: Row(
-        children: [
-          /// Left Big Image
-          Expanded(flex: 2, child: _gridImage(context, mediaList[0])),
-
-          const SizedBox(width: 8),
-
-          /// Right Column
-          Expanded(
-            flex: 1,
-            child: Column(
-              children: [
-                Expanded(child: _gridImage(context, mediaList[1])),
-                const SizedBox(height: 8),
-                Expanded(
-                  child: InkWell(
-                    onTap: () {
-                      if (mediaList.length > 3) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => AllImagesScreenForNewsFeed(
-                              mediaList: mediaList,
-                            ),
-                          ),
-                        );
-                      }
-                    },
-                    child: Stack(
-                      children: [
-                        _gridImage(context, mediaList[2]),
-
-                        if (mediaList.length > 3)
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Colors.black.withOpacity(0.5),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            alignment: Alignment.center,
-                            child: Text(
-                              "+${mediaList.length - 3}",
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -566,6 +705,12 @@ class AllImagesScreenForNewsFeed extends StatelessWidget {
       body: GridView.builder(
         padding: const EdgeInsets.all(12),
         itemCount: mediaList.length,
+
+        // FIX 1: addRepaintBoundaries + addAutomaticKeepAlives = false
+        // prevents Flutter from keeping all decoded images in memory at once
+        addRepaintBoundaries: true,
+        addAutomaticKeepAlives: false,
+
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 3,
           crossAxisSpacing: 8,
@@ -573,18 +718,21 @@ class AllImagesScreenForNewsFeed extends StatelessWidget {
         ),
         itemBuilder: (context, index) {
           final media = mediaList[index];
+          final url = media.file ?? "";
+
+          if (url.isEmpty) return const SizedBox();
 
           return GestureDetector(
-            onTap: () {
-              showFullImageDialog(context, mediaList[index].file ?? "");
-            },
+            onTap: () => showFullImageDialog(context, url),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10),
+
               child: CachedNetworkImage(
                 imageUrl: media.file ?? "",
                 fit: BoxFit.cover,
                 placeholder: (context, url) => Image.asset(placeholder),
                 errorWidget: (context, url, error) => Image.asset(placeholder),
+
               ),
 
               // FadeInImage.assetNetwork(
