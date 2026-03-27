@@ -16,6 +16,7 @@ import 'package:bloom_kidz/NewsFeed/models/news_feed_response.dart' hide Media;
 import 'package:bloom_kidz/Styles/my_colors.dart';
 import 'package:bloom_kidz/Styles/my_font.dart';
 import 'package:bloom_kidz/Styles/my_icons.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_svg/svg.dart';
@@ -271,12 +272,13 @@ class ObservationCard extends StatelessWidget {
         child: SizedBox(
           height: 200,
           width: double.infinity,
-          child: FadeInImage.assetNetwork(
-            placeholder: placeholder,
-            image: media.image ?? "",
+          child: CachedNetworkImage(
+            imageUrl: media.image ?? "",
             fit: BoxFit.cover,
             height: 200,
             width: double.infinity,
+            placeholder: (context, url) => Image.asset(placeholder),
+            errorWidget: (context, url, error) => Image.asset(placeholder),
           ),
         ),
       ),
@@ -295,12 +297,13 @@ class ObservationCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
                 child: GestureDetector(
                   onTap: () => showFullImageDialog(context, media.image ?? ""),
-                  child: FadeInImage.assetNetwork(
-                    placeholder: placeholder,
-                    image: media.image ?? "",
+                  child: CachedNetworkImage(
+                    imageUrl: media.image ?? "",
                     fit: BoxFit.cover,
                     height: 200,
                     width: double.infinity,
+                    placeholder: (context, url) => Image.asset(placeholder),
+                    errorWidget: (context, url, error) => Image.asset(placeholder),
                   ),
                 ),
               ),
@@ -379,11 +382,12 @@ class ObservationCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(12),
       child: GestureDetector(
         onTap: () => showFullImageDialog(context, media.image ?? ""),
-        child: FadeInImage.assetNetwork(
-          placeholder: placeholder,
-          image: media.image ?? "",
+        child: CachedNetworkImage(
+          imageUrl: media.image ?? "",
           fit: BoxFit.cover,
           width: double.infinity,
+          placeholder: (context, url) => Image.asset(placeholder),
+          errorWidget: (context, url, error) => Image.asset(placeholder),
         ),
       ),
     );
@@ -453,14 +457,14 @@ class ObservationCard extends StatelessWidget {
   }
 
   Widget _whatsNext() {
-    if ((observation.whatsNext ?? "").isEmpty) {
+    if ((observation.typeData?.whatsNext ?? "").isEmpty) {
       return const SizedBox();
     }
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Html(
-        data: _sanitizeHtml(observation.whatsNext ?? ""),
+        data: _sanitizeHtml(observation.typeData?.whatsNext ?? ""),
         style: {
           "*": Style(
             fontSize: FontSize(13),
@@ -754,10 +758,11 @@ class AllImagesScreenForObservation extends StatelessWidget {
             },
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10),
-              child: FadeInImage.assetNetwork(
-                placeholder: placeholder,
-                image: media.image ?? "",
+              child: CachedNetworkImage(
+                imageUrl: media.image ?? "",
                 fit: BoxFit.cover,
+                placeholder: (context, url) => Image.asset(placeholder),
+                errorWidget: (context, url, error) => Image.asset(placeholder),
               ),
             ),
           );

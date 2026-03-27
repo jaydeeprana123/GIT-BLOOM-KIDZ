@@ -205,10 +205,21 @@ createdDateConverted(String originalDate) {
   return result;
 }
 
-getTimeInAmPM(DateTime dateTime) {
-  String result = "";
-  result = DateFormat("hh:mm a").format(dateTime);
-  return result;
+String getTimeInAmPM(DateTime dateTime) {
+  final now = DateTime.now();
+  final today = DateTime(now.year, now.month, now.day);
+  final messageDate = DateTime(dateTime.year, dateTime.month, dateTime.day);
+
+  if (messageDate == today) {
+    // Today
+    return DateFormat("hh:mm a").format(dateTime);
+  } else if (messageDate == today.subtract(const Duration(days: 1))) {
+    // Yesterday
+    return "Yesterday, ${DateFormat("hh:mm a").format(dateTime)}";
+  } else {
+    // Older dates
+    return DateFormat("dd MMM, hh:mm a").format(dateTime);
+  }
 }
 
 getDateOnly(String originalDate) {

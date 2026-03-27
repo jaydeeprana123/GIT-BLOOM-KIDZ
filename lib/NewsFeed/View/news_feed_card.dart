@@ -11,6 +11,7 @@ import 'package:bloom_kidz/NewsFeed/models/news_feed_response.dart';
 import 'package:bloom_kidz/Styles/my_colors.dart';
 import 'package:bloom_kidz/Styles/my_font.dart';
 import 'package:bloom_kidz/Styles/my_icons.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -140,7 +141,6 @@ class NewsFeedCard extends StatelessWidget {
                     image: DecorationImage(
                       image: NetworkImage(newsFeed.createdId?.profile ?? ""),
                       fit: BoxFit.cover,
-
                     ),
                   ),
                 )
@@ -239,13 +239,24 @@ class NewsFeedCard extends StatelessWidget {
         child: SizedBox(
           height: 200,
           width: double.infinity,
-          child: FadeInImage.assetNetwork(
-            placeholder: placeholder,
-            image: media.file ?? "",
+          child: CachedNetworkImage(
+            imageUrl: media.file ?? "",
             fit: BoxFit.cover,
             height: 200,
             width: double.infinity,
-          ),
+            placeholder: (context, url) => Image.asset(placeholder),
+            errorWidget: (context, url, error) => Image.asset(placeholder),
+          )
+
+
+
+          // FadeInImage.assetNetwork(
+          //   placeholder: placeholder,
+          //   image: media.file ?? "",
+          //   fit: BoxFit.cover,
+          //   height: 200,
+          //   width: double.infinity,
+          // ),
         ),
       ),
     );
@@ -263,12 +274,13 @@ class NewsFeedCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
                 child: GestureDetector(
                   onTap: () => showFullImageDialog(context, media.file ?? ""),
-                  child: FadeInImage.assetNetwork(
-                    placeholder: placeholder,
-                    image: media.file ?? "",
+                  child: CachedNetworkImage(
+                    imageUrl: media.file ?? "",
                     fit: BoxFit.cover,
                     height: 200,
                     width: double.infinity,
+                    placeholder: (context, url) => Image.asset(placeholder),
+                    errorWidget: (context, url, error) => Image.asset(placeholder),
                   ),
                 ),
               ),
@@ -347,11 +359,12 @@ class NewsFeedCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(12),
       child: GestureDetector(
         onTap: () => showFullImageDialog(context, media.file ?? ""),
-        child: FadeInImage.assetNetwork(
-          placeholder: placeholder,
-          image: media.file ?? "",
+        child: CachedNetworkImage(
+          imageUrl: media.file ?? "",
           fit: BoxFit.cover,
           width: double.infinity,
+          placeholder: (context, url) => Image.asset(placeholder),
+          errorWidget: (context, url, error) => Image.asset(placeholder),
         ),
       ),
     );
@@ -567,11 +580,18 @@ class AllImagesScreenForNewsFeed extends StatelessWidget {
             },
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10),
-              child: FadeInImage.assetNetwork(
-                placeholder: placeholder,
-                image: media.file ?? "",
+              child: CachedNetworkImage(
+                imageUrl: media.file ?? "",
                 fit: BoxFit.cover,
+                placeholder: (context, url) => Image.asset(placeholder),
+                errorWidget: (context, url, error) => Image.asset(placeholder),
               ),
+
+              // FadeInImage.assetNetwork(
+              //   placeholder: placeholder,
+              //   image: media.file ?? "",
+              //   fit: BoxFit.cover,
+              // ),
             ),
           );
         },

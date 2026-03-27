@@ -7,6 +7,7 @@ import 'package:bloom_kidz/CommonWidgets/black_medium_regular_text.dart';
 import 'package:bloom_kidz/CommonWidgets/blue_large_bold_text.dart';
 import 'package:bloom_kidz/CommonWidgets/common_green_button.dart';
 import 'package:bloom_kidz/CommonWidgets/common_text_field.dart';
+import 'package:bloom_kidz/CommonWidgets/common_widget.dart';
 import 'package:bloom_kidz/Styles/my_colors.dart';
 import 'package:bloom_kidz/Styles/my_font.dart';
 import 'package:bloom_kidz/Styles/my_icons.dart';
@@ -21,6 +22,7 @@ import '../../ChildInfo/View/child_info_screen.dart';
 
 import 'package:flutter/material.dart';
 
+import '../../CommonWidgets/black_small_regular_text.dart';
 import '../../CommonWidgets/common_appbar.dart';
 import '../../Drawer/app_drawer.dart';
 import 'chat_bubble.dart';
@@ -165,6 +167,14 @@ class ConversationTile extends StatelessWidget {
                       fontSize: 12,
                       color: Colors.black
                     ),
+
+
+                    Container(
+                      alignment: Alignment.centerRight,
+                      padding: const EdgeInsets.only(right: 6, top: 3),
+                      child: BlackSmallRegularText(getTimeInAmPM(conversationData.lastTime??DateTime(2026)), color: Colors.black),
+                    ),
+
                   ],
                 ),
               ),
