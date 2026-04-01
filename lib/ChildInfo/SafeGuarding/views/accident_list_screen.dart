@@ -320,7 +320,7 @@ class _AccidentCard extends StatelessWidget {
         btnTitle: "Acknowledge",
         onPressed: () {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            controller.callAddMedicationAcknowledgeAPI(
+            controller.callAddAccidentAcknowledgeAPI(
               context,
               medicationId,
               childId,
