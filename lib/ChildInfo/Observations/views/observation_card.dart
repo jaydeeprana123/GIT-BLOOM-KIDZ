@@ -564,7 +564,9 @@ class ObservationCard extends StatelessWidget {
         ),
         loadingBuilder: (_, child, progress) {
           if (progress == null) return child;
-          return Image.asset(placeholder);
+          return  Center(
+  child: CircularProgressIndicator(),
+);
         },
       ),
     );
@@ -650,8 +652,12 @@ class ObservationCard extends StatelessWidget {
             fit: BoxFit.cover,
             height: 200,
             width: double.infinity,
-            placeholder: (context, url) => Image.asset(placeholder),
-            errorWidget: (context, url, error) => Image.asset(placeholder),
+            placeholder: (context, url) =>  Center(
+  child: CircularProgressIndicator(),
+),
+            errorWidget: (context, url, error) =>  Center(
+  child: CircularProgressIndicator(),
+),
           ),
         ),
       ),
@@ -675,9 +681,13 @@ class ObservationCard extends StatelessWidget {
                     fit: BoxFit.cover,
                     height: 200,
                     width: double.infinity,
-                    placeholder: (context, url) => Image.asset(placeholder),
+                    placeholder: (context, url) =>  Center(
+  child: CircularProgressIndicator(),
+),
                     errorWidget: (context, url, error) =>
-                        Image.asset(placeholder),
+                         Center(
+  child: CircularProgressIndicator(),
+),
                   ),
                 ),
               ),
@@ -755,8 +765,12 @@ class ObservationCard extends StatelessWidget {
           imageUrl: media.image ?? "",
           fit: BoxFit.cover,
           width: double.infinity,
-          placeholder: (context, url) => Image.asset(placeholder),
-          errorWidget: (context, url, error) => Image.asset(placeholder),
+          placeholder: (context, url) =>  Center(
+  child: CircularProgressIndicator(),
+),
+          errorWidget: (context, url, error) =>  Center(
+  child: CircularProgressIndicator(),
+),
         ),
       ),
     );
@@ -1081,8 +1095,12 @@ class AllImagesScreenForObservation extends StatelessWidget {
               child: CachedNetworkImage(
                 imageUrl: media.image ?? "",
                 fit: BoxFit.cover,
-                placeholder: (context, url) => Image.asset(placeholder),
-                errorWidget: (context, url, error) => Image.asset(placeholder),
+                placeholder: (context, url) =>  Center(
+  child: CircularProgressIndicator(),
+),
+                errorWidget: (context, url, error) =>  Center(
+  child: CircularProgressIndicator(),
+),
               ),
             ),
           );

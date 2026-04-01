@@ -305,7 +305,9 @@ class NewsFeedCard extends StatelessWidget {
         ),
         loadingBuilder: (_, child, progress) {
           if (progress == null) return child;
-          return Image.asset(placeholder);
+          return  Center(
+  child: CircularProgressIndicator(),
+);
         },
       ),
     );
@@ -446,8 +448,12 @@ class NewsFeedCard extends StatelessWidget {
             fit: BoxFit.cover,
             height: 200,
             width: double.infinity,
-            placeholder: (context, url) => Image.asset(placeholder),
-            errorWidget: (context, url, error) => Image.asset(placeholder),
+            placeholder: (context, url) =>  Center(
+  child: CircularProgressIndicator(),
+),
+            errorWidget: (context, url, error) =>  Center(
+  child: CircularProgressIndicator(),
+),
           )
 
 
@@ -481,8 +487,12 @@ class NewsFeedCard extends StatelessWidget {
                     fit: BoxFit.cover,
                     height: 200,
                     width: double.infinity,
-                    placeholder: (context, url) => Image.asset(placeholder),
-                    errorWidget: (context, url, error) => Image.asset(placeholder),
+                    placeholder: (context, url) =>  Center(
+  child: CircularProgressIndicator(),
+),
+                    errorWidget: (context, url, error) =>  Center(
+  child: CircularProgressIndicator(),
+),
                   ),
                 ),
               ),
@@ -502,8 +512,12 @@ class NewsFeedCard extends StatelessWidget {
           imageUrl: media.file ?? "",
           fit: BoxFit.cover,
           width: double.infinity,
-          placeholder: (context, url) => Image.asset(placeholder),
-          errorWidget: (context, url, error) => Image.asset(placeholder),
+          placeholder: (context, url) =>  Center(
+  child: CircularProgressIndicator(),
+),
+          errorWidget: (context, url, error) =>  Center(
+  child: CircularProgressIndicator(),
+),
         ),
       ),
     );
@@ -730,8 +744,12 @@ class AllImagesScreenForNewsFeed extends StatelessWidget {
               child: CachedNetworkImage(
                 imageUrl: media.file ?? "",
                 fit: BoxFit.cover,
-                placeholder: (context, url) => Image.asset(placeholder),
-                errorWidget: (context, url, error) => Image.asset(placeholder),
+                placeholder: (context, url) =>  Center(
+  child: CircularProgressIndicator(),
+),
+                errorWidget: (context, url, error) =>  Center(
+  child: CircularProgressIndicator(),
+),
 
               ),
 
