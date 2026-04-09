@@ -44,7 +44,8 @@ class Data {
     observations: json["observations"] == null
         ? []
         : List<Observation>.from(
-        json["observations"]!.map((x) => Observation.fromJson(x))),
+            json["observations"]!.map((x) => Observation.fromJson(x)),
+          ),
     pagination: json["pagination"] == null
         ? null
         : Pagination.fromJson(json["pagination"]),
@@ -81,7 +82,7 @@ class Observation {
   List<Media>? media;
   List<Like>? likes;
   int? likesCount;
-  List<dynamic>? comments;
+  List<Comment>? comments;
   int? commentsCount;
 
   Observation({
@@ -135,7 +136,8 @@ class Observation {
     specificAreas: json["specific_areas"] == null
         ? []
         : List<SpecificArea>.from(
-        json["specific_areas"]!.map((x) => SpecificArea.fromJson(x))),
+            json["specific_areas"]!.map((x) => SpecificArea.fromJson(x)),
+          ),
     obsType: json["obs_type"],
     obsTypeLabel: json["obs_type_label"],
     typeData: json["type_data"] == null
@@ -157,7 +159,7 @@ class Observation {
     likesCount: json["likes_count"],
     comments: json["comments"] == null
         ? []
-        : List<dynamic>.from(json["comments"]!.map((x) => x)),
+        : List<Comment>.from(json["comments"]!.map((x) => Comment.fromJson(x))),
     commentsCount: json["comments_count"],
   );
 
@@ -200,7 +202,7 @@ class Observation {
     "likes_count": likesCount,
     "comments": comments == null
         ? []
-        : List<dynamic>.from(comments!.map((x) => x)),
+        : List<Comment>.from(comments!.map((x) => x)),
     "comments_count": commentsCount,
   };
 }
@@ -212,17 +214,10 @@ class CreatedBy {
 
   CreatedBy({this.id, this.name, this.profile});
 
-  factory CreatedBy.fromJson(Map<String, dynamic> json) => CreatedBy(
-    id: json["id"],
-    name: json["name"],
-    profile: json["profile"],
-  );
+  factory CreatedBy.fromJson(Map<String, dynamic> json) =>
+      CreatedBy(id: json["id"], name: json["name"], profile: json["profile"]);
 
-  Map<String, dynamic> toJson() => {
-    "id": id,
-    "name": name,
-    "profile": profile,
-  };
+  Map<String, dynamic> toJson() => {"id": id, "name": name, "profile": profile};
 }
 
 class Domain {
@@ -377,7 +372,7 @@ class TypeData {
     Map<String, String?>? tabsMap;
     if (json["tabs"] != null && json["tabs"] is Map) {
       tabsMap = (json["tabs"] as Map<String, dynamic>).map(
-            (k, v) => MapEntry(k, v?.toString()),
+        (k, v) => MapEntry(k, v?.toString()),
       );
     }
 
@@ -461,8 +456,12 @@ class CommunicationLanguage {
   String? ageBand;
   String? ageBandLabel;
 
-  CommunicationLanguage(
-      {this.text, this.assessmentType, this.ageBand, this.ageBandLabel});
+  CommunicationLanguage({
+    this.text,
+    this.assessmentType,
+    this.ageBand,
+    this.ageBandLabel,
+  });
 
   factory CommunicationLanguage.fromJson(Map<String, dynamic> json) =>
       CommunicationLanguage(
@@ -487,12 +486,13 @@ class Pagination {
   int? total;
   bool? hasMore;
 
-  Pagination(
-      {this.currentPage,
-        this.lastPage,
-        this.perPage,
-        this.total,
-        this.hasMore});
+  Pagination({
+    this.currentPage,
+    this.lastPage,
+    this.perPage,
+    this.total,
+    this.hasMore,
+  });
 
   factory Pagination.fromJson(Map<String, dynamic> json) => Pagination(
     currentPage: json["current_page"],
@@ -509,4 +509,34 @@ class Pagination {
     "total": total,
     "has_more": hasMore,
   };
+}
+
+class Comment {
+  int? id;
+  String? content;
+  DateTime? date;
+  int? likes;
+
+  User? user;
+
+  Comment({this.id, this.content, this.date, this.likes, this.user});
+
+  factory Comment.fromJson(Map<String, dynamic> json) => Comment(
+    id: json["id"],
+    content: json["content"],
+    date: json["date"] == null ? null : DateTime.parse(json["date"]),
+    likes: json["likes"],
+    user: json["user"] == null ? null : User.fromJson(json["user"]),
+  );
+}
+
+class User {
+  int? id;
+  String? name;
+  String? profile;
+
+  User({this.id, this.name, this.profile});
+
+  factory User.fromJson(Map<String, dynamic> json) =>
+      User(id: json["id"], name: json["name"], profile: json["profile"]);
 }
