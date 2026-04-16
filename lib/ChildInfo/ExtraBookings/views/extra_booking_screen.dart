@@ -126,7 +126,7 @@ class _ExtraBookingScreenState extends State<ExtraBookingScreen> {
                               ),
                             ),
 
-                            InkWell(
+                           if(controller.extraBookingList[index].approvedUser == null || (controller.extraBookingList[index].approvedUser??"").isEmpty) InkWell(
                               onTap: () {
                                 showUpdateDeleteDialog(
                                   context,
