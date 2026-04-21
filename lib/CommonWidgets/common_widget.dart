@@ -6,6 +6,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import '../ChildInfo/GroupObservation/model/group_observation_list_response.dart';
+import '../ChildInfo/Observations/models/observation_list_response.dart';
+import '../NewsFeed/models/news_feed_response.dart';
 import '../Profile/view/quick_pin_screen.dart';
 import '../Styles/my_colors.dart';
 import '../Styles/my_font.dart';
@@ -346,7 +349,186 @@ Future<String> selectPhoto(BuildContext context, bool isGalleryVisible) async {
   return imagePathOfFile;
 }
 
-void showFullImageDialog(BuildContext context, String imageUrl) {
+void showFullImageDialog(
+    BuildContext context,
+    List<Media> mediaList,
+    int initialIndex,
+    ) {
+  PageController controller = PageController(initialPage: initialIndex);
+
+  showDialog(
+    context: context,
+    barrierColor: Colors.black,
+    builder: (_) {
+      return Dialog(
+        insetPadding: EdgeInsets.zero,
+        backgroundColor: Colors.black,
+        child: Stack(
+          children: [
+            /// 🔄 Swipeable Images
+            PageView.builder(
+              controller: controller,
+              itemCount: mediaList.length,
+              itemBuilder: (context, index) {
+                final url = mediaList[index].file ?? "";
+
+                return InteractiveViewer(
+                  child: Center(
+                    child: Image.network(
+                      url,
+                      fit: BoxFit.contain,
+                      loadingBuilder: (context, child, progress) {
+                        if (progress == null) return child;
+                        return const Center(
+                          child: CircularProgressIndicator(
+                              color: Colors.white),
+                        );
+                      },
+                      errorBuilder: (context, error, stackTrace) {
+                        return const Icon(
+                          Icons.broken_image,
+                          color: Colors.white,
+                          size: 80,
+                        );
+                      },
+                    ),
+                  ),
+                );
+              },
+            ),
+
+            /// ❌ Close Button
+            Positioned(
+              top: 40,
+              right: 20,
+              child: IconButton(
+                icon: const Icon(Icons.close, color: Colors.white, size: 28),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
+
+// void showFullImageDialogForObservation(BuildContext context, String imageUrl) {
+//   showDialog(
+//     context: context,
+//     barrierColor: Colors.black,
+//     builder: (_) {
+//       return Dialog(
+//         insetPadding: EdgeInsets.zero,
+//         backgroundColor: Colors.black,
+//         child: Stack(
+//           children: [
+//             /// 🔍 Zoomable Image
+//             InteractiveViewer(
+//               child: Center(
+//                 child: Image.network(
+//                   imageUrl,
+//                   fit: BoxFit.contain,
+//                   loadingBuilder: (context, child, loadingProgress) {
+//                     if (loadingProgress == null) return child;
+//                     return const Center(
+//                       child: CircularProgressIndicator(color: Colors.white),
+//                     );
+//                   },
+//                   errorBuilder: (context, error, stackTrace) {
+//                     return const Icon(
+//                       Icons.broken_image,
+//                       color: Colors.white,
+//                       size: 80,
+//                     );
+//                   },
+//                 ),
+//               ),
+//             ),
+//
+//             /// ❌ Close Button
+//             Positioned(
+//               top: 40,
+//               right: 20,
+//               child: IconButton(
+//                 icon: const Icon(Icons.close, color: Colors.white, size: 28),
+//                 onPressed: () => Navigator.pop(context),
+//               ),
+//             ),
+//           ],
+//         ),
+//       );
+//     },
+//   );
+// }
+
+
+void showFullImageDialogForObservation(
+    BuildContext context,
+    List<ObservationMedia> mediaList,
+    int initialIndex,
+    ) {
+  PageController controller = PageController(initialPage: initialIndex);
+
+  showDialog(
+    context: context,
+    barrierColor: Colors.black,
+    builder: (_) {
+      return Dialog(
+        insetPadding: EdgeInsets.zero,
+        backgroundColor: Colors.black,
+        child: Stack(
+          children: [
+            /// 🔄 Swipeable Images
+            PageView.builder(
+              controller: controller,
+              itemCount: mediaList.length,
+              itemBuilder: (context, index) {
+                final url = mediaList[index].image ?? "";
+
+                return InteractiveViewer(
+                  child: Center(
+                    child: Image.network(
+                      url,
+                      fit: BoxFit.contain,
+                      loadingBuilder: (context, child, progress) {
+                        if (progress == null) return child;
+                        return const Center(
+                          child: CircularProgressIndicator(
+                              color: Colors.white),
+                        );
+                      },
+                      errorBuilder: (context, error, stackTrace) {
+                        return const Icon(
+                          Icons.broken_image,
+                          color: Colors.white,
+                          size: 80,
+                        );
+                      },
+                    ),
+                  ),
+                );
+              },
+            ),
+
+            /// ❌ Close Button
+            Positioned(
+              top: 40,
+              right: 20,
+              child: IconButton(
+                icon: const Icon(Icons.close, color: Colors.white, size: 28),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
+
+
+void showSingleFullImageDialog(BuildContext context, String imageUrl) {
   showDialog(
     context: context,
     barrierColor: Colors.black,
@@ -394,6 +576,7 @@ void showFullImageDialog(BuildContext context, String imageUrl) {
     },
   );
 }
+
 
 Future showImagePicker(context, bool isGalleryVisible) {
   // imagePath = null;

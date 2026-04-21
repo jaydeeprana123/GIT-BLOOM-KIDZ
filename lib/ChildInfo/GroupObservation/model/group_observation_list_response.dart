@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'package:bloom_kidz/ChildInfo/Observations/models/observation_list_response.dart';
+
 GroupObservationListResponse groupObservationListResponseFromJson(String str) =>
     GroupObservationListResponse.fromJson(json.decode(str));
 
@@ -71,7 +73,7 @@ class GroupObservation {
   String? isGroup;
   DateTime? createdAt;
   CreatedBy? createdBy;
-  List<GroupMedia>? media;
+  List<ObservationMedia>? media;
   bool? isExpanded = false;
 
   GroupObservation({
@@ -98,8 +100,8 @@ class GroupObservation {
             : CreatedBy.fromJson(json["created_by"]),
         media: json["media"] == null
             ? []
-            : List<GroupMedia>.from(
-                json["media"]!.map((x) => GroupMedia.fromJson(x)),
+            : List<ObservationMedia>.from(
+                json["media"]!.map((x) => ObservationMedia.fromJson(x)),
               ),
       );
 
@@ -129,28 +131,28 @@ class CreatedBy {
   Map<String, dynamic> toJson() => {"id": id, "name": name, "profile": profile};
 }
 
-class GroupMedia {
-  int? id;
-  String? image;
-  String? extension;
-  String? size;
-
-  GroupMedia({this.id, this.image, this.extension, this.size});
-
-  factory GroupMedia.fromJson(Map<String, dynamic> json) => GroupMedia(
-    id: json["id"],
-    image: json["image"],
-    extension: json["extension"],
-    size: json["size"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "id": id,
-    "image": image,
-    "extension": extension,
-    "size": size,
-  };
-}
+// class GroupMedia {
+//   int? id;
+//   String? image;
+//   String? extension;
+//   String? size;
+//
+//   GroupMedia({this.id, this.image, this.extension, this.size});
+//
+//   factory GroupMedia.fromJson(Map<String, dynamic> json) => GroupMedia(
+//     id: json["id"],
+//     image: json["image"],
+//     extension: json["extension"],
+//     size: json["size"],
+//   );
+//
+//   Map<String, dynamic> toJson() => {
+//     "id": id,
+//     "image": image,
+//     "extension": extension,
+//     "size": size,
+//   };
+// }
 
 class Pagination {
   int? currentPage;

@@ -231,7 +231,7 @@ class NewsFeedCard extends StatelessWidget {
             itemBuilder: (context, i) {
               final url = mediaList[i].file ?? "";
               return _isImageUrl(url)
-                  ? _imageItem(context, url)
+                  ? _imageItem(context, url, mediaList, i)
                   : _attachmentItem(context, url);
             },
           ),
@@ -287,9 +287,9 @@ class NewsFeedCard extends StatelessWidget {
     }
   }
 
-  Widget _imageItem(BuildContext context, String url) {
+  Widget _imageItem(BuildContext context, String url, List<Media> mediaList, int i, ) {
     return GestureDetector(
-      onTap: () => showFullImageDialog(context, url),
+      onTap: () => showFullImageDialog(context, mediaList, i),
       child: Image.network(
         url,
         fit: BoxFit.cover,
@@ -391,15 +391,15 @@ class NewsFeedCard extends StatelessWidget {
           height: 200,
           child: Row(
             children: [
-              Expanded(flex: 2, child: _gridImage(context, mediaList[0])),
+              Expanded(flex: 2, child: _gridImage(context, mediaList, 0)),
               const SizedBox(width: 8),
               Expanded(
                 flex: 1,
                 child: Column(
                   children: [
-                    Expanded(child: _gridImage(context, mediaList[1])),
+                    Expanded(child: _gridImage(context, mediaList, 1)),
                     const SizedBox(height: 8),
-                    Expanded(child: _gridImage(context, mediaList[2])),
+                    Expanded(child: _gridImage(context, mediaList, 2)),
                   ],
                 ),
               ),
@@ -430,86 +430,53 @@ class NewsFeedCard extends StatelessWidget {
         childAspectRatio: 1,
       ),
       itemBuilder: (context, index) {
-        return _gridImage(context, remaining[index]);
+        return _gridImage(context, remaining, index);
       },
     );
   }
 
-  Widget _singleImage(BuildContext context, Media media) {
+//   Widget _singleImage(BuildContext context, Media media) {
+//     return ClipRRect(
+//       borderRadius: BorderRadius.circular(12),
+//       child: GestureDetector(
+//         onTap: () => showFullImageDialog(context, media.file ?? ""),
+//         child: SizedBox(
+//           height: 200,
+//           width: double.infinity,
+//           child: CachedNetworkImage(
+//             imageUrl: media.file ?? "",
+//             fit: BoxFit.cover,
+//             height: 200,
+//             width: double.infinity,
+//             placeholder: (context, url) =>  Center(
+//   child: CircularProgressIndicator(),
+// ),
+//             errorWidget: (context, url, error) =>  Center(
+//   child: CircularProgressIndicator(),
+// ),
+//           )
+//
+//
+//
+//           // FadeInImage.assetNetwork(
+//           //   placeholder: placeholder,
+//           //   image: media.file ?? "",
+//           //   fit: BoxFit.cover,
+//           //   height: 200,
+//           //   width: double.infinity,
+//           // ),
+//         ),
+//       ),
+//     );
+//   }
+
+  Widget _gridImage(BuildContext context, List<Media> mediaList, int i, ) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
       child: GestureDetector(
-        onTap: () => showFullImageDialog(context, media.file ?? ""),
-        child: SizedBox(
-          height: 200,
-          width: double.infinity,
-          child: CachedNetworkImage(
-            imageUrl: media.file ?? "",
-            fit: BoxFit.cover,
-            height: 200,
-            width: double.infinity,
-            placeholder: (context, url) =>  Center(
-  child: CircularProgressIndicator(),
-),
-            errorWidget: (context, url, error) =>  Center(
-  child: CircularProgressIndicator(),
-),
-          )
-
-
-
-          // FadeInImage.assetNetwork(
-          //   placeholder: placeholder,
-          //   image: media.file ?? "",
-          //   fit: BoxFit.cover,
-          //   height: 200,
-          //   width: double.infinity,
-          // ),
-        ),
-      ),
-    );
-  }
-
-  Widget _twoImages(BuildContext context, List<Media> mediaList) {
-    return SizedBox(
-      height: 200,
-      child: Row(
-        children: mediaList.map((media) {
-          return Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: GestureDetector(
-                  onTap: () => showFullImageDialog(context, media.file ?? ""),
-                  child: CachedNetworkImage(
-                    imageUrl: media.file ?? "",
-                    fit: BoxFit.cover,
-                    height: 200,
-                    width: double.infinity,
-                    placeholder: (context, url) =>  Center(
-  child: CircularProgressIndicator(),
-),
-                    errorWidget: (context, url, error) =>  Center(
-  child: CircularProgressIndicator(),
-),
-                  ),
-                ),
-              ),
-            ),
-          );
-        }).toList(),
-      ),
-    );
-  }
-
-  Widget _gridImage(BuildContext context, Media media) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
-      child: GestureDetector(
-        onTap: () => showFullImageDialog(context, media.file ?? ""),
+        onTap: () => showFullImageDialog(context, mediaList, i),
         child: CachedNetworkImage(
-          imageUrl: media.file ?? "",
+          imageUrl: mediaList[i].file ?? "",
           fit: BoxFit.cover,
           width: double.infinity,
           placeholder: (context, url) =>  Center(
@@ -737,7 +704,7 @@ class AllImagesScreenForNewsFeed extends StatelessWidget {
           if (url.isEmpty) return const SizedBox();
 
           return GestureDetector(
-            onTap: () => showFullImageDialog(context, url),
+            onTap: () => showFullImageDialog(context, mediaList, index),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10),
 

@@ -120,7 +120,7 @@ class _ChatBubbleState extends State<ChatBubble> {
                         )
                           InkWell(
                             onTap: () {
-                              showFullImageDialog(
+                              showSingleFullImageDialog(
                                 context,
                                 widget.attachments?[i].url ?? "",
                               );

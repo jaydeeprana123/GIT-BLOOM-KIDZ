@@ -156,7 +156,7 @@ class GroupObservationCard extends StatelessWidget {
     }
 
     if (mediaList.length == 1) {
-      return _singleImage(context, mediaList[0]);
+      return _singleImage(context, mediaList, 0);
     }
 
     if (mediaList.length == 2) {
@@ -166,17 +166,17 @@ class GroupObservationCard extends StatelessWidget {
     return _multiImages(context, mediaList);
   }
 
-  Widget _singleImage(BuildContext context, GroupMedia media) {
+  Widget _singleImage(BuildContext context, List<ObservationMedia> mediaList, int i,) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
       child: GestureDetector(
-        onTap: () => showFullImageDialog(context, media.image ?? ""),
+        onTap: () => showFullImageDialogForObservation(context, mediaList, i),
         child: SizedBox(
           height: 200,
           width: double.infinity,
           child: FadeInImage.assetNetwork(
             placeholder: placeholder,
-            image: media.image ?? "",
+            image: mediaList[i].image ?? "",
             fit: BoxFit.cover,
           ),
         ),
@@ -184,18 +184,25 @@ class GroupObservationCard extends StatelessWidget {
     );
   }
 
-  Widget _twoImages(BuildContext context, List<GroupMedia> mediaList) {
+  Widget _twoImages(BuildContext context, List<ObservationMedia> mediaList) {
     return SizedBox(
       height: 200,
       child: Row(
-        children: mediaList.map((media) {
+        children: mediaList.asMap().entries.map((entry) {
+          int index = entry.key; // 👈 position
+          ObservationMedia media = entry.value;
+
           return Expanded(
             child: Padding(
               padding: const EdgeInsets.only(right: 8),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: GestureDetector(
-                  onTap: () => showFullImageDialog(context, media.image ?? ""),
+                  onTap: () => showFullImageDialogForObservation(
+                    context,
+                    mediaList,
+                    index, // 👈 pass index here
+                  ),
                   child: FadeInImage.assetNetwork(
                     placeholder: placeholder,
                     image: media.image ?? "",
@@ -210,13 +217,13 @@ class GroupObservationCard extends StatelessWidget {
     );
   }
 
-  Widget _multiImages(BuildContext context, List<GroupMedia> mediaList) {
+  Widget _multiImages(BuildContext context, List<ObservationMedia> mediaList) {
     return SizedBox(
       height: 200,
       child: Row(
         children: [
           /// Left Big Image
-          Expanded(flex: 2, child: _gridImage(context, mediaList[0])),
+          Expanded(flex: 2, child: _gridImage(context, mediaList, 0)),
 
           const SizedBox(width: 8),
 
@@ -225,7 +232,7 @@ class GroupObservationCard extends StatelessWidget {
             flex: 1,
             child: Column(
               children: [
-                Expanded(child: _gridImage(context, mediaList[1])),
+                Expanded(child: _gridImage(context, mediaList, 1)),
                 const SizedBox(height: 8),
                 Expanded(
                   child: InkWell(
@@ -242,7 +249,7 @@ class GroupObservationCard extends StatelessWidget {
                     },
                     child: Stack(
                       children: [
-                        _gridImage(context, mediaList[2]),
+                        _gridImage(context, mediaList, 2),
 
                         if (mediaList.length > 3)
                           Container(
@@ -272,14 +279,14 @@ class GroupObservationCard extends StatelessWidget {
     );
   }
 
-  Widget _gridImage(BuildContext context, GroupMedia media) {
+  Widget _gridImage(BuildContext context, List<ObservationMedia> mediaList, int i, ) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
       child: GestureDetector(
-        onTap: () => showFullImageDialog(context, media.image ?? ""),
+        onTap: () => showFullImageDialogForObservation(context, mediaList, i),
         child: FadeInImage.assetNetwork(
           placeholder: placeholder,
-          image: media.image ?? "",
+          image: mediaList[i].image ?? "",
           fit: BoxFit.cover,
         ),
       ),
@@ -372,7 +379,7 @@ class GroupObservationCard extends StatelessWidget {
 }
 
 class AllImagesScreen extends StatelessWidget {
-  final List<GroupMedia> mediaList;
+  final List<ObservationMedia> mediaList;
 
   const AllImagesScreen({super.key, required this.mediaList});
 
@@ -393,7 +400,7 @@ class AllImagesScreen extends StatelessWidget {
 
           return GestureDetector(
             onTap: () {
-              showFullImageDialog(context, mediaList[index].image ?? "");
+              showFullImageDialogForObservation(context, mediaList, index);
             },
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10),

@@ -492,7 +492,7 @@ class ObservationCard extends StatelessWidget {
             itemBuilder: (context, i) {
               final url = mediaList[i].image ?? "";
               return _isImageUrl(url)
-                  ? _imageItem(context, url)
+                  ? _imageItem(context, mediaList, i)
                   : _attachmentItem(context, url);
             },
           ),
@@ -546,11 +546,11 @@ class ObservationCard extends StatelessWidget {
     }
   }
 
-  Widget _imageItem(BuildContext context, String url) {
+  Widget _imageItem(BuildContext context, List<ObservationMedia> mediaList, int i) {
     return GestureDetector(
-      onTap: () => showFullImageDialog(context, url),
+      onTap: () => showFullImageDialogForObservation(context, mediaList, i),
       child: Image.network(
-        url,
+        mediaList[i].image??"",
         fit: BoxFit.cover,
         width: double.infinity,
         cacheWidth: 1080,
@@ -637,143 +637,6 @@ class ObservationCard extends StatelessWidget {
         );
       }
     }
-  }
-
-  Widget _singleImage(BuildContext context, Media media) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
-      child: GestureDetector(
-        onTap: () => showFullImageDialog(context, media.image ?? ""),
-        child: SizedBox(
-          height: 200,
-          width: double.infinity,
-          child: CachedNetworkImage(
-            imageUrl: media.image ?? "",
-            fit: BoxFit.cover,
-            height: 200,
-            width: double.infinity,
-            placeholder: (context, url) =>  Center(
-  child: CircularProgressIndicator(),
-),
-            errorWidget: (context, url, error) =>  Center(
-  child: CircularProgressIndicator(),
-),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _twoImages(BuildContext context, List<Media> mediaList) {
-    return SizedBox(
-      height: 200,
-      child: Row(
-        children: mediaList.map((media) {
-          return Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: GestureDetector(
-                  onTap: () => showFullImageDialog(context, media.image ?? ""),
-                  child: CachedNetworkImage(
-                    imageUrl: media.image ?? "",
-                    fit: BoxFit.cover,
-                    height: 200,
-                    width: double.infinity,
-                    placeholder: (context, url) =>  Center(
-  child: CircularProgressIndicator(),
-),
-                    errorWidget: (context, url, error) =>
-                         Center(
-  child: CircularProgressIndicator(),
-),
-                  ),
-                ),
-              ),
-            ),
-          );
-        }).toList(),
-      ),
-    );
-  }
-
-  Widget _multiImages(BuildContext context, List<Media> mediaList) {
-    return SizedBox(
-      height: 200,
-      child: Row(
-        children: [
-          Expanded(flex: 2, child: _gridImage(context, mediaList[0])),
-          const SizedBox(width: 8),
-          Expanded(
-            flex: 1,
-            child: Column(
-              children: [
-                Expanded(child: _gridImage(context, mediaList[1])),
-                const SizedBox(height: 8),
-                Expanded(
-                  child: InkWell(
-                    onTap: () {
-                      if (mediaList.length > 3) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => AllImagesScreenForObservation(
-                              mediaList: mediaList,
-                            ),
-                          ),
-                        );
-                      }
-                    },
-                    child: Stack(
-                      children: [
-                        _gridImage(context, mediaList[2]),
-                        if (mediaList.length > 3)
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Colors.black.withOpacity(0.5),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            alignment: Alignment.center,
-                            child: Text(
-                              "+${mediaList.length - 3}",
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _gridImage(BuildContext context, Media media) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
-      child: GestureDetector(
-        onTap: () => showFullImageDialog(context, media.image ?? ""),
-        child: CachedNetworkImage(
-          imageUrl: media.image ?? "",
-          fit: BoxFit.cover,
-          width: double.infinity,
-          placeholder: (context, url) =>  Center(
-  child: CircularProgressIndicator(),
-),
-          errorWidget: (context, url, error) =>  Center(
-  child: CircularProgressIndicator(),
-),
-        ),
-      ),
-    );
   }
 
   Widget _description() {
@@ -1068,7 +931,7 @@ class ObservationCard extends StatelessWidget {
 }
 
 class AllImagesScreenForObservation extends StatelessWidget {
-  final List<Media> mediaList;
+  final List<ObservationMedia> mediaList;
 
   const AllImagesScreenForObservation({super.key, required this.mediaList});
 
@@ -1088,7 +951,7 @@ class AllImagesScreenForObservation extends StatelessWidget {
           final media = mediaList[index];
           return GestureDetector(
             onTap: () {
-              showFullImageDialog(context, mediaList[index].image ?? "");
+              showFullImageDialogForObservation(context, mediaList, index);
             },
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10),

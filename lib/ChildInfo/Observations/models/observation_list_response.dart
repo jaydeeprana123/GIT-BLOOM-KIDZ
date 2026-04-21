@@ -79,7 +79,7 @@ class Observation {
   String? addedBy;
   DateTime? createdAt;
   CreatedBy? createdBy;
-  List<Media>? media;
+  List<ObservationMedia>? media;
   List<Like>? likes;
   int? likesCount;
   List<Comment>? comments;
@@ -152,7 +152,7 @@ class Observation {
         : CreatedBy.fromJson(json["created_by"]),
     media: json["media"] == null
         ? []
-        : List<Media>.from(json["media"]!.map((x) => Media.fromJson(x))),
+        : List<ObservationMedia>.from(json["media"]!.map((x) => ObservationMedia.fromJson(x))),
     likes: json["likes"] == null
         ? []
         : List<Like>.from(json["likes"]!.map((x) => Like.fromJson(x))),
@@ -303,16 +303,16 @@ class Like {
   };
 }
 
-class Media {
+class ObservationMedia {
   int? id;
   int? masterId;
   String? image;
   String? extension;
   String? size;
 
-  Media({this.id, this.masterId, this.image, this.extension, this.size});
+  ObservationMedia({this.id, this.masterId, this.image, this.extension, this.size});
 
-  factory Media.fromJson(Map<String, dynamic> json) => Media(
+  factory ObservationMedia.fromJson(Map<String, dynamic> json) => ObservationMedia(
     id: json["id"],
     masterId: json["master_id"],
     image: json["image"],
