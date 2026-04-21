@@ -91,9 +91,7 @@ class _ExtraBookingScreenState extends State<ExtraBookingScreen> {
             }
 
             if (controller.extraBookingList.isEmpty) {
-              return  Center(
-                child: BlueLargeBoldText("No Data Found"),
-              );
+              return Center(child: BlueLargeBoldText("No Data Found"));
             }
 
             return ListView.builder(
@@ -126,21 +124,26 @@ class _ExtraBookingScreenState extends State<ExtraBookingScreen> {
                               ),
                             ),
 
-                           if(controller.extraBookingList[index].approvedUser == null || (controller.extraBookingList[index].approvedUser??"").isEmpty) InkWell(
-                              onTap: () {
-                                showUpdateDeleteDialog(
-                                  context,
-                                  widget.childId,
-                                  (controller.extraBookingList[index].id ?? 0)
-                                      .toString(),
-                                  controller.extraBookingList[index],
-                                );
-                              },
-                              child: Icon(
-                                Icons.more_vert,
-                                color: color_secondary,
+                            if ((controller
+                                        .extraBookingList[index]
+                                        .approvedUser ??
+                                    "")
+                                .isEmpty)
+                              InkWell(
+                                onTap: () {
+                                  showUpdateDeleteDialog(
+                                    context,
+                                    widget.childId,
+                                    (controller.extraBookingList[index].id ?? 0)
+                                        .toString(),
+                                    controller.extraBookingList[index],
+                                  );
+                                },
+                                child: Icon(
+                                  Icons.more_vert,
+                                  color: color_secondary,
+                                ),
                               ),
-                            ),
                           ],
                         ),
 
