@@ -172,7 +172,7 @@ class _ExtraBookingScreenState extends State<ExtraBookingScreen> {
 
                                     if ((day.sessions ?? []).isNotEmpty)
                                       Expanded(
-                                        flex: 2,
+                                        flex: 3,
                                         child: Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.center,
@@ -180,14 +180,14 @@ class _ExtraBookingScreenState extends State<ExtraBookingScreen> {
                                             Row(
                                               children: [
                                                 BlueMediumBoldText(
-                                                  '${selectedSession(day)?.startTime} - ${selectedSession(day)?.endTime}',
+                                                  '${selectedSession(day)?.startTime} - ${selectedSession(day)?.endTime} (${calculateTotalHours(selectedSession(day)?.startTime ?? "", selectedSession(day)?.endTime ?? "")})',
                                                 ),
 
-                                                SizedBox(width: 3),
-                                                BlueMediumBoldText(
-                                                  fontFamily: fontInterSemiBold,
-                                                  "(${calculateTotalHours(selectedSession(day)?.startTime ?? "", selectedSession(day)?.endTime ?? "")})",
-                                                ),
+                                                // SizedBox(width: 3),
+                                                // BlueMediumBoldText(
+                                                //   fontFamily: fontInterSemiBold,
+                                                //   ,
+                                                // ),
                                               ],
                                             ),
                                             SizedBox(height: 8),

@@ -10,6 +10,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 import 'package:flutter/material.dart';
+import '../../../CommonWidgets/blue_large_bold_text.dart';
 import '../../../CommonWidgets/common_appbar.dart';
 import 'observation_add_screen.dart';
 import 'observation_card.dart';
@@ -95,8 +96,9 @@ class _ObservationListScreenState extends State<ObservationListScreen> {
             Positioned.fill(child: SvgPicture.asset(app_bg, fit: BoxFit.cover)),
 
             Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Expanded(
+                if(childInfoController.observationList.isNotEmpty && !childInfoController.isNewAddedObservationLoading.value)Expanded(
                   child: RefreshIndicator(
                     onRefresh: _onRefresh,
                     child: ListView.builder(
@@ -115,6 +117,8 @@ class _ObservationListScreenState extends State<ObservationListScreen> {
                     ),
                   ),
                 ),
+
+                if(childInfoController.observationList.isEmpty && !childInfoController.isNewAddedObservationLoading.value)Center(child: BlueLargeBoldText("No Data Found")),
 
                 if (childInfoController.isNewAddedObservationLoading.value)
                   Center(
