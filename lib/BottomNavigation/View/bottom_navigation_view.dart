@@ -68,11 +68,13 @@ class _BottomNavigationViewState extends State<BottomNavigationView> {
         child: Obx(() => tabs[bottomNavController.currentIndex.value]),
       ),
       bottomNavigationBar: Obx(
-        () => CustomBottomNav(
-          currentIndex: bottomNavController.currentIndex.value,
-          onTap: (index) {
-            bottomNavController.currentIndex.value = index;
-          },
+        () => SafeArea(
+          child: CustomBottomNav(
+            currentIndex: bottomNavController.currentIndex.value,
+            onTap: (index) {
+              bottomNavController.currentIndex.value = index;
+            },
+          ),
         ),
       ),
 
