@@ -28,6 +28,7 @@ class _NewsFeedScreenState extends State<NewsFeedScreen> {
   ScrollController observationListScrollController = ScrollController();
 
   Future<void> _onRefresh() async {
+    newsFeedController.isLoading.value = true; // 👈 Add this first
     newsFeedController.newsFeedList.clear();
     newsFeedController.replyController.clear();
     newsFeedController.pageNumberObservation = 1;
