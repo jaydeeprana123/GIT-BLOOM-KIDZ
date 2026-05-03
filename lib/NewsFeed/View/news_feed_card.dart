@@ -45,7 +45,7 @@ class NewsFeedCard extends StatelessWidget {
     return Card(
       color: Colors.white,
       shadowColor: color_primary,
-      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 6),
       elevation: 8,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -54,6 +54,7 @@ class NewsFeedCard extends StatelessWidget {
           _titleText(),
           if ((newsFeed.media ?? []).isNotEmpty) _image(context),
           _description(),
+
 
           if (newsFeed.type == "events")
             Container(
@@ -229,7 +230,7 @@ class NewsFeedCard extends StatelessWidget {
               newsFeedController.updateImagePage(index, page);
             },
             itemBuilder: (context, i) {
-              final url = mediaList[i].file ?? "";
+              final url = mediaList[i].fullUrl ?? "";
               return _isImageUrl(url)
                   ? _imageItem(context, url, mediaList, i)
                   : _attachmentItem(context, url);
@@ -476,7 +477,7 @@ class NewsFeedCard extends StatelessWidget {
       child: GestureDetector(
         onTap: () => showFullImageDialog(context, mediaList, i),
         child: CachedNetworkImage(
-          imageUrl: mediaList[i].file ?? "",
+          imageUrl: mediaList[i].fullUrl ?? "",
           fit: BoxFit.cover,
           width: double.infinity,
           placeholder: (context, url) =>  Center(
@@ -500,51 +501,15 @@ class NewsFeedCard extends StatelessWidget {
             fontSize: FontSize(13),
             color: text_color,
             lineHeight: LineHeight(1.4),
+            margin: Margins.zero,      // 👈 Add this
+            padding: HtmlPaddings.zero, // 👈 Add this
+          ),
+          "body": Style(
+            margin: Margins.zero,       // 👈 Add this
+            padding: HtmlPaddings.zero, // 👈 Add this
           ),
         },
-        extensions: [
-          TagExtension(
-            tagsToExtend: {"img"},
-            builder: (context) {
-              final src = context.attributes['src'] ?? '';
-
-              if (src.startsWith('data:image')) {
-                try {
-                  final base64Str = src.split(',').last;
-                  final bytes = base64Decode(base64Str);
-
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Image.memory(
-                      bytes,
-                      fit: BoxFit.contain,
-                      errorBuilder: (context, error, stackTrace) {
-                        return const SizedBox();
-                      },
-                    ),
-                  );
-                } catch (e) {
-                  return const SizedBox();
-                }
-              }
-
-              if (src.isNotEmpty && !src.startsWith('data:')) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Image.network(
-                    src,
-                    fit: BoxFit.contain,
-                    errorBuilder: (context, error, stackTrace) {
-                      return const SizedBox();
-                    },
-                  ),
-                );
-              }
-
-              return const SizedBox();
-            },
-          ),
-        ],
+        // ... extensions
       ),
     );
   }
@@ -699,7 +664,7 @@ class AllImagesScreenForNewsFeed extends StatelessWidget {
         ),
         itemBuilder: (context, index) {
           final media = mediaList[index];
-          final url = media.file ?? "";
+          final url = media.fullUrl ?? "";
 
           if (url.isEmpty) return const SizedBox();
 
@@ -709,7 +674,7 @@ class AllImagesScreenForNewsFeed extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
 
               child: CachedNetworkImage(
-                imageUrl: media.file ?? "",
+                imageUrl: media.fullUrl ?? "",
                 fit: BoxFit.cover,
                 placeholder: (context, url) =>  Center(
   child: CircularProgressIndicator(),

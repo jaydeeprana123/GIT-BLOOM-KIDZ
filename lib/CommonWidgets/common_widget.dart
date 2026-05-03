@@ -370,7 +370,7 @@ void showFullImageDialog(
               controller: controller,
               itemCount: mediaList.length,
               itemBuilder: (context, index) {
-                final url = mediaList[index].file ?? "";
+                final url = mediaList[index].fullUrl ?? "";
 
                 return InteractiveViewer(
                   child: Center(

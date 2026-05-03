@@ -277,28 +277,32 @@ class Like {
 class Media {
   int? id;
   int? masterId;
-  String? file;
+  // String? file;
+  String? fullUrl;
   String? extenstion;
 
   Media({
     this.id,
     this.masterId,
-    this.file,
+    // this.file,
     this.extenstion,
+    this.fullUrl
   });
 
   factory Media.fromJson(Map<String, dynamic> json) => Media(
     id: json["id"],
     masterId: json["master_id"],
-    file: json["file"],
+    // file: json["file"],
     extenstion: json["extenstion"],
+      fullUrl: json["full_url"]
   );
 
   Map<String, dynamic> toJson() => {
     "id": id,
     "master_id": masterId,
-    "file": file,
+    // "file": file,
     "extenstion": extenstion,
+    "full_url": fullUrl
   };
 }
 
