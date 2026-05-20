@@ -18,6 +18,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 import 'package:flutter/material.dart';
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../CommonWidgets/black_medium_bold_text.dart';
@@ -318,6 +319,51 @@ class NewsFeedCard extends StatelessWidget {
     final name = _fileName(url);
     final isPdf = url.toLowerCase().split('?').first.endsWith('.pdf');
 
+    if (isPdf) {
+      return Stack(
+        children: [
+          SfPdfViewer.network(
+            url,
+            canShowScrollHead: false,
+            canShowScrollStatus: false,
+          ),
+          Positioned(
+            top: 8,
+            right: 8,
+            child: GestureDetector(
+              onTap: () => _openAttachment(context, url),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.6),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.open_in_new_rounded,
+                      color: Colors.white,
+                      size: 14,
+                    ),
+                    SizedBox(width: 4),
+                    Text(
+                      "Open",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+
     return GestureDetector(
       onTap: () => _openAttachment(context, url),
       child: Container(
@@ -327,9 +373,9 @@ class NewsFeedCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              isPdf ? Icons.picture_as_pdf_rounded : Icons.attach_file_rounded,
+              Icons.attach_file_rounded,
               size: 64,
-              color: isPdf ? Colors.red[400] : color_secondary,
+              color: color_secondary,
             ),
             const SizedBox(height: 12),
             Padding(
@@ -368,7 +414,16 @@ class NewsFeedCard extends StatelessWidget {
     );
   }
 
-  void _openAttachment(BuildContext context, String url) async {
+  void _openAttachment(BuildContext context, String url) {
+    final isPdf = url.toLowerCase().split('?').first.endsWith('.pdf');
+    if (isPdf) {
+      Get.to(() => FullScreenPdfViewer(url: url, title: _fileName(url)));
+    } else {
+      _launchExternal(context, url);
+    }
+  }
+
+  void _launchExternal(BuildContext context, String url) async {
     final uri = Uri.parse(url);
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
@@ -694,6 +749,29 @@ class AllImagesScreenForNewsFeed extends StatelessWidget {
           );
         },
       ),
+    );
+  }
+}
+
+class FullScreenPdfViewer extends StatelessWidget {
+  final String url;
+  final String title;
+
+  const FullScreenPdfViewer({super.key, required this.url, required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          title,
+          style: const TextStyle(fontSize: 16),
+        ),
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        elevation: 1,
+      ),
+      body: SfPdfViewer.network(url),
     );
   }
 }

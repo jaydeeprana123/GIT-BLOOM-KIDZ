@@ -53,6 +53,7 @@ dependencies:
   package_info_plus: ^9.0.0
   photo_view: ^0.15.0
   cached_network_image: ^3.4.1
+  syncfusion_flutter_pdfviewer: ^32.2.9
 
 
 dev_dependencies:
