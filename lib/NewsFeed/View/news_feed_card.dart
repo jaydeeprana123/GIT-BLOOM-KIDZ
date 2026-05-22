@@ -1,27 +1,18 @@
-import 'dart:convert';
-
-import 'package:bloom_kidz/ChildInfo/controller/child_info_controller.dart';
 import 'package:bloom_kidz/CommonWidgets/black_large_bold_text.dart';
 import 'package:bloom_kidz/CommonWidgets/blue_medium_bold_text.dart';
 import 'package:bloom_kidz/CommonWidgets/blue_medium_regular_text.dart';
-import 'package:bloom_kidz/CommonWidgets/common_green_button.dart';
-import 'package:bloom_kidz/CommonWidgets/common_text_field.dart';
 import 'package:bloom_kidz/NewsFeed/controller/news_feed_controller.dart';
 import 'package:bloom_kidz/NewsFeed/models/news_feed_response.dart';
 import 'package:bloom_kidz/Styles/my_colors.dart';
-import 'package:bloom_kidz/Styles/my_font.dart';
 import 'package:bloom_kidz/Styles/my_icons.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-
-import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../CommonWidgets/black_medium_bold_text.dart';
 import '../../CommonWidgets/black_medium_regular_text.dart';
 import '../../CommonWidgets/blue_small_regular_text.dart';
 import '../../CommonWidgets/common_widget.dart';
@@ -234,7 +225,7 @@ class NewsFeedCard extends StatelessWidget {
               final url = mediaList[i].fullUrl ?? "";
               return _isImageUrl(url)
                   ? _imageItem(context, url, mediaList, i)
-                  : _attachmentItem(context, url);
+                  : _attachmentItem(context, mediaList[i]);
             },
           ),
         ),
@@ -315,9 +306,11 @@ class NewsFeedCard extends StatelessWidget {
     );
   }
 
-  Widget _attachmentItem(BuildContext context, String url) {
+  Widget _attachmentItem(BuildContext context, Media media) {
+    final url = media.fullUrl ?? "";
     final name = _fileName(url);
-    final isPdf = url.toLowerCase().split('?').first.endsWith('.pdf');
+    final isPdf = (media.extenstion ?? "").toLowerCase() == "pdf" ||
+        url.toLowerCase().split('?').first.endsWith('.pdf');
 
     if (isPdf) {
       return Stack(
@@ -331,7 +324,7 @@ class NewsFeedCard extends StatelessWidget {
             top: 8,
             right: 8,
             child: GestureDetector(
-              onTap: () => _openAttachment(context, url),
+              onTap: () => _openAttachment(context, media),
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
@@ -365,7 +358,7 @@ class NewsFeedCard extends StatelessWidget {
     }
 
     return GestureDetector(
-      onTap: () => _openAttachment(context, url),
+      onTap: () => _openAttachment(context, media),
       child: Container(
         width: double.infinity,
         color: Colors.grey[100],
@@ -414,8 +407,10 @@ class NewsFeedCard extends StatelessWidget {
     );
   }
 
-  void _openAttachment(BuildContext context, String url) {
-    final isPdf = url.toLowerCase().split('?').first.endsWith('.pdf');
+  void _openAttachment(BuildContext context, Media media) {
+    final url = media.fullUrl ?? "";
+    final isPdf = (media.extenstion ?? "").toLowerCase() == "pdf" ||
+        url.toLowerCase().split('?').first.endsWith('.pdf');
     if (isPdf) {
       Get.to(() => FullScreenPdfViewer(url: url, title: _fileName(url)));
     } else {
@@ -424,10 +419,10 @@ class NewsFeedCard extends StatelessWidget {
   }
 
   void _launchExternal(BuildContext context, String url) async {
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
+    try {
+      final uri = Uri.parse(url);
       await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } else {
+    } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Could not open attachment")),
@@ -770,6 +765,23 @@ class FullScreenPdfViewer extends StatelessWidget {
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 1,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.open_in_browser_rounded),
+            onPressed: () async {
+              try {
+                final uri = Uri.parse(url);
+                await launchUrl(uri, mode: LaunchMode.externalApplication);
+              } catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Could not open in browser")),
+                  );
+                }
+              }
+            },
+          ),
+        ],
       ),
       body: SfPdfViewer.network(url),
     );

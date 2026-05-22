@@ -8,26 +8,17 @@ import 'package:bloom_kidz/CommonWidgets/black_medium_bold_text.dart';
 import 'package:bloom_kidz/CommonWidgets/black_medium_regular_text.dart';
 import 'package:bloom_kidz/CommonWidgets/blue_medium_bold_text.dart';
 import 'package:bloom_kidz/CommonWidgets/blue_medium_regular_text.dart';
-import 'package:bloom_kidz/CommonWidgets/common_green_button.dart';
-import 'package:bloom_kidz/CommonWidgets/common_text_field.dart';
 import 'package:bloom_kidz/CommonWidgets/common_widget.dart';
-import 'package:bloom_kidz/NewsFeed/controller/news_feed_controller.dart';
-import 'package:bloom_kidz/NewsFeed/models/news_feed_response.dart' hide Media;
 import 'package:bloom_kidz/Styles/my_colors.dart';
-import 'package:bloom_kidz/Styles/my_font.dart';
 import 'package:bloom_kidz/Styles/my_icons.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-
-import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../CommonWidgets/blue_small_regular_text.dart';
-import '../../../NewsFeed/View/comment_list.dart';
-import '../../GroupObservation/view/group_observation_card.dart';
 import 'observation_comment_list.dart';
 
 class ObservationCard extends StatelessWidget {
@@ -493,7 +484,7 @@ class ObservationCard extends StatelessWidget {
               final url = mediaList[i].image ?? "";
               return _isImageUrl(url)
                   ? _imageItem(context, mediaList, i)
-                  : _attachmentItem(context, url);
+                  : _attachmentItem(context, mediaList[i]);
             },
           ),
         ),
@@ -572,9 +563,11 @@ class ObservationCard extends StatelessWidget {
     );
   }
 
-  Widget _attachmentItem(BuildContext context, String url) {
+  Widget _attachmentItem(BuildContext context, ObservationMedia media) {
+    final url = media.image ?? "";
     final name = _fileName(url);
-    final isPdf = url.toLowerCase().split('?').first.endsWith('.pdf');
+    final isPdf = (media.extension ?? "").toLowerCase() == "pdf" ||
+        url.toLowerCase().split('?').first.endsWith('.pdf');
 
     return GestureDetector(
       onTap: () => _openAttachment(context, url),
@@ -627,10 +620,10 @@ class ObservationCard extends StatelessWidget {
   }
 
   void _openAttachment(BuildContext context, String url) async {
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
+    try {
+      final uri = Uri.parse(url);
       await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } else {
+    } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Could not open attachment")),
