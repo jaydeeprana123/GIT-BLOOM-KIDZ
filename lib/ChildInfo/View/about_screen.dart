@@ -1,4 +1,5 @@
 import 'package:bloom_kidz/ChildInfo/controller/child_info_controller.dart';
+import 'package:bloom_kidz/ChildInfo/View/edit_doctor_dentist_screen.dart';
 import 'package:bloom_kidz/CommonWidgets/black_large_bold_text.dart';
 import 'package:bloom_kidz/CommonWidgets/black_large_regular_text.dart';
 import 'package:bloom_kidz/CommonWidgets/black_medium_bold_text.dart';
@@ -58,10 +59,19 @@ class _AboutScreenState extends State<AboutScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: const CommonAppBar(
-        title: "About",
-        showMenu: false,
-        showBack: true,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(64),
+        child: Obx(
+          () => CommonAppBar(
+            title: "About",
+            showMenu: false,
+            showBack: true,
+            showEditButton: childInfoController.selectedTab.value == 1,
+            onAddButtonTap: () {
+              Get.to(() => EditDoctorDentistScreen(childId: widget.childId));
+            },
+          ),
+        ),
       ),
       body: Obx(() {
         final basic = childInfoController.aboutChildren.value.basicInfo;

@@ -19,6 +19,7 @@ import '../../CommonWidgets/custom_bottom_nav.dart';
 import '../../NewsFeed/View/event_calender_screen.dart';
 import '../../Profile/view/profile_screen.dart';
 import '../controller/bottom_navigation_controller.dart';
+import 'package:bloom_kidz/Notification/controller/notification_controller.dart';
 
 class BottomNavigationView extends StatefulWidget {
   final int selectTabPosition;
@@ -48,6 +49,10 @@ class _BottomNavigationViewState extends State<BottomNavigationView> {
     super.initState();
     setState(() {
       bottomNavController.currentIndex.value = widget.selectTabPosition;
+    });
+    final notificationController = Get.put(NotificationController());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notificationController.callNotificationsAPI(context, isToClearList: true);
     });
   }
 

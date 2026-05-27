@@ -17,6 +17,8 @@ import 'package:flutter/material.dart';
 
 import '../Authentication/controller/login_controller.dart';
 import '../NewsFeed/View/event_calender_screen.dart';
+import '../../Notification/view/notification_screen.dart';
+
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
@@ -127,6 +129,20 @@ class AppDrawer extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (_) => const CalendarScreen()),
+                    );
+                  },
+                ),
+
+                // 🔵 Notifications option
+                ListTile(
+                  leading: const Icon(Icons.notifications_none_outlined),
+                  title: BlackLargeBoldText('Notifications'),
+                  onTap: () {
+                    Navigator.pop(context); // close drawer
+
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const NotificationScreen()),
                     );
                   },
                 ),

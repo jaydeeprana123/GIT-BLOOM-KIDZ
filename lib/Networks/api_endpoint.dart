@@ -1,6 +1,9 @@
 // live url
-var urlBase =
-    'https://api.bloomkidz.net/api'; // change ( 10-07-2024 ) ( Live url)
+// var urlBase =
+//     'https://api.bloomkidz.net/api'; // change ( 10-07-2024 ) ( Live url)
+
+// live url
+var urlBase = 'staging.bloomkidz.net/api'; // change ( 10-07-2024 ) ( Live url)
 
 //Authentication APIs
 const urlLogin = '/login';
@@ -81,3 +84,6 @@ const urlGetGroupChat = '/parent/chat/messages';
 const urlDeleteMessage = '/parent/chat/delete-message';
 const urlAddGroupMember = '/parent/chat/add-members';
 const urlConversations = '/parent/chat/conversations';
+const urlNotificationList = '/parent/notifications';
+const urlNotificationMarkAsRead = '/parent/notifications/mark-as-read';
+const urlNotificationClearAll = '/parent/notifications/clear-all';

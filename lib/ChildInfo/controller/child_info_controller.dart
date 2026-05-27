@@ -155,6 +155,20 @@ class ChildInfoController extends GetxController {
   Rx<TextEditingController> additionalNotesController =
       TextEditingController().obs;
 
+  Rx<TextEditingController> docNameController = TextEditingController().obs;
+  Rx<TextEditingController> docMobileController = TextEditingController().obs;
+  Rx<TextEditingController> docStreetController = TextEditingController().obs;
+  Rx<TextEditingController> docCityController = TextEditingController().obs;
+  Rx<TextEditingController> docCountryController = TextEditingController().obs;
+  Rx<TextEditingController> docPostcodeController = TextEditingController().obs;
+
+  Rx<TextEditingController> dentistNameController = TextEditingController().obs;
+  Rx<TextEditingController> dentistMobileController = TextEditingController().obs;
+  Rx<TextEditingController> dentistStreetController = TextEditingController().obs;
+  Rx<TextEditingController> dentistCityController = TextEditingController().obs;
+  Rx<TextEditingController> dentistCountryController = TextEditingController().obs;
+  Rx<TextEditingController> dentistPostcodeController = TextEditingController().obs;
+
   // Tracks current page index per news card
   final RxMap<int, int> imagePageMap = <int, int>{}.obs;
 
@@ -2441,5 +2455,57 @@ class ChildInfoController extends GetxController {
       }
     }
     return null;
+  }
+
+  Future<void> callUpdateDoctorDentistAPI({
+    required BuildContext context,
+    required String childId,
+    required Map<String, dynamic> body,
+  }) async {
+    isLoading.value = true;
+
+    try {
+      String token = await MySharedPref().getStringValue(
+        SharePreData.keyAccessToken,
+      );
+
+      String url = "$urlBase$urlGetAbout/$childId/update-doctor-dentist";
+      printData("url", url);
+
+      var headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      };
+      var request = http.Request('POST', Uri.parse(url));
+      request.headers.addAll(headers);
+      request.body = json.encode(body);
+
+      http.StreamedResponse response = await request.send();
+      isLoading.value = false;
+
+      if (response.statusCode == 200) {
+        final valueData = await response.stream.bytesToString();
+        printData("callUpdateDoctorDentistAPI", valueData);
+
+        Map<String, dynamic> responseMap = json.decode(valueData);
+        BaseModel baseModel = BaseModel.fromJson(responseMap);
+
+        if (baseModel.status ?? false) {
+          snackBar(context, baseModel.message ?? "Doctor & Dentist updated successfully");
+          await callGetAboutChildAPI(context, childId);
+          Navigator.pop(context);
+        } else {
+          snackBar(context, baseModel.message ?? "");
+        }
+      } else if (response.statusCode == 401) {
+        logoutFromTheApp();
+      } else {
+        snackBar(context, "Server error (${response.statusCode})");
+      }
+    } catch (e) {
+      isLoading.value = false;
+      printData("Error in callUpdateDoctorDentistAPI", e.toString());
+      snackBar(context, "An error occurred while updating information");
+    }
   }
 }

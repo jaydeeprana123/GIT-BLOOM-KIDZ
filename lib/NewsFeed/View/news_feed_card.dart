@@ -4,6 +4,7 @@ import 'package:bloom_kidz/CommonWidgets/blue_medium_regular_text.dart';
 import 'package:bloom_kidz/NewsFeed/controller/news_feed_controller.dart';
 import 'package:bloom_kidz/NewsFeed/models/news_feed_response.dart';
 import 'package:bloom_kidz/Styles/my_colors.dart';
+import 'package:bloom_kidz/Styles/my_font.dart';
 import 'package:bloom_kidz/Styles/my_icons.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -46,7 +47,6 @@ class NewsFeedCard extends StatelessWidget {
           _titleText(),
           if ((newsFeed.media ?? []).isNotEmpty) _image(context),
           _description(),
-
 
           if (newsFeed.type == "events")
             Container(
@@ -280,7 +280,12 @@ class NewsFeedCard extends StatelessWidget {
     }
   }
 
-  Widget _imageItem(BuildContext context, String url, List<Media> mediaList, int i, ) {
+  Widget _imageItem(
+    BuildContext context,
+    String url,
+    List<Media> mediaList,
+    int i,
+  ) {
     return GestureDetector(
       onTap: () => showFullImageDialog(context, mediaList, i),
       child: Image.network(
@@ -298,9 +303,7 @@ class NewsFeedCard extends StatelessWidget {
         ),
         loadingBuilder: (_, child, progress) {
           if (progress == null) return child;
-          return  Center(
-  child: CircularProgressIndicator(),
-);
+          return Center(child: CircularProgressIndicator());
         },
       ),
     );
@@ -309,7 +312,8 @@ class NewsFeedCard extends StatelessWidget {
   Widget _attachmentItem(BuildContext context, Media media) {
     final url = media.fullUrl ?? "";
     final name = _fileName(url);
-    final isPdf = (media.extenstion ?? "").toLowerCase() == "pdf" ||
+    final isPdf =
+        (media.extenstion ?? "").toLowerCase() == "pdf" ||
         url.toLowerCase().split('?').first.endsWith('.pdf');
 
     if (isPdf) {
@@ -326,7 +330,10 @@ class NewsFeedCard extends StatelessWidget {
             child: GestureDetector(
               onTap: () => _openAttachment(context, media),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.black.withOpacity(0.6),
                   borderRadius: BorderRadius.circular(12),
@@ -365,11 +372,7 @@ class NewsFeedCard extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.attach_file_rounded,
-              size: 64,
-              color: color_secondary,
-            ),
+            Icon(Icons.attach_file_rounded, size: 64, color: color_secondary),
             const SizedBox(height: 12),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -409,7 +412,8 @@ class NewsFeedCard extends StatelessWidget {
 
   void _openAttachment(BuildContext context, Media media) {
     final url = media.fullUrl ?? "";
-    final isPdf = (media.extenstion ?? "").toLowerCase() == "pdf" ||
+    final isPdf =
+        (media.extenstion ?? "").toLowerCase() == "pdf" ||
         url.toLowerCase().split('?').first.endsWith('.pdf');
     if (isPdf) {
       Get.to(() => FullScreenPdfViewer(url: url, title: _fileName(url)));
@@ -486,42 +490,42 @@ class NewsFeedCard extends StatelessWidget {
     );
   }
 
-//   Widget _singleImage(BuildContext context, Media media) {
-//     return ClipRRect(
-//       borderRadius: BorderRadius.circular(12),
-//       child: GestureDetector(
-//         onTap: () => showFullImageDialog(context, media.file ?? ""),
-//         child: SizedBox(
-//           height: 200,
-//           width: double.infinity,
-//           child: CachedNetworkImage(
-//             imageUrl: media.file ?? "",
-//             fit: BoxFit.cover,
-//             height: 200,
-//             width: double.infinity,
-//             placeholder: (context, url) =>  Center(
-//   child: CircularProgressIndicator(),
-// ),
-//             errorWidget: (context, url, error) =>  Center(
-//   child: CircularProgressIndicator(),
-// ),
-//           )
-//
-//
-//
-//           // FadeInImage.assetNetwork(
-//           //   placeholder: placeholder,
-//           //   image: media.file ?? "",
-//           //   fit: BoxFit.cover,
-//           //   height: 200,
-//           //   width: double.infinity,
-//           // ),
-//         ),
-//       ),
-//     );
-//   }
+  //   Widget _singleImage(BuildContext context, Media media) {
+  //     return ClipRRect(
+  //       borderRadius: BorderRadius.circular(12),
+  //       child: GestureDetector(
+  //         onTap: () => showFullImageDialog(context, media.file ?? ""),
+  //         child: SizedBox(
+  //           height: 200,
+  //           width: double.infinity,
+  //           child: CachedNetworkImage(
+  //             imageUrl: media.file ?? "",
+  //             fit: BoxFit.cover,
+  //             height: 200,
+  //             width: double.infinity,
+  //             placeholder: (context, url) =>  Center(
+  //   child: CircularProgressIndicator(),
+  // ),
+  //             errorWidget: (context, url, error) =>  Center(
+  //   child: CircularProgressIndicator(),
+  // ),
+  //           )
+  //
+  //
+  //
+  //           // FadeInImage.assetNetwork(
+  //           //   placeholder: placeholder,
+  //           //   image: media.file ?? "",
+  //           //   fit: BoxFit.cover,
+  //           //   height: 200,
+  //           //   width: double.infinity,
+  //           // ),
+  //         ),
+  //       ),
+  //     );
+  //   }
 
-  Widget _gridImage(BuildContext context, List<Media> mediaList, int i, ) {
+  Widget _gridImage(BuildContext context, List<Media> mediaList, int i) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
       child: GestureDetector(
@@ -530,12 +534,10 @@ class NewsFeedCard extends StatelessWidget {
           imageUrl: mediaList[i].fullUrl ?? "",
           fit: BoxFit.cover,
           width: double.infinity,
-          placeholder: (context, url) =>  Center(
-  child: CircularProgressIndicator(),
-),
-          errorWidget: (context, url, error) =>  Center(
-  child: CircularProgressIndicator(),
-),
+          placeholder: (context, url) =>
+              Center(child: CircularProgressIndicator()),
+          errorWidget: (context, url, error) =>
+              Center(child: CircularProgressIndicator()),
         ),
       ),
     );
@@ -551,11 +553,11 @@ class NewsFeedCard extends StatelessWidget {
             fontSize: FontSize(13),
             color: text_color,
             lineHeight: LineHeight(1.4),
-            margin: Margins.zero,      // 👈 Add this
+            margin: Margins.zero, // 👈 Add this
             padding: HtmlPaddings.zero, // 👈 Add this
           ),
           "body": Style(
-            margin: Margins.zero,       // 👈 Add this
+            margin: Margins.zero, // 👈 Add this
             padding: HtmlPaddings.zero, // 👈 Add this
           ),
         },
@@ -605,7 +607,7 @@ class NewsFeedCard extends StatelessWidget {
             ),
           ),
           SizedBox(width: 4),
-          BlueMediumRegularText((newsFeed.likesCount ?? 0).toString()),
+          _likedUsersAvatarsAndCount(context),
           SizedBox(width: 16),
           InkWell(
             onTap: () {
@@ -687,6 +689,142 @@ class NewsFeedCard extends StatelessWidget {
         false;
     return isLikedByMe;
   }
+
+  Widget _likedUsersAvatarsAndCount(BuildContext context) {
+    final likedUsers = newsFeed.likedUsers ?? [];
+    final likesCount = newsFeed.likesCount ?? 0;
+
+    if (likesCount == 0) {
+      return BlueMediumRegularText("0");
+    }
+
+    return InkWell(
+      onTap: () {
+        if (likedUsers.isNotEmpty) {
+          _showLikedUsersBottomSheet(context, likedUsers);
+        }
+      },
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (likedUsers.isNotEmpty) ...[
+            SizedBox(
+              height: 20,
+              width: (likedUsers.length.clamp(1, 3) * 14.0) + 6.0,
+              child: Stack(
+                children: List.generate(likedUsers.length.clamp(1, 3), (i) {
+                  final user = likedUsers[i];
+                  return Positioned(
+                    left: i * 14.0,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 1.5),
+                      ),
+                      child: CircleAvatar(
+                        radius: 8,
+                        backgroundImage:
+                            (user.profile != null && user.profile!.isNotEmpty)
+                            ? NetworkImage(user.profile!)
+                            : null,
+                        child: (user.profile == null || user.profile!.isEmpty)
+                            ? Text(
+                                (user.name ?? "").isNotEmpty
+                                    ? user.name![0].toUpperCase()
+                                    : "",
+                                style: const TextStyle(
+                                  fontSize: 8,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              )
+                            : null,
+                      ),
+                    ),
+                  );
+                }),
+              ),
+            ),
+            const SizedBox(width: 4),
+          ],
+          BlueMediumRegularText("$likesCount"),
+        ],
+      ),
+    );
+  }
+
+  void _showLikedUsersBottomSheet(BuildContext context, List<User> users) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                "Liked By",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: fontInterBold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Divider(),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: users.length,
+                  itemBuilder: (context, i) {
+                    final user = users[i];
+                    return ListTile(
+                      leading: CircleAvatar(
+                        radius: 20,
+                        backgroundImage:
+                            (user.profile != null && user.profile!.isNotEmpty)
+                            ? NetworkImage(user.profile!)
+                            : null,
+                        backgroundColor: color_secondary,
+                        child: (user.profile == null || user.profile!.isEmpty)
+                            ? Text(
+                                (user.name ?? "").isNotEmpty
+                                    ? user.name![0].toUpperCase()
+                                    : "",
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              )
+                            : null,
+                      ),
+                      title: Text(
+                        user.name ?? "",
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 }
 
 class AllImagesScreenForNewsFeed extends StatelessWidget {
@@ -726,13 +864,10 @@ class AllImagesScreenForNewsFeed extends StatelessWidget {
               child: CachedNetworkImage(
                 imageUrl: media.fullUrl ?? "",
                 fit: BoxFit.cover,
-                placeholder: (context, url) =>  Center(
-  child: CircularProgressIndicator(),
-),
-                errorWidget: (context, url, error) =>  Center(
-  child: CircularProgressIndicator(),
-),
-
+                placeholder: (context, url) =>
+                    Center(child: CircularProgressIndicator()),
+                errorWidget: (context, url, error) =>
+                    Center(child: CircularProgressIndicator()),
               ),
 
               // FadeInImage.assetNetwork(
@@ -752,16 +887,17 @@ class FullScreenPdfViewer extends StatelessWidget {
   final String url;
   final String title;
 
-  const FullScreenPdfViewer({super.key, required this.url, required this.title});
+  const FullScreenPdfViewer({
+    super.key,
+    required this.url,
+    required this.title,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          title,
-          style: const TextStyle(fontSize: 16),
-        ),
+        title: Text(title, style: const TextStyle(fontSize: 16)),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 1,

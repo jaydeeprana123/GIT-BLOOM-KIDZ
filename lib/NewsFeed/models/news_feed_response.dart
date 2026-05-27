@@ -75,6 +75,7 @@ class Newsfeed {
   int? likesCount;
   List<Comment>? comments;
   int? commentsCount;
+  List<User>? likedUsers;
 
   Newsfeed({
     this.id,
@@ -95,6 +96,7 @@ class Newsfeed {
     this.likesCount,
     this.comments,
     this.commentsCount,
+    this.likedUsers,
   });
 
   factory Newsfeed.fromJson(Map<String, dynamic> json) => Newsfeed(
@@ -116,6 +118,7 @@ class Newsfeed {
     likesCount: json["likes_count"],
     comments: json["comments"] == null ? [] : List<Comment>.from(json["comments"]!.map((x) => Comment.fromJson(x))),
     commentsCount: json["comments_count"],
+    likedUsers: json["liked_users"] == null ? [] : List<User>.from(json["liked_users"]!.map((x) => User.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
@@ -137,6 +140,7 @@ class Newsfeed {
     "likes_count": likesCount,
     "comments": comments == null ? [] : List<dynamic>.from(comments!.map((x) => x.toJson())),
     "comments_count": commentsCount,
+    "liked_users": likedUsers == null ? [] : List<dynamic>.from(likedUsers!.map((x) => x.toJson())),
   };
 }
 
