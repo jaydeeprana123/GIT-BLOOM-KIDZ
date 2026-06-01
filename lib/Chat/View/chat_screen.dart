@@ -37,6 +37,7 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   ChatController chatController = Get.find<ChatController>();
+  Message? _editingMessage;
 
   @override
   void initState() {
@@ -204,6 +205,19 @@ class _ChatScreenState extends State<ChatScreen> {
               ); // your API call
             }
           },
+          onEdit: () {
+            setState(() {
+              _editingMessage = chatController
+                  .groupChatResponse
+                  .value
+                  .data
+                  ?.messages?[index];
+              if (_editingMessage != null) {
+                chatController.messageController.value.text =
+                    _editingMessage!.message ?? "";
+              }
+            });
+          },
         );
       },
     );
@@ -214,89 +228,149 @@ class _ChatScreenState extends State<ChatScreen> {
     return Obx(
       () => Padding(
         padding: const EdgeInsets.all(12),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(30),
-            border: Border.all(color: const Color(0xff1f78c8)),
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: chatController.messageController.value,
-                  decoration: const InputDecoration(
-                    hintText: "Write a reply...",
-                    border: InputBorder.none,
-                  ),
-                  onChanged: (value) {
-                    setState(() {});
-                  },
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if (_editingMessage != null)
+              Container(
+                margin: const EdgeInsets.only(bottom: 8, left: 8, right: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade50,
+                  borderRadius: BorderRadius.circular(15),
+                  border: Border.all(color: Colors.blue.shade200),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.edit, color: Colors.blue, size: 16),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        "Editing: ${_editingMessage!.message}",
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          color: Colors.blue,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _editingMessage = null;
+                          chatController.messageController.value.text = "";
+                        });
+                      },
+                      child: const Icon(Icons.close, color: Colors.blue, size: 16),
+                    ),
+                  ],
                 ),
               ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(30),
+                border: Border.all(color: const Color(0xff1f78c8)),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: chatController.messageController.value,
+                      decoration: const InputDecoration(
+                        hintText: "Write a reply...",
+                        border: InputBorder.none,
+                      ),
+                      onChanged: (value) {
+                        setState(() {});
+                      },
+                    ),
+                  ),
 
-              if (chatController.messageController.value.text.isEmpty)
-                IconButton(
-                  icon: const Icon(Icons.attach_file, color: Color(0xff1f78c8)),
-                  onPressed: () async {
-                    chatController.imagePath.value = await selectPhoto(
-                      context,
-                      true,
-                    );
+                  if (chatController.messageController.value.text.isEmpty)
+                    IconButton(
+                      icon: const Icon(Icons.attach_file, color: Color(0xff1f78c8)),
+                      onPressed: () async {
+                        chatController.imagePath.value = await selectPhoto(
+                          context,
+                          true,
+                        );
 
-                    printData(
-                      "chatController.imagePath",
-                      chatController.imagePath.value,
-                    );
+                        printData(
+                          "chatController.imagePath",
+                          chatController.imagePath.value,
+                        );
 
-                    showImageDialog(
-                      context,
-                      chatController.imagePath.value,
-                      chatController.groupChatResponse.value.data?.group?.id ??
-                          0,
-                      chatController
-                              .groupChatResponse
-                              .value
-                              .data
-                              ?.group
-                              ?.name ??
-                          "",
-                    );
-                  },
-                ),
+                        showImageDialog(
+                          context,
+                          chatController.imagePath.value,
+                          chatController.groupChatResponse.value.data?.group?.id ??
+                              0,
+                          chatController
+                                  .groupChatResponse
+                                  .value
+                                  .data
+                                  ?.group
+                                  ?.name ??
+                              "",
+                        );
+                      },
+                    ),
 
-              if (chatController.messageController.value.text.isNotEmpty)
-                IconButton(
-                  icon: const Icon(Icons.send, color: Color(0xff1f78c8)),
-                  onPressed: () {
-                    if (widget.groupId.isEmpty &&
-                        widget.sendMessageNotGroupRequest != null) {
-                      widget.sendMessageNotGroupRequest?.message =
-                          chatController.messageController.value.text;
-                      chatController.callSendMessageNotGroupAPI(
-                        context,
-                        widget.sendMessageNotGroupRequest!,
-                        isFromChatScreen: true,
-                      );
-                    } else {
-                      chatController.callSendMessageInGroupAPI(
-                        context,
-                        (chatController
-                                    .groupChatResponse
-                                    .value
-                                    .data
-                                    ?.group
-                                    ?.id ??
-                                0)
-                            .toString(),
-                        chatController.messageController.value.text,
-                      );
-                    }
-                  },
-                ),
-            ],
-          ),
+                  if (chatController.messageController.value.text.isNotEmpty)
+                    IconButton(
+                      icon: const Icon(Icons.send, color: Color(0xff1f78c8)),
+                      onPressed: () {
+                        if (_editingMessage != null) {
+                          final editedText = chatController.messageController.value.text;
+                          final messageId = _editingMessage!.id.toString();
+                          final activeGroupId = widget.groupId.isNotEmpty
+                              ? widget.groupId
+                              : (chatController.groupChatResponse.value.data?.group?.id ?? 0).toString();
+
+                          chatController.callEditMessageAPI(
+                            context,
+                            activeGroupId,
+                            messageId,
+                            editedText,
+                          );
+                          setState(() {
+                            _editingMessage = null;
+                            chatController.messageController.value.text = "";
+                          });
+                        } else if (widget.groupId.isEmpty &&
+                            widget.sendMessageNotGroupRequest != null) {
+                          widget.sendMessageNotGroupRequest?.message =
+                              chatController.messageController.value.text;
+                          chatController.callSendMessageNotGroupAPI(
+                            context,
+                            widget.sendMessageNotGroupRequest!,
+                            isFromChatScreen: true,
+                          );
+                        } else {
+                          chatController.callSendMessageInGroupAPI(
+                            context,
+                            (chatController
+                                        .groupChatResponse
+                                        .value
+                                        .data
+                                        ?.group
+                                        ?.id ??
+                                    0)
+                                .toString(),
+                            chatController.messageController.value.text,
+                          );
+                        }
+                      },
+                    ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

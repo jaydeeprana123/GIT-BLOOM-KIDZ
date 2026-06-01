@@ -17,7 +17,10 @@ class NotificationController extends GetxController {
   RxBool isMoreDataAvailable = true.obs;
   int pageNumber = 1;
 
-  Future<void> callNotificationsAPI(BuildContext context, {bool isToClearList = true}) async {
+  Future<void> callNotificationsAPI(
+    BuildContext context, {
+    bool isToClearList = true,
+  }) async {
     if (pageNumber == 1) {
       if (isToClearList) {
         notificationList.clear();
@@ -44,14 +47,18 @@ class NotificationController extends GetxController {
       );
 
       final valueData = await res.stream.bytesToString();
-      printData(runtimeType.toString(), "callNotificationsAPI value $valueData");
+      printData(
+        runtimeType.toString(),
+        "callNotificationsAPI value $valueData",
+      );
 
       isLoading.value = false;
       isPaginationLoading.value = false;
 
       if (res.statusCode == 200) {
         Map<String, dynamic> responseMap = json.decode(valueData);
-        NotificationResponse notificationResponse = NotificationResponse.fromJson(responseMap);
+        NotificationResponse notificationResponse =
+            NotificationResponse.fromJson(responseMap);
 
         if (notificationResponse.status ?? false) {
           final data = notificationResponse.data;
@@ -66,7 +73,9 @@ class NotificationController extends GetxController {
           }
 
           if (pagination != null) {
-            isMoreDataAvailable.value = pagination.hasMore ?? (pagination.currentPage! < pagination.lastPage!);
+            isMoreDataAvailable.value =
+                pagination.hasMore ??
+                (pagination.currentPage! < pagination.lastPage!);
             pageNumber = pagination.currentPage! + 1;
           } else {
             isMoreDataAvailable.value = false;
@@ -114,16 +123,16 @@ class NotificationController extends GetxController {
         SharePreData.keyAccessToken,
       );
 
-      String url = "$urlBase$urlNotificationMarkAsRead";
+      String url = "$urlBase$urlNotificationMarkAsRead/$id";
       printData("url", url);
 
       final apiReq = Request();
-      final body = {
-        'notification_id': id.toString(),
-        'id': id.toString(),
-      };
+      // final body = {
+      //   'notification_id': id.toString(),
+      //   'id': id.toString(),
+      // };
 
-      final value = await apiReq.postAPI(url, body, token);
+      final value = await apiReq.postAPI(url, null, token);
       http.StreamedResponse res = value;
       printData(
         runtimeType.toString(),
@@ -187,7 +196,10 @@ class NotificationController extends GetxController {
         if (responseMap["status"] ?? false) {
           notificationList.clear();
           unreadCount.value = 0;
-          snackBarRapid(context, responseMap["message"] ?? "All notifications cleared");
+          snackBarRapid(
+            context,
+            responseMap["message"] ?? "All notifications cleared",
+          );
         } else {
           snackBarRapid(context, responseMap["message"] ?? "");
         }

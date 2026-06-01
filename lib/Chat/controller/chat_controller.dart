@@ -534,6 +534,58 @@ class ChatController extends GetxController {
     });
   }
 
+  /// Edit Message API
+  callEditMessageAPI(
+    BuildContext context,
+    String groupId,
+    String id,
+    String message,
+  ) async {
+    isLoading.value = true;
+
+    String token = await MySharedPref().getStringValue(
+      SharePreData.keyAccessToken,
+    );
+
+    String url = "$urlBase$urlEditMessage";
+
+    final apiReq = Request();
+
+    dynamic body = {"id": id, "message": message};
+
+    await apiReq.postAPI(url, body, token).then((value) async {
+      http.StreamedResponse res = value;
+      printData(
+        runtimeType.toString(),
+        "callEditMessageAPI response ${res.statusCode}",
+      );
+
+      await res.stream.bytesToString().then((valueData) async {
+        printData(
+          runtimeType.toString(),
+          "callEditMessageAPI value ${valueData}",
+        );
+
+        isLoading.value = false;
+
+        if (res.statusCode == 200) {
+          Map<String, dynamic> userModel = json.decode(valueData);
+          BaseModel baseModel = BaseModel.fromJson(userModel);
+
+          if (baseModel.status ?? false) {
+            snackBar(context, baseModel.message ?? "");
+
+            callGetGroupChatAPI(context, groupId);
+          } else {
+            snackBar(context, baseModel.message ?? "");
+          }
+        } else if (res.statusCode == 401) {
+          logoutFromTheApp();
+        }
+      });
+    });
+  }
+
   /// Add Group Member API
   callAddGroupMemberAPI(
     BuildContext context,

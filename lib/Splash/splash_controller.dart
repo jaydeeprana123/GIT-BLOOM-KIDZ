@@ -148,16 +148,17 @@ class SplashController extends GetxController {
 
       if (token.isEmpty) {
         if (email.isNotEmpty) {
-          bool quickPinSet = await sharedPref.getBoolValue(SharePreData.keyPinSet);
+          bool quickPinSet = await sharedPref.getBoolValue(
+            SharePreData.keyPinSet,
+          );
 
           printData("quickPinset ", quickPinSet.toString());
 
-          if(quickPinSet){
+          if (quickPinSet) {
             Get.off(() => QuickAccessPinScreen());
-          }else{
+          } else {
             Get.off(() => LoginScreen());
           }
-
         } else {
           Get.off(() => LoginScreen());
         }
@@ -200,18 +201,17 @@ class SplashController extends GetxController {
             userModel,
           );
 
-          if ((quickPinResponse.data?.isPinSet ??false)) {
-
+          if ((quickPinResponse.data?.isPinSet ?? false)) {
             var preferences = MySharedPref();
             await preferences.setBool(SharePreData.keyPinSet, true);
 
             Get.off(() => QuickAccessPinScreen());
-          }else{
+          } else {
             var preferences = MySharedPref();
             await preferences.setBool(SharePreData.keyPinSet, false);
             Get.off(() => LoginScreen());
           }
-        }else{
+        } else {
           var preferences = MySharedPref();
           await preferences.setBool(SharePreData.keyPinSet, false);
           Get.off(() => LoginScreen());

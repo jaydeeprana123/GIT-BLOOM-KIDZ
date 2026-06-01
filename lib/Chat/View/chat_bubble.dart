@@ -27,6 +27,7 @@ class ChatBubble extends StatefulWidget {
   final bool showSenderName;
   final List<Attachment>? attachments;
   final VoidCallback? onDelete;
+  final VoidCallback? onEdit;
 
   const ChatBubble({
     super.key,
@@ -38,6 +39,7 @@ class ChatBubble extends StatefulWidget {
     required this.showSenderName,
     this.attachments,
     this.onDelete,
+    this.onEdit,
   });
 
   @override
@@ -67,35 +69,70 @@ class _ChatBubbleState extends State<ChatBubble> {
             child: BlackSmallRegularText(widget.time, color: Colors.black),
           ),
 
-          // Delete button
+          // Edit/Delete buttons
           if (_showDelete && widget.isSender)
-            GestureDetector(
-              onTap: () {
-                setState(() => _showDelete = false);
-                widget.onDelete?.call();
-              },
-              child: Container(
-                margin: const EdgeInsets.only(bottom: 4),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.red,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.delete, color: Colors.white, size: 14),
-                    SizedBox(width: 4),
-                    Text(
-                      "Delete",
-                      style: TextStyle(color: Colors.white, fontSize: 12),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if ((widget.attachments ?? []).isEmpty) ...[
+                  GestureDetector(
+                    onTap: () {
+                      setState(() => _showDelete = false);
+                      widget.onEdit?.call();
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.only(bottom: 4, right: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.edit, color: Colors.white, size: 14),
+                          SizedBox(width: 4),
+                          Text(
+                            "Edit",
+                            style: TextStyle(color: Colors.white, fontSize: 12),
+                          ),
+                        ],
+                      ),
                     ),
-                  ],
+                  ),
+                ],
+                GestureDetector(
+                  onTap: () {
+                    setState(() => _showDelete = false);
+                    widget.onDelete?.call();
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.only(bottom: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.delete, color: Colors.white, size: 14),
+                        SizedBox(width: 4),
+                        Text(
+                          "Delete",
+                          style: TextStyle(color: Colors.white, fontSize: 12),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
 
           // Message / Attachments

@@ -155,9 +155,7 @@ class CommentListWidget extends StatelessWidget {
                                               fontSize: 14,
                                             ),
                                             BlackSmallMediumText(
-                                              getDateOnlyInIndianFormat(
-                                                comment?.date ?? DateTime(2025),
-                                              ),
+                                              comment?.date ?? "",
                                             ),
                                           ],
                                         ),
