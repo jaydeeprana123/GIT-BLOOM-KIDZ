@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_html_table/flutter_html_table.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
@@ -201,8 +202,27 @@ class _AllAboutMeScreenState extends State<AllAboutMeScreen> {
             color: text_color,
             lineHeight: LineHeight(1.4),
           ),
+          "table": Style(
+            width: Width(900, Unit.px),
+          ),
+          "td": Style(
+            padding: HtmlPaddings.all(6),
+          ),
+          "th": Style(
+            padding: HtmlPaddings.all(6),
+          ),
         },
         extensions: [
+          TagWrapExtension(
+            tagsToWrap: {"table"},
+            builder: (child) {
+              return SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: child,
+              );
+            },
+          ),
+          TableHtmlExtension(),
           TagExtension(
             tagsToExtend: {"img"},
             builder: (context) {
@@ -259,6 +279,36 @@ class _AllAboutMeScreenState extends State<AllAboutMeScreen> {
     // Remove font-variant-* properties that might cause issues
     html = html.replaceAllMapped(
       RegExp(r'font-variant-[^:]*:[^;}"]*', caseSensitive: false),
+      (match) => '',
+    );
+
+    // Remove height and max-height inline styles that limit the element's height and clip text
+    html = html.replaceAllMapped(
+      RegExp(r'\b(max-)?height\s*:\s*[^;}"]*', caseSensitive: false),
+      (match) => '',
+    );
+
+    // Remove overflow inline styles that might hide content
+    html = html.replaceAllMapped(
+      RegExp(r'\boverflow(-[xy])?\s*:\s*[^;}"]*', caseSensitive: false),
+      (match) => '',
+    );
+
+    // Remove white-space: nowrap inline styles to ensure proper wrapping of long text
+    html = html.replaceAllMapped(
+      RegExp(r'\bwhite-space\s*:\s*nowrap[^;}"]*', caseSensitive: false),
+      (match) => '',
+    );
+
+    // Remove align="left" and align="right" attributes from tags (like table or img) that cause float/wrapping bugs
+    html = html.replaceAll(
+      RegExp(r'''\balign=["']?(left|right)["']?''', caseSensitive: false),
+      '',
+    );
+
+    // Remove float: left and float: right inline styles
+    html = html.replaceAllMapped(
+      RegExp(r'\bfloat\s*:\s*(left|right)[^;}"]*', caseSensitive: false),
       (match) => '',
     );
 

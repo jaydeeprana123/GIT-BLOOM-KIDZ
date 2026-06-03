@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:bloom_kidz/Authentication/model/login_response.dart';
+import 'package:bloom_kidz/Authentication/model/login_response.dart' hide User;
 import 'package:bloom_kidz/NewsFeed/models/news_feed_caleneder_response.dart';
 import 'package:bloom_kidz/NewsFeed/models/news_feed_response.dart';
 import 'package:bloom_kidz/Styles/my_colors.dart';
@@ -39,6 +39,12 @@ class NewsFeedController extends GetxController {
 
   void updateImagePage(int cardIndex, int page) {
     imagePageMap[cardIndex] = page;
+  }
+
+  @override
+  void onInit() {
+    super.onInit();
+    getUserInfo();
   }
 
   getUserInfo() async {
@@ -88,6 +94,29 @@ class NewsFeedController extends GetxController {
 
         if (res.statusCode == 200) {
           Map<String, dynamic> userModel = json.decode(valueData);
+          
+          // Debug likes structure
+          try {
+            final firstFeed = (userModel["data"]?["newsfeeds"] as List?)?.first;
+            if (firstFeed != null) {
+              final debugData = {
+                "feed_id": firstFeed["id"],
+                "likes": firstFeed["likes"],
+                "liked_users": firstFeed["liked_users"],
+                "likedUsers": firstFeed["likedUsers"],
+                "comments": (firstFeed["comments"] as List?)?.map((c) => {
+                  "comment_id": c["id"],
+                  "likes": c["likes"],
+                  "liked_users": c["liked_users"],
+                  "likedUsers": c["likedUsers"],
+                }).toList(),
+              };
+              File("likes_debug.json").writeAsStringSync(json.encode(debugData));
+            }
+          } catch (e) {
+            // ignore
+          }
+
           NewsFeedResponse newsFeedResponse = NewsFeedResponse.fromJson(
             userModel,
           );
@@ -363,12 +392,38 @@ class NewsFeedController extends GetxController {
           BaseModel baseModel = BaseModel.fromJson(userModel);
 
           if (baseModel.status ?? false) {
-            // newsFeedList[index].isLike = true;
-            pageNumberObservation = 1;
+            final newsItem = newsFeedList[index];
+            final myUserId = loginResponse.value.data?.user?.id;
 
-            /// Here list should not clear
-            callNewsFeedAPI(context, isToClearList: false);
+            if (newsItem.likes == null) {
+              newsItem.likes = [];
+            }
+            final int likeIndex = newsItem.likes!.indexWhere((like) => like.userId == myUserId);
+            final bool isLiked = likeIndex != -1;
 
+            if (isLiked) {
+              // Unlike locally
+              newsItem.likes!.removeAt(likeIndex);
+              newsItem.likesCount = ((newsItem.likesCount ?? 0) - 1).clamp(0, 999999);
+              newsItem.likedUsers?.removeWhere((u) => u.id == myUserId);
+            } else {
+              // Like locally
+              newsItem.likes!.add(Like(userId: myUserId));
+              newsItem.likesCount = (newsItem.likesCount ?? 0) + 1;
+              if (newsItem.likedUsers == null) {
+                newsItem.likedUsers = [];
+              }
+              if (!newsItem.likedUsers!.any((u) => u.id == myUserId)) {
+                newsItem.likedUsers!.add(User(
+                  id: myUserId,
+                  name: loginResponse.value.data?.user?.name,
+                  profile: loginResponse.value.data?.user?.profile,
+                ));
+              }
+            }
+
+            newsFeedList[index] = newsItem;
+            newsFeedList.refresh();
             update();
 
             snackBar(context, baseModel.message ?? "");
@@ -386,6 +441,7 @@ class NewsFeedController extends GetxController {
     String newsId,
     String commentId,
     int index,
+    Comment? comment,
   ) async {
     isLoading.value = true;
 
@@ -418,7 +474,33 @@ class NewsFeedController extends GetxController {
           BaseModel baseModel = BaseModel.fromJson(userModel);
 
           if (baseModel.status ?? false) {
-            isLikeList[index] = true;
+            final bool currentlyLiked = isLikeList[index];
+            isLikeList[index] = !currentlyLiked;
+
+            if (comment != null) {
+              if (isLikeList[index]) {
+                comment.likes = (comment.likes ?? 0) + 1;
+                if (comment.likedUsers == null) {
+                  comment.likedUsers = [];
+                }
+                if (!comment.likedUsers!.any(
+                  (u) => u.id == loginResponse.value.data?.user?.id,
+                )) {
+                  comment.likedUsers!.add(
+                    User(
+                      id: loginResponse.value.data?.user?.id,
+                      name: loginResponse.value.data?.user?.name,
+                      profile: loginResponse.value.data?.user?.profile,
+                    ),
+                  );
+                }
+              } else {
+                comment.likes = ((comment.likes ?? 0) - 1).clamp(0, 999999);
+                comment.likedUsers?.removeWhere(
+                  (u) => u.id == loginResponse.value.data?.user?.id,
+                );
+              }
+            }
 
             update();
 

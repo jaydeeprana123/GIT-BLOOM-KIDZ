@@ -54,6 +54,7 @@ dependencies:
   photo_view: ^0.15.0
   cached_network_image: ^3.4.1
   syncfusion_flutter_pdfviewer: ^32.2.9
+  flutter_html_table: ^3.0.0
 
 
 dev_dependencies:

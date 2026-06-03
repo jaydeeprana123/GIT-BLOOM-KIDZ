@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:bloom_kidz/Authentication/model/login_response.dart';
+import 'package:bloom_kidz/Authentication/model/login_response.dart' hide User;
 import 'package:bloom_kidz/ChildInfo/About/models/about_response.dart';
 import 'package:bloom_kidz/ChildInfo/AllAboutMe/model/all_about_me_response.dart';
 import 'package:bloom_kidz/ChildInfo/Documents/models/documents_response.dart';
@@ -12,7 +12,6 @@ import 'package:bloom_kidz/ChildInfo/Permissions/models/permissions_response.dar
 import 'package:bloom_kidz/ChildInfo/WeeklyPlan/model/weekly_plan_response.dart';
 import 'package:bloom_kidz/ChildInfo/models/child_activity_response.dart';
 import 'package:bloom_kidz/ChildInfo/models/child_info_list_response.dart';
-import 'package:bloom_kidz/NewsFeed/models/news_feed_response.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -284,6 +283,12 @@ class ChildInfoController extends GetxController {
     if (activityList.isEmpty) return null;
     if (selectedDateIndex.value >= activityList.length) return null;
     return activityList[selectedDateIndex.value];
+  }
+
+  @override
+  void onInit() {
+    super.onInit();
+    getUserInfo();
   }
 
   getUserInfo() async {
@@ -1392,6 +1397,29 @@ class ChildInfoController extends GetxController {
 
         if (res.statusCode == 200) {
           Map<String, dynamic> userModel = json.decode(valueData);
+          
+          // Debug likes structure
+          try {
+            final firstObs = (userModel["data"]?["observations"] as List?)?.first;
+            if (firstObs != null) {
+              final debugData = {
+                "observation_id": firstObs["id"],
+                "likes": firstObs["likes"],
+                "liked_users": firstObs["liked_users"],
+                "likedUsers": firstObs["likedUsers"],
+                "comments": (firstObs["comments"] as List?)?.map((c) => {
+                  "comment_id": c["id"],
+                  "likes": c["likes"],
+                  "liked_users": c["liked_users"],
+                  "likedUsers": c["likedUsers"],
+                }).toList(),
+              };
+              File("likes_debug_obs.json").writeAsStringSync(json.encode(debugData));
+            }
+          } catch (e) {
+            // ignore
+          }
+
           ObservationListResponse observationListResponse =
               ObservationListResponse.fromJson(userModel);
 
@@ -1605,10 +1633,38 @@ class ChildInfoController extends GetxController {
           BaseModel baseModel = BaseModel.fromJson(userModel);
 
           if (baseModel.status ?? false) {
-            // observationList[index].isLike = true;
+            final obsItem = observationList[index];
+            final myUserId = loginResponse.value.data?.user?.id;
 
-            pageNumberObservation = 1;
-            callObservationListAPI(context, childId, isToClearList: false);
+            if (obsItem.likes == null) {
+              obsItem.likes = [];
+            }
+            final int likeIndex = obsItem.likes!.indexWhere((like) => like.userId == myUserId);
+            final bool isLiked = likeIndex != -1;
+
+            if (isLiked) {
+              // Unlike locally
+              obsItem.likes!.removeAt(likeIndex);
+              obsItem.likesCount = ((obsItem.likesCount ?? 0) - 1).clamp(0, 999999);
+              obsItem.likedUsers?.removeWhere((u) => u.id == myUserId);
+            } else {
+              // Like locally
+              obsItem.likes!.add(Like(userId: myUserId));
+              obsItem.likesCount = (obsItem.likesCount ?? 0) + 1;
+              if (obsItem.likedUsers == null) {
+                obsItem.likedUsers = [];
+              }
+              if (!obsItem.likedUsers!.any((u) => u.id == myUserId)) {
+                obsItem.likedUsers!.add(User(
+                  id: myUserId,
+                  name: loginResponse.value.data?.user?.name,
+                  profile: loginResponse.value.data?.user?.profile,
+                ));
+              }
+            }
+
+            observationList[index] = obsItem;
+            observationList.refresh();
             update();
 
             snackBar(context, baseModel.message ?? "");
@@ -1629,6 +1685,7 @@ class ChildInfoController extends GetxController {
     String observationId,
     String commentId,
     int index,
+    Comment? comment,
   ) async {
     isLoading.value = true;
 
@@ -1661,7 +1718,28 @@ class ChildInfoController extends GetxController {
           BaseModel baseModel = BaseModel.fromJson(userModel);
 
           if (baseModel.status ?? false) {
-            isLikeList[index] = true;
+            final bool currentlyLiked = isLikeList[index];
+            isLikeList[index] = !currentlyLiked;
+
+            if (comment != null) {
+              if (isLikeList[index]) {
+                comment.likes = (comment.likes ?? 0) + 1;
+                if (comment.likedUsers == null) {
+                  comment.likedUsers = [];
+                }
+                if (!comment.likedUsers!.any((u) => u.id == loginResponse.value.data?.user?.id)) {
+                  comment.likedUsers!.add(User(
+                    id: loginResponse.value.data?.user?.id,
+                    name: loginResponse.value.data?.user?.name,
+                    profile: loginResponse.value.data?.user?.profile,
+                  ));
+                }
+              } else {
+                comment.likes = ((comment.likes ?? 0) - 1).clamp(0, 999999);
+                comment.likedUsers?.removeWhere((u) => u.id == loginResponse.value.data?.user?.id);
+              }
+            }
+
             update();
 
             snackBar(context, baseModel.message ?? "");

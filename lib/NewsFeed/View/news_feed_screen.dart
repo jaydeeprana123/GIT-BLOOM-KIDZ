@@ -46,7 +46,7 @@ class _NewsFeedScreenState extends State<NewsFeedScreen> {
             !newsFeedController.isPaginationApiCalling.value) {
           newsFeedController.isPaginationApiCalling.value = true;
 
-          newsFeedController.callNewsFeedAPI(context);
+          await newsFeedController.callNewsFeedAPI(context);
 
           newsFeedController.isPaginationApiCalling.value = false;
         }

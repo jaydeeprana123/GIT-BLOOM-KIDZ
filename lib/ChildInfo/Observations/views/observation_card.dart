@@ -10,10 +10,12 @@ import 'package:bloom_kidz/CommonWidgets/blue_medium_bold_text.dart';
 import 'package:bloom_kidz/CommonWidgets/blue_medium_regular_text.dart';
 import 'package:bloom_kidz/CommonWidgets/common_widget.dart';
 import 'package:bloom_kidz/Styles/my_colors.dart';
+import 'package:bloom_kidz/Styles/my_font.dart';
 import 'package:bloom_kidz/Styles/my_icons.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_html_table/flutter_html_table.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -70,8 +72,6 @@ class ObservationCard extends StatelessWidget {
                 color: Colors.white,
               ),
             ),
-
-
 
           Container(
             margin: EdgeInsets.symmetric(vertical: 4),
@@ -157,12 +157,24 @@ class ObservationCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _areaSection("Communication and Language", typeData.areas?.communicationLanguage),
-        _areaSection("Personal, Social and Emotional Development", typeData.areas?.psed),
-        _areaSection("Physical Development", typeData.areas?.physicalDevelopment),
+        _areaSection(
+          "Communication and Language",
+          typeData.areas?.communicationLanguage,
+        ),
+        _areaSection(
+          "Personal, Social and Emotional Development",
+          typeData.areas?.psed,
+        ),
+        _areaSection(
+          "Physical Development",
+          typeData.areas?.physicalDevelopment,
+        ),
         _areaSection("Literacy", typeData.areas?.literacy),
         _areaSection("Mathematics", typeData.areas?.mathematics),
-        _areaSection("Understanding the World", typeData.areas?.understandingWorld),
+        _areaSection(
+          "Understanding the World",
+          typeData.areas?.understandingWorld,
+        ),
         _areaSection("Expressive Arts and Design", typeData.areas?.ead),
       ],
     );
@@ -175,17 +187,32 @@ class ObservationCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _areaSection("Communication and Language", typeData.areas?.communicationLanguage),
-        _areaSection("Personal, Social and Emotional Development", typeData.areas?.psed),
-        _areaSection("Physical Development", typeData.areas?.physicalDevelopment),
+        _areaSection(
+          "Communication and Language",
+          typeData.areas?.communicationLanguage,
+        ),
+        _areaSection(
+          "Personal, Social and Emotional Development",
+          typeData.areas?.psed,
+        ),
+        _areaSection(
+          "Physical Development",
+          typeData.areas?.physicalDevelopment,
+        ),
         _areaSection("Literacy", typeData.areas?.literacy),
         _areaSection("Mathematics", typeData.areas?.mathematics),
-        _areaSection("Understanding the World", typeData.areas?.understandingWorld),
+        _areaSection(
+          "Understanding the World",
+          typeData.areas?.understandingWorld,
+        ),
         _areaSection("Expressive Arts and Design", typeData.areas?.ead),
         if (tabs != null) ...[
           _tabField("Playing & Exploring", tabs["playing_exploring"]),
           _tabField("Active Learning", tabs["active_learning"]),
-          _tabField("Creating & Thinking Critically", tabs["creating_thinking"]),
+          _tabField(
+            "Creating & Thinking Critically",
+            tabs["creating_thinking"],
+          ),
           _tabField("Child's Strengths & Interests", tabs["strengths"]),
           _tabField("Activities & Strategies", tabs["activities_development"]),
           _tabField("Info from Other Agencies", tabs["agencies_info"]),
@@ -218,17 +245,32 @@ class ObservationCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _areaSection("Communication and Language", typeData.areas?.communicationLanguage),
-        _areaSection("Personal, Social and Emotional Development", typeData.areas?.psed),
-        _areaSection("Physical Development", typeData.areas?.physicalDevelopment),
+        _areaSection(
+          "Communication and Language",
+          typeData.areas?.communicationLanguage,
+        ),
+        _areaSection(
+          "Personal, Social and Emotional Development",
+          typeData.areas?.psed,
+        ),
+        _areaSection(
+          "Physical Development",
+          typeData.areas?.physicalDevelopment,
+        ),
         _areaSection("Literacy", typeData.areas?.literacy),
         _areaSection("Mathematics", typeData.areas?.mathematics),
-        _areaSection("Understanding the World", typeData.areas?.understandingWorld),
+        _areaSection(
+          "Understanding the World",
+          typeData.areas?.understandingWorld,
+        ),
         _areaSection("Expressive Arts and Design", typeData.areas?.ead),
         if (tabs != null) ...[
           _tabField("Playing & Exploring", tabs["playing_exploring"]),
           _tabField("Active Learning", tabs["active_learning"]),
-          _tabField("Creating & Thinking Critically", tabs["creating_thinking"]),
+          _tabField(
+            "Creating & Thinking Critically",
+            tabs["creating_thinking"],
+          ),
         ],
       ],
     );
@@ -324,10 +366,7 @@ class ObservationCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 4),
-          Text(
-            text,
-            style: const TextStyle(fontSize: 13, color: text_color),
-          ),
+          Text(text, style: const TextStyle(fontSize: 13, color: text_color)),
         ],
       ),
     );
@@ -365,38 +404,38 @@ class ObservationCard extends StatelessWidget {
         children: [
           /// Avatar
           (observation.createdBy?.profile != null &&
-              (observation.createdBy?.profile ?? "").isNotEmpty)
+                  (observation.createdBy?.profile ?? "").isNotEmpty)
               ? Container(
-            width: 70,
-            height: 70,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              image: DecorationImage(
-                image: NetworkImage(observation.createdBy?.profile ?? ""),
-                fit: BoxFit.cover,
-              ),
-            ),
-          )
+                  width: 70,
+                  height: 70,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    image: DecorationImage(
+                      image: NetworkImage(observation.createdBy?.profile ?? ""),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                )
               : Container(
-            width: 70,
-            height: 70,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              color: color_secondary,
-            ),
-            alignment: Alignment.center,
-            child: Text(
-              (observation.createdBy != null &&
-                  (observation.createdBy?.name ?? "").isNotEmpty)
-                  ? (observation.createdBy?.name ?? "")[0].toUpperCase()
-                  : "",
-              style: const TextStyle(
-                fontSize: 38,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-          ),
+                  width: 70,
+                  height: 70,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    color: color_secondary,
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    (observation.createdBy != null &&
+                            (observation.createdBy?.name ?? "").isNotEmpty)
+                        ? (observation.createdBy?.name ?? "")[0].toUpperCase()
+                        : "",
+                    style: const TextStyle(
+                      fontSize: 38,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
 
           const SizedBox(width: 10),
 
@@ -420,7 +459,7 @@ class ObservationCard extends StatelessWidget {
                     BlueSmallRegularText(
                       observation.createdAt != null
                           ? '${observation.createdAt?.hour.toString().padLeft(2, '0')}:'
-                          '${observation.createdAt?.minute.toString().padLeft(2, '0')}'
+                                '${observation.createdAt?.minute.toString().padLeft(2, '0')}'
                           : '',
                     ),
 
@@ -430,8 +469,8 @@ class ObservationCard extends StatelessWidget {
                     BlueSmallRegularText(
                       observation.createdAt != null
                           ? '${observation.createdAt?.day.toString().padLeft(2, '0')}-'
-                          '${observation.createdAt?.month.toString().padLeft(2, '0')}-'
-                          '${observation.createdAt?.year} • '
+                                '${observation.createdAt?.month.toString().padLeft(2, '0')}-'
+                                '${observation.createdAt?.year} • '
                           : '',
                     ),
                   ],
@@ -537,11 +576,15 @@ class ObservationCard extends StatelessWidget {
     }
   }
 
-  Widget _imageItem(BuildContext context, List<ObservationMedia> mediaList, int i) {
+  Widget _imageItem(
+    BuildContext context,
+    List<ObservationMedia> mediaList,
+    int i,
+  ) {
     return GestureDetector(
       onTap: () => showFullImageDialogForObservation(context, mediaList, i),
       child: Image.network(
-        mediaList[i].image??"",
+        mediaList[i].image ?? "",
         fit: BoxFit.cover,
         width: double.infinity,
         cacheWidth: 1080,
@@ -555,9 +598,7 @@ class ObservationCard extends StatelessWidget {
         ),
         loadingBuilder: (_, child, progress) {
           if (progress == null) return child;
-          return  Center(
-  child: CircularProgressIndicator(),
-);
+          return Center(child: CircularProgressIndicator());
         },
       ),
     );
@@ -566,7 +607,8 @@ class ObservationCard extends StatelessWidget {
   Widget _attachmentItem(BuildContext context, ObservationMedia media) {
     final url = media.image ?? "";
     final name = _fileName(url);
-    final isPdf = (media.extension ?? "").toLowerCase() == "pdf" ||
+    final isPdf =
+        (media.extension ?? "").toLowerCase() == "pdf" ||
         url.toLowerCase().split('?').first.endsWith('.pdf');
 
     return GestureDetector(
@@ -647,8 +689,21 @@ class ObservationCard extends StatelessWidget {
             color: text_color,
             lineHeight: LineHeight(1.4),
           ),
+          "table": Style(width: Width(900, Unit.px)),
+          "td": Style(padding: HtmlPaddings.all(6)),
+          "th": Style(padding: HtmlPaddings.all(6)),
         },
         extensions: [
+          TagWrapExtension(
+            tagsToWrap: {"table"},
+            builder: (child) {
+              return SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: child,
+              );
+            },
+          ),
+          TableHtmlExtension(),
           TagExtension(
             tagsToExtend: {"img"},
             builder: (context) {
@@ -663,7 +718,7 @@ class ObservationCard extends StatelessWidget {
                       bytes,
                       fit: BoxFit.contain,
                       errorBuilder: (context, error, stackTrace) =>
-                      const SizedBox(),
+                          const SizedBox(),
                     ),
                   );
                 } catch (e) {
@@ -677,7 +732,7 @@ class ObservationCard extends StatelessWidget {
                     src,
                     fit: BoxFit.contain,
                     errorBuilder: (context, error, stackTrace) =>
-                    const SizedBox(),
+                        const SizedBox(),
                   ),
                 );
               }
@@ -717,8 +772,21 @@ class ObservationCard extends StatelessWidget {
                 color: text_color,
                 lineHeight: LineHeight(1.4),
               ),
+              "table": Style(width: Width(900, Unit.px)),
+              "td": Style(padding: HtmlPaddings.all(6)),
+              "th": Style(padding: HtmlPaddings.all(6)),
             },
             extensions: [
+              TagWrapExtension(
+                tagsToWrap: {"table"},
+                builder: (child) {
+                  return SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: child,
+                  );
+                },
+              ),
+              TableHtmlExtension(),
               TagExtension(
                 tagsToExtend: {"img"},
                 builder: (context) {
@@ -733,7 +801,7 @@ class ObservationCard extends StatelessWidget {
                           bytes,
                           fit: BoxFit.contain,
                           errorBuilder: (context, error, stackTrace) =>
-                          const SizedBox(),
+                              const SizedBox(),
                         ),
                       );
                     } catch (e) {
@@ -747,7 +815,7 @@ class ObservationCard extends StatelessWidget {
                         src,
                         fit: BoxFit.contain,
                         errorBuilder: (context, error, stackTrace) =>
-                        const SizedBox(),
+                            const SizedBox(),
                       ),
                     );
                   }
@@ -762,17 +830,53 @@ class ObservationCard extends StatelessWidget {
   }
 
   String _sanitizeHtml(String html) {
+    // Remove problematic inline styles that contain font-feature-settings
     html = html.replaceAllMapped(
       RegExp(r'font-feature-settings:[^;}"]*', caseSensitive: false),
-          (match) => '',
+      (match) => '',
     );
+
+    // Remove font-variant-* properties that might cause issues
     html = html.replaceAllMapped(
       RegExp(r'font-variant-[^:]*:[^;}"]*', caseSensitive: false),
-          (match) => '',
+      (match) => '',
     );
+
+    // Remove height and max-height inline styles that limit the element's height and clip text
+    html = html.replaceAllMapped(
+      RegExp(r'\b(max-)?height\s*:\s*[^;}"]*', caseSensitive: false),
+      (match) => '',
+    );
+
+    // Remove overflow inline styles that might hide content
+    html = html.replaceAllMapped(
+      RegExp(r'\boverflow(-[xy])?\s*:\s*[^;}"]*', caseSensitive: false),
+      (match) => '',
+    );
+
+    // Remove white-space: nowrap inline styles to ensure proper wrapping of long text
+    html = html.replaceAllMapped(
+      RegExp(r'\bwhite-space\s*:\s*nowrap[^;}"]*', caseSensitive: false),
+      (match) => '',
+    );
+
+    // Remove align="left" and align="right" attributes from tags (like table or img) that cause float/wrapping bugs
+    html = html.replaceAll(
+      RegExp(r'''\balign=["']?(left|right)["']?''', caseSensitive: false),
+      '',
+    );
+
+    // Remove float: left and float: right inline styles
+    html = html.replaceAllMapped(
+      RegExp(r'\bfloat\s*:\s*(left|right)[^;}"]*', caseSensitive: false),
+      (match) => '',
+    );
+
+    // Clean up any double semicolons or style attributes that are now empty
     html = html.replaceAll(';;', ';');
     html = html.replaceAll('style=""', '');
     html = html.replaceAll('style=" "', '');
+
     return html;
   }
 
@@ -796,7 +900,7 @@ class ObservationCard extends StatelessWidget {
             ),
           ),
           SizedBox(width: 4),
-          BlueMediumRegularText((observation.likesCount ?? 0).toString()),
+          _likedUsersAvatarsAndCount(context),
           SizedBox(width: 16),
           InkWell(
             onTap: () {
@@ -865,12 +969,12 @@ class ObservationCard extends StatelessWidget {
   }
 
   void showUpdateDialog(
-      BuildContext context,
-      String childId,
-      String id,
-      Observation observation,
-      ChildInfoController controller,
-      ) {
+    BuildContext context,
+    String childId,
+    String id,
+    Observation observation,
+    ChildInfoController controller,
+  ) {
     showDialog(
       context: context,
       builder: (context) {
@@ -896,8 +1000,8 @@ class ObservationCard extends StatelessWidget {
                     controller.selectedObservation.value = observation;
                     Navigator.pop(context);
                     Get.to(ObservationUpdateScreen(childId: childId))?.then((
-                        value,
-                        ) {
+                      value,
+                    ) {
                       childInfoController.pageNumberObservation = 1;
                       controller.callObservationListAPI(context, childId);
                     });
@@ -914,12 +1018,156 @@ class ObservationCard extends StatelessWidget {
   bool isLikeOrNot() {
     bool isLikedByMe =
         observation.likes?.any(
-              (like) =>
-          like.userId ==
+          (like) =>
+              like.userId ==
               childInfoController.loginResponse.value.data?.user?.id,
         ) ??
-            false;
+        false;
     return isLikedByMe;
+  }
+
+  Widget _likedUsersAvatarsAndCount(BuildContext context) {
+    final likedUsers = observation.likedUsers ?? [];
+    final likesCount = observation.likesCount ?? 0;
+
+    if (likesCount == 0) {
+      return BlueMediumRegularText("0");
+    }
+
+    // Number of avatar circles to show (real users or placeholders)
+    final displayCount = likedUsers.isNotEmpty
+        ? likedUsers.length.clamp(1, 3)
+        : likesCount.clamp(1, 3);
+
+    return InkWell(
+      onTap: () {
+        if (likedUsers.isNotEmpty) {
+          _showLikedUsersBottomSheet(context, likedUsers);
+        }
+      },
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Always show avatar stack when there are likes
+          SizedBox(
+            height: 20,
+            width: (displayCount * 14.0) + 6.0,
+            child: Stack(
+              children: List.generate(displayCount, (i) {
+                final user = likedUsers.isNotEmpty && i < likedUsers.length
+                    ? likedUsers[i]
+                    : null;
+                return Positioned(
+                  left: i * 14.0,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white, width: 1.5),
+                    ),
+                    child: CircleAvatar(
+                      radius: 8,
+                      backgroundColor: color_secondary,
+                      backgroundImage:
+                          (user?.profile != null && user!.profile!.isNotEmpty)
+                          ? NetworkImage(user.profile!)
+                          : null,
+                      child: (user?.profile == null || (user?.profile ?? "").isEmpty)
+                          ? Text(
+                              (user?.name ?? "").isNotEmpty
+                                  ? user!.name![0].toUpperCase()
+                                  : "",
+                              style: const TextStyle(
+                                fontSize: 8,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            )
+                          : null,
+                    ),
+                  ),
+                );
+              }),
+            ),
+          ),
+          const SizedBox(width: 4),
+          BlueMediumRegularText("$likesCount"),
+        ],
+      ),
+    );
+  }
+
+  void _showLikedUsersBottomSheet(BuildContext context, List<User> users) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                "Liked By",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: fontInterBold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Divider(),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: users.length,
+                  itemBuilder: (context, i) {
+                    final user = users[i];
+                    return ListTile(
+                      leading: CircleAvatar(
+                        radius: 20,
+                        backgroundImage:
+                            (user.profile != null && user.profile!.isNotEmpty)
+                            ? NetworkImage(user.profile!)
+                            : null,
+                        backgroundColor: color_secondary,
+                        child: (user.profile == null || user.profile!.isEmpty)
+                            ? Text(
+                                (user.name ?? "").isNotEmpty
+                                    ? user.name![0].toUpperCase()
+                                    : "",
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              )
+                            : null,
+                      ),
+                      title: Text(
+                        user.name ?? "",
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 }
 
@@ -951,12 +1199,10 @@ class AllImagesScreenForObservation extends StatelessWidget {
               child: CachedNetworkImage(
                 imageUrl: media.image ?? "",
                 fit: BoxFit.cover,
-                placeholder: (context, url) =>  Center(
-  child: CircularProgressIndicator(),
-),
-                errorWidget: (context, url, error) =>  Center(
-  child: CircularProgressIndicator(),
-),
+                placeholder: (context, url) =>
+                    Center(child: CircularProgressIndicator()),
+                errorWidget: (context, url, error) =>
+                    Center(child: CircularProgressIndicator()),
               ),
             ),
           );

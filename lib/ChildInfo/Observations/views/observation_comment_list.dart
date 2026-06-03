@@ -9,7 +9,8 @@ import 'package:bloom_kidz/CommonWidgets/common_green_button.dart';
 import 'package:bloom_kidz/CommonWidgets/common_text_field.dart';
 import 'package:bloom_kidz/CommonWidgets/common_widget.dart';
 import 'package:bloom_kidz/NewsFeed/controller/news_feed_controller.dart';
-import 'package:bloom_kidz/NewsFeed/models/news_feed_response.dart';
+import 'package:bloom_kidz/NewsFeed/models/news_feed_response.dart'
+    hide Comment, User;
 import 'package:bloom_kidz/Styles/my_colors.dart';
 import 'package:bloom_kidz/Styles/my_font.dart';
 import 'package:bloom_kidz/Styles/my_icons.dart';
@@ -35,8 +36,17 @@ class ObservationCommentListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    childInfoController.isLikeList.clear();
     for (int i = 0; i < (observation.comments ?? []).length; i++) {
-      childInfoController.isLikeList.add(false);
+      final comment = observation.comments?[i];
+      final isLikedByMe =
+          comment?.likedUsers?.any(
+            (user) =>
+                user.id ==
+                childInfoController.loginResponse.value.data?.user?.id,
+          ) ??
+          false;
+      childInfoController.isLikeList.add(isLikedByMe);
     }
 
     childInfoController.getUserInfo();
@@ -191,6 +201,7 @@ class ObservationCommentListWidget extends StatelessWidget {
                                                       (comment?.id ?? 0)
                                                           .toString(),
                                                       index,
+                                                      comment,
                                                     );
                                               },
                                               child: Icon(
@@ -209,12 +220,11 @@ class ObservationCommentListWidget extends StatelessWidget {
                                                     : text_color,
                                               ),
                                             ),
-                                            const SizedBox(width: 4),
-                                            BlackMediumBoldText(
-                                              (comment?.likes ?? 0).toString(),
+                                            const SizedBox(width: 8),
+                                            _likedUsersAvatarsAndCount(
+                                              context,
+                                              comment,
                                             ),
-
-                                            SizedBox(width: 16),
                                           ],
                                         ),
                                       ],
@@ -312,6 +322,150 @@ class ObservationCommentListWidget extends StatelessWidget {
                 ),
               ],
             ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _likedUsersAvatarsAndCount(BuildContext context, Comment? comment) {
+    final likedUsers = comment?.likedUsers ?? [];
+    final likesCount = comment?.likes ?? 0;
+
+    if (likesCount == 0) {
+      return BlueMediumRegularText("0");
+    }
+
+    // Number of avatar circles to show (real users or placeholders)
+    final displayCount = likedUsers.isNotEmpty
+        ? likedUsers.length.clamp(1, 3)
+        : likesCount.clamp(1, 3);
+
+    return InkWell(
+      onTap: () {
+        if (likedUsers.isNotEmpty) {
+          _showLikedUsersBottomSheet(context, likedUsers);
+        }
+      },
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Always show avatar stack when there are likes
+          SizedBox(
+            height: 20,
+            width: (displayCount * 14.0) + 6.0,
+            child: Stack(
+              children: List.generate(displayCount, (i) {
+                final user = likedUsers.isNotEmpty && i < likedUsers.length
+                    ? likedUsers[i]
+                    : null;
+                return Positioned(
+                  left: i * 14.0,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white, width: 1.5),
+                    ),
+                    child: CircleAvatar(
+                      radius: 8,
+                      backgroundColor: color_secondary,
+                      backgroundImage:
+                          (user?.profile != null && user!.profile!.isNotEmpty)
+                          ? NetworkImage(user.profile!)
+                          : null,
+                      child: (user?.profile == null || (user?.profile ?? "").isEmpty)
+                          ? Text(
+                              (user?.name ?? "").isNotEmpty
+                                  ? user!.name![0].toUpperCase()
+                                  : "",
+                              style: const TextStyle(
+                                fontSize: 8,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            )
+                          : null,
+                    ),
+                  ),
+                );
+              }),
+            ),
+          ),
+          const SizedBox(width: 4),
+          BlueMediumRegularText("$likesCount"),
+        ],
+      ),
+    );
+  }
+
+  void _showLikedUsersBottomSheet(BuildContext context, List<User> users) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                "Liked By",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: fontInterBold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Divider(),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: users.length,
+                  itemBuilder: (context, i) {
+                    final user = users[i];
+                    return ListTile(
+                      leading: CircleAvatar(
+                        radius: 20,
+                        backgroundImage:
+                            (user.profile != null && user.profile!.isNotEmpty)
+                            ? NetworkImage(user.profile!)
+                            : null,
+                        backgroundColor: color_secondary,
+                        child: (user.profile == null || user.profile!.isEmpty)
+                            ? Text(
+                                (user.name ?? "").isNotEmpty
+                                    ? user.name![0].toUpperCase()
+                                    : "",
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              )
+                            : null,
+                      ),
+                      title: Text(
+                        user.name ?? "",
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
         );
       },

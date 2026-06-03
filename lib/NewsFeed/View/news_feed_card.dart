@@ -9,6 +9,7 @@ import 'package:bloom_kidz/Styles/my_icons.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_html_table/flutter_html_table.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
@@ -560,8 +561,28 @@ class NewsFeedCard extends StatelessWidget {
             margin: Margins.zero, // 👈 Add this
             padding: HtmlPaddings.zero, // 👈 Add this
           ),
+          "table": Style(
+            width: Width(900, Unit.px),
+          ),
+          "td": Style(
+            padding: HtmlPaddings.all(6),
+          ),
+          "th": Style(
+            padding: HtmlPaddings.all(6),
+          ),
         },
-        // ... extensions
+        extensions: [
+          TagWrapExtension(
+            tagsToWrap: {"table"},
+            builder: (child) {
+              return SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: child,
+              );
+            },
+          ),
+          TableHtmlExtension(),
+        ],
       ),
     );
   }
@@ -576,6 +597,36 @@ class NewsFeedCard extends StatelessWidget {
     // Remove font-variant-* properties that might cause issues
     html = html.replaceAllMapped(
       RegExp(r'font-variant-[^:]*:[^;}"]*', caseSensitive: false),
+      (match) => '',
+    );
+
+    // Remove height and max-height inline styles that limit the element's height and clip text
+    html = html.replaceAllMapped(
+      RegExp(r'\b(max-)?height\s*:\s*[^;}"]*', caseSensitive: false),
+      (match) => '',
+    );
+
+    // Remove overflow inline styles that might hide content
+    html = html.replaceAllMapped(
+      RegExp(r'\boverflow(-[xy])?\s*:\s*[^;}"]*', caseSensitive: false),
+      (match) => '',
+    );
+
+    // Remove white-space: nowrap inline styles to ensure proper wrapping of long text
+    html = html.replaceAllMapped(
+      RegExp(r'\bwhite-space\s*:\s*nowrap[^;}"]*', caseSensitive: false),
+      (match) => '',
+    );
+
+    // Remove align="left" and align="right" attributes from tags (like table or img) that cause float/wrapping bugs
+    html = html.replaceAll(
+      RegExp(r'''\balign=["']?(left|right)["']?''', caseSensitive: false),
+      '',
+    );
+
+    // Remove float: left and float: right inline styles
+    html = html.replaceAllMapped(
+      RegExp(r'\bfloat\s*:\s*(left|right)[^;}"]*', caseSensitive: false),
       (match) => '',
     );
 
@@ -698,6 +749,11 @@ class NewsFeedCard extends StatelessWidget {
       return BlueMediumRegularText("0");
     }
 
+    // Number of avatar circles to show (real users or placeholders)
+    final displayCount = likedUsers.isNotEmpty
+        ? likedUsers.length.clamp(1, 3)
+        : likesCount.clamp(1, 3);
+
     return InkWell(
       onTap: () {
         if (likedUsers.isNotEmpty) {
@@ -707,45 +763,48 @@ class NewsFeedCard extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (likedUsers.isNotEmpty) ...[
-            SizedBox(
-              height: 20,
-              width: (likedUsers.length.clamp(1, 3) * 14.0) + 6.0,
-              child: Stack(
-                children: List.generate(likedUsers.length.clamp(1, 3), (i) {
-                  final user = likedUsers[i];
-                  return Positioned(
-                    left: i * 14.0,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white, width: 1.5),
-                      ),
-                      child: CircleAvatar(
-                        radius: 8,
-                        backgroundImage:
-                            (user.profile != null && user.profile!.isNotEmpty)
-                            ? NetworkImage(user.profile!)
-                            : null,
-                        child: (user.profile == null || user.profile!.isEmpty)
-                            ? Text(
-                                (user.name ?? "").isNotEmpty
-                                    ? user.name![0].toUpperCase()
-                                    : "",
-                                style: const TextStyle(
-                                  fontSize: 8,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              )
-                            : null,
-                      ),
+          // Always show avatar stack when there are likes
+          SizedBox(
+            height: 20,
+            width: (displayCount * 14.0) + 6.0,
+            child: Stack(
+              children: List.generate(displayCount, (i) {
+                final user = likedUsers.isNotEmpty && i < likedUsers.length
+                    ? likedUsers[i]
+                    : null;
+                return Positioned(
+                  left: i * 14.0,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white, width: 1.5),
                     ),
-                  );
-                }),
-              ),
+                    child: CircleAvatar(
+                      radius: 8,
+                      backgroundColor: color_secondary,
+                      backgroundImage:
+                          (user?.profile != null && user!.profile!.isNotEmpty)
+                          ? NetworkImage(user.profile!)
+                          : null,
+                      child: (user?.profile == null || (user?.profile ?? "").isEmpty)
+                          ? Text(
+                              (user?.name ?? "").isNotEmpty
+                                  ? user!.name![0].toUpperCase()
+                                  : "",
+                              style: const TextStyle(
+                                fontSize: 8,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            )
+                          : null,
+                    ),
+                  ),
+                );
+              }),
             ),
-            const SizedBox(width: 4),
-          ],
+          ),
+          const SizedBox(width: 4),
           BlueMediumRegularText("$likesCount"),
         ],
       ),

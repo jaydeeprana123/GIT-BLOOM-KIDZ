@@ -66,10 +66,6 @@ class _AboutScreenState extends State<AboutScreen> {
             title: "About",
             showMenu: false,
             showBack: true,
-            showEditButton: childInfoController.selectedTab.value == 1,
-            onAddButtonTap: () {
-              Get.to(() => EditDoctorDentistScreen(childId: widget.childId));
-            },
           ),
         ),
       ),
@@ -444,11 +440,35 @@ class _AboutScreenState extends State<AboutScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _sectionTitle("Doctor Info"),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            _sectionTitle("Doctor Info"),
+            InkWell(
+              onTap: () {
+                Get.to(() => EditDoctorDentistScreen(childId: widget.childId));
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: color_secondary,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: const Text(
+                  "Edit",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
         const SizedBox(height: 10),
         _infoLine(keyPersonIcon, "Name", health.doctor?.name ?? "-"),
         _infoLine(icon_call_video, "Mobile", health.doctor?.mobile ?? "-"),
-
         _infoLine(icon_home, "Address", buildAddress(health.doctor)),
       ],
     );
@@ -458,9 +478,33 @@ class _AboutScreenState extends State<AboutScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _sectionTitle("Dentist Info"),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            _sectionTitle("Dentist Info"),
+            InkWell(
+              onTap: () {
+                Get.to(() => EditDoctorDentistScreen(childId: widget.childId));
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: color_secondary,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: const Text(
+                  "Edit",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
         const SizedBox(height: 10),
-
         _infoLine(keyPersonIcon, "Name", health.dentist?.name ?? "-"),
         _infoLine(icon_call_video, "Mobile", health.dentist?.mobile ?? "-"),
         _infoLine(icon_home, "Address", buildAddress(health.dentist)),

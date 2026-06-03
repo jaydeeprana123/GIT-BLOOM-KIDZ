@@ -102,41 +102,58 @@ class Newsfeed {
     this.likedUsers,
   });
 
-  factory Newsfeed.fromJson(Map<String, dynamic> json) => Newsfeed(
-    id: json["id"],
-    name: json["name"],
-    description: json["description"],
-    descriptionOld: json["description_old"],
-    showType: json["show_type"],
-    startDate: json["start_date"] == null
-        ? null
-        : DateTime.parse(json["start_date"]),
-    startTime: json["start_time"],
-    endTime: json["end_time"],
-    nurseryId: json["nursery_id"],
-    type: json["type"],
-    status: json["status"],
-    createdAt: json["created_at"] == null
-        ? null
-        : DateTime.parse(json["created_at"]),
-    createdId: json["created_id"] == null
-        ? null
-        : CreatedId.fromJson(json["created_id"]),
-    media: json["media"] == null
-        ? []
-        : List<Media>.from(json["media"]!.map((x) => Media.fromJson(x))),
-    likes: json["likes"] == null
-        ? []
-        : List<Like>.from(json["likes"]!.map((x) => Like.fromJson(x))),
-    likesCount: json["likes_count"],
-    comments: json["comments"] == null
-        ? []
-        : List<Comment>.from(json["comments"]!.map((x) => Comment.fromJson(x))),
-    commentsCount: json["comments_count"],
-    likedUsers: json["liked_users"] == null
-        ? []
-        : List<User>.from(json["liked_users"]!.map((x) => User.fromJson(x))),
-  );
+  factory Newsfeed.fromJson(Map<String, dynamic> json) {
+    final parsedLikes = json["likes"] == null
+        ? <Like>[]
+        : List<Like>.from(json["likes"]!.map((x) => Like.fromJson(x)));
+
+    List<User> usersList = [];
+    if (json["liked_users"] != null) {
+      usersList = List<User>.from(json["liked_users"]!.map((x) => User.fromJson(x)));
+    } else if (json["likedUsers"] != null) {
+      usersList = List<User>.from(json["likedUsers"]!.map((x) => User.fromJson(x)));
+    } else {
+      // Build from likes array: use nested user object if present,
+      // otherwise create a minimal User from user_id so avatars are never lost.
+      usersList = parsedLikes.map((l) {
+        if (l.user != null) return l.user!;
+        if (l.userId != null) return User(id: l.userId);
+        return null;
+      }).whereType<User>().toList();
+    }
+
+    return Newsfeed(
+      id: json["id"],
+      name: json["name"],
+      description: json["description"],
+      descriptionOld: json["description_old"],
+      showType: json["show_type"],
+      startDate: json["start_date"] == null
+          ? null
+          : DateTime.parse(json["start_date"]),
+      startTime: json["start_time"],
+      endTime: json["end_time"],
+      nurseryId: json["nursery_id"],
+      type: json["type"],
+      status: json["status"],
+      createdAt: json["created_at"] == null
+          ? null
+          : DateTime.parse(json["created_at"]),
+      createdId: json["created_id"] == null
+          ? null
+          : CreatedId.fromJson(json["created_id"]),
+      media: json["media"] == null
+          ? []
+          : List<Media>.from(json["media"]!.map((x) => Media.fromJson(x))),
+      likes: parsedLikes,
+      likesCount: json["likes_count"],
+      comments: json["comments"] == null
+          ? []
+          : List<Comment>.from(json["comments"]!.map((x) => Comment.fromJson(x))),
+      commentsCount: json["comments_count"],
+      likedUsers: usersList,
+    );
+  }
 
   Map<String, dynamic> toJson() => {
     "id": id,
@@ -176,8 +193,9 @@ class Comment {
   String? date;
   int? likes;
   User? user;
+  List<User>? likedUsers;
 
-  Comment({this.id, this.content, this.date, this.likes, this.user});
+  Comment({this.id, this.content, this.date, this.likes, this.user, this.likedUsers});
 
   factory Comment.fromJson(Map<String, dynamic> json) => Comment(
     id: json["id"],
@@ -185,6 +203,9 @@ class Comment {
     date: json["date"],
     likes: json["likes"],
     user: json["user"] == null ? null : User.fromJson(json["user"]),
+    likedUsers: json["liked_users"] == null
+        ? []
+        : List<User>.from(json["liked_users"]!.map((x) => User.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
@@ -193,6 +214,9 @@ class Comment {
     "date": date,
     "likes": likes,
     "user": user?.toJson(),
+    "liked_users": likedUsers == null
+        ? []
+        : List<dynamic>.from(likedUsers!.map((x) => x.toJson())),
   };
 }
 
@@ -268,14 +292,20 @@ class Like {
   int? masterId;
   int? userId;
   dynamic date;
+  User? user;
 
-  Like({this.id, this.masterId, this.userId, this.date});
+  Like({this.id, this.masterId, this.userId, this.date, this.user});
 
   factory Like.fromJson(Map<String, dynamic> json) => Like(
     id: json["id"],
     masterId: json["master_id"],
     userId: json["user_id"],
     date: json["date"],
+    user: json["user"] == null
+        ? (json["user_details"] == null
+            ? (json["liked_by"] == null ? null : User.fromJson(json["liked_by"]))
+            : User.fromJson(json["user_details"]))
+        : User.fromJson(json["user"]),
   );
 
   Map<String, dynamic> toJson() => {
@@ -283,6 +313,7 @@ class Like {
     "master_id": masterId,
     "user_id": userId,
     "date": date,
+    "user": user?.toJson(),
   };
 }
 

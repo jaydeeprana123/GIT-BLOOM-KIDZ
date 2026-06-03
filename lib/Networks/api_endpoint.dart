@@ -1,10 +1,10 @@
 // live url
-// var urlBase =
-//     'https://api.bloomkidz.net/api'; // change ( 10-07-2024 ) ( Live url)
+var urlBase =
+    'https://api.bloomkidz.net/api'; // change ( 10-07-2024 ) ( Live url)
 
 // live url
-var urlBase =
-    'https://staging.bloomkidz.net/api'; // change ( 10-07-2024 ) ( Live url)
+// var urlBase =
+//     'https://staging.bloomkidz.net/api'; // change ( 10-07-2024 ) ( Live url)
 
 //Authentication APIs
 const urlLogin = '/login';
