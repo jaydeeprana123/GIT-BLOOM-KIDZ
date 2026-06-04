@@ -61,12 +61,10 @@ class _AboutScreenState extends State<AboutScreen> {
       backgroundColor: Colors.white,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(64),
-        child: Obx(
-          () => CommonAppBar(
-            title: "About",
-            showMenu: false,
-            showBack: true,
-          ),
+        child: CommonAppBar(
+          title: "About",
+          showMenu: false,
+          showBack: true,
         ),
       ),
       body: Obx(() {

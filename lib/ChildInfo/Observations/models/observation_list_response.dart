@@ -553,16 +553,53 @@ class Comment {
 
   Comment({this.id, this.content, this.date, this.likes, this.user, this.likedUsers});
 
-  factory Comment.fromJson(Map<String, dynamic> json) => Comment(
-    id: json["id"],
-    content: json["content"],
-    date: json["date"] == null ? null : DateTime.parse(json["date"]),
-    likes: json["likes"],
-    user: json["user"] == null ? null : User.fromJson(json["user"]),
-    likedUsers: json["liked_users"] == null
-        ? []
-        : List<User>.from(json["liked_users"]!.map((x) => User.fromJson(x))),
-  );
+  factory Comment.fromJson(Map<String, dynamic> json) {
+    final dynamic likesRaw = json["likes"];
+    List<Like> parsedLikes = [];
+    int likesCount = 0;
+
+    if (likesRaw is List) {
+      parsedLikes = List<Like>.from(
+        likesRaw.map((x) => Like.fromJson(x as Map<String, dynamic>)),
+      );
+      likesCount = json["likes_count"] as int? ?? parsedLikes.length;
+    } else if (likesRaw is int) {
+      likesCount = likesRaw;
+    } else {
+      likesCount = json["likes_count"] as int? ?? 0;
+    }
+
+    List<User> usersList = [];
+    if (json["liked_users"] != null) {
+      usersList = List<User>.from(
+        json["liked_users"]!.map((x) => User.fromJson(x)),
+      );
+    } else if (json["likedUsers"] != null) {
+      usersList = List<User>.from(
+        json["likedUsers"]!.map((x) => User.fromJson(x)),
+      );
+    } else if (parsedLikes.isNotEmpty) {
+      usersList = parsedLikes.map((l) {
+        if (l.user != null) return l.user!;
+        if (l.userId != null) return User(id: l.userId);
+        return null;
+      }).whereType<User>().toList();
+    }
+
+    final dynamic userRaw =
+        json["user"] ?? json["user_details"] ?? json["created_by"];
+
+    return Comment(
+      id: json["id"],
+      content: json["content"],
+      date: json["date"] == null ? null : DateTime.parse(json["date"]),
+      likes: likesCount,
+      user: userRaw == null
+          ? null
+          : User.fromJson(userRaw as Map<String, dynamic>),
+      likedUsers: usersList,
+    );
+  }
 
   Map<String, dynamic> toJson() => {
     "id": id,
@@ -583,8 +620,11 @@ class User {
 
   User({this.id, this.name, this.profile});
 
-  factory User.fromJson(Map<String, dynamic> json) =>
-      User(id: json["id"], name: json["name"], profile: json["profile"]);
+  factory User.fromJson(Map<String, dynamic> json) => User(
+    id: json["id"],
+    name: json["name"],
+    profile: json["profile"] ?? json["profile_image"] ?? json["image_url"],
+  );
 
   Map<String, dynamic> toJson() => {
     "id": id,

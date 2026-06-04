@@ -18,6 +18,8 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../CommonWidgets/black_medium_regular_text.dart';
 import '../../CommonWidgets/blue_small_regular_text.dart';
 import '../../CommonWidgets/common_widget.dart';
+import '../../CommonWidgets/full_screen_attachment_viewer.dart';
+import '../../utils/html_sanitizer.dart';
 import 'comment_list.dart';
 
 class NewsFeedCard extends StatelessWidget {
@@ -281,6 +283,33 @@ class NewsFeedCard extends StatelessWidget {
     }
   }
 
+  String _mediaExtension(Media media, String url) {
+    final fromApi = (media.extenstion ?? "").toLowerCase();
+    if (fromApi.isNotEmpty) return fromApi;
+
+    final path = url.toLowerCase().split('?').first;
+    for (final ext in ['pdf', 'docx', 'doc', 'xlsx', 'xls', 'pptx', 'ppt']) {
+      if (path.endsWith('.$ext')) return ext;
+    }
+    return '';
+  }
+
+  bool _isPdfMedia(Media media, String url) =>
+      _mediaExtension(media, url) == 'pdf';
+
+  bool _isOfficeMedia(Media media, String url) {
+    final ext = _mediaExtension(media, url);
+    return ext == 'doc' ||
+        ext == 'docx' ||
+        ext == 'xls' ||
+        ext == 'xlsx' ||
+        ext == 'ppt' ||
+        ext == 'pptx';
+  }
+
+  bool _isInAppViewableMedia(Media media, String url) =>
+      _isPdfMedia(media, url) || _isOfficeMedia(media, url);
+
   Widget _imageItem(
     BuildContext context,
     String url,
@@ -313,9 +342,8 @@ class NewsFeedCard extends StatelessWidget {
   Widget _attachmentItem(BuildContext context, Media media) {
     final url = media.fullUrl ?? "";
     final name = _fileName(url);
-    final isPdf =
-        (media.extenstion ?? "").toLowerCase() == "pdf" ||
-        url.toLowerCase().split('?').first.endsWith('.pdf');
+    final isPdf = _isPdfMedia(media, url);
+    final isOffice = _isOfficeMedia(media, url);
 
     if (isPdf) {
       return Stack(
@@ -373,7 +401,13 @@ class NewsFeedCard extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.attach_file_rounded, size: 64, color: color_secondary),
+            Icon(
+              isOffice
+                  ? Icons.description_outlined
+                  : Icons.attach_file_rounded,
+              size: 64,
+              color: isOffice ? Colors.blue[700] : color_secondary,
+            ),
             const SizedBox(height: 12),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -389,6 +423,17 @@ class NewsFeedCard extends StatelessWidget {
                 ),
               ),
             ),
+            if (isOffice) ...[
+              const SizedBox(height: 4),
+              Text(
+                _mediaExtension(media, url).toUpperCase(),
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey[600],
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
             const SizedBox(height: 8),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
@@ -413,11 +458,17 @@ class NewsFeedCard extends StatelessWidget {
 
   void _openAttachment(BuildContext context, Media media) {
     final url = media.fullUrl ?? "";
-    final isPdf =
-        (media.extenstion ?? "").toLowerCase() == "pdf" ||
-        url.toLowerCase().split('?').first.endsWith('.pdf');
-    if (isPdf) {
-      Get.to(() => FullScreenPdfViewer(url: url, title: _fileName(url)));
+    if (url.isEmpty) return;
+
+    final ext = _mediaExtension(media, url);
+    if (_isInAppViewableMedia(media, url)) {
+      Get.to(
+        () => FullScreenAttachmentViewer(
+          url: url,
+          title: _fileName(url),
+          extension: ext,
+        ),
+      );
     } else {
       _launchExternal(context, url);
     }
@@ -545,97 +596,61 @@ class NewsFeedCard extends StatelessWidget {
   }
 
   Widget _description() {
+    final sanitized = sanitizeHtmlForDisplay(newsFeed.description ?? "");
+    const cellBorder = Border.fromBorderSide(
+      BorderSide(color: Color(0xFF9E9E9E), width: 1),
+    );
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12),
-      child: Html(
-        data: _sanitizeHtml(newsFeed.description ?? ""),
-        style: {
-          "*": Style(
-            fontSize: FontSize(13),
-            color: text_color,
-            lineHeight: LineHeight(1.4),
-            margin: Margins.zero, // 👈 Add this
-            padding: HtmlPaddings.zero, // 👈 Add this
-          ),
-          "body": Style(
-            margin: Margins.zero, // 👈 Add this
-            padding: HtmlPaddings.zero, // 👈 Add this
-          ),
-          "table": Style(
-            width: Width(900, Unit.px),
-          ),
-          "td": Style(
-            padding: HtmlPaddings.all(6),
-          ),
-          "th": Style(
-            padding: HtmlPaddings.all(6),
-          ),
-        },
-        extensions: [
-          TagWrapExtension(
-            tagsToWrap: {"table"},
-            builder: (child) {
-              return SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: child,
-              );
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return Html(
+            data: sanitized,
+            style: {
+              "*": Style(
+                fontSize: FontSize(13),
+                color: text_color,
+                lineHeight: LineHeight(1.4),
+              ),
+              "body": Style(
+                margin: Margins.zero,
+                padding: HtmlPaddings.zero,
+              ),
+              "p": Style(margin: Margins.only(bottom: 6)),
+              "table": Style(
+                width: Width(constraints.maxWidth, Unit.px),
+                margin: Margins.symmetric(vertical: 8),
+                border: cellBorder,
+              ),
+              "td": Style(
+                padding: HtmlPaddings.all(8),
+                border: cellBorder,
+                alignment: Alignment.centerLeft,
+              ),
+              "th": Style(
+                padding: HtmlPaddings.all(8),
+                border: cellBorder,
+                fontWeight: FontWeight.bold,
+                alignment: Alignment.centerLeft,
+              ),
             },
-          ),
-          TableHtmlExtension(),
-        ],
+            extensions: [
+              TableHtmlExtension(),
+              TagWrapExtension(
+                tagsToWrap: {"table"},
+                builder: (child) {
+                  return SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: child,
+                  );
+                },
+              ),
+            ],
+          );
+        },
       ),
     );
-  }
-
-  String _sanitizeHtml(String html) {
-    // Remove problematic inline styles that contain font-feature-settings
-    html = html.replaceAllMapped(
-      RegExp(r'font-feature-settings:[^;}"]*', caseSensitive: false),
-      (match) => '',
-    );
-
-    // Remove font-variant-* properties that might cause issues
-    html = html.replaceAllMapped(
-      RegExp(r'font-variant-[^:]*:[^;}"]*', caseSensitive: false),
-      (match) => '',
-    );
-
-    // Remove height and max-height inline styles that limit the element's height and clip text
-    html = html.replaceAllMapped(
-      RegExp(r'\b(max-)?height\s*:\s*[^;}"]*', caseSensitive: false),
-      (match) => '',
-    );
-
-    // Remove overflow inline styles that might hide content
-    html = html.replaceAllMapped(
-      RegExp(r'\boverflow(-[xy])?\s*:\s*[^;}"]*', caseSensitive: false),
-      (match) => '',
-    );
-
-    // Remove white-space: nowrap inline styles to ensure proper wrapping of long text
-    html = html.replaceAllMapped(
-      RegExp(r'\bwhite-space\s*:\s*nowrap[^;}"]*', caseSensitive: false),
-      (match) => '',
-    );
-
-    // Remove align="left" and align="right" attributes from tags (like table or img) that cause float/wrapping bugs
-    html = html.replaceAll(
-      RegExp(r'''\balign=["']?(left|right)["']?''', caseSensitive: false),
-      '',
-    );
-
-    // Remove float: left and float: right inline styles
-    html = html.replaceAllMapped(
-      RegExp(r'\bfloat\s*:\s*(left|right)[^;}"]*', caseSensitive: false),
-      (match) => '',
-    );
-
-    // Clean up any double semicolons or style attributes that are now empty
-    html = html.replaceAll(';;', ';');
-    html = html.replaceAll('style=""', '');
-    html = html.replaceAll('style=" "', '');
-
-    return html;
   }
 
   Widget _actions(
@@ -942,43 +957,3 @@ class AllImagesScreenForNewsFeed extends StatelessWidget {
   }
 }
 
-class FullScreenPdfViewer extends StatelessWidget {
-  final String url;
-  final String title;
-
-  const FullScreenPdfViewer({
-    super.key,
-    required this.url,
-    required this.title,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(title, style: const TextStyle(fontSize: 16)),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
-        elevation: 1,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.open_in_browser_rounded),
-            onPressed: () async {
-              try {
-                final uri = Uri.parse(url);
-                await launchUrl(uri, mode: LaunchMode.externalApplication);
-              } catch (e) {
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Could not open in browser")),
-                  );
-                }
-              }
-            },
-          ),
-        ],
-      ),
-      body: SfPdfViewer.network(url),
-    );
-  }
-}

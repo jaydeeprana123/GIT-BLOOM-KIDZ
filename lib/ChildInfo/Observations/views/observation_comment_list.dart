@@ -36,18 +36,14 @@ class ObservationCommentListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    childInfoController.isLikeList.clear();
-    for (int i = 0; i < (observation.comments ?? []).length; i++) {
-      final comment = observation.comments?[i];
-      final isLikedByMe =
-          comment?.likedUsers?.any(
-            (user) =>
-                user.id ==
-                childInfoController.loginResponse.value.data?.user?.id,
-          ) ??
-          false;
-      childInfoController.isLikeList.add(isLikedByMe);
-    }
+    final myUserId =
+        childInfoController.loginResponse.value.data?.user?.id;
+    childInfoController.isLikeList.assignAll(
+      (observation.comments ?? []).map(
+        (comment) =>
+            comment.likedUsers?.any((user) => user.id == myUserId) ?? false,
+      ),
+    );
 
     childInfoController.getUserInfo();
 
@@ -144,13 +140,7 @@ class ObservationCommentListWidget extends StatelessWidget {
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  /// 👤 Profile Image
-                                  CircleAvatar(
-                                    radius: 22,
-                                    backgroundImage: NetworkImage(
-                                      comment?.user?.profile ?? "",
-                                    ),
-                                  ),
+                                  _buildCommentUserAvatar(comment?.user),
 
                                   const SizedBox(width: 10),
 
@@ -205,17 +195,18 @@ class ObservationCommentListWidget extends StatelessWidget {
                                                     );
                                               },
                                               child: Icon(
-                                                childInfoController
-                                                            .isLikeList[index] ==
-                                                        true
+                                                _isCommentLiked(
+                                                      index,
+                                                      comment,
+                                                    )
                                                     ? Icons.thumb_up
                                                     : Icons
                                                           .thumb_up_alt_outlined,
                                                 size: 16,
-                                                color:
-                                                    childInfoController
-                                                            .isLikeList[index] ==
-                                                        true
+                                                color: _isCommentLiked(
+                                                      index,
+                                                      comment,
+                                                    )
                                                     ? color_secondary
                                                     : text_color,
                                               ),
@@ -245,6 +236,41 @@ class ObservationCommentListWidget extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _buildCommentUserAvatar(User? user) {
+    final profile = user?.profile ?? "";
+    final name = user?.name ?? "";
+
+    if (profile.isNotEmpty) {
+      return CircleAvatar(
+        radius: 22,
+        backgroundImage: NetworkImage(profile),
+      );
+    }
+
+    return CircleAvatar(
+      radius: 22,
+      backgroundColor: color_secondary,
+      child: Text(
+        name.isNotEmpty ? name[0].toUpperCase() : "",
+        style: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
+
+  bool _isCommentLiked(int index, Comment? comment) {
+    final myUserId =
+        childInfoController.loginResponse.value.data?.user?.id;
+    if (index < childInfoController.isLikeList.length &&
+        childInfoController.isLikeList[index]) {
+      return true;
+    }
+    return comment?.likedUsers?.any((user) => user.id == myUserId) ?? false;
   }
 
   void showDeleteWarningDialog(

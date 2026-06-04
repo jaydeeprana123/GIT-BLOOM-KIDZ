@@ -32,15 +32,14 @@ class CommentListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    newsFeedController.isLikeList.clear();
-    for (int i = 0; i < (newsFeed.comments ?? []).length; i++) {
-      final comment = newsFeed.comments?[i];
-      final isLikedByMe = comment?.likedUsers?.any(
-            (user) => user.id == newsFeedController.loginResponse.value.data?.user?.id,
-          ) ??
-          false;
-      newsFeedController.isLikeList.add(isLikedByMe);
-    }
+    final myUserId =
+        newsFeedController.loginResponse.value.data?.user?.id;
+    newsFeedController.isLikeList.assignAll(
+      (newsFeed.comments ?? []).map(
+        (comment) =>
+            comment.likedUsers?.any((user) => user.id == myUserId) ?? false,
+      ),
+    );
 
     newsFeedController.getUserInfo();
 
@@ -135,13 +134,7 @@ class CommentListWidget extends StatelessWidget {
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  /// 👤 Profile Image
-                                  CircleAvatar(
-                                    radius: 22,
-                                    backgroundImage: NetworkImage(
-                                      comment?.user?.profile ?? "",
-                                    ),
-                                  ),
+                                  _buildCommentUserAvatar(comment?.user),
 
                                   const SizedBox(width: 10),
 
@@ -193,17 +186,18 @@ class CommentListWidget extends StatelessWidget {
                                                     );
                                               },
                                               child: Icon(
-                                                newsFeedController
-                                                            .isLikeList[index] ==
-                                                        true
+                                                _isCommentLiked(
+                                                      index,
+                                                      comment,
+                                                    )
                                                     ? Icons.thumb_up
                                                     : Icons
                                                           .thumb_up_alt_outlined,
                                                 size: 16,
-                                                color:
-                                                    newsFeedController
-                                                            .isLikeList[index] ==
-                                                        true
+                                                color: _isCommentLiked(
+                                                      index,
+                                                      comment,
+                                                    )
                                                     ? color_secondary
                                                     : text_color,
                                               ),
@@ -230,6 +224,41 @@ class CommentListWidget extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _buildCommentUserAvatar(User? user) {
+    final profile = user?.profile ?? "";
+    final name = user?.name ?? "";
+
+    if (profile.isNotEmpty) {
+      return CircleAvatar(
+        radius: 22,
+        backgroundImage: NetworkImage(profile),
+      );
+    }
+
+    return CircleAvatar(
+      radius: 22,
+      backgroundColor: color_secondary,
+      child: Text(
+        name.isNotEmpty ? name[0].toUpperCase() : "",
+        style: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
+
+  bool _isCommentLiked(int index, Comment? comment) {
+    final myUserId =
+        newsFeedController.loginResponse.value.data?.user?.id;
+    if (index < newsFeedController.isLikeList.length &&
+        newsFeedController.isLikeList[index]) {
+      return true;
+    }
+    return comment?.likedUsers?.any((user) => user.id == myUserId) ?? false;
   }
 
   void showDeleteWarningDialog(
