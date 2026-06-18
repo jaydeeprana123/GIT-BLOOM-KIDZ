@@ -19,6 +19,7 @@ import '../../CommonWidgets/black_medium_regular_text.dart';
 import '../../CommonWidgets/blue_small_regular_text.dart';
 import '../../CommonWidgets/common_widget.dart';
 import '../../CommonWidgets/full_screen_attachment_viewer.dart';
+import '../../utils/html_image_extension.dart';
 import '../../utils/html_sanitizer.dart';
 import 'comment_list.dart';
 
@@ -637,6 +638,7 @@ class NewsFeedCard extends StatelessWidget {
             },
             extensions: [
               TableHtmlExtension(),
+              htmlImageExtension(),
               TagWrapExtension(
                 tagsToWrap: {"table"},
                 builder: (child) {
