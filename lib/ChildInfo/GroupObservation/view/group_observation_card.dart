@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:bloom_kidz/ChildInfo/Observations/models/observation_list_response.dart';
 import 'package:bloom_kidz/ChildInfo/Observations/views/observation_update_screen.dart';
 import 'package:bloom_kidz/ChildInfo/controller/child_info_controller.dart';
@@ -11,14 +9,13 @@ import 'package:bloom_kidz/CommonWidgets/blue_medium_regular_text.dart';
 import 'package:bloom_kidz/CommonWidgets/common_green_button.dart';
 import 'package:bloom_kidz/CommonWidgets/common_text_field.dart';
 import 'package:bloom_kidz/CommonWidgets/common_widget.dart';
+import 'package:bloom_kidz/CommonWidgets/sanitized_html_content.dart';
 import 'package:bloom_kidz/NewsFeed/controller/news_feed_controller.dart';
 import 'package:bloom_kidz/NewsFeed/models/news_feed_response.dart' hide Media;
 import 'package:bloom_kidz/Styles/my_colors.dart';
 import 'package:bloom_kidz/Styles/my_font.dart';
 import 'package:bloom_kidz/Styles/my_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_html_table/flutter_html_table.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
@@ -299,132 +296,7 @@ class GroupObservationCard extends StatelessWidget {
       return const SizedBox();
     }
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      child: Html(
-        data: _sanitizeHtml(observation.observations ?? ""),
-        style: {
-          "*": Style(
-            fontSize: FontSize(13),
-            color: text_color,
-            lineHeight: LineHeight(1.4),
-          ),
-          "table": Style(
-            width: Width(900, Unit.px),
-          ),
-          "td": Style(
-            padding: HtmlPaddings.all(6),
-          ),
-          "th": Style(
-            padding: HtmlPaddings.all(6),
-          ),
-        },
-        extensions: [
-          TagWrapExtension(
-            tagsToWrap: {"table"},
-            builder: (child) {
-              return SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: child,
-              );
-            },
-          ),
-          TableHtmlExtension(),
-          TagExtension(
-            tagsToExtend: {"img"},
-            builder: (context) {
-              final src = context.attributes['src'] ?? '';
-
-              if (src.startsWith('data:image')) {
-                try {
-                  final base64Str = src.split(',').last;
-                  final bytes = base64Decode(base64Str);
-
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Image.memory(
-                      bytes,
-                      fit: BoxFit.contain,
-                      errorBuilder: (context, error, stackTrace) {
-                        return const SizedBox();
-                      },
-                    ),
-                  );
-                } catch (e) {
-                  return const SizedBox();
-                }
-              }
-
-              if (src.isNotEmpty && !src.startsWith('data:')) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Image.network(
-                    src,
-                    fit: BoxFit.contain,
-                    errorBuilder: (context, error, stackTrace) {
-                      return const SizedBox();
-                    },
-                  ),
-                );
-              }
-
-              return const SizedBox();
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  String _sanitizeHtml(String html) {
-    // Remove problematic inline styles that contain font-feature-settings
-    html = html.replaceAllMapped(
-      RegExp(r'font-feature-settings:[^;}"]*', caseSensitive: false),
-      (match) => '',
-    );
-
-    // Remove font-variant-* properties that might cause issues
-    html = html.replaceAllMapped(
-      RegExp(r'font-variant-[^:]*:[^;}"]*', caseSensitive: false),
-      (match) => '',
-    );
-
-    // Remove height and max-height inline styles that limit the element's height and clip text
-    html = html.replaceAllMapped(
-      RegExp(r'\b(max-)?height\s*:\s*[^;}"]*', caseSensitive: false),
-      (match) => '',
-    );
-
-    // Remove overflow inline styles that might hide content
-    html = html.replaceAllMapped(
-      RegExp(r'\boverflow(-[xy])?\s*:\s*[^;}"]*', caseSensitive: false),
-      (match) => '',
-    );
-
-    // Remove white-space: nowrap inline styles to ensure proper wrapping of long text
-    html = html.replaceAllMapped(
-      RegExp(r'\bwhite-space\s*:\s*nowrap[^;}"]*', caseSensitive: false),
-      (match) => '',
-    );
-
-    // Remove align="left" and align="right" attributes from tags (like table or img) that cause float/wrapping bugs
-    html = html.replaceAll(
-      RegExp(r'''\balign=["']?(left|right)["']?''', caseSensitive: false),
-      '',
-    );
-
-    // Remove float: left and float: right inline styles
-    html = html.replaceAllMapped(
-      RegExp(r'\bfloat\s*:\s*(left|right)[^;}"]*', caseSensitive: false),
-      (match) => '',
-    );
-
-    // Clean up any double semicolons or style attributes that are now empty
-    html = html.replaceAll(';;', ';');
-    html = html.replaceAll('style=""', '');
-    html = html.replaceAll('style=" "', '');
-
-    return html;
+    return SanitizedHtmlContent(html: observation.observations ?? "");
   }
 }
 

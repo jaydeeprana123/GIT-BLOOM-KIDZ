@@ -94,7 +94,7 @@ class NewsFeedController extends GetxController {
 
         if (res.statusCode == 200) {
           Map<String, dynamic> userModel = json.decode(valueData);
-          
+
           // Debug likes structure
           try {
             final firstFeed = (userModel["data"]?["newsfeeds"] as List?)?.first;
@@ -104,14 +104,20 @@ class NewsFeedController extends GetxController {
                 "likes": firstFeed["likes"],
                 "liked_users": firstFeed["liked_users"],
                 "likedUsers": firstFeed["likedUsers"],
-                "comments": (firstFeed["comments"] as List?)?.map((c) => {
-                  "comment_id": c["id"],
-                  "likes": c["likes"],
-                  "liked_users": c["liked_users"],
-                  "likedUsers": c["likedUsers"],
-                }).toList(),
+                "comments": (firstFeed["comments"] as List?)
+                    ?.map(
+                      (c) => {
+                        "comment_id": c["id"],
+                        "likes": c["likes"],
+                        "liked_users": c["liked_users"],
+                        "likedUsers": c["likedUsers"],
+                      },
+                    )
+                    .toList(),
               };
-              File("likes_debug.json").writeAsStringSync(json.encode(debugData));
+              File(
+                "likes_debug.json",
+              ).writeAsStringSync(json.encode(debugData));
             }
           } catch (e) {
             // ignore
@@ -270,13 +276,13 @@ class NewsFeedController extends GetxController {
       http.StreamedResponse res = value;
       printData(
         runtimeType.toString(),
-        "callLeaveRequestAPI response ${res.statusCode}",
+        "callAInterestedNotInterestedAPI response ${res.statusCode}",
       );
 
       await res.stream.bytesToString().then((valueData) async {
         printData(
           runtimeType.toString(),
-          "callLeaveRequestAPI value ${valueData}",
+          "callAInterestedNotInterestedAPI value ${valueData}",
         );
 
         isLoading.value = false;
@@ -398,13 +404,18 @@ class NewsFeedController extends GetxController {
             if (newsItem.likes == null) {
               newsItem.likes = [];
             }
-            final int likeIndex = newsItem.likes!.indexWhere((like) => like.userId == myUserId);
+            final int likeIndex = newsItem.likes!.indexWhere(
+              (like) => like.userId == myUserId,
+            );
             final bool isLiked = likeIndex != -1;
 
             if (isLiked) {
               // Unlike locally
               newsItem.likes!.removeAt(likeIndex);
-              newsItem.likesCount = ((newsItem.likesCount ?? 0) - 1).clamp(0, 999999);
+              newsItem.likesCount = ((newsItem.likesCount ?? 0) - 1).clamp(
+                0,
+                999999,
+              );
               newsItem.likedUsers?.removeWhere((u) => u.id == myUserId);
             } else {
               // Like locally
@@ -414,11 +425,13 @@ class NewsFeedController extends GetxController {
                 newsItem.likedUsers = [];
               }
               if (!newsItem.likedUsers!.any((u) => u.id == myUserId)) {
-                newsItem.likedUsers!.add(User(
-                  id: myUserId,
-                  name: loginResponse.value.data?.user?.name,
-                  profile: loginResponse.value.data?.user?.profile,
-                ));
+                newsItem.likedUsers!.add(
+                  User(
+                    id: myUserId,
+                    name: loginResponse.value.data?.user?.name,
+                    profile: loginResponse.value.data?.user?.profile,
+                  ),
+                );
               }
             }
 

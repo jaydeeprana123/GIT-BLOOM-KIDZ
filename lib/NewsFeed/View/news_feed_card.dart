@@ -8,8 +8,6 @@ import 'package:bloom_kidz/Styles/my_font.dart';
 import 'package:bloom_kidz/Styles/my_icons.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_html_table/flutter_html_table.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
@@ -19,8 +17,7 @@ import '../../CommonWidgets/black_medium_regular_text.dart';
 import '../../CommonWidgets/blue_small_regular_text.dart';
 import '../../CommonWidgets/common_widget.dart';
 import '../../CommonWidgets/full_screen_attachment_viewer.dart';
-import '../../utils/html_image_extension.dart';
-import '../../utils/html_sanitizer.dart';
+import '../../CommonWidgets/sanitized_html_content.dart';
 import 'comment_list.dart';
 
 class NewsFeedCard extends StatelessWidget {
@@ -597,62 +594,7 @@ class NewsFeedCard extends StatelessWidget {
   }
 
   Widget _description() {
-    final sanitized = sanitizeHtmlForDisplay(newsFeed.description ?? "");
-    const cellBorder = Border.fromBorderSide(
-      BorderSide(color: Color(0xFF9E9E9E), width: 1),
-    );
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          return Html(
-            data: sanitized,
-            style: {
-              "*": Style(
-                fontSize: FontSize(13),
-                color: text_color,
-                lineHeight: LineHeight(1.4),
-              ),
-              "body": Style(
-                margin: Margins.zero,
-                padding: HtmlPaddings.zero,
-              ),
-              "p": Style(margin: Margins.only(bottom: 6)),
-              "table": Style(
-                width: Width(constraints.maxWidth, Unit.px),
-                margin: Margins.symmetric(vertical: 8),
-                border: cellBorder,
-              ),
-              "td": Style(
-                padding: HtmlPaddings.all(8),
-                border: cellBorder,
-                alignment: Alignment.centerLeft,
-              ),
-              "th": Style(
-                padding: HtmlPaddings.all(8),
-                border: cellBorder,
-                fontWeight: FontWeight.bold,
-                alignment: Alignment.centerLeft,
-              ),
-            },
-            extensions: [
-              TableHtmlExtension(),
-              htmlImageExtension(),
-              TagWrapExtension(
-                tagsToWrap: {"table"},
-                builder: (child) {
-                  return SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: child,
-                  );
-                },
-              ),
-            ],
-          );
-        },
-      ),
-    );
+    return SanitizedHtmlContent(html: newsFeed.description ?? "");
   }
 
   Widget _actions(

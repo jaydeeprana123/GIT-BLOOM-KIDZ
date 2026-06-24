@@ -52,7 +52,42 @@ String sanitizeHtmlForDisplay(String html) {
     (_) => 'border-width:1px',
   );
 
-  // Fixed pt/cm widths on cells break table layout on mobile
+  // Fixed widths break layout on mobile (px, pt, cm, in, %, etc.)
+  html = html.replaceAllMapped(
+    RegExp(r'\b(?:max-)?width\s*:\s*[^;}"]*;?', caseSensitive: false),
+    (_) => '',
+  );
+
+  html = html.replaceAll(
+    RegExp(r'\s+(?:width|height)="[^"]*"', caseSensitive: false),
+    '',
+  );
+
+  // Word list/paragraph indents push content off-screen
+  html = html.replaceAllMapped(
+    RegExp(
+      r'\b(?:margin|padding)-(?:left|right|top|bottom)\s*:\s*[^;}"]*;?',
+      caseSensitive: false,
+    ),
+    (_) => '',
+  );
+
+  html = html.replaceAllMapped(
+    RegExp(r'\btext-indent\s*:\s*[^;}"]*;?', caseSensitive: false),
+    (_) => '',
+  );
+
+  html = html.replaceAllMapped(
+    RegExp(r'\b(?:left|right|top|bottom)\s*:\s*[^;}"]*;?', caseSensitive: false),
+    (_) => '',
+  );
+
+  html = html.replaceAllMapped(
+    RegExp(r'\bposition\s*:\s*[^;}"]*;?', caseSensitive: false),
+    (_) => '',
+  );
+
+  // Legacy rules kept for table-specific cleanup
   html = html.replaceAllMapped(
     RegExp(r'\bwidth\s*:\s*[\d.]+(?:pt|cm)[^;}"]*;?', caseSensitive: false),
     (_) => '',
@@ -80,6 +115,10 @@ String sanitizeHtmlForDisplay(String html) {
   html = html.replaceAll(';;', ';');
   html = html.replaceAll('style=""', '');
   html = html.replaceAll('style=" "', '');
+
+  // Collapse empty paragraphs and leading whitespace before content
+  html = html.replaceAll(RegExp(r'<p>\s+', caseSensitive: false), '<p>');
+  html = html.replaceAll(RegExp(r'<p>\s*</p>', caseSensitive: false), '');
 
   return html;
 }
