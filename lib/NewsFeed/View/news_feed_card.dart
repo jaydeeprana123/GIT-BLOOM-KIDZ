@@ -49,72 +49,101 @@ class NewsFeedCard extends StatelessWidget {
           if ((newsFeed.media ?? []).isNotEmpty) _image(context),
           _description(),
 
-          if (newsFeed.type == "events")
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 12),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: InkWell(
-                      onTap: () {
-                        newsFeedController.callAInterestedNotInterestedAPI(
-                          context,
-                          newsFeed.id.toString(),
-                          "1",
-                        );
-                      },
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 4,
-                        ),
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: Colors.green,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: BlackMediumRegularText(
-                          "Interested",
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(width: 16),
-
-                  Expanded(
-                    child: InkWell(
-                      onTap: () {
-                        newsFeedController.callAInterestedNotInterestedAPI(
-                          context,
-                          newsFeed.id.toString(),
-                          "2",
-                        );
-                      },
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 4,
-                        ),
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: Colors.red,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: BlackMediumRegularText(
-                          "Not Interested",
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+          if (newsFeed.type == "events") _eventResponseActions(context),
 
           _actions(context, newsFeedController, index, newsFeed.id.toString()),
           _replyBox(context, newsFeed.id.toString(), index),
+        ],
+      ),
+    );
+  }
+
+  Widget _eventResponseActions(BuildContext context) {
+    final response = (newsFeed.eventResponse ?? "").trim().toLowerCase();
+    final showInterested = response.isEmpty || response == "not_interested";
+    final showNotInterested = response.isEmpty || response == "interested";
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (response == "interested")
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: BlackMediumRegularText(
+                "You marked this event as Interested",
+                color: Colors.green,
+              ),
+            ),
+          if (response == "not_interested")
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: BlackMediumRegularText(
+                "You marked this event as Not Interested",
+                color: Colors.red,
+              ),
+            ),
+          Row(
+            children: [
+              if (showInterested)
+                Expanded(
+                  child: InkWell(
+                    onTap: () {
+                      newsFeedController.callAInterestedNotInterestedAPI(
+                        context,
+                        newsFeed.id.toString(),
+                        "1",
+                      );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 4,
+                      ),
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: Colors.green,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: BlackMediumRegularText(
+                        "Interested",
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              if (showInterested && showNotInterested)
+                const SizedBox(width: 16),
+              if (showNotInterested)
+                Expanded(
+                  child: InkWell(
+                    onTap: () {
+                      newsFeedController.callAInterestedNotInterestedAPI(
+                        context,
+                        newsFeed.id.toString(),
+                        "2",
+                      );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 4,
+                      ),
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: BlackMediumRegularText(
+                        "Not Interested",
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
         ],
       ),
     );
@@ -400,9 +429,7 @@ class NewsFeedCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              isOffice
-                  ? Icons.description_outlined
-                  : Icons.attach_file_rounded,
+              isOffice ? Icons.description_outlined : Icons.attach_file_rounded,
               size: 64,
               color: isOffice ? Colors.blue[700] : color_secondary,
             ),
@@ -745,7 +772,9 @@ class NewsFeedCard extends StatelessWidget {
                           (user?.profile != null && user!.profile!.isNotEmpty)
                           ? NetworkImage(user.profile!)
                           : null,
-                      child: (user?.profile == null || (user?.profile ?? "").isEmpty)
+                      child:
+                          (user?.profile == null ||
+                              (user?.profile ?? "").isEmpty)
                           ? Text(
                               (user?.name ?? "").isNotEmpty
                                   ? user!.name![0].toUpperCase()
@@ -900,4 +929,3 @@ class AllImagesScreenForNewsFeed extends StatelessWidget {
     );
   }
 }
-

@@ -292,6 +292,16 @@ class NewsFeedController extends GetxController {
           BaseModel baseModel = BaseModel.fromJson(userModel);
 
           if (baseModel.status ?? false) {
+            // Update local event response immediately for responsive UI
+            final feedIndex = newsFeedList.indexWhere(
+              (feed) => feed.id.toString() == id,
+            );
+            if (feedIndex != -1) {
+              newsFeedList[feedIndex].eventResponse =
+                  status == "1" ? "interested" : "not_interested";
+              newsFeedList.refresh();
+            }
+
             snackBar(context, baseModel.message ?? "");
 
             pageNumberObservation = 1;
